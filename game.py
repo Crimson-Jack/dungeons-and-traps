@@ -153,15 +153,6 @@ while True:
     key = pygame.key.get_pressed()
     hero.is_moving = False
 
-    if key[pygame.K_LEFT] and key[pygame.K_UP] and key[pygame.K_RIGHT]:
-        print("K_LEFT K_UP K_RIGHT")
-    if key[pygame.K_LEFT] and key[pygame.K_DOWN] and key[pygame.K_RIGHT]:
-        print("K_LEFT K_DOWN K_RIGHT")
-    if key[pygame.K_RIGHT] and key[pygame.K_UP] and key[pygame.K_DOWN]:
-        print("K_RIGHT K_UP K_DOWN")
-    if key[pygame.K_LEFT] and key[pygame.K_UP] and key[pygame.K_DOWN]:
-        print("K_LEFT K_UP K_DOWN")
-
     if (key[pygame.K_RIGHT] and key[pygame.K_LEFT]) or (key[pygame.K_UP] and key[pygame.K_DOWN]):
         hero.is_moving = False
     else:
