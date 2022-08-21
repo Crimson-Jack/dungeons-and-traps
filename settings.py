@@ -1,10 +1,10 @@
+from debug import Debug
+
 # Game setup
-#WIDTH = 1280
-#HEIGHT = 720
-WIDTH = 800
+WIDTH = 900
 HEIGHT = 600
 FPS = 60
-TILESIZE = 64
+TILE_SIZE = 64
 
 WORLD_MAP = [
     ['p', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ' '],
@@ -24,3 +24,6 @@ WORLD_MAP = [
     [' ', ' ', 'x', ' ', ' ', ' ', ' ', ' ', ' ', 'x', ' ', ' ', ' ', ' ', ' ', 'x', ' ', ' ', ' ', ' '],
     [' ', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ' ']
 ]
+
+# Create debugger
+debugger = Debug()

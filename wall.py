@@ -2,7 +2,7 @@ import pygame
 from settings import *
 
 
-class Tile(pygame.sprite.Sprite):
+class Wall(pygame.sprite.Sprite):
     def __init__(self, pos, groups):
         super().__init__(groups)
         image = pygame.image.load('img/tile_0014.png').convert_alpha()
