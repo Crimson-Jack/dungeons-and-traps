@@ -18,7 +18,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            self.screen.fill((200, 200, 200))
+            self.screen.fill((234, 165, 108))
             self.level.run()
             pygame.display.update()
             self.clock.tick(FPS)

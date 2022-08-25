@@ -1,6 +1,7 @@
 import pygame
 import settings
 from wall import Wall
+from ground import Ground
 from player import Player
 
 
@@ -9,6 +10,7 @@ class Level:
         # Get the display surface
         self.display_surface = pygame.display.get_surface()
         # Sprite group set up
+        self.background_sprites = CameraGroup()
         self.visible_sprites = YSortCameraGroup()
         self.obstactle_sprites = pygame.sprite.Group()
         # Build the map
@@ -22,19 +24,25 @@ class Level:
                 if col == 'x':
                     # Add tile to visible and obstacle sprites group
                     Wall((x, y), [self.visible_sprites, self.obstactle_sprites])
+                if col == 'g':
+                    # Add tile to background sprites group
+                    Ground((x, y), [self.background_sprites])
                 if col == 'p':
                     # Add player to visible group
                     self.player = Player((x, y), [self.visible_sprites], self.obstactle_sprites)
 
     def run(self):
+        self.background_sprites.custom_draw(self.player)
         self.visible_sprites.custom_draw(self.player)
         #self.visible_sprites.draw(self.display_surface)
+        # Read inputs and display variables if debugger is enabled
         settings.debugger.input()
         settings.debugger.show()
+        # Run Update method foreach sprite from the group
         self.visible_sprites.update()
 
 
-class YSortCameraGroup(pygame.sprite.Group):
+class CameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
@@ -42,8 +50,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_height = self.display_surface.get_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
-    def custom_draw(self, player):
-
+    def set_map_offset(self, player):
         # The maximum width (x) for the whole map
         max_width = settings.TILE_SIZE * len(settings.WORLD_MAP[0])
         # The maximum height (y) for the whole map
@@ -70,8 +77,21 @@ class YSortCameraGroup(pygame.sprite.Group):
             settings.debugger.add_info(f'Scroll in y: YES, offset = {self.offset}')
             self.offset.y = self.half_height - player.rect.centery
 
-        #for sprite in self.sprites():
-        for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
+    def custom_draw(self, player):
+        self.set_map_offset(player)
+
+        for sprite in self.sprites():
             offset_position = sprite.rect.topleft + self.offset
             self.display_surface.blit(sprite.image, offset_position)
 
+
+class YSortCameraGroup(CameraGroup):
+    def __init__(self):
+        super().__init__()
+
+    def custom_draw(self, player):
+        super().set_map_offset(player)
+
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_position = sprite.rect.topleft + self.offset
+            self.display_surface.blit(sprite.image, offset_position)
