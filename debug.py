@@ -4,7 +4,7 @@ import pygame
 class Debug():
     def __init__(self, x=10, y=10):
         self.enabled = False
-        self.change_enabled_state = 0
+        self.text_color = 'Black'
         self.info_list = []
         self.x = x
         self.y = y
@@ -20,7 +20,7 @@ class Debug():
             display_surface = pygame.display.get_surface()
             y_position = 0
             for info in self.info_list:
-                debug_surface = self.font.render(str(info), True, 'Black')
+                debug_surface = self.font.render(str(info), True, self.text_color)
                 debug_surface.set_alpha(150)
                 debug_rect = debug_surface.get_rect(topleft=(self.x, self.y + y_position))
                 display_surface.blit(debug_surface, debug_rect)
@@ -33,8 +33,12 @@ class Debug():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_F1]:
-            self.change_enabled_state += 1
-            if (self.change_enabled_state > 5):
-                self.enabled = not self.enabled
-                self.change_enabled_state = 0
+            self.enabled = True
+            self.text_color = 'Black'
+        elif keys[pygame.K_F2]:
+            self.enabled = True
+            self.text_color = "White"
+        elif keys[pygame.K_ESCAPE]:
+            self.enabled = False
+
 
