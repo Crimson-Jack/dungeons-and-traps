@@ -6,12 +6,10 @@ from player import Player
 
 
 class Level:
-    def __init__(self):
-        # Get the display surface
-        self.display_surface = pygame.display.get_surface()
+    def __init__(self, screen, game_surface):
         # Sprite group set up
-        self.background_sprites = CameraGroup()
-        self.visible_sprites = YSortCameraGroup()
+        self.background_sprites = CameraGroup(screen, game_surface)
+        self.visible_sprites = YSortCameraGroup(screen, game_surface)
         self.obstactle_sprites = pygame.sprite.Group()
         # Build the map
         self.create_map()
@@ -43,11 +41,14 @@ class Level:
 
 
 class CameraGroup(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self, screen, game_surface):
         super().__init__()
-        self.display_surface = pygame.display.get_surface()
-        self.half_width = self.display_surface.get_size()[0] // 2
-        self.half_height = self.display_surface.get_size()[1] // 2
+        #self.display_surface = pygame.display.get_surface()
+        self.screen = screen
+        self.game_surface = game_surface
+
+        self.half_width = self.game_surface.get_size()[0] // 2
+        self.half_height = self.game_surface.get_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
     def set_map_offset(self, player):
@@ -82,16 +83,19 @@ class CameraGroup(pygame.sprite.Group):
 
         for sprite in self.sprites():
             offset_position = sprite.rect.topleft + self.offset
-            self.display_surface.blit(sprite.image, offset_position)
+            self.game_surface.blit(sprite.image, offset_position)
 
+        self.screen.blit(self.game_surface, (0,0))
 
 class YSortCameraGroup(CameraGroup):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, screen, game_surface):
+        super().__init__(screen, game_surface)
 
     def custom_draw(self, player):
         super().set_map_offset(player)
 
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft + self.offset
-            self.display_surface.blit(sprite.image, offset_position)
+            self.game_surface.blit(sprite.image, offset_position)
+
+        self.screen.blit(self.game_surface, (0, 0))

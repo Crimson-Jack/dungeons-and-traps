@@ -1,9 +1,13 @@
 from debug import Debug
 
-# Game setup
+# Screen size
 WIDTH = 900
 HEIGHT = 600
+# Dashboard size
+DASHBOARD_HEIGHT = 120
+# Clock
 FPS = 60
+# Tile size
 TILE_SIZE = 64
 
 WORLD_MAP = [
