@@ -1,3 +1,4 @@
+# Note: This file is just a draft for testing purposes
 import pygame, sys
 from enum import IntEnum
 

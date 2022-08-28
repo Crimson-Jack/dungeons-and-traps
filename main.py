@@ -1,5 +1,5 @@
 import pygame, sys
-from settings import *
+import settings
 from level import Level
 from dashboard import Dashboard
 
@@ -10,11 +10,11 @@ class Game:
         pygame.display.set_caption('Dungeons and traps')
 
         # Main - screen surface
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
         # Game surface
-        self.game_surface = pygame.Surface((WIDTH, HEIGHT - DASHBOARD_HEIGHT))
+        self.game_surface = pygame.Surface((settings.WIDTH, settings.HEIGHT - settings.DASHBOARD_HEIGHT))
         # Dashboard surface
-        self.dashboard_surface = pygame.Surface((WIDTH, DASHBOARD_HEIGHT))
+        self.dashboard_surface = pygame.Surface((settings.WIDTH, settings.DASHBOARD_HEIGHT))
 
         self.clock = pygame.time.Clock()
 
@@ -31,13 +31,15 @@ class Game:
             self.screen.fill((0, 0, 0))
             self.game_surface.fill((234, 165, 108))
             self.dashboard_surface.fill((50, 50, 50))
-            self.dashboard.draw()
+
             self.level.run()
+            self.dashboard.draw()
 
             pygame.display.update()
-            self.clock.tick(FPS)
+            self.clock.tick(settings.FPS)
 
 
 if __name__ == '__main__':
+    # Initialize and run the game
     game = Game()
     game.run()
