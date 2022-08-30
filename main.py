@@ -1,5 +1,6 @@
 import pygame, sys
 import settings
+from game_state import GameState
 from level import Level
 from dashboard import Dashboard
 
@@ -18,8 +19,15 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.level = Level(self.screen, self.game_surface)
-        self.dashboard = Dashboard(self.screen, self.dashboard_surface)
+        self.game_state = GameState()
+        self.level = Level(self.screen, self.game_surface, self.game_state)
+        self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
+
+        self.refresh_dashboard_surface()
+
+    def refresh_dashboard_surface(self):
+        self.dashboard_surface.fill((50, 50, 50))
+        self.dashboard.draw()
 
     def run(self):
         while True:
@@ -27,13 +35,13 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == settings.ADD_DIAMOND_EVENT:
+                    # Refresh dashboard surface
+                    self.refresh_dashboard_surface()
 
-            self.screen.fill((0, 0, 0))
+            # Refresh game surface
             self.game_surface.fill((234, 165, 108))
-            self.dashboard_surface.fill((50, 50, 50))
-
             self.level.run()
-            self.dashboard.draw()
 
             pygame.display.update()
             self.clock.tick(settings.FPS)

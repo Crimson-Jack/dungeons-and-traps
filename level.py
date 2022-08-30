@@ -9,12 +9,15 @@ from y_sort_camera_group import YSortCameraGroup
 
 
 class Level:
-    def __init__(self, screen, game_surface):
+    def __init__(self, screen, game_surface, game_state):
         # Set up sprite groups
         self.background_sprites = CameraGroup(screen, game_surface)
         self.visible_sprites = YSortCameraGroup(screen, game_surface)
         self.obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
+
+        # Set game state
+        self.game_state = game_state
 
         # Build the map
         self.create_map()
@@ -35,7 +38,7 @@ class Level:
                     Diamond((x, y), [self.visible_sprites, self.collectable_sprites])
                 if col == 'p':
                     # Add player to visible group
-                    self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites)
+                    self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites, self.game_state)
 
     def run(self):
         # Run Update method foreach sprite from the group

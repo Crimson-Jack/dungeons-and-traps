@@ -1,7 +1,7 @@
 import pygame
 
 
-class Debug():
+class Debug:
     def __init__(self, x=10, y=10):
         self.enabled = False
         self.text_color = 'Black'
