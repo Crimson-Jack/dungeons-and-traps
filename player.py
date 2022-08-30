@@ -3,7 +3,7 @@ import settings
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacle_sprites, collectable_sprites):
+    def __init__(self, pos, groups, obstacle_sprites, collectable_sprites, game_state):
         super().__init__(groups)
         image = pygame.image.load('img/tile_0097.png').convert_alpha()
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -17,6 +17,9 @@ class Player(pygame.sprite.Sprite):
         # Create groups of collision
         self.obstacle_sprites = obstacle_sprites
         self.collectable_sprites = collectable_sprites
+
+        # Set game state
+        self.game_state = game_state
 
     def input(self):
         # Read pressed key and specify movement direction
@@ -52,8 +55,10 @@ class Player(pygame.sprite.Sprite):
         # Check collision with collectable sprites
         for sprite in self.collectable_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
+                # Increase number of collected diamonds
+                self.game_state.add_diamond()
+                # Remove diamond
                 sprite.kill()
-                print("Diamond collected")
 
         # Check collision with obstacle sprites
         if direction == 'horizontal':

@@ -40,4 +40,5 @@ class CameraGroup(pygame.sprite.Group):
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
 
+        # Blit game_surface on the screen
         self.screen.blit(self.game_surface, (0, 0))
