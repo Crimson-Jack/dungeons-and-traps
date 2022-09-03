@@ -2,8 +2,8 @@ from camera_group import CameraGroup
 
 
 class YSortCameraGroup(CameraGroup):
-    def __init__(self, screen, game_surface):
-        super().__init__(screen, game_surface)
+    def __init__(self, game_surface):
+        super().__init__(game_surface)
 
     def custom_draw(self, player):
         # Calculate map offset
@@ -13,6 +13,3 @@ class YSortCameraGroup(CameraGroup):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
-
-        # Blit game_surface on the screen
-        self.screen.blit(self.game_surface, (0, 0))

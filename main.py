@@ -35,13 +35,20 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == settings.GAME_OVER_EVENT:
+                    # Game over - show the end panel
+                    self.level.game_over()
                 if event.type == settings.ADD_DIAMOND_EVENT:
                     # Refresh dashboard surface
                     self.refresh_dashboard_surface()
+                if event.type == settings.DECREASE_ENERGY_EVENT:
+                    # Refresh dashboard surface
+                    self.refresh_dashboard_surface()
 
-            # Refresh game surface
-            self.game_surface.fill((234, 165, 108))
-            self.level.run()
+            if not self.game_state.game_over:
+                # Refresh game surface
+                self.game_surface.fill((234, 165, 108))
+                self.level.run()
 
             pygame.display.update()
             self.clock.tick(settings.FPS)

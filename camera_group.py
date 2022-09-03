@@ -1,14 +1,13 @@
 import pygame
+
+import enemy
 import settings
 
 
 class CameraGroup(pygame.sprite.Group):
-    def __init__(self, screen, game_surface):
+    def __init__(self, game_surface):
         super().__init__()
-
-        self.screen = screen
         self.game_surface = game_surface
-
         self.half_width = self.game_surface.get_size()[0] // 2
         self.half_height = self.game_surface.get_size()[1] // 2
         self.offset = pygame.math.Vector2()
@@ -35,10 +34,13 @@ class CameraGroup(pygame.sprite.Group):
         # Calculate map offset
         self.set_map_offset(player)
 
+        # Draw extra effects for enemies
+        for sprite in self.sprites():
+            if isinstance(sprite, enemy.Enemy):
+                sprite.custom_draw(self.game_surface, self.offset)
+
         # Draw each tile with an offset on game_surface
         for sprite in self.sprites():
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
 
-        # Blit game_surface on the screen
-        self.screen.blit(self.game_surface, (0, 0))
