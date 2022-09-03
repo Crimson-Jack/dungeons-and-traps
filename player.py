@@ -3,11 +3,11 @@ import settings
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obstacle_sprites, collectable_sprites, game_state):
+    def __init__(self, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
         image = pygame.image.load('img/tile_0097.png').convert_alpha()
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
-        self.rect = self.image.get_rect(topleft=pos)
+        self.rect = self.image.get_rect(topleft=position)
         self.hitbox = self.rect.inflate(0, -5)
 
         # Create movement variables
@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
         # Create groups of collision
         self.obstacle_sprites = obstacle_sprites
         self.collectable_sprites = collectable_sprites
+        self.enemy_sprites = enemy_sprites
 
         # Set game state
         self.game_state = game_state
@@ -59,6 +60,11 @@ class Player(pygame.sprite.Sprite):
                 self.game_state.add_diamond()
                 # Remove diamond
                 sprite.kill()
+
+        # Check collision with enemy sprites
+        for sprite in self.enemy_sprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                self.game_state.decrease_energy()
 
         # Check collision with obstacle sprites
         if direction == 'horizontal':
