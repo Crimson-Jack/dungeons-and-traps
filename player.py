@@ -40,15 +40,15 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
-    def move(self, speed):
+    def move(self):
         # Normalize vector
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 
         # Set the movement offset and check the collision
-        self.hitbox.x += self.direction.x * speed
+        self.hitbox.x += self.direction.x * self.speed
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * speed
+        self.hitbox.y += self.direction.y * self.speed
         self.collision('vertical')
         self.rect.center = self.hitbox.center
 
@@ -84,4 +84,4 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.input()
-        self.move(self.speed)
+        self.move()

@@ -4,6 +4,7 @@ from wall import Wall
 from ground import Ground
 from diamond import Diamond
 from spider_enemy import SpiderEnemy
+from ghost_enemy import GhostEnemy
 from player import Player
 from camera_group import CameraGroup
 from y_sort_camera_group import YSortCameraGroup
@@ -22,13 +23,32 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
 
+        # Set obstacle map
+        self.obstacle_map = self.get_obstacle_map()
+
         # Set game state
         self.game_state = game_state
 
-        # Build the map
-        self.create_map()
+        # Create sprites
+        self.player = self.create_sprites_and_get_player()
 
-    def create_map(self):
+    def get_obstacle_map(self):
+        # Create obstacle map
+        map_rows = []
+        for row_index, row in enumerate(settings.WORLD_MAP):
+            map_columns = []
+            for col_index, col in enumerate(row):
+                if col == 'x':
+                    map_columns.append(True)
+                else:
+                    map_columns.append(False)
+            map_rows.append(map_columns)
+
+        return map_rows
+
+    def create_sprites_and_get_player(self):
+        # Create sprites and get player sprite
+        player = None
         for row_index, row in enumerate(settings.WORLD_MAP):
             for col_index, col in enumerate(row):
                 x = col_index * settings.TILE_SIZE
@@ -36,7 +56,7 @@ class Level:
                 if col == 'x':
                     # Add tile to visible and obstacle sprites group
                     Wall((x, y), [self.visible_sprites, self.obstacle_sprites])
-                if col == 'g':
+                if col == 'bg':
                     # Add tile to background sprites group
                     Ground((x, y), [self.background_sprites])
                 if col == 'd':
@@ -46,9 +66,14 @@ class Level:
                     # TODO: Improve parsing process
                     # Add tile to enemy sprites group
                     SpiderEnemy((x, y), [self.enemy_sprites], int(col[1]), int(col[2]))
+                if col == 'g':
+                    GhostEnemy((x, y), [self.enemy_sprites], self.obstacle_map)
                 if col == 'p':
                     # Add player to visible group
-                    self.player = Player((x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites, self.enemy_sprites, self.game_state)
+                    player = Player((x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites,
+                                    self.enemy_sprites, self.game_state)
+
+        return player
 
     def run(self):
         # Run Update method foreach sprite from the group

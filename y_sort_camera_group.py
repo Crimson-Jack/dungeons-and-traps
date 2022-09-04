@@ -1,3 +1,4 @@
+import pygame
 from camera_group import CameraGroup
 
 
@@ -13,3 +14,4 @@ class YSortCameraGroup(CameraGroup):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
+            #pygame.draw.rect(self.game_surface, (255, 255, 255), sprite.rect, 1)
