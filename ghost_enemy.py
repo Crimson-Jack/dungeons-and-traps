@@ -21,30 +21,8 @@ class GhostEnemy(Enemy):
         self.new_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
 
     def determine_direction(self, x_tile_number, y_tile_number):
-        # TODO: Add a logic
-        if self.direction.x > 0:
-            if self.obstacle_map[y_tile_number][x_tile_number+1]:
-                self.direction.x = 0
-                self.direction.y = 1
-                print('A')
-
-        elif self.direction.y > 0:
-            if self.obstacle_map[y_tile_number+1][x_tile_number]:
-                self.direction.x = -1
-                self.direction.y = 0
-                print('B')
-
-        elif self.direction.x < 0:
-            if self.obstacle_map[y_tile_number][x_tile_number-1]:
-                self.direction.x = 0
-                self.direction.y = -1
-                print('C')
-
-        elif self.direction.y < 0:
-            if self.obstacle_map[y_tile_number-1][x_tile_number]:
-                self.direction.x = 1
-                self.direction.y = 0
-                print('D')
+        # TODO: Add logic using wall_follower_path
+        pass
 
     def move(self):
         # Set the movement offset
