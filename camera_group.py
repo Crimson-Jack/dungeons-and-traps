@@ -19,15 +19,13 @@ class CameraGroup(pygame.sprite.Group):
         max_height = settings.TILE_SIZE * len(settings.WORLD_MAP)
 
         if player.rect.centerx < self.half_width or max_width - player.rect.centerx < self.half_width:
-            settings.debugger.add_info('Scroll in x: NO')
+            pass
         else:
-            settings.debugger.add_info(f'Scroll in x: YES, offset = {self.offset}')
             self.offset.x = self.half_width - player.rect.centerx
 
         if player.rect.centery < self.half_height or max_height - player.rect.centery < self.half_height:
-            settings.debugger.add_info('Scroll in y: NO')
+            pass
         else:
-            settings.debugger.add_info(f'Scroll in y: YES, offset = {self.offset}')
             self.offset.y = self.half_height - player.rect.centery
 
     def custom_draw(self, player):
@@ -43,4 +41,3 @@ class CameraGroup(pygame.sprite.Group):
         for sprite in self.sprites():
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
-

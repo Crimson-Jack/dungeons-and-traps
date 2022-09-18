@@ -1,3 +1,6 @@
+import pygame
+
+import settings
 from camera_group import CameraGroup
 
 
@@ -13,3 +16,9 @@ class YSortCameraGroup(CameraGroup):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
+
+            # Draw rectangles when debug is enabled
+            if settings.debugger.enabled:
+                new_rect = pygame.rect.Rect(sprite.rect)
+                new_rect.topleft += self.offset
+                pygame.draw.rect(self.game_surface, (255, 255, 255), new_rect, 1)
