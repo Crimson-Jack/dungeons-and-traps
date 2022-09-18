@@ -30,7 +30,6 @@ class GhostEnemy(Enemy):
         current_position = start_position
         is_end_of_path = False
         path = []
-        count = 0
 
         while not is_end_of_path:
             next_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
@@ -79,23 +78,38 @@ class GhostEnemy(Enemy):
         self.hitbox.x += self.direction.x * self.speed
         self.hitbox.y += self.direction.y * self.speed
         self.rect.center = self.hitbox.center
-        
+
+        # Adjust offset
+        # This is necessary for offsets that are not TILE_SIZE dividers
+        x_remainder = self.rect.right % settings.TILE_SIZE
+        y_remainder = self.rect.bottom % settings.TILE_SIZE
+
+        if x_remainder < self.speed:
+            self.hitbox.x = self.hitbox.x - x_remainder
+            self.rect.center = self.hitbox.center
+
+        if y_remainder < self.speed:
+            self.hitbox.y = self.hitbox.y - y_remainder
+            self.rect.center = self.hitbox.center
+
+        # Recognize the moment when ghost moves to a new area
+        # In this case TILE_SIZE is a divisor of "right" or "bottom"
         if self.rect.right % settings.TILE_SIZE == 0:
             self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
 
         if self.rect.bottom % settings.TILE_SIZE == 0:
             self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 1
 
+        # If position was changed, change position and determine new direction
         if self.current_position_on_map != self.new_position_on_map:
+            # Change current position
             if self.current_position_on_map[0] != self.new_position_on_map[0]:
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
 
-            print(f'x={self.current_position_on_map[0]}')
-            print(f'y={self.current_position_on_map[1]}')
-
             # Determine new direction
+            # Get previous position from the path
             previous_position = self.wall_follower_path[self.movement_index]
 
             # Increase movement index in the path
@@ -106,9 +120,10 @@ class GhostEnemy(Enemy):
                 # Reset index - the loop is closed - start from the beginning
                 self.movement_index = 0
 
+            # Get next position from the path
             next_position = self.wall_follower_path[self.movement_index]
 
-
+            # Calculate new direction vector based on previous and next position
             self.direction.x = next_position[0] - previous_position[0]
             self.direction.y = next_position[1] - previous_position[1]
 
