@@ -6,7 +6,8 @@ class GameState:
     def __init__(self):
         self.game_over = False
         self.diamonds = 0
-        self.energy = 100
+        self.max_energy_value = 800
+        self.energy = self.max_energy_value
 
     def add_diamond(self):
         self.diamonds += 1

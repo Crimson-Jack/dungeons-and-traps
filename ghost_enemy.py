@@ -16,13 +16,14 @@ class GhostEnemy(Enemy):
 
         # Left hand wall follower path
         self.wall_follower_path = self.get_wall_follower_path(self.obstacle_map, tile_start_position)
-        self.movement_index = 0
+        self.movement_index = -1
 
         # Create movement variables
         self.direction = pygame.math.Vector2((1, 0))
         self.speed = speed
         self.current_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
-        self.new_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
+        self.new_position_on_map = list(self.current_position_on_map)
+        self.set_new_direction()
 
     def get_wall_follower_path(self, obstacle_map, start_position):
         # Right direction
@@ -102,30 +103,33 @@ class GhostEnemy(Enemy):
 
         # If position was changed, change position and determine new direction
         if self.current_position_on_map != self.new_position_on_map:
-            # Change current position
+            # Change current position (x or y or both)
             if self.current_position_on_map[0] != self.new_position_on_map[0]:
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
 
-            # Determine new direction
-            # Get previous position from the path
-            previous_position = self.wall_follower_path[self.movement_index]
+            self.set_new_direction()
 
-            # Increase movement index in the path
-            if self.movement_index < len(self.wall_follower_path) - 1:
-                # Move to the next index
-                self.movement_index += 1
-            else:
-                # Reset index - the loop is closed - start from the beginning
-                self.movement_index = 0
+    def set_new_direction(self):
+        # Determine new direction
+        # Get previous position from the path
+        previous_position = self.wall_follower_path[self.movement_index]
 
-            # Get next position from the path
-            next_position = self.wall_follower_path[self.movement_index]
+        # Increase movement index in the path
+        if self.movement_index < len(self.wall_follower_path) - 1:
+            # Move to the next index
+            self.movement_index += 1
+        else:
+            # Reset index - the loop is closed - start from the beginning
+            self.movement_index = 0
 
-            # Calculate new direction vector based on previous and next position
-            self.direction.x = next_position[0] - previous_position[0]
-            self.direction.y = next_position[1] - previous_position[1]
+        # Get next position from the path
+        next_position = self.wall_follower_path[self.movement_index]
+
+        # Calculate new direction vector based on previous and next position
+        self.direction.x = next_position[0] - previous_position[0]
+        self.direction.y = next_position[1] - previous_position[1]
 
     def update(self):
         self.move()
