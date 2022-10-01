@@ -99,7 +99,7 @@ class Level:
 
         accent_color = (255, 255, 255)
         background_color = (100, 100, 100)
-        basic_font = pygame.font.Font('freesansbold.ttf', 50)
+        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 50)
 
         game_over = basic_font.render('GAME OVER', True, accent_color, background_color)
         game_over_size = game_over.get_size()
