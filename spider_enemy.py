@@ -4,9 +4,8 @@ from enemy import Enemy
 
 
 class SpiderEnemy(Enemy):
-    def __init__(self, position, groups, speed=2, net_length=3):
+    def __init__(self, image, position, groups, speed, net_length):
         super().__init__(groups)
-        image = pygame.image.load('img/tile_0122.png').convert_alpha()
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hitbox = self.rect.inflate(0, 0)

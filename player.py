@@ -3,9 +3,8 @@ import settings
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
+    def __init__(self, image, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
-        image = pygame.image.load('img/tile_0097.png').convert_alpha()
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hitbox = self.rect.inflate(0, -5)

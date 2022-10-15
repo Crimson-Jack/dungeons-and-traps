@@ -4,9 +4,8 @@ from enemy import Enemy
 
 
 class GhostEnemy(Enemy):
-    def __init__(self, position, groups, speed, obstacle_map, tile_start_position):
+    def __init__(self, image, position, groups, speed, obstacle_map, tile_start_position):
         super().__init__(groups)
-        image = pygame.image.load('img/tile_0121.png').convert_alpha()
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hitbox = self.rect.inflate(0, 0)

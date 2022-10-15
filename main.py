@@ -47,7 +47,6 @@ class Game:
 
             if not self.game_state.game_over:
                 # Refresh game surface
-                self.game_surface.fill((234, 165, 108))
                 self.level.run()
 
             pygame.display.update()
