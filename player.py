@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, -5)
+        self.hitbox = self.rect.inflate(-5, -5)
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
