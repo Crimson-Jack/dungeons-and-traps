@@ -5,7 +5,7 @@ import settings
 class Player(pygame.sprite.Sprite):
     def __init__(self, image, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
+        self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
         self.rect = self.image.get_rect(topleft=position)
         self.hitbox = self.rect.inflate(-5, -5)
 

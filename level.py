@@ -57,36 +57,52 @@ class Level:
             # Add tile to background sprites group
             Ground(image, (x, y), [self.background_sprites])
 
-        obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
-        for tile_x, tile_y, image in obstacles_layer.tiles():
+        obstacle_layer = self.tmx_data.get_layer_by_name('obstacle')
+        for tile_x, tile_y, image in obstacle_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and obstacle sprites group
             Wall(image, (x, y), [self.visible_sprites, self.obstacle_sprites])
 
-        collectables_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
-        for tile_x, tile_y, image in collectables_diamond_layer.tiles():
+        collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
+        for tile_x, tile_y, image in collectable_diamond_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and collectable sprites group
             Diamond(image, (x, y), [self.visible_sprites, self.collectable_sprites])
 
-        enemies_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
-        enemies_spider_speed = enemies_spider_layer.properties['speed']
-        enemies_spider_net_length = enemies_spider_layer.properties['net_length']
-        for tile_x, tile_y, image in enemies_spider_layer.tiles():
+        enemy_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
+        for enemy_spider in enemy_spider_layer:
+            tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
+            tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
-            # Add tile to enemy sprites group
-            SpiderEnemy(image, (x, y), [self.enemy_sprites], enemies_spider_speed, enemies_spider_net_length)
 
-        enemies_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
-        enemies_ghost_speed = enemies_ghost_layer.properties['speed']
-        for tile_x, tile_y, image in enemies_ghost_layer.tiles():
+            if enemy_spider.properties.get('speed') is None:
+                speed = enemy_spider_layer.properties.get('speed')
+            else:
+                speed = enemy_spider.properties.get('speed')
+
+            if enemy_spider.properties.get('net_length') is None:
+                net_length = enemy_spider_layer.properties.get('net_length')
+            else:
+                net_length = enemy_spider.properties.get('net_length')
+
+            SpiderEnemy(enemy_spider.image, (x, y), [self.enemy_sprites], speed, net_length)
+
+        enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
+        for enemy_ghost in enemy_ghost_layer:
+            tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
+            tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
-            # Add tile to enemy sprites group
-            GhostEnemy(image, (x, y), [self.enemy_sprites], enemies_ghost_speed, self.obstacle_map, (tile_x, tile_y))
+
+            if enemy_ghost.properties.get('speed') is None:
+                speed = enemy_ghost_layer.properties.get('speed')
+            else:
+                speed = enemy_ghost.properties.get('speed')
+
+            GhostEnemy(enemy_ghost.image, (x, y), [self.enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
 
     def get_obstacle_map(self):
         obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
