@@ -1,22 +1,22 @@
 import pygame
-
 import enemy
 import settings
 
 
 class CameraGroup(pygame.sprite.Group):
-    def __init__(self, game_surface):
+    def __init__(self, game_surface, size_of_map):
         super().__init__()
         self.game_surface = game_surface
         self.half_width = self.game_surface.get_size()[0] // 2
         self.half_height = self.game_surface.get_size()[1] // 2
         self.offset = pygame.math.Vector2()
+        self.size_of_map = size_of_map
 
     def set_map_offset(self, player):
         # The maximum width (x) for the whole map
-        max_width = settings.TILE_SIZE * len(settings.WORLD_MAP[0])
+        max_width = settings.TILE_SIZE * self.size_of_map[0]
         # The maximum height (y) for the whole map
-        max_height = settings.TILE_SIZE * len(settings.WORLD_MAP)
+        max_height = settings.TILE_SIZE * self.size_of_map[1]
 
         if player.rect.centerx < self.half_width or max_width - player.rect.centerx < self.half_width:
             pass

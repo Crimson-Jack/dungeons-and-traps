@@ -1,12 +1,11 @@
 import pygame
-
 import settings
 from camera_group import CameraGroup
 
 
 class YSortCameraGroup(CameraGroup):
-    def __init__(self, game_surface):
-        super().__init__(game_surface)
+    def __init__(self, game_surface, size_of_map):
+        super().__init__(game_surface, size_of_map)
 
     def custom_draw(self, player):
         # Calculate map offset
