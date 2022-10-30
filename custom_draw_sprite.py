@@ -1,8 +1,7 @@
 import pygame
-import settings
 
 
-class Enemy(pygame.sprite.Sprite):
+class CustomDrawSprite(pygame.sprite.Sprite):
     def __init__(self, groups):
         super().__init__(groups)
 

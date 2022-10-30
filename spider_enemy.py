@@ -1,9 +1,9 @@
 import pygame
 import settings
-from enemy import Enemy
+from custom_draw_sprite import CustomDrawSprite
 
 
-class SpiderEnemy(Enemy):
+class SpiderEnemy(CustomDrawSprite):
     def __init__(self, image, position, groups, speed, net_length):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))

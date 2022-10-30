@@ -1,5 +1,5 @@
 import pygame
-import enemy
+import custom_draw_sprite
 import settings
 
 
@@ -34,7 +34,7 @@ class CameraGroup(pygame.sprite.Group):
 
         # Draw extra effects for enemies
         for sprite in self.sprites():
-            if isinstance(sprite, enemy.Enemy):
+            if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
                 sprite.custom_draw(self.game_surface, self.offset)
 
         # Draw each tile with an offset on game_surface

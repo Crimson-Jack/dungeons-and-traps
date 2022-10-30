@@ -1,9 +1,9 @@
 import pygame
 import settings
-from enemy import Enemy
+from custom_draw_sprite import CustomDrawSprite
 
 
-class GhostEnemy(Enemy):
+class GhostEnemy(CustomDrawSprite):
     def __init__(self, image, position, groups, speed, obstacle_map, tile_start_position):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -134,7 +134,6 @@ class GhostEnemy(Enemy):
         self.move()
 
     def custom_draw(self, game_surface, offset):
-
         # TODO: Remove after tests
         # Draw obstacle info
         if settings.debugger.enabled:

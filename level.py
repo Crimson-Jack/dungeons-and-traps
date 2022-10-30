@@ -37,16 +37,16 @@ class Level:
         # Create sprites
         self.create_sprites()
 
-        # Create player
-        self.create_player()
+        # Get player
+        self.player = self.get_player()
 
-    def create_player(self):
+    def get_player(self):
         player_layer = self.tmx_data.get_layer_by_name('player')
         for tile_x, tile_y, image in player_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add player to visible group
-            self.player = Player(image, (x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites,
+            return Player(image, (x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites,
                             self.enemy_sprites, self.game_state)
 
     def create_sprites(self):
