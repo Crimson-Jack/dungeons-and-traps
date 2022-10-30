@@ -1,8 +1,9 @@
 import pygame
 import settings
+from custom_draw_sprite import CustomDrawSprite
 
 
-class Player(pygame.sprite.Sprite):
+class Player(CustomDrawSprite):
     def __init__(self, image, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
@@ -20,6 +21,9 @@ class Player(pygame.sprite.Sprite):
 
         # Set game state
         self.game_state = game_state
+
+        # Player state variables
+        self.collided_with_enemy = False
 
     def input(self):
         # Read pressed key and specify movement direction
@@ -52,6 +56,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.hitbox.center
 
     def collision(self, direction):
+        self.collided_with_enemy = False
+
         # Check collision with collectable sprites
         for sprite in self.collectable_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
@@ -63,6 +69,7 @@ class Player(pygame.sprite.Sprite):
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
+                self.collided_with_enemy = True
                 self.game_state.decrease_energy()
 
         # Check collision with obstacle sprites
@@ -84,3 +91,12 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.input()
         self.move()
+
+    def custom_draw(self, game_surface, offset):
+        # Draw glow effect when player is collided with an enemy
+        if self.collided_with_enemy:
+            end_position = pygame.Vector2(self.rect.center) + offset
+            pygame.draw.circle(game_surface, (255, 0, 0), end_position, settings.TILE_SIZE // 1.45)
+            pygame.draw.circle(game_surface, (255, 100, 0), end_position, settings.TILE_SIZE // 1.55)
+            pygame.draw.circle(game_surface, (255, 150, 0), end_position, settings.TILE_SIZE // 1.8)
+            pygame.draw.circle(game_surface, (255, 200, 0), end_position, settings.TILE_SIZE // 2.2)
