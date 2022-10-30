@@ -95,8 +95,8 @@ class Player(CustomDrawSprite):
     def custom_draw(self, game_surface, offset):
         # Draw glow effect when player is collided with an enemy
         if self.collided_with_enemy:
-            end_position = pygame.Vector2(self.rect.center) + offset
-            pygame.draw.circle(game_surface, (255, 0, 0), end_position, settings.TILE_SIZE // 1.45)
-            pygame.draw.circle(game_surface, (255, 100, 0), end_position, settings.TILE_SIZE // 1.55)
-            pygame.draw.circle(game_surface, (255, 150, 0), end_position, settings.TILE_SIZE // 1.8)
-            pygame.draw.circle(game_surface, (255, 200, 0), end_position, settings.TILE_SIZE // 2.2)
+            position = pygame.Vector2(self.rect.center) + offset
+            pygame.draw.circle(game_surface, (255, 0, 0), position, settings.TILE_SIZE // 1.45)
+            pygame.draw.circle(game_surface, (255, 100, 0), position, settings.TILE_SIZE // 1.55)
+            pygame.draw.circle(game_surface, (255, 150, 0), position, settings.TILE_SIZE // 1.8)
+            pygame.draw.circle(game_surface, (255, 200, 0), position, settings.TILE_SIZE // 2.2)
