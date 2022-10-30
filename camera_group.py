@@ -38,7 +38,7 @@ class CameraGroup(pygame.sprite.Group):
         # Calculate map offset
         self.set_map_offset(player)
 
-        # Custom draw each sprite
+        # Custom draw of each sprite
         self.custom_draw_each_sprite()
 
         # Draw each tile with an offset on game_surface

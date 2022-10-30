@@ -11,7 +11,7 @@ class YSortCameraGroup(CameraGroup):
         # Calculate map offset
         super().set_map_offset(player)
 
-        # Custom draw each sprite
+        # Custom draw of each sprite
         super().custom_draw_each_sprite()
 
         # Draw each tile with an offset on game_surface keeping Y order

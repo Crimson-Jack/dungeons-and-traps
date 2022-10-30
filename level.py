@@ -21,10 +21,12 @@ class Level:
         self.tmx_data = load_pygame('data/tmx/basic.tmx')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
-        # Set up sprite groups
-        self.background_sprites = CameraGroup(game_surface, size_of_map)
-        self.visible_sprites = YSortCameraGroup(game_surface, size_of_map)
-        self.enemy_sprites = CameraGroup(game_surface, size_of_map)
+        # Set up visible groups
+        self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
+        self.middle_layer_regular_sprites = YSortCameraGroup(game_surface, size_of_map)
+        self.top_layer_enemy_sprites = CameraGroup(game_surface, size_of_map)
+
+        # Set up functional groups
         self.obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
 
@@ -46,8 +48,8 @@ class Level:
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add player to visible group
-            return Player(image, (x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites,
-                            self.enemy_sprites, self.game_state)
+            return Player(image, (x, y), [self.middle_layer_regular_sprites], self.obstacle_sprites, self.collectable_sprites,
+                          self.top_layer_enemy_sprites, self.game_state)
 
     def create_sprites(self):
         ground_layer = self.tmx_data.get_layer_by_name('ground')
@@ -55,21 +57,21 @@ class Level:
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to background sprites group
-            Ground(image, (x, y), [self.background_sprites])
+            Ground(image, (x, y), [self.bottom_layer_background_sprites])
 
         obstacle_layer = self.tmx_data.get_layer_by_name('obstacle')
         for tile_x, tile_y, image in obstacle_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and obstacle sprites group
-            Wall(image, (x, y), [self.visible_sprites, self.obstacle_sprites])
+            Wall(image, (x, y), [self.middle_layer_regular_sprites, self.obstacle_sprites])
 
         collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
         for tile_x, tile_y, image in collectable_diamond_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and collectable sprites group
-            Diamond(image, (x, y), [self.visible_sprites, self.collectable_sprites])
+            Diamond(image, (x, y), [self.middle_layer_regular_sprites, self.collectable_sprites])
 
         enemy_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
         for enemy_spider in enemy_spider_layer:
@@ -88,7 +90,7 @@ class Level:
             else:
                 net_length = enemy_spider.properties.get('net_length')
 
-            SpiderEnemy(enemy_spider.image, (x, y), [self.enemy_sprites], speed, net_length)
+            SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_enemy_sprites], speed, net_length)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
         for enemy_ghost in enemy_ghost_layer:
@@ -102,21 +104,21 @@ class Level:
             else:
                 speed = enemy_ghost.properties.get('speed')
 
-            GhostEnemy(enemy_ghost.image, (x, y), [self.enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
+            GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
 
     def get_obstacle_map(self):
         obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
         return obstacles_layer.data
 
     def run(self):
-        # Run Update method foreach sprite from the group
-        self.visible_sprites.update()
-        self.enemy_sprites.update()
+        # Run an update method foreach sprite from the group
+        self.middle_layer_regular_sprites.update()
+        self.top_layer_enemy_sprites.update()
 
         # Draw all visible sprites
-        self.background_sprites.custom_draw(self.player)
-        self.visible_sprites.custom_draw(self.player)
-        self.enemy_sprites.custom_draw(self.player)
+        self.bottom_layer_background_sprites.custom_draw(self.player)
+        self.middle_layer_regular_sprites.custom_draw(self.player)
+        self.top_layer_enemy_sprites.custom_draw(self.player)
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, (0, 0))
