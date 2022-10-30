@@ -28,14 +28,18 @@ class CameraGroup(pygame.sprite.Group):
         else:
             self.offset.y = self.half_height - player.rect.centery
 
-    def custom_draw(self, player):
-        # Calculate map offset
-        self.set_map_offset(player)
-
+    def custom_draw_each_sprite(self):
         # Draw extra effects for enemies
         for sprite in self.sprites():
             if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
                 sprite.custom_draw(self.game_surface, self.offset)
+
+    def custom_draw(self, player):
+        # Calculate map offset
+        self.set_map_offset(player)
+
+        # Custom draw each sprite
+        self.custom_draw_each_sprite()
 
         # Draw each tile with an offset on game_surface
         for sprite in self.sprites():
