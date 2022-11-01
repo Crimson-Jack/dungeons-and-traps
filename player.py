@@ -1,5 +1,6 @@
 import pygame
 import settings
+import game_helper
 from custom_draw_sprite import CustomDrawSprite
 
 
@@ -12,7 +13,11 @@ class Player(CustomDrawSprite):
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
-        self.speed = 7
+        self.speed = game_helper.get_speed(7)
+
+        # Real position is required to store the real distance, which is then casted to integer
+        self.real_x_position = float(self.hitbox.x)
+        self.real_y_position = float(self.hitbox.y)
 
         # Create groups of collision
         self.obstacle_sprites = obstacle_sprites
@@ -48,11 +53,16 @@ class Player(CustomDrawSprite):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 
-        # Set the movement offset and check the collision
-        self.hitbox.x += self.direction.x * self.speed
+        # Calculate real y position
+        self.real_x_position += float(self.direction.x * self.speed)
+        self.real_y_position += float(self.direction.y * self.speed)
+
+        # Cast real position to integer and check the collision
+        self.hitbox.x = int(self.real_x_position)
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * self.speed
+        self.hitbox.y = int(self.real_y_position)
         self.collision('vertical')
+        # Set the movement offset
         self.rect.center = self.hitbox.center
 
     def collision(self, direction):
@@ -80,6 +90,8 @@ class Player(CustomDrawSprite):
                         self.hitbox.right = sprite.hitbox.left
                     if self.direction.x < 0:
                         self.hitbox.left = sprite.hitbox.right
+                    self.real_x_position = float(self.hitbox.x)
+                    self.real_y_position = float(self.hitbox.y)
         if direction == 'vertical':
             for sprite in self.obstacle_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
@@ -87,6 +99,8 @@ class Player(CustomDrawSprite):
                         self.hitbox.bottom = sprite.hitbox.top
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+                    self.real_x_position = float(self.hitbox.x)
+                    self.real_y_position = float(self.hitbox.y)
 
     def update(self):
         self.input()

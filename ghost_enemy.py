@@ -24,6 +24,10 @@ class GhostEnemy(CustomDrawSprite):
         self.new_position_on_map = list(self.current_position_on_map)
         self.set_new_direction()
 
+        # Real position is required to store the real distance, which is then casted to integer
+        self.real_x_position = float(self.hitbox.x)
+        self.real_y_position = float(self.hitbox.y)
+
     def get_wall_follower_path(self, obstacle_map, start_position):
         # Right direction
         direction = [1, 0]
@@ -74,9 +78,15 @@ class GhostEnemy(CustomDrawSprite):
         return path
 
     def move(self):
+        # Calculate real y position
+        self.real_x_position += float(self.direction.x * self.speed)
+        self.real_y_position += float(self.direction.y * self.speed)
+
+        # Cast real position to integer
+        self.hitbox.x = int(self.real_x_position)
+        self.hitbox.y = int(self.real_y_position)
+
         # Set the movement offset
-        self.hitbox.x += self.direction.x * self.speed
-        self.hitbox.y += self.direction.y * self.speed
         self.rect.center = self.hitbox.center
 
         # Adjust offset

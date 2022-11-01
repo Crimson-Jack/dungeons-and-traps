@@ -9,6 +9,7 @@ WIDTH = 960
 HEIGHT = 600
 # Dashboard size
 DASHBOARD_HEIGHT = 120
+
 # Tile size
 TILE_SIZE = 64
 

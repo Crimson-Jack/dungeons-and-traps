@@ -16,13 +16,23 @@ class SpiderEnemy(CustomDrawSprite):
         self.min_y_position = self.rect.topleft[1]
         self.max_net_length = settings.TILE_SIZE * net_length
 
+        # Real position is required to store the real distance, which is then casted to integer
+        self.real_y_position = float(self.hitbox.y)
+
     def move(self):
-        # Set the movement offset
-        self.hitbox.y += self.direction.y * self.speed
+        # Calculate real y position
+        self.real_y_position += float(self.direction.y * self.speed)
+
+        # Cast real position to integer
+        self.hitbox.y = int(self.real_y_position)
+
+        # Movement characteristic
         if self.hitbox.y > self.min_y_position + self.max_net_length:
             self.direction.y = self.direction.y * -1
         if self.hitbox.y < self.min_y_position:
             self.direction.y = self.direction.y * -1
+
+        # Set the movement offset
         self.rect.center = self.hitbox.center
 
     def update(self):

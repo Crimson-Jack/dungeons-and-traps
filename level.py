@@ -1,5 +1,6 @@
 import pygame
 import settings
+import game_helper
 from pytmx.util_pygame import load_pygame
 from wall import Wall
 from ground import Ground
@@ -75,36 +76,38 @@ class Level:
 
         enemy_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
         for enemy_spider in enemy_spider_layer:
-            tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
-            tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
-            x = tile_x * settings.TILE_SIZE
-            y = tile_y * settings.TILE_SIZE
+            if enemy_spider.visible:
+                tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
 
-            if enemy_spider.properties.get('speed') is None:
-                speed = enemy_spider_layer.properties.get('speed')
-            else:
-                speed = enemy_spider.properties.get('speed')
+                if enemy_spider.properties.get('speed') is None:
+                    speed = game_helper.get_speed(enemy_spider_layer.properties.get('speed'))
+                else:
+                    speed = game_helper.get_speed(enemy_spider.properties.get('speed'))
 
-            if enemy_spider.properties.get('net_length') is None:
-                net_length = enemy_spider_layer.properties.get('net_length')
-            else:
-                net_length = enemy_spider.properties.get('net_length')
+                if enemy_spider.properties.get('net_length') is None:
+                    net_length = enemy_spider_layer.properties.get('net_length')
+                else:
+                    net_length = enemy_spider.properties.get('net_length')
 
-            SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_enemy_sprites], speed, net_length)
+                SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_enemy_sprites], speed, net_length)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
         for enemy_ghost in enemy_ghost_layer:
-            tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
-            tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
-            x = tile_x * settings.TILE_SIZE
-            y = tile_y * settings.TILE_SIZE
+            if enemy_ghost.visible:
+                tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
 
-            if enemy_ghost.properties.get('speed') is None:
-                speed = enemy_ghost_layer.properties.get('speed')
-            else:
-                speed = enemy_ghost.properties.get('speed')
+                if enemy_ghost.properties.get('speed') is None:
+                    speed = game_helper.get_speed(enemy_ghost_layer.properties.get('speed'))
+                else:
+                    speed = game_helper.get_speed(enemy_ghost.properties.get('speed'))
 
-            GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
+                GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
 
     def get_obstacle_map(self):
         obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
