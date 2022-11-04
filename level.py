@@ -9,7 +9,7 @@ from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from player import Player
 from camera_group import CameraGroup
-from y_sort_camera_group import YSortCameraGroup
+from camera_group_with_y_sort import CameraGroupWithYSort
 
 
 class Level:
@@ -24,7 +24,7 @@ class Level:
 
         # Set up visible groups
         self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
-        self.middle_layer_regular_sprites = YSortCameraGroup(game_surface, size_of_map)
+        self.middle_layer_regular_sprites = CameraGroupWithYSort(game_surface, size_of_map)
         self.top_layer_enemy_sprites = CameraGroup(game_surface, size_of_map)
 
         # Set up functional groups

@@ -3,7 +3,7 @@ import settings
 from camera_group import CameraGroup
 
 
-class YSortCameraGroup(CameraGroup):
+class CameraGroupWithYSort(CameraGroup):
     def __init__(self, game_surface, size_of_map):
         super().__init__(game_surface, size_of_map)
 
