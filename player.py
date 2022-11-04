@@ -9,11 +9,11 @@ class Player(CustomDrawSprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(-5, -5)
+        self.hitbox = self.rect.inflate(game_helper.calculate_ratio(-5), 0)
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
-        self.speed = game_helper.get_speed(7)
+        self.speed = game_helper.calculate_ratio(7)
 
         # Real position is required to store the real distance, which is then casted to integer
         self.real_x_position = float(self.hitbox.x)

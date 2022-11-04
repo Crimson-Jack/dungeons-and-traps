@@ -83,9 +83,9 @@ class Level:
                 y = tile_y * settings.TILE_SIZE
 
                 if enemy_spider.properties.get('speed') is None:
-                    speed = game_helper.get_speed(enemy_spider_layer.properties.get('speed'))
+                    speed = game_helper.calculate_ratio(enemy_spider_layer.properties.get('speed'))
                 else:
-                    speed = game_helper.get_speed(enemy_spider.properties.get('speed'))
+                    speed = game_helper.calculate_ratio(enemy_spider.properties.get('speed'))
 
                 if enemy_spider.properties.get('net_length') is None:
                     net_length = enemy_spider_layer.properties.get('net_length')
@@ -103,9 +103,9 @@ class Level:
                 y = tile_y * settings.TILE_SIZE
 
                 if enemy_ghost.properties.get('speed') is None:
-                    speed = game_helper.get_speed(enemy_ghost_layer.properties.get('speed'))
+                    speed = game_helper.calculate_ratio(enemy_ghost_layer.properties.get('speed'))
                 else:
-                    speed = game_helper.get_speed(enemy_ghost.properties.get('speed'))
+                    speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
 

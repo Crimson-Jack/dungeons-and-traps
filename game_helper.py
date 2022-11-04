@@ -1,8 +1,8 @@
 import settings
 
-# Base tile size - base on this parameter, all other speed values are calculated
+# Base tile size - reference tile size - base on this parameter, all other values are calculated
 BASE_TILE_SIZE = 64
 
 
-def get_speed(speed):
-    return speed * settings.TILE_SIZE / BASE_TILE_SIZE
+def calculate_ratio(value):
+    return value * settings.TILE_SIZE / BASE_TILE_SIZE

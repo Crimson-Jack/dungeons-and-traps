@@ -1,5 +1,6 @@
 import pygame
 import settings
+import game_helper
 
 
 class Wall(pygame.sprite.Sprite):
@@ -7,4 +8,4 @@ class Wall(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, -30)
+        self.hitbox = self.rect.inflate(game_helper.calculate_ratio(0), game_helper.calculate_ratio(-40))

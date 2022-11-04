@@ -8,7 +8,7 @@ class SpiderEnemy(CustomDrawSprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hitbox = self.rect
 
         # Create movement variables
         self.direction = pygame.math.Vector2((0, 1))

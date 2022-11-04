@@ -8,7 +8,7 @@ class GhostEnemy(CustomDrawSprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hitbox = self.rect
 
         # Set obstacle map
         self.obstacle_map = obstacle_map
@@ -70,7 +70,7 @@ class GhostEnemy(CustomDrawSprite):
                     # Add position to the path
                     path.append(current_position)
                 elif obstacle_map[next_position[1]][next_position[0]]:
-                    # Turn -90 degree
+                    # Turn 90 degree
                     vector = pygame.math.Vector2(direction)
                     new_vector = pygame.math.Vector2.rotate(vector, 90)
                     direction = [int(new_vector[0]), int(new_vector[1])]
