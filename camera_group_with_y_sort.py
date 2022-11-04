@@ -23,4 +23,4 @@ class CameraGroupWithYSort(CameraGroup):
             if settings.debugger.enabled:
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, (255, 255, 255), new_rect, 1)
+                pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)

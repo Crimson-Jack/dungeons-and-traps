@@ -1,9 +1,8 @@
 import pygame
 import settings
-from custom_draw_sprite import CustomDrawSprite
 
 
-class GhostEnemy(CustomDrawSprite):
+class GhostEnemy(pygame.sprite.Sprite):
     def __init__(self, image, position, groups, speed, obstacle_map, tile_start_position):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -143,31 +142,4 @@ class GhostEnemy(CustomDrawSprite):
     def update(self):
         self.move()
 
-    def custom_draw(self, game_surface, offset):
-        # TODO: Remove after tests
-        # Draw obstacle info
-        if settings.debugger.enabled:
-            temp_font = pygame.font.Font(None, 26)
-            key_row = 0
-            key_column = 0
-            for map_row in self.obstacle_map:
-                for map_column in map_row:
-                    temp_surface = temp_font.render(str(map_column), True, (255, 255, 255))
-                    temp_rect = temp_surface.get_rect(topleft=(key_column * settings.TILE_SIZE + 26, key_row * settings.TILE_SIZE +26))
-                    game_surface.blit(temp_surface, temp_rect)
-                    key_column += 1
-                key_row += 1
-                key_column = 0
-
-        # TODO: Remove after tests
-        # Draw wall follower path
-        if settings.debugger.enabled:
-            temp_font = pygame.font.Font(None, 26)
-            temp_count = 0
-            for point in self.wall_follower_path:
-                temp_surface = temp_font.render(str(f"[{temp_count}]"), True, (255, 255, 255))
-                temp_rect = temp_surface.get_rect(
-                    topleft=(point[0] * settings.TILE_SIZE + 3, point[1] * settings.TILE_SIZE + 3))
-                game_surface.blit(temp_surface, temp_rect)
-                temp_count += 1
 

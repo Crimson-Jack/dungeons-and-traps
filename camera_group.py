@@ -45,3 +45,9 @@ class CameraGroup(pygame.sprite.Group):
         for sprite in self.sprites():
             offset_position = sprite.rect.topleft + self.offset
             self.game_surface.blit(sprite.image, offset_position)
+
+            # Draw rectangles when debug is enabled
+            if settings.debugger.enabled:
+                new_rect = pygame.rect.Rect(sprite.rect)
+                new_rect.topleft += self.offset
+                pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
