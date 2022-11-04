@@ -8,7 +8,7 @@ class GhostEnemy(CustomDrawSprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect
+        self.hit_box = self.rect
 
         # Set obstacle map
         self.obstacle_map = obstacle_map
@@ -25,8 +25,8 @@ class GhostEnemy(CustomDrawSprite):
         self.set_new_direction()
 
         # Real position is required to store the real distance, which is then casted to integer
-        self.real_x_position = float(self.hitbox.x)
-        self.real_y_position = float(self.hitbox.y)
+        self.real_x_position = float(self.hit_box.x)
+        self.real_y_position = float(self.hit_box.y)
 
     def get_wall_follower_path(self, obstacle_map, start_position):
         # Right direction
@@ -83,11 +83,11 @@ class GhostEnemy(CustomDrawSprite):
         self.real_y_position += float(self.direction.y * self.speed)
 
         # Cast real position to integer
-        self.hitbox.x = int(self.real_x_position)
-        self.hitbox.y = int(self.real_y_position)
+        self.hit_box.x = int(self.real_x_position)
+        self.hit_box.y = int(self.real_y_position)
 
         # Set the movement offset
-        self.rect.center = self.hitbox.center
+        self.rect.center = self.hit_box.center
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
@@ -95,12 +95,12 @@ class GhostEnemy(CustomDrawSprite):
         y_remainder = self.rect.bottom % settings.TILE_SIZE
 
         if x_remainder < self.speed:
-            self.hitbox.x = self.hitbox.x - x_remainder
-            self.rect.center = self.hitbox.center
+            self.hit_box.x = self.hit_box.x - x_remainder
+            self.rect.center = self.hit_box.center
 
         if y_remainder < self.speed:
-            self.hitbox.y = self.hitbox.y - y_remainder
-            self.rect.center = self.hitbox.center
+            self.hit_box.y = self.hit_box.y - y_remainder
+            self.rect.center = self.hit_box.center
 
         # Recognize the moment when ghost moves to a new area
         # In this case TILE_SIZE is a divisor of "right" or "bottom"

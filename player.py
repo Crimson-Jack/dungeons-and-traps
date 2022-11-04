@@ -9,15 +9,15 @@ class Player(CustomDrawSprite):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(game_helper.calculate_ratio(-5), 0)
+        self.hit_box = self.rect.inflate(game_helper.calculate_ratio(-5), 0)
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
         self.speed = game_helper.calculate_ratio(7)
 
         # Real position is required to store the real distance, which is then casted to integer
-        self.real_x_position = float(self.hitbox.x)
-        self.real_y_position = float(self.hitbox.y)
+        self.real_x_position = float(self.hit_box.x)
+        self.real_y_position = float(self.hit_box.y)
 
         # Create groups of collision
         self.obstacle_sprites = obstacle_sprites
@@ -58,19 +58,19 @@ class Player(CustomDrawSprite):
         self.real_y_position += float(self.direction.y * self.speed)
 
         # Cast real position to integer and check the collision
-        self.hitbox.x = int(self.real_x_position)
+        self.hit_box.x = int(self.real_x_position)
         self.collision('horizontal')
-        self.hitbox.y = int(self.real_y_position)
+        self.hit_box.y = int(self.real_y_position)
         self.collision('vertical')
         # Set the movement offset
-        self.rect.center = self.hitbox.center
+        self.rect.center = self.hit_box.center
 
     def collision(self, direction):
         self.collided_with_enemy = False
 
         # Check collision with collectable sprites
         for sprite in self.collectable_sprites:
-            if sprite.hitbox.colliderect(self.hitbox):
+            if sprite.hit_box.colliderect(self.hit_box):
                 # Increase number of collected diamonds
                 self.game_state.add_diamond()
                 # Remove diamond
@@ -78,29 +78,29 @@ class Player(CustomDrawSprite):
 
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
-            if sprite.hitbox.colliderect(self.hitbox):
+            if sprite.hit_box.colliderect(self.hit_box):
                 self.collided_with_enemy = True
                 self.game_state.decrease_energy()
 
         # Check collision with obstacle sprites
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
+                if sprite.hit_box.colliderect(self.hit_box):
                     if self.direction.x > 0:
-                        self.hitbox.right = sprite.hitbox.left
+                        self.hit_box.right = sprite.hit_box.left
                     if self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
-                    self.real_x_position = float(self.hitbox.x)
-                    self.real_y_position = float(self.hitbox.y)
+                        self.hit_box.left = sprite.hit_box.right
+                    self.real_x_position = float(self.hit_box.x)
+                    self.real_y_position = float(self.hit_box.y)
         if direction == 'vertical':
             for sprite in self.obstacle_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
+                if sprite.hit_box.colliderect(self.hit_box):
                     if self.direction.y > 0:
-                        self.hitbox.bottom = sprite.hitbox.top
+                        self.hit_box.bottom = sprite.hit_box.top
                     if self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
-                    self.real_x_position = float(self.hitbox.x)
-                    self.real_y_position = float(self.hitbox.y)
+                        self.hit_box.top = sprite.hit_box.bottom
+                    self.real_x_position = float(self.hit_box.x)
+                    self.real_y_position = float(self.hit_box.y)
 
     def update(self):
         self.input()
