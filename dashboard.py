@@ -22,7 +22,7 @@ class Dashboard:
 
     def draw(self):
         # Diamonds
-        diamonds = self.basic_font.render(f'Diamonds {self.game_state.diamonds}', True, self.accent_color)
+        diamonds = self.basic_font.render(f'Diamonds {self.game_state.diamonds} ({self.game_state.required_diamonds})', True, self.accent_color)
         self.dashboard_surface.blit(diamonds, (self.margin, self.margin))
         # Energy bar
         self.energy_bar.draw(self.game_state.energy)
