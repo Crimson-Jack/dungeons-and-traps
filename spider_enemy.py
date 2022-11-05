@@ -1,14 +1,14 @@
 import pygame
 import settings
-from enemy import Enemy
+from custom_draw_sprite import CustomDrawSprite
 
 
-class SpiderEnemy(Enemy):
+class SpiderEnemy(CustomDrawSprite):
     def __init__(self, image, position, groups, speed, net_length):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hit_box = self.rect
 
         # Create movement variables
         self.direction = pygame.math.Vector2((0, 1))
@@ -16,14 +16,24 @@ class SpiderEnemy(Enemy):
         self.min_y_position = self.rect.topleft[1]
         self.max_net_length = settings.TILE_SIZE * net_length
 
+        # Real position is required to store the real distance, which is then casted to integer
+        self.real_y_position = float(self.hit_box.y)
+
     def move(self):
+        # Calculate real y position
+        self.real_y_position += float(self.direction.y * self.speed)
+
+        # Cast real position to integer
+        self.hit_box.y = int(self.real_y_position)
+
+        # Movement characteristic
+        if self.hit_box.y > self.min_y_position + self.max_net_length:
+            self.direction.y = self.direction.y * -1
+        if self.hit_box.y < self.min_y_position:
+            self.direction.y = self.direction.y * -1
+
         # Set the movement offset
-        self.hitbox.y += self.direction.y * self.speed
-        if self.hitbox.y > self.min_y_position + self.max_net_length:
-            self.direction.y = self.direction.y * -1
-        if self.hitbox.y < self.min_y_position:
-            self.direction.y = self.direction.y * -1
-        self.rect.center = self.hitbox.center
+        self.rect.center = self.hit_box.center
 
     def update(self):
         self.move()

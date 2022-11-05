@@ -1,14 +1,13 @@
 import pygame
 import settings
-from enemy import Enemy
 
 
-class GhostEnemy(Enemy):
+class GhostEnemy(pygame.sprite.Sprite):
     def __init__(self, image, position, groups, speed, obstacle_map, tile_start_position):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hit_box = self.rect
 
         # Set obstacle map
         self.obstacle_map = obstacle_map
@@ -23,6 +22,10 @@ class GhostEnemy(Enemy):
         self.current_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
         self.new_position_on_map = list(self.current_position_on_map)
         self.set_new_direction()
+
+        # Real position is required to store the real distance, which is then casted to integer
+        self.real_x_position = float(self.hit_box.x)
+        self.real_y_position = float(self.hit_box.y)
 
     def get_wall_follower_path(self, obstacle_map, start_position):
         # Right direction
@@ -66,7 +69,7 @@ class GhostEnemy(Enemy):
                     # Add position to the path
                     path.append(current_position)
                 elif obstacle_map[next_position[1]][next_position[0]]:
-                    # Turn -90 degree
+                    # Turn 90 degree
                     vector = pygame.math.Vector2(direction)
                     new_vector = pygame.math.Vector2.rotate(vector, 90)
                     direction = [int(new_vector[0]), int(new_vector[1])]
@@ -74,10 +77,16 @@ class GhostEnemy(Enemy):
         return path
 
     def move(self):
+        # Calculate real y position
+        self.real_x_position += float(self.direction.x * self.speed)
+        self.real_y_position += float(self.direction.y * self.speed)
+
+        # Cast real position to integer
+        self.hit_box.x = int(self.real_x_position)
+        self.hit_box.y = int(self.real_y_position)
+
         # Set the movement offset
-        self.hitbox.x += self.direction.x * self.speed
-        self.hitbox.y += self.direction.y * self.speed
-        self.rect.center = self.hitbox.center
+        self.rect.center = self.hit_box.center
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
@@ -85,12 +94,12 @@ class GhostEnemy(Enemy):
         y_remainder = self.rect.bottom % settings.TILE_SIZE
 
         if x_remainder < self.speed:
-            self.hitbox.x = self.hitbox.x - x_remainder
-            self.rect.center = self.hitbox.center
+            self.hit_box.x = self.hit_box.x - x_remainder
+            self.rect.center = self.hit_box.center
 
         if y_remainder < self.speed:
-            self.hitbox.y = self.hitbox.y - y_remainder
-            self.rect.center = self.hitbox.center
+            self.hit_box.y = self.hit_box.y - y_remainder
+            self.rect.center = self.hit_box.center
 
         # Recognize the moment when ghost moves to a new area
         # In this case TILE_SIZE is a divisor of "right" or "bottom"
@@ -132,33 +141,3 @@ class GhostEnemy(Enemy):
 
     def update(self):
         self.move()
-
-    def custom_draw(self, game_surface, offset):
-
-        # TODO: Remove after tests
-        # Draw obstacle info
-        if settings.debugger.enabled:
-            temp_font = pygame.font.Font(None, 26)
-            key_row = 0
-            key_column = 0
-            for map_row in self.obstacle_map:
-                for map_column in map_row:
-                    temp_surface = temp_font.render(str(map_column), True, (255, 255, 255))
-                    temp_rect = temp_surface.get_rect(topleft=(key_column * settings.TILE_SIZE + 26, key_row * settings.TILE_SIZE +26))
-                    game_surface.blit(temp_surface, temp_rect)
-                    key_column += 1
-                key_row += 1
-                key_column = 0
-
-        # TODO: Remove after tests
-        # Draw wall follower path
-        if settings.debugger.enabled:
-            temp_font = pygame.font.Font(None, 26)
-            temp_count = 0
-            for point in self.wall_follower_path:
-                temp_surface = temp_font.render(str(f"[{temp_count}]"), True, (255, 255, 255))
-                temp_rect = temp_surface.get_rect(
-                    topleft=(point[0] * settings.TILE_SIZE + 3, point[1] * settings.TILE_SIZE + 3))
-                game_surface.blit(temp_surface, temp_rect)
-                temp_count += 1
-

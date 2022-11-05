@@ -1,5 +1,6 @@
 import pygame
 import settings
+import game_helper
 from pytmx.util_pygame import load_pygame
 from wall import Wall
 from ground import Ground
@@ -7,8 +8,9 @@ from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from player import Player
+from exit_point import ExitPoint
 from camera_group import CameraGroup
-from y_sort_camera_group import YSortCameraGroup
+from camera_group_with_y_sort import CameraGroupWithYSort
 
 
 class Level:
@@ -21,33 +23,64 @@ class Level:
         self.tmx_data = load_pygame('data/tmx/basic.tmx')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
-        # Set up sprite groups
-        self.background_sprites = CameraGroup(game_surface, size_of_map)
-        self.visible_sprites = YSortCameraGroup(game_surface, size_of_map)
-        self.enemy_sprites = CameraGroup(game_surface, size_of_map)
+        # Set up visible groups
+        self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
+        self.middle_layer_regular_sprites = CameraGroupWithYSort(game_surface, size_of_map)
+        self.top_layer_sprites = CameraGroup(game_surface, size_of_map)
+
+        # Set up functional groups
+        self.exit_points = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
+        self.enemy_sprites = pygame.sprite.Group()
 
         # Set game state
         self.game_state = game_state
 
         # Set obstacle map
-        self.obstacle_map = self.get_obstacle_map()
+        self.obstacle_map = self.tmx_data.get_layer_by_name('obstacle').data
 
         # Create sprites
         self.create_sprites()
-
         # Create player
-        self.create_player()
+        self.player = self.create_player()
+        # Create exit point
+        self.exit_point = self.create_exit_point()
+
+        # Complete required diamonds parameter based on current level data
+        self.game_state.set_number_of_required_diamonds(len(self.collectable_sprites))
 
     def create_player(self):
-        player_layer = self.tmx_data.get_layer_by_name('player')
-        for tile_x, tile_y, image in player_layer.tiles():
+        player_object = self.tmx_data.get_object_by_name('player')
+
+        if player_object.visible:
+            tile_x = int(player_object.x // self.tmx_data.tilewidth)
+            tile_y = int(player_object.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
+
+            if player_object.properties.get('speed') is None:
+                # Default player speed
+                speed = game_helper.calculate_ratio(7)
+            else:
+                speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
+
             # Add player to visible group
-            self.player = Player(image, (x, y), [self.visible_sprites], self.obstacle_sprites, self.collectable_sprites,
-                            self.enemy_sprites, self.game_state)
+            return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed,
+                          self.exit_points, self.obstacle_sprites, self.collectable_sprites, self.enemy_sprites,
+                          self.game_state)
+
+    def create_exit_point(self):
+        exit_object = self.tmx_data.get_object_by_name('exit-point')
+
+        if exit_object.visible:
+            tile_x = int(exit_object.x // self.tmx_data.tilewidth)
+            tile_y = int(exit_object.y // self.tmx_data.tileheight)
+            x = tile_x * settings.TILE_SIZE
+            y = tile_y * settings.TILE_SIZE
+
+            # Add exit point to visible group
+            return ExitPoint(exit_object.image, (x, y), [self.bottom_layer_background_sprites, self.exit_points])
 
     def create_sprites(self):
         ground_layer = self.tmx_data.get_layer_by_name('ground')
@@ -55,68 +88,68 @@ class Level:
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to background sprites group
-            Ground(image, (x, y), [self.background_sprites])
+            Ground(image, (x, y), [self.bottom_layer_background_sprites])
 
         obstacle_layer = self.tmx_data.get_layer_by_name('obstacle')
         for tile_x, tile_y, image in obstacle_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and obstacle sprites group
-            Wall(image, (x, y), [self.visible_sprites, self.obstacle_sprites])
+            Wall(image, (x, y), [self.middle_layer_regular_sprites, self.obstacle_sprites])
 
         collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
         for tile_x, tile_y, image in collectable_diamond_layer.tiles():
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and collectable sprites group
-            Diamond(image, (x, y), [self.visible_sprites, self.collectable_sprites])
+            Diamond(image, (x, y), [self.middle_layer_regular_sprites, self.collectable_sprites])
 
         enemy_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
         for enemy_spider in enemy_spider_layer:
-            tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
-            tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
-            x = tile_x * settings.TILE_SIZE
-            y = tile_y * settings.TILE_SIZE
+            if enemy_spider.visible:
+                tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
 
-            if enemy_spider.properties.get('speed') is None:
-                speed = enemy_spider_layer.properties.get('speed')
-            else:
-                speed = enemy_spider.properties.get('speed')
+                if enemy_spider.properties.get('speed') is None:
+                    speed = game_helper.calculate_ratio(enemy_spider_layer.properties.get('speed'))
+                else:
+                    speed = game_helper.calculate_ratio(enemy_spider.properties.get('speed'))
 
-            if enemy_spider.properties.get('net_length') is None:
-                net_length = enemy_spider_layer.properties.get('net_length')
-            else:
-                net_length = enemy_spider.properties.get('net_length')
+                if enemy_spider.properties.get('net_length') is None:
+                    net_length = enemy_spider_layer.properties.get('net_length')
+                else:
+                    net_length = enemy_spider.properties.get('net_length')
 
-            SpiderEnemy(enemy_spider.image, (x, y), [self.enemy_sprites], speed, net_length)
+                SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                            speed, net_length)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
         for enemy_ghost in enemy_ghost_layer:
-            tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
-            tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
-            x = tile_x * settings.TILE_SIZE
-            y = tile_y * settings.TILE_SIZE
+            if enemy_ghost.visible:
+                tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
 
-            if enemy_ghost.properties.get('speed') is None:
-                speed = enemy_ghost_layer.properties.get('speed')
-            else:
-                speed = enemy_ghost.properties.get('speed')
+                if enemy_ghost.properties.get('speed') is None:
+                    speed = game_helper.calculate_ratio(enemy_ghost_layer.properties.get('speed'))
+                else:
+                    speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
-            GhostEnemy(enemy_ghost.image, (x, y), [self.enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
-
-    def get_obstacle_map(self):
-        obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
-        return obstacles_layer.data
+                GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                           speed, self.obstacle_map, (tile_x, tile_y))
 
     def run(self):
-        # Run Update method foreach sprite from the group
-        self.visible_sprites.update()
-        self.enemy_sprites.update()
+        # Run an update method foreach sprite from the group
+        self.middle_layer_regular_sprites.update()
+        self.top_layer_sprites.update()
 
         # Draw all visible sprites
-        self.background_sprites.custom_draw(self.player)
-        self.visible_sprites.custom_draw(self.player)
-        self.enemy_sprites.custom_draw(self.player)
+        self.bottom_layer_background_sprites.custom_draw(self.player)
+        self.middle_layer_regular_sprites.custom_draw(self.player)
+        self.top_layer_sprites.custom_draw(self.player)
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, (0, 0))
@@ -124,6 +157,18 @@ class Level:
         # Read inputs and display variables if debugger is enabled
         settings.debugger.input()
         settings.debugger.show()
+
+    def next_level(self):
+        half_width = self.screen.get_size()[0] // 2
+        half_height = self.screen.get_size()[1] // 2
+
+        accent_color = (255, 255, 255)
+        background_color = (100, 100, 100)
+        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 50)
+
+        text_layer = basic_font.render('YOU WIN!', True, accent_color, background_color)
+        text_layer_size = text_layer.get_size()
+        self.screen.blit(text_layer, (half_width - text_layer_size[0] // 2, half_height - text_layer_size[1] // 2))
 
     def game_over(self):
         half_width = self.screen.get_size()[0] // 2
