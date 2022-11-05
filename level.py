@@ -8,6 +8,7 @@ from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from player import Player
+from exit_point import ExitPoint
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 
@@ -25,11 +26,13 @@ class Level:
         # Set up visible groups
         self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
         self.middle_layer_regular_sprites = CameraGroupWithYSort(game_surface, size_of_map)
-        self.top_layer_enemy_sprites = CameraGroup(game_surface, size_of_map)
+        self.top_layer_sprites = CameraGroup(game_surface, size_of_map)
 
         # Set up functional groups
+        self.exit_points = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
+        self.enemy_sprites = pygame.sprite.Group()
 
         # Set game state
         self.game_state = game_state
@@ -39,11 +42,15 @@ class Level:
 
         # Create sprites
         self.create_sprites()
+        # Create player
+        self.player = self.create_player()
+        # Create exit point
+        self.exit_point = self.create_exit_point()
 
-        # Get player
-        self.player = self.get_player()
+        # Complete required diamonds parameter based on current level data
+        self.game_state.set_number_of_required_diamonds(len(self.collectable_sprites))
 
-    def get_player(self):
+    def create_player(self):
         player_object = self.tmx_data.get_object_by_name('player')
 
         if player_object.visible:
@@ -59,9 +66,21 @@ class Level:
                 speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
 
             # Add player to visible group
-            return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed, self.obstacle_sprites,
-                          self.collectable_sprites,
-                          self.top_layer_enemy_sprites, self.game_state)
+            return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed,
+                          self.exit_points, self.obstacle_sprites, self.collectable_sprites, self.enemy_sprites,
+                          self.game_state)
+
+    def create_exit_point(self):
+        exit_object = self.tmx_data.get_object_by_name('exit-point')
+
+        if exit_object.visible:
+            tile_x = int(exit_object.x // self.tmx_data.tilewidth)
+            tile_y = int(exit_object.y // self.tmx_data.tileheight)
+            x = tile_x * settings.TILE_SIZE
+            y = tile_y * settings.TILE_SIZE
+
+            # Add exit point to visible group
+            return ExitPoint(exit_object.image, (x, y), [self.bottom_layer_background_sprites, self.exit_points])
 
     def create_sprites(self):
         ground_layer = self.tmx_data.get_layer_by_name('ground')
@@ -103,7 +122,8 @@ class Level:
                 else:
                     net_length = enemy_spider.properties.get('net_length')
 
-                SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_enemy_sprites], speed, net_length)
+                SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                            speed, net_length)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
         for enemy_ghost in enemy_ghost_layer:
@@ -118,17 +138,18 @@ class Level:
                 else:
                     speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
-                GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
+                GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                           speed, self.obstacle_map, (tile_x, tile_y))
 
     def run(self):
         # Run an update method foreach sprite from the group
         self.middle_layer_regular_sprites.update()
-        self.top_layer_enemy_sprites.update()
+        self.top_layer_sprites.update()
 
         # Draw all visible sprites
         self.bottom_layer_background_sprites.custom_draw(self.player)
         self.middle_layer_regular_sprites.custom_draw(self.player)
-        self.top_layer_enemy_sprites.custom_draw(self.player)
+        self.top_layer_sprites.custom_draw(self.player)
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, (0, 0))
@@ -136,6 +157,18 @@ class Level:
         # Read inputs and display variables if debugger is enabled
         settings.debugger.input()
         settings.debugger.show()
+
+    def next_level(self):
+        half_width = self.screen.get_size()[0] // 2
+        half_height = self.screen.get_size()[1] // 2
+
+        accent_color = (255, 255, 255)
+        background_color = (100, 100, 100)
+        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 50)
+
+        text_layer = basic_font.render('YOU WIN!', True, accent_color, background_color)
+        text_layer_size = text_layer.get_size()
+        self.screen.blit(text_layer, (half_width - text_layer_size[0] // 2, half_height - text_layer_size[1] // 2))
 
     def game_over(self):
         half_width = self.screen.get_size()[0] // 2

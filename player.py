@@ -5,7 +5,8 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class Player(CustomDrawSprite):
-    def __init__(self, image, position, groups, speed, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
+    def __init__(self, image, position, groups, speed, exit_points, obstacle_sprites,
+                 collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
         self.rect = self.image.get_rect(topleft=position)
@@ -20,6 +21,7 @@ class Player(CustomDrawSprite):
         self.real_y_position = float(self.hit_box.y)
 
         # Create groups of collision
+        self.exit_points = exit_points
         self.obstacle_sprites = obstacle_sprites
         self.collectable_sprites = collectable_sprites
         self.enemy_sprites = enemy_sprites
@@ -62,11 +64,17 @@ class Player(CustomDrawSprite):
         self.collision('horizontal')
         self.hit_box.y = int(self.real_y_position)
         self.collision('vertical')
+
         # Set the movement offset
         self.rect.center = self.hit_box.center
 
     def collision(self, direction):
         self.collided_with_enemy = False
+
+        # Check collision with exit points
+        for sprite in self.exit_points:
+            if sprite.hit_box.colliderect(self.hit_box):
+                self.game_state.level_completed()
 
         # Check collision with collectable sprites
         for sprite in self.collectable_sprites:

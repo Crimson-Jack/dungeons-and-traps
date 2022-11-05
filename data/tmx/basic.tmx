@@ -26,8 +26,8 @@
 49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49
 </data>
  </layer>
- <objectgroup id="16" name="major-item">
-  <object id="14" name="exit" gid="61" x="448" y="32" width="16" height="16"/>
+ <objectgroup id="16" name="major-game-item">
+  <object id="14" name="exit-point" gid="61" x="448" y="32" width="16" height="16"/>
   <object id="15" name="player" gid="98" x="16" y="32" width="16" height="16">
    <properties>
     <property name="speed" type="int" value="8"/>
