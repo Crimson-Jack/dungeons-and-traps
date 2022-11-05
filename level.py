@@ -35,7 +35,7 @@ class Level:
         self.game_state = game_state
 
         # Set obstacle map
-        self.obstacle_map = self.get_obstacle_map()
+        self.obstacle_map = self.tmx_data.get_layer_by_name('obstacle').data
 
         # Create sprites
         self.create_sprites()
@@ -44,12 +44,23 @@ class Level:
         self.player = self.get_player()
 
     def get_player(self):
-        player_layer = self.tmx_data.get_layer_by_name('player')
-        for tile_x, tile_y, image in player_layer.tiles():
+        player_object = self.tmx_data.get_object_by_name('player')
+
+        if player_object.visible:
+            tile_x = int(player_object.x // self.tmx_data.tilewidth)
+            tile_y = int(player_object.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
+
+            if player_object.properties.get('speed') is None:
+                # Default player speed
+                speed = game_helper.calculate_ratio(7)
+            else:
+                speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
+
             # Add player to visible group
-            return Player(image, (x, y), [self.middle_layer_regular_sprites], self.obstacle_sprites, self.collectable_sprites,
+            return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed, self.obstacle_sprites,
+                          self.collectable_sprites,
                           self.top_layer_enemy_sprites, self.game_state)
 
     def create_sprites(self):
@@ -108,10 +119,6 @@ class Level:
                     speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_enemy_sprites], speed, self.obstacle_map, (tile_x, tile_y))
-
-    def get_obstacle_map(self):
-        obstacles_layer = self.tmx_data.get_layer_by_name('obstacle')
-        return obstacles_layer.data
 
     def run(self):
         # Run an update method foreach sprite from the group

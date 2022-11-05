@@ -5,7 +5,7 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class Player(CustomDrawSprite):
-    def __init__(self, image, position, groups, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
+    def __init__(self, image, position, groups, speed, obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
         self.rect = self.image.get_rect(topleft=position)
@@ -13,7 +13,7 @@ class Player(CustomDrawSprite):
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
-        self.speed = game_helper.calculate_ratio(7)
+        self.speed = game_helper.calculate_ratio(speed)
 
         # Real position is required to store the real distance, which is then casted to integer
         self.real_x_position = float(self.hit_box.x)
