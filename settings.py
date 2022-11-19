@@ -5,7 +5,7 @@ from debug import Debug
 FPS = 60
 
 # Screen size
-WIDTH = 960
+WIDTH = 800
 HEIGHT = 600
 # Dashboard size
 DASHBOARD_HEIGHT = 120
@@ -17,7 +17,8 @@ TILE_SIZE = 64
 GAME_OVER_EVENT = pygame.USEREVENT + 1
 ADD_DIAMOND_EVENT = pygame.USEREVENT + 2
 DECREASE_ENERGY_EVENT = pygame.USEREVENT + 3
-NEXT_LEVEL_EVENT = pygame.USEREVENT + 4
+EXIT_POINT_IS_OPEN_EVENT = pygame.USEREVENT + 4
+NEXT_LEVEL_EVENT = pygame.USEREVENT + 5
 
 # Create debugger
 debugger = Debug()

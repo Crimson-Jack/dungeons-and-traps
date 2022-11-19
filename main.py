@@ -41,6 +41,9 @@ class Game:
                 if event.type == settings.DECREASE_ENERGY_EVENT:
                     # Refresh dashboard surface
                     self.refresh_dashboard_surface()
+                if event.type == settings.EXIT_POINT_IS_OPEN_EVENT:
+                    # Show exit point
+                    self.level.show_exit_point()
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     # Next level - go to the next level
                     self.level.next_level()

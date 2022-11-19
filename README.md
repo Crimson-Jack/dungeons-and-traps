@@ -9,6 +9,10 @@ The following command may be useful to import all required libraries. The virtua
 
 ```pip install -r requirements.txt```
 
+Run the game:
+
+```python main.py```
+
 ### What has been done so far:
 * Center camera (adjusted to edge of the map).
 * 3D effect using Y-sorting for tiles.

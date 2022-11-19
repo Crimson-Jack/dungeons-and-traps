@@ -9,6 +9,7 @@ from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from player import Player
 from exit_point import ExitPoint
+from blast_effect import BlastEffect
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 
@@ -50,6 +51,10 @@ class Level:
         # Complete required diamonds parameter based on current level data
         self.game_state.set_number_of_required_diamonds(len(self.collectable_sprites))
 
+        # Set blast effect details
+        self.blast_effect = BlastEffect(self.game_surface, self.game_surface.get_width(),
+                                        self.game_surface.get_height(), 8, 'White')
+
     def create_player(self):
         player_object = self.tmx_data.get_object_by_name('player')
 
@@ -80,7 +85,7 @@ class Level:
             y = tile_y * settings.TILE_SIZE
 
             # Add exit point to visible group
-            return ExitPoint(exit_object.image, (x, y), [self.bottom_layer_background_sprites, self.exit_points])
+            return ExitPoint(exit_object.image, (x, y), [self.bottom_layer_background_sprites, self.exit_points], False)
 
     def create_sprites(self):
         ground_layer = self.tmx_data.get_layer_by_name('ground')
@@ -145,11 +150,15 @@ class Level:
         # Run an update method foreach sprite from the group
         self.middle_layer_regular_sprites.update()
         self.top_layer_sprites.update()
+        # Run an update method for effects
+        self.blast_effect.update()
 
         # Draw all visible sprites
         self.bottom_layer_background_sprites.custom_draw(self.player)
         self.middle_layer_regular_sprites.custom_draw(self.player)
         self.top_layer_sprites.custom_draw(self.player)
+        # Draw effects
+        self.blast_effect.draw()
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, (0, 0))
@@ -158,7 +167,12 @@ class Level:
         settings.debugger.input()
         settings.debugger.show()
 
+    def show_exit_point(self):
+        self.blast_effect.run()
+        self.exit_point.visible = True
+
     def next_level(self):
+        # Show message
         half_width = self.screen.get_size()[0] // 2
         half_height = self.screen.get_size()[1] // 2
 
@@ -171,6 +185,7 @@ class Level:
         self.screen.blit(text_layer, (half_width - text_layer_size[0] // 2, half_height - text_layer_size[1] // 2))
 
     def game_over(self):
+        # Show message
         half_width = self.screen.get_size()[0] // 2
         half_height = self.screen.get_size()[1] // 2
 

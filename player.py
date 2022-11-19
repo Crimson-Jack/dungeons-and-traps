@@ -122,3 +122,7 @@ class Player(CustomDrawSprite):
             pygame.draw.circle(game_surface, (255, 100, 0), position, settings.TILE_SIZE // 1.55)
             pygame.draw.circle(game_surface, (255, 150, 0), position, settings.TILE_SIZE // 1.8)
             pygame.draw.circle(game_surface, (255, 200, 0), position, settings.TILE_SIZE // 2.2)
+
+        # Draw sprite
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
