@@ -44,6 +44,10 @@ class SpiderEnemy(CustomDrawSprite):
         end_position = pygame.Vector2(self.rect.center) + offset
         pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, 2)
 
+        # Draw sprite
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
+
 
 
 

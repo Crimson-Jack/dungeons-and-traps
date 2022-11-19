@@ -1,4 +1,5 @@
 import pygame
+import custom_draw_sprite
 import settings
 from camera_group import CameraGroup
 
@@ -11,13 +12,13 @@ class CameraGroupWithYSort(CameraGroup):
         # Calculate map offset
         super().set_map_offset(player)
 
-        # Custom draw of each sprite
-        super().custom_draw_each_sprite()
-
         # Draw each tile with an offset on game_surface keeping Y order
         for sprite in sorted(self.sprites(), key=lambda item: item.rect.centery):
-            offset_position = sprite.rect.topleft + self.offset
-            self.game_surface.blit(sprite.image, offset_position)
+            if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
+                sprite.custom_draw(self.game_surface, self.offset)
+            else:
+                offset_position = sprite.rect.topleft + self.offset
+                self.game_surface.blit(sprite.image, offset_position)
 
             # Draw rectangles when debug is enabled
             if settings.debugger.enabled:

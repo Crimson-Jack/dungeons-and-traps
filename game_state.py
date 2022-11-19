@@ -16,6 +16,8 @@ class GameState:
     def add_diamond(self):
         self.diamonds += 1
         pygame.event.post(pygame.event.Event(settings.ADD_DIAMOND_EVENT))
+        if self.diamonds == self.required_diamonds:
+            pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
 
     def decrease_energy(self):
         self.energy -= 1
