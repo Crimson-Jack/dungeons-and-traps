@@ -87,8 +87,9 @@ class Player(CustomDrawSprite):
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                self.collided_with_enemy = True
-                self.game_state.decrease_energy()
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False, pygame.sprite.collide_mask):
+                    self.collided_with_enemy = True
+                    self.game_state.decrease_energy()
 
         # Check collision with obstacle sprites
         if direction == 'horizontal':
