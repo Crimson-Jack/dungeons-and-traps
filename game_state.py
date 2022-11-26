@@ -9,6 +9,7 @@ class GameState:
         self.diamonds = 0
         self.max_energy_value = 800
         self.energy = self.max_energy_value
+        self.player_movement_direction = pygame.Vector2()
 
     def set_number_of_required_diamonds(self, value):
         self.required_diamonds = value
