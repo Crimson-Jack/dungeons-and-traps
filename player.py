@@ -8,13 +8,13 @@ class Player(CustomDrawSprite):
     def __init__(self, image, position, groups, speed, exit_points, obstacle_sprites,
                  collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE * 0.9, settings.TILE_SIZE * 0.9))
+        self.image = pygame.transform.scale(image, (int(settings.TILE_SIZE * 0.9), int(settings.TILE_SIZE * 0.9)))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect.inflate(game_helper.calculate_ratio(-5), 0)
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
-        self.speed = game_helper.calculate_ratio(speed)
+        self.speed = speed
 
         # Real position is required to store the real distance, which is then casted to integer
         self.real_x_position = float(self.hit_box.x)
@@ -33,22 +33,8 @@ class Player(CustomDrawSprite):
         self.collided_with_enemy = False
 
     def input(self):
-        # Read pressed key and specify movement direction
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_UP]:
-            self.direction.y = -1
-        elif keys[pygame.K_DOWN]:
-            self.direction.y = 1
-        else:
-            self.direction.y = 0
-
-        if keys[pygame.K_RIGHT]:
-            self.direction.x = 1
-        elif keys[pygame.K_LEFT]:
-            self.direction.x = -1
-        else:
-            self.direction.x = 0
+        # Copy player direction from game state
+        self.direction = self.game_state.player_movement_direction
 
     def move(self):
         # Normalize vector
