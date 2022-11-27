@@ -14,7 +14,7 @@ class Player(CustomDrawSprite):
 
         # Create movement variables
         self.direction = pygame.math.Vector2()
-        self.speed = game_helper.calculate_ratio(speed)
+        self.speed = speed
 
         # Real position is required to store the real distance, which is then casted to integer
         self.real_x_position = float(self.hit_box.x)
