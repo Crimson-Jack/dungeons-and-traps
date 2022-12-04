@@ -36,7 +36,7 @@ class Hero(pygame.sprite.Sprite):
 
         # Sprite - hero stand
         # Default - right
-        hero_image = pygame.image.load('top-view-hero-movement/img/manBlue_stand.png')
+        hero_image = pygame.image.load(f'img/manBlue_stand.png')
         hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
         self.all_sprites['right'].append(hero_image)
         self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
@@ -44,7 +44,7 @@ class Hero(pygame.sprite.Sprite):
         self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
         # Sprite - rotated (45 degrees) hero stand
         # Default = right down
-        hero_image_rotated = pygame.image.load(f'top-view-hero-movement/img/manBlue_stand_ang45.png')
+        hero_image_rotated = pygame.image.load(f'img/manBlue_stand_ang45.png')
         hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
         self.all_sprites['right_down'].append(hero_image_rotated)
         self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
@@ -53,14 +53,14 @@ class Hero(pygame.sprite.Sprite):
 
         # Sprites - hero walk
         for num in range(1, self.__number_of_sprites):
-            hero_image = pygame.image.load(f'top-view-hero-movement/img/manBlue_walk{num}.png')
+            hero_image = pygame.image.load(f'img/manBlue_walk{num}.png')
             hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
             self.all_sprites['right'].append(hero_image)
             self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
             self.all_sprites['up'].append(pygame.transform.rotate(hero_image, 90))
             self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
             # Sprites - rotated (45 degrees) hero walk
-            hero_image_rotated = pygame.image.load(f'top-view-hero-movement/img/manBlue_walk{num}_ang45.png')
+            hero_image_rotated = pygame.image.load(f'img/manBlue_walk{num}_ang45.png')
             hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
             self.all_sprites['right_down'].append(hero_image_rotated)
             self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
