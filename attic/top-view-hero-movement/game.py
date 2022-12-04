@@ -26,8 +26,6 @@ class Hero(pygame.sprite.Sprite):
         self.hero_size = 100
 
         self.load_all_srites()
-        # self.rect.centerx = start_position[0] * self.tile_size + (0.5 * self.tile_size)
-        # self.rect.centery = start_position[1] * self.tile_size + (0.5 * self.tile_size)
         self.rect.center = (position_x, position_y)
 
         self.is_moving = False
@@ -38,7 +36,7 @@ class Hero(pygame.sprite.Sprite):
 
         # Sprite - hero stand
         # Default - right
-        hero_image = pygame.image.load('img/manBlue_stand.png')
+        hero_image = pygame.image.load('top-view-hero-movement/img/manBlue_stand.png')
         hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
         self.all_sprites['right'].append(hero_image)
         self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
@@ -46,7 +44,7 @@ class Hero(pygame.sprite.Sprite):
         self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
         # Sprite - rotated (45 degrees) hero stand
         # Default = right down
-        hero_image_rotated = pygame.image.load(f'img/manBlue_stand_ang45.png')
+        hero_image_rotated = pygame.image.load(f'top-view-hero-movement/img/manBlue_stand_ang45.png')
         hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
         self.all_sprites['right_down'].append(hero_image_rotated)
         self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
@@ -55,14 +53,14 @@ class Hero(pygame.sprite.Sprite):
 
         # Sprites - hero walk
         for num in range(1, self.__number_of_sprites):
-            hero_image = pygame.image.load(f'img/manBlue_walk{num}.png')
+            hero_image = pygame.image.load(f'top-view-hero-movement/img/manBlue_walk{num}.png')
             hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
             self.all_sprites['right'].append(hero_image)
             self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
             self.all_sprites['up'].append(pygame.transform.rotate(hero_image, 90))
             self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
             # Sprites - rotated (45 degrees) hero walk
-            hero_image_rotated = pygame.image.load(f'img/manBlue_walk{num}_ang45.png')
+            hero_image_rotated = pygame.image.load(f'top-view-hero-movement/img/manBlue_walk{num}_ang45.png')
             hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
             self.all_sprites['right_down'].append(hero_image_rotated)
             self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
@@ -137,7 +135,7 @@ clock = pygame.time.Clock()
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Dungeons and traps")
+pygame.display.set_caption("Top view | hero movement")
 
 hero = Hero(200, 200)
 main_sprites = pygame.sprite.Group()
