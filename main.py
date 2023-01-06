@@ -38,22 +38,22 @@ class Game:
                 # Player movement direction
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        self.game_state.player_movement_direction.y += 1
+                        self.game_state.set_player_movement(0, 1)
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        self.game_state.player_movement_direction.y -= 1
+                        self.game_state.set_player_movement(0, -1)
                     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        self.game_state.player_movement_direction.x += 1
+                        self.game_state.set_player_movement(1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        self.game_state.player_movement_direction.x -= 1
+                        self.game_state.set_player_movement(-1, 0)
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        self.game_state.player_movement_direction.y -= 1
+                        self.game_state.set_player_movement(0, -1)
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        self.game_state.player_movement_direction.y += 1
+                        self.game_state.set_player_movement(0, 1)
                     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        self.game_state.player_movement_direction.x -= 1
+                        self.game_state.set_player_movement(-1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        self.game_state.player_movement_direction.x += 1
+                        self.game_state.set_player_movement(1, 0)
 
                 #  Custom events
                 if event.type == settings.ADD_DIAMOND_EVENT:
