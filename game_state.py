@@ -1,5 +1,6 @@
 import pygame
 import settings
+import direction
 
 
 class GameState:
@@ -9,7 +10,8 @@ class GameState:
         self.diamonds = 0
         self.max_energy_value = 800
         self.energy = self.max_energy_value
-        self.player_movement_direction = pygame.Vector2()
+        self.player_movement_vector = pygame.Vector2()
+        self.player_movement_direction = direction.Direction.RIGHT
 
     def set_number_of_required_diamonds(self, value):
         self.required_diamonds = value
@@ -34,3 +36,26 @@ class GameState:
             # NOTE: Only for temporary solution
             self.game_over = True
             pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+
+    def set_player_movement(self, x, y):
+        # Set vector
+        self.player_movement_vector.x += x
+        self.player_movement_vector.y += y
+
+        # Set direction
+        if self.player_movement_vector.y == 0 and self.player_movement_vector.x > 0:
+            self.player_movement_direction = direction.Direction.RIGHT
+        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x > 0:
+            self.player_movement_direction = direction.Direction.RIGHT_DOWN
+        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x == 0:
+            self.player_movement_direction = direction.Direction.DOWN
+        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x < 0:
+            self.player_movement_direction = direction.Direction.LEFT_DOWN
+        elif self.player_movement_vector.y == 0 and self.player_movement_vector.x < 0:
+            self.player_movement_direction = direction.Direction.LEFT
+        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x < 0:
+            self.player_movement_direction = direction.Direction.LEFT_UP
+        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x == 0:
+            self.player_movement_direction = direction.Direction.UP
+        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
+            self.player_movement_direction = direction.Direction.RIGHT_UP

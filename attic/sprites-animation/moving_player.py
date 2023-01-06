@@ -1,5 +1,6 @@
 # Note: This file is just a draft for testing purposes
 import pygame, sys
+import moving_player_spritesheet
 from enum import IntEnum
 
 
@@ -16,18 +17,18 @@ class Direction(IntEnum):
 
 class Hero(pygame.sprite.Sprite):
     __hero_speed = 3
-    __number_of_sprites = 8
+    __number_of_sprites = 5
 
-    def __init__(self, position_x, position_y):
+    def __init__(self, position_x, position_y, hero_scale):
         super().__init__()
+
+        self.colour_key = (0, 0, 0)
 
         self.step_counter = 0
         self.costume_index = 0
-        self.hero_size = 100
+        self.hero_scale = hero_scale
 
         self.load_all_srites()
-        # self.rect.centerx = start_position[0] * self.tile_size + (0.5 * self.tile_size)
-        # self.rect.centery = start_position[1] * self.tile_size + (0.5 * self.tile_size)
         self.rect.center = (position_x, position_y)
 
         self.is_moving = False
@@ -36,38 +37,32 @@ class Hero(pygame.sprite.Sprite):
         self.all_sprites = {'left': [], 'right': [], 'up': [], 'down': [], 'right_down': [], 'left_down': [],
                             'left_up': [], 'right_up': []}
 
+        sprite_sheet_image = pygame.image.load('player.png').convert_alpha()
+        sprite_sheet = moving_player_spritesheet.MovingPlayerSpriteSheet(sprite_sheet_image)
+
         # Sprite - hero stand
-        # Default - right
-        hero_image = pygame.image.load('img/manBlue_stand.png')
-        hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
-        self.all_sprites['right'].append(hero_image)
-        self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
-        self.all_sprites['up'].append(pygame.transform.rotate(hero_image, 90))
-        self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
-        # Sprite - rotated (45 degrees) hero stand
-        # Default = right down
-        hero_image_rotated = pygame.image.load(f'img/manBlue_stand_ang45.png')
-        hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
-        self.all_sprites['right_down'].append(hero_image_rotated)
-        self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
-        self.all_sprites['left_up'].append(pygame.transform.rotate(hero_image_rotated, 180))
-        self.all_sprites['left_down'].append(pygame.transform.rotate(hero_image_rotated, 270))
+        self.all_sprites['right'].append(sprite_sheet.get_image(0, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['left'].append(sprite_sheet.get_image(2, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['up'].append(sprite_sheet.get_image(4, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['down'].append(sprite_sheet.get_image(6, 0, 16, 16, self.hero_scale, self.colour_key))
+
+        self.all_sprites['right_down'].append(sprite_sheet.get_image(6, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['right_up'].append(sprite_sheet.get_image(4, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['left_down'].append(sprite_sheet.get_image(6, 0, 16, 16, self.hero_scale, self.colour_key))
+        self.all_sprites['left_up'].append(sprite_sheet.get_image(4, 0, 16, 16, self.hero_scale, self.colour_key))
 
         # Sprites - hero walk
-        for num in range(1, self.__number_of_sprites):
-            hero_image = pygame.image.load(f'img/manBlue_walk{num}.png')
-            hero_image = pygame.transform.scale(hero_image, (self.hero_size, self.hero_size))
-            self.all_sprites['right'].append(hero_image)
-            self.all_sprites['left'].append(pygame.transform.rotate(hero_image, 180))
-            self.all_sprites['up'].append(pygame.transform.rotate(hero_image, 90))
-            self.all_sprites['down'].append(pygame.transform.rotate(hero_image, 270))
-            # Sprites - rotated (45 degrees) hero walk
-            hero_image_rotated = pygame.image.load(f'img/manBlue_walk{num}_ang45.png')
-            hero_image_rotated = pygame.transform.scale(hero_image_rotated, (self.hero_size, self.hero_size))
-            self.all_sprites['right_down'].append(hero_image_rotated)
-            self.all_sprites['right_up'].append(pygame.transform.rotate(hero_image_rotated, 90))
-            self.all_sprites['left_up'].append(pygame.transform.rotate(hero_image_rotated, 180))
-            self.all_sprites['left_down'].append(pygame.transform.rotate(hero_image_rotated, 270))
+        for num in range(0, self.__number_of_sprites):
+
+            self.all_sprites['right'].append(sprite_sheet.get_image(1, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['left'].append(sprite_sheet.get_image(3, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['up'].append(sprite_sheet.get_image(5, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['down'].append(sprite_sheet.get_image(7, num, 16, 16, self.hero_scale, self.colour_key))
+
+            self.all_sprites['right_down'].append(sprite_sheet.get_image(7, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['right_up'].append(sprite_sheet.get_image(5, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['left_down'].append(sprite_sheet.get_image(7, num, 16, 16, self.hero_scale, self.colour_key))
+            self.all_sprites['left_up'].append(sprite_sheet.get_image(5, num, 16, 16, self.hero_scale, self.colour_key))
 
         self.image = self.all_sprites['right'][0]
         self.rect = self.image.get_rect()
@@ -87,7 +82,7 @@ class Hero(pygame.sprite.Sprite):
         # Default translation
         dx = 0
         dy = 0
-        costume_switching_threshold = 3
+        costume_switching_threshold = 4
 
         if self.direction == Direction.RIGHT or self.direction == Direction.RIGHT_UP or self.direction == Direction.RIGHT_DOWN:
             dx += self.__hero_speed
@@ -137,9 +132,11 @@ clock = pygame.time.Clock()
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Dungeons and traps")
+pygame.display.set_caption("Top view | hero movement")
+BG = (150, 150, 150)
+hero_scale = 10
 
-hero = Hero(200, 200)
+hero = Hero(screen_width // 2, screen_height // 2, hero_scale)
 main_sprites = pygame.sprite.Group()
 main_sprites.add(hero)
 
@@ -176,7 +173,7 @@ while True:
             hero.move(Direction.DOWN)
 
     pygame.display.flip()
-    screen.fill((200, 200, 200))
+    screen.fill(BG)
     main_sprites.update()
     main_sprites.draw(screen)
 
