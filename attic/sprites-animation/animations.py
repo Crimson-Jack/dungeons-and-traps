@@ -1,6 +1,6 @@
 # Use key arrows (up, down) to change animations (actions: right, left, up, down)
 import pygame
-import spritesheet
+import animations_spritesheet
 
 pygame.init()
 
@@ -11,7 +11,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Spritesheets - animations')
 
 sprite_sheet_image = pygame.image.load('player.png').convert_alpha()
-sprite_sheet = spritesheet.SpriteSheet(sprite_sheet_image)
+sprite_sheet = animations_spritesheet.AnimationsSpriteSheet(sprite_sheet_image)
 
 BG = (150, 150, 150)
 BLACK = (0, 0, 0)
@@ -48,7 +48,7 @@ while run:
         last_update = current_time
 
     # Show frame image
-    screen.blit(animation_list[action][frame], (0, 0))
+    screen.blit(animation_list[action][frame], (SCREEN_WIDTH // 2 - (16 * 3) // 2, SCREEN_HEIGHT // 2 - (16 * 3) // 2))
 
     # Event handler
     for event in pygame.event.get():

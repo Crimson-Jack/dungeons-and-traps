@@ -1,7 +1,7 @@
 import pygame
 
 
-class SpriteSheet():
+class MovingPlayerSpriteSheet():
     def __init__(self, image):
         self.sheet = image
 
