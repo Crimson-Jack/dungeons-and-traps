@@ -7,7 +7,7 @@ import game_helper
 class Stone(MovingObstacle):
     def __init__(self, image, position, groups, obstacle_map):
         super().__init__(image, position, groups, obstacle_map)
-        # Note: inflate rectange in y should have the same value as obstacles (wall)
+        # Note: inflate rectangle in y should have the same value as obstacles (wall)
         self.hit_box = self.rect.inflate(game_helper.calculate_ratio(-10), game_helper.calculate_ratio(-40))
         
     def move_object(self, movement_direction):

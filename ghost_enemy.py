@@ -1,23 +1,25 @@
 import pygame
 import settings
+import game_helper
+from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
-class GhostEnemy(pygame.sprite.Sprite):
-    def __init__(self, image, position, groups, speed, obstacle_map, tile_start_position):
+class GhostEnemy(ObstacleMapRefreshSprite):
+    def __init__(self, image, position, groups, speed, obstacle_map, start_position):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        # Set obstacle map
-        self.obstacle_map = obstacle_map
+        self.direction = pygame.math.Vector2((1, 0))
 
         # Left hand wall follower path
-        self.wall_follower_path = self.get_wall_follower_path(self.obstacle_map, tile_start_position)
+        self.wall_follower_path = []
+        self.refresh_obstacle_map(obstacle_map, start_position)
         self.movement_index = -1
 
         # Create movement variables
-        self.direction = pygame.math.Vector2((1, 0))
+        #self.direction = pygame.math.Vector2((1, 0))
         self.speed = speed
         self.current_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
         self.new_position_on_map = list(self.current_position_on_map)
@@ -26,55 +28,6 @@ class GhostEnemy(pygame.sprite.Sprite):
         # Real position is required to store the real distance, which is then casted to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
-
-    def get_wall_follower_path(self, obstacle_map, start_position):
-        # Right direction
-        direction = [1, 0]
-        current_position = start_position
-        is_end_of_path = False
-        path = []
-
-        while not is_end_of_path:
-            next_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
-
-            # If Right direction
-            if direction == [1, 0]:
-                next_position_left = [next_position[0], next_position[1] - 1]
-            # If Up direction
-            elif direction == [0, -1]:
-                next_position_left = [next_position[0] - 1, next_position[1]]
-            # Elif left direction
-            elif direction == [-1, 0]:
-                next_position_left = [next_position[0], next_position[1] + 1]
-            # Elif down direction
-            elif direction == [0, 1]:
-                next_position_left = [next_position[0] + 1, next_position[1]]
-
-            if len(path) > 0 and next_position == path[0]:
-                is_end_of_path = True
-
-            if not is_end_of_path:
-                if not obstacle_map[next_position[1]][next_position[0]] and obstacle_map[next_position_left[1]][next_position_left[0]]:
-                    # Move
-                    current_position = next_position
-                    # Add position to the path
-                    path.append(current_position)
-                elif not obstacle_map[next_position[1]][next_position[0]] and not obstacle_map[next_position_left[1]][next_position_left[0]]:
-                    # Move
-                    current_position = next_position
-                    # Turn -90 degree
-                    vector = pygame.math.Vector2(direction)
-                    new_vector = pygame.math.Vector2.rotate(vector, -90)
-                    direction = [int(new_vector[0]), int(new_vector[1])]
-                    # Add position to the path
-                    path.append(current_position)
-                elif obstacle_map[next_position[1]][next_position[0]]:
-                    # Turn 90 degree
-                    vector = pygame.math.Vector2(direction)
-                    new_vector = pygame.math.Vector2.rotate(vector, 90)
-                    direction = [int(new_vector[0]), int(new_vector[1])]
-
-        return path
 
     def move(self):
         # Calculate real y position
@@ -116,7 +69,7 @@ class GhostEnemy(pygame.sprite.Sprite):
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
-
+            print(f'pos: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
             self.set_new_direction()
 
     def set_new_direction(self):
@@ -128,9 +81,11 @@ class GhostEnemy(pygame.sprite.Sprite):
         if self.movement_index < len(self.wall_follower_path) - 1:
             # Move to the next index
             self.movement_index += 1
+            print('Add movement')
         else:
             # Reset index - the loop is closed - start from the beginning
             self.movement_index = 0
+            print('Reset')
 
         # Get next position from the path
         next_position = self.wall_follower_path[self.movement_index]
@@ -141,3 +96,17 @@ class GhostEnemy(pygame.sprite.Sprite):
 
     def update(self):
         self.move()
+
+        #print(f'mov: {self.movement_index} pos: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
+
+    def refresh_obstacle_map(self, obstacle_map, start_position=None):
+        # Start position is current position
+        if start_position is None:
+            start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
+        # Generate a new path
+        self.wall_follower_path = game_helper.get_wall_follower_path(obstacle_map, start_position, self.direction)
+        self.movement_index = 0
+
+        #TODO: Remove
+        settings.wall_follower_path = self.wall_follower_path
+

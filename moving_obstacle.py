@@ -16,6 +16,9 @@ class MovingObstacle(pygame.sprite.Sprite):
 
         # Get old position
         old_position_x, old_position_y = self.position[0], self.position[1]
+        # Calculate old position on the map
+        old_map_x = old_position_x // settings.TILE_SIZE
+        old_map_y = old_position_y // settings.TILE_SIZE
 
         # Check if movement is possible
         new_position_x, new_position_y = 0, 0
@@ -42,7 +45,7 @@ class MovingObstacle(pygame.sprite.Sprite):
         elif movement_direction == direction.Direction.LEFT_DOWN:
             is_blocked = True
 
-        # Calculate position on the map
+        # Calculate new position on the map
         new_map_x = new_position_x // settings.TILE_SIZE
         new_map_y = new_position_y // settings.TILE_SIZE
 
@@ -52,6 +55,11 @@ class MovingObstacle(pygame.sprite.Sprite):
             # Change position
             self.rect.x = int(self.position[0])
             self.rect.y = int(self.position[1])
+            # Change obstacle map
+            self.obstacle_map[old_map_y][old_map_x] = 0
+            self.obstacle_map[new_map_y][new_map_x] = 1
+            # Raise event to refresh obstacle map
+            pygame.event.post(pygame.event.Event(settings.REFRESH_OBSTACLE_MAP_EVENT))
         else:
             is_blocked = True
 

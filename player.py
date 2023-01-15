@@ -224,6 +224,7 @@ class Player(CustomDrawSprite):
                             self.hit_box.left = sprite.hit_box.right
                         self.real_x_position = float(self.hit_box.x)
                         self.real_y_position = float(self.hit_box.y)
+
         if direction == 'vertical':
             # Obstacle
             for sprite in self.obstacle_sprites:
