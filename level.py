@@ -163,7 +163,7 @@ class Level:
                     speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
-                           speed, self.obstacle_map.items, (tile_x, tile_y))
+                           speed, self.obstacle_map.items)
 
     def run(self):
         # Run an update method foreach sprite from the group

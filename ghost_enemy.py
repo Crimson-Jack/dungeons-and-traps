@@ -5,27 +5,28 @@ from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
 class GhostEnemy(ObstacleMapRefreshSprite):
-    def __init__(self, image, position, groups, speed, obstacle_map, start_position):
+    def __init__(self, image, position, groups, speed, obstacle_map):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
+        # Create movement variables
         self.is_moving = True
+        self.speed = speed
         self.movement_vector = pygame.math.Vector2((1, 0))
 
-        # Left hand wall follower path
-        self.wall_follower_path = []
-        self.refresh_obstacle_map(obstacle_map, start_position)
-        self.movement_index = -1
-
-        # Create movement variables
-        self.speed = speed
+        # Set positions on map
         self.current_position_on_map = [
             (self.rect.right // settings.TILE_SIZE) - 1,
             (self.rect.bottom // settings.TILE_SIZE) - 1
         ]
         self.new_position_on_map = list(self.current_position_on_map)
+
+        # Left hand wall follower path
+        self.wall_follower_path = []
+        self.refresh_obstacle_map(obstacle_map)
+        self.movement_index = -1
         self.set_new_direction()
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -99,13 +100,13 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         if self.is_moving:
             self.move()
 
-    def refresh_obstacle_map(self, obstacle_map, start_position=None):
+    def refresh_obstacle_map(self, obstacle_map):
         # Start position is current position
-        if start_position is None:
-            start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
+        start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
 
         # Generate a new path
         self.wall_follower_path = game_helper.get_wall_follower_path(obstacle_map, start_position, self.movement_vector)
+        # Reset movement index
         self.movement_index = 0
 
         # Can move only when is more than 1 tiles in path
