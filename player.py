@@ -39,7 +39,7 @@ class Player(CustomDrawSprite):
         self.previous_movement_direction = direction.Direction.RIGHT
         self.speed = speed
 
-        # Real position is required to store the real distance, which is then casted to integer
+        # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
@@ -217,7 +217,8 @@ class Player(CustomDrawSprite):
             # Moving obstacle
             for sprite in self.moving_obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
-                    if sprite.move_object(self.movement_direction):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction, self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites):
+                        # Obstacle has not been moved
                         if self.movement_vector.x > 0:
                             self.hit_box.right = sprite.hit_box.left
                         if self.movement_vector.x < 0:
@@ -238,7 +239,8 @@ class Player(CustomDrawSprite):
             # Moving obstacle
             for sprite in self.moving_obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
-                    if sprite.move_object(self.movement_direction):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction, self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites):
+                        # Obstacle has not been moved
                         if self.movement_vector.y > 0:
                             self.hit_box.bottom = sprite.hit_box.top
                         if self.movement_vector.y < 0:

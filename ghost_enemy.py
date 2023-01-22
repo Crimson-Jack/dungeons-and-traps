@@ -25,7 +25,7 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.new_position_on_map = list(self.current_position_on_map)
         self.set_new_direction()
 
-        # Real position is required to store the real distance, which is then casted to integer
+        # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
@@ -69,7 +69,7 @@ class GhostEnemy(ObstacleMapRefreshSprite):
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
-            print(f'pos: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
+            print(f'pos on the map: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
             self.set_new_direction()
 
     def set_new_direction(self):
@@ -81,11 +81,9 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         if self.movement_index < len(self.wall_follower_path) - 1:
             # Move to the next index
             self.movement_index += 1
-            print('Add movement')
         else:
             # Reset index - the loop is closed - start from the beginning
             self.movement_index = 0
-            print('Reset')
 
         # Get next position from the path
         next_position = self.wall_follower_path[self.movement_index]
@@ -96,8 +94,6 @@ class GhostEnemy(ObstacleMapRefreshSprite):
 
     def update(self):
         self.move()
-
-        #print(f'mov: {self.movement_index} pos: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
 
     def refresh_obstacle_map(self, obstacle_map, start_position=None):
         # Start position is current position

@@ -9,11 +9,13 @@ class Stone(MovingObstacle):
         super().__init__(image, position, groups, obstacle_map)
         # Note: inflate rectangle in y should have the same value as obstacles (wall)
         self.hit_box = self.rect.inflate(game_helper.calculate_ratio(-10), game_helper.calculate_ratio(-40))
-        
-    def move_object(self, movement_direction):
-        is_blocked = super().move_object(movement_direction)
 
-        if not is_blocked:
+    # Note: enemy_sprites, obstacle_sprites, moving_obstacle_sprites should be moved to the constructor
+    def move_obstacle_if_allowed(self, movement_direction, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
+        obstacle_has_been_moved = super().move_obstacle_if_allowed(movement_direction, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
+
+        if obstacle_has_been_moved:
+            # Adjust hit box
             self.hit_box.center = self.rect.center
 
-        return is_blocked
+        return obstacle_has_been_moved

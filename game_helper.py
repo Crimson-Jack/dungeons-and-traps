@@ -27,7 +27,6 @@ def get_wall_follower_path(obstacle_map, start_position, base_direction):
     path = []
 
     iteration = 0
-    print(len(obstacle_map) * len(obstacle_map[0]))
     while not is_end_of_path:
         next_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
 
@@ -49,7 +48,6 @@ def get_wall_follower_path(obstacle_map, start_position, base_direction):
 
         if iteration >= 2:
             is_end_of_path = True
-            print(f'it: {iteration}')
 
         if not is_end_of_path:
             if not obstacle_map[next_position[1]][next_position[0]] and obstacle_map[next_position_left[1]][next_position_left[0]]:
