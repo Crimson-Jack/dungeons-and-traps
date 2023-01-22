@@ -11,6 +11,8 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
+        self.is_moving = True
+
         self.direction = pygame.math.Vector2((1, 0))
 
         # Left hand wall follower path
@@ -93,16 +95,27 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.direction.y = next_position[1] - previous_position[1]
 
     def update(self):
-        self.move()
+        if self.is_moving:
+            self.move()
 
     def refresh_obstacle_map(self, obstacle_map, start_position=None):
         # Start position is current position
         if start_position is None:
             start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
+
         # Generate a new path
         self.wall_follower_path = game_helper.get_wall_follower_path(obstacle_map, start_position, self.direction)
         self.movement_index = 0
 
-        #TODO: Remove
+        # Can move only when is more than 1 tiles in path
+        if len(self.wall_follower_path) > 1:
+            self.is_moving = True
+            print('Ghost starts moving')
+        else:
+            self.is_moving = False
+            # TODO: Reset vector, based on the opening - how to do this?
+            print('Ghost stops moving')
+
+        # TODO: Remove after tests
         settings.wall_follower_path = self.wall_follower_path
 

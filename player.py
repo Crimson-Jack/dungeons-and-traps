@@ -217,7 +217,7 @@ class Player(CustomDrawSprite):
             # Moving obstacle
             for sprite in self.moving_obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
-                    if not sprite.move_obstacle_if_allowed(self.movement_direction, self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
                         # Obstacle has not been moved
                         if self.movement_vector.x > 0:
                             self.hit_box.right = sprite.hit_box.left
@@ -239,7 +239,7 @@ class Player(CustomDrawSprite):
             # Moving obstacle
             for sprite in self.moving_obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
-                    if not sprite.move_obstacle_if_allowed(self.movement_direction, self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
                         # Obstacle has not been moved
                         if self.movement_vector.y > 0:
                             self.hit_box.bottom = sprite.hit_box.top

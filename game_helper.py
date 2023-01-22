@@ -9,38 +9,50 @@ def calculate_ratio(value):
     return value * settings.TILE_SIZE / BASE_TILE_SIZE
 
 
-def get_wall_follower_path(obstacle_map, start_position, base_direction):
-    # Right direction
-    direction = [1, 0]
+def get_wall_follower_path(obstacle_map, start_position, base_movement_vector):
 
-    if base_direction == pygame.math.Vector2(1, 0):
-        direction = [1, 0]
-    elif base_direction == pygame.math.Vector2(-1, 0):
-        direction = [-1, 0]
-    elif base_direction == pygame.math.Vector2(0, 1):
-        direction = [0, 1]
-    elif base_direction == pygame.math.Vector2(0, -1):
-        direction = [0, -1]
+    path = []
+
+    # If all neighbours are obstacles - stop this function and return single tile path
+    tile_top = obstacle_map[start_position[1]-1][start_position[0]]
+    tile_bottom = obstacle_map[start_position[1]+1][start_position[0]]
+    tile_left = obstacle_map[start_position[1]][start_position[0]-1]
+    tile_right = obstacle_map[start_position[1]][start_position[0]+1]
+    if tile_top and tile_bottom and tile_left and tile_right:
+        path.append(start_position)
+        return path
+
+    # Set movement vector from base movement vector
+    if base_movement_vector == pygame.math.Vector2(1, 0):
+        movement_vector = [1, 0]
+    elif base_movement_vector == pygame.math.Vector2(-1, 0):
+        movement_vector = [-1, 0]
+    elif base_movement_vector == pygame.math.Vector2(0, 1):
+        movement_vector = [0, 1]
+    elif base_movement_vector == pygame.math.Vector2(0, -1):
+        movement_vector = [0, -1]
+    else:
+        # Default direction - right
+        movement_vector = [1, 0]
 
     current_position = start_position
     is_end_of_path = False
-    path = []
-
     iteration = 0
-    while not is_end_of_path:
-        next_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
 
-        # If Right direction
-        if direction == [1, 0]:
+    while not is_end_of_path:
+        next_position = [current_position[0] + movement_vector[0], current_position[1] + movement_vector[1]]
+
+        # If Right
+        if movement_vector == [1, 0]:
             next_position_left = [next_position[0], next_position[1] - 1]
-        # If Up direction
-        elif direction == [0, -1]:
+        # If Up
+        elif movement_vector == [0, -1]:
             next_position_left = [next_position[0] - 1, next_position[1]]
-        # Elif left direction
-        elif direction == [-1, 0]:
+        # Elif left
+        elif movement_vector == [-1, 0]:
             next_position_left = [next_position[0], next_position[1] + 1]
-        # Elif down direction
-        elif direction == [0, 1]:
+        # Elif down
+        elif movement_vector == [0, 1]:
             next_position_left = [next_position[0] + 1, next_position[1]]
 
         if len(path) > 0 and next_position == path[0]:
@@ -59,15 +71,15 @@ def get_wall_follower_path(obstacle_map, start_position, base_direction):
                 # Move
                 current_position = next_position
                 # Turn -90 degree
-                vector = pygame.math.Vector2(direction)
+                vector = pygame.math.Vector2(movement_vector)
                 new_vector = pygame.math.Vector2.rotate(vector, -90)
-                direction = [int(new_vector[0]), int(new_vector[1])]
+                movement_vector = [int(new_vector[0]), int(new_vector[1])]
                 # Add position to the path
                 path.append(current_position)
             elif obstacle_map[next_position[1]][next_position[0]]:
                 # Turn 90 degree
-                vector = pygame.math.Vector2(direction)
+                vector = pygame.math.Vector2(movement_vector)
                 new_vector = pygame.math.Vector2.rotate(vector, 90)
-                direction = [int(new_vector[0]), int(new_vector[1])]
+                movement_vector = [int(new_vector[0]), int(new_vector[1])]
 
     return path

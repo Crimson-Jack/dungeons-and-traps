@@ -4,12 +4,13 @@ import direction
 
 
 class MovingObstacle(pygame.sprite.Sprite):
-    def __init__(self, image, position, groups, obstacle_map):
+    def __init__(self, image, position, groups, obstacle_map_items, collision_sprites):
         super().__init__(groups)
         self.position = position
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.obstacle_map = obstacle_map
+        self.obstacle_map_items = obstacle_map_items
+        self.collision_sprites = collision_sprites
 
     def calculate_new_position(self, movement_direction):
         new_position_x, new_position_y = 0, 0
@@ -42,31 +43,21 @@ class MovingObstacle(pygame.sprite.Sprite):
 
         return [(new_position_x, new_position_y), (new_map_x, new_map_y)]
 
-    # Note: enemy_sprites, obstacle_sprites, moving_obstacle_sprites should be moved to the constructor
-    def check_if_destination_tile_is_empty(self, new_position_x, new_position_y, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
-        for sprite in enemy_sprites:
-            source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE, settings.TILE_SIZE)
-            if sprite.hit_box.colliderect(source_hit_box):
-                return False
-        for sprite in obstacle_sprites:
-            source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE, settings.TILE_SIZE)
-            if sprite.hit_box.colliderect(source_hit_box):
-                return False
-        for sprite in moving_obstacle_sprites:
-            source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE, settings.TILE_SIZE)
-            if sprite.hit_box.colliderect(source_hit_box):
-                return False
-
+    def check_if_destination_tile_is_empty(self, new_position_x, new_position_y):
+        for collision_sprite_group in self.collision_sprites:
+            for sprite in collision_sprite_group:
+                source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE,
+                                                  settings.TILE_SIZE)
+                if sprite.hit_box.colliderect(source_hit_box):
+                    return False
         return True
 
-    # Note: enemy_sprites, obstacle_sprites, moving_obstacle_sprites should be moved to the constructor
-    def move_obstacle_if_allowed(self, movement_direction, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
+    def move_obstacle_if_allowed(self, movement_direction):
         # Get old position
         old_position_x, old_position_y = self.position[0], self.position[1]
         # Calculate old position on the map
         old_map_x = old_position_x // settings.TILE_SIZE
         old_map_y = old_position_y // settings.TILE_SIZE
-
         # Get new position
         [
             (new_position_x, new_position_y),
@@ -74,15 +65,15 @@ class MovingObstacle(pygame.sprite.Sprite):
         ] = self.calculate_new_position(movement_direction)
 
         # Execute the movement if it's allowed
-        if self.check_if_destination_tile_is_empty(new_position_x, new_position_y, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
+        if self.check_if_destination_tile_is_empty(new_position_x, new_position_y):
             # Set new coordinates
             self.position = [new_position_x, new_position_y]
             # Change position
             self.rect.x = int(self.position[0])
             self.rect.y = int(self.position[1])
             # Change obstacle map
-            self.obstacle_map[old_map_y][old_map_x] = 0
-            self.obstacle_map[new_map_y][new_map_x] = 1
+            self.obstacle_map_items[old_map_y][old_map_x] = 0
+            self.obstacle_map_items[new_map_y][new_map_x] = 1
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(settings.REFRESH_OBSTACLE_MAP_EVENT))
             # Obstacle has been moved
