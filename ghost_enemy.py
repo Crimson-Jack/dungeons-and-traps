@@ -12,8 +12,7 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.hit_box = self.rect
 
         self.is_moving = True
-
-        self.direction = pygame.math.Vector2((1, 0))
+        self.movement_vector = pygame.math.Vector2((1, 0))
 
         # Left hand wall follower path
         self.wall_follower_path = []
@@ -21,9 +20,11 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.movement_index = -1
 
         # Create movement variables
-        #self.direction = pygame.math.Vector2((1, 0))
         self.speed = speed
-        self.current_position_on_map = [(self.rect.right // settings.TILE_SIZE) - 1, (self.rect.bottom // settings.TILE_SIZE) - 1]
+        self.current_position_on_map = [
+            (self.rect.right // settings.TILE_SIZE) - 1,
+            (self.rect.bottom // settings.TILE_SIZE) - 1
+        ]
         self.new_position_on_map = list(self.current_position_on_map)
         self.set_new_direction()
 
@@ -33,8 +34,8 @@ class GhostEnemy(ObstacleMapRefreshSprite):
 
     def move(self):
         # Calculate real y position
-        self.real_x_position += float(self.direction.x * self.speed)
-        self.real_y_position += float(self.direction.y * self.speed)
+        self.real_x_position += float(self.movement_vector.x * self.speed)
+        self.real_y_position += float(self.movement_vector.y * self.speed)
 
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
@@ -90,9 +91,9 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         # Get next position from the path
         next_position = self.wall_follower_path[self.movement_index]
 
-        # Calculate new direction vector based on previous and next position
-        self.direction.x = next_position[0] - previous_position[0]
-        self.direction.y = next_position[1] - previous_position[1]
+        # Calculate new movement vector based on previous and next position
+        self.movement_vector.x = next_position[0] - previous_position[0]
+        self.movement_vector.y = next_position[1] - previous_position[1]
 
     def update(self):
         if self.is_moving:
@@ -104,7 +105,7 @@ class GhostEnemy(ObstacleMapRefreshSprite):
             start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
 
         # Generate a new path
-        self.wall_follower_path = game_helper.get_wall_follower_path(obstacle_map, start_position, self.direction)
+        self.wall_follower_path = game_helper.get_wall_follower_path(obstacle_map, start_position, self.movement_vector)
         self.movement_index = 0
 
         # Can move only when is more than 1 tiles in path
@@ -113,7 +114,7 @@ class GhostEnemy(ObstacleMapRefreshSprite):
             print('Ghost starts moving')
         else:
             self.is_moving = False
-            # TODO: Reset vector, based on the opening - how to do this?
+            # TODO: Reset movement vector, based on the opening - how to do this?
             print('Ghost stops moving')
 
         # TODO: Remove after tests
