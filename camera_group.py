@@ -1,5 +1,6 @@
 import pygame
 import custom_draw_sprite
+import obstacle_map_refresh_sprite
 import settings
 
 
@@ -32,6 +33,8 @@ class CameraGroup(pygame.sprite.Group):
         # Calculate map offset
         self.set_map_offset(player)
 
+        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
+
         # Draw each tile with an offset on game_surface
         for sprite in self.sprites():
             if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
@@ -45,3 +48,21 @@ class CameraGroup(pygame.sprite.Group):
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
                 pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
+
+
+                # TODO: Remove section below
+                '''
+                if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
+                    text = basic_font.render(f'{sprite.rect.top} {sprite.rect.left}', True, 'Black')
+                    self.game_surface.blit(text, new_rect.topleft)
+                '''
+
+                top = sprite.rect.top // settings.TILE_SIZE
+                left = sprite.rect.left // settings.TILE_SIZE
+
+                if [left, top] in settings.wall_follower_path:
+                    find_index = list.index(settings.wall_follower_path, [left, top])
+                    #text_position = basic_font.render(f'{top} {left}', True, 'Black')
+                    text_index = basic_font.render(f'{find_index}', True, 'Black')
+                    self.game_surface.blit(text_index, new_rect.topleft)
+

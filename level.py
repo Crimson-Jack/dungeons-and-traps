@@ -1,8 +1,12 @@
 import pygame
+
+import obstacle_map_refresh_sprite
 import settings
 import game_helper
 from pytmx.util_pygame import load_pygame
+from obstacle_map import ObstacleMap
 from wall import Wall
+from stone import Stone
 from ground import Ground
 from diamond import Diamond
 from spider_enemy import SpiderEnemy
@@ -32,14 +36,18 @@ class Level:
         # Set up functional groups
         self.exit_points = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
+        self.moving_obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
 
         # Set game state
         self.game_state = game_state
 
-        # Set obstacle map
-        self.obstacle_map = self.tmx_data.get_layer_by_name('obstacle').data
+        # Create obstacle map and combine all layers with obstacles
+        self.obstacle_map = ObstacleMap([
+            self.tmx_data.get_layer_by_name('obstacle').data,
+            self.tmx_data.get_layer_by_name('moving-obstacle').data
+        ])
 
         # Create sprites
         self.create_sprites()
@@ -72,8 +80,8 @@ class Level:
 
             # Add player to visible group
             return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed,
-                          self.exit_points, self.obstacle_sprites, self.collectable_sprites, self.enemy_sprites,
-                          self.game_state)
+                          self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
+                          self.collectable_sprites, self.enemy_sprites, self.game_state)
 
     def create_exit_point(self):
         exit_object = self.tmx_data.get_object_by_name('exit-point')
@@ -101,6 +109,17 @@ class Level:
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and obstacle sprites group
             Wall(image, (x, y), [self.middle_layer_regular_sprites, self.obstacle_sprites])
+
+        moving_obstacle_layer = self.tmx_data.get_layer_by_name('moving-obstacle')
+        for tile_x, tile_y, image in moving_obstacle_layer.tiles():
+            x = tile_x * settings.TILE_SIZE
+            y = tile_y * settings.TILE_SIZE
+            # Create collision sprites list for moving obstacles
+            collision_sprites = [self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites, self.collectable_sprites]
+            # Add tile to visible and obstacle sprites group
+            # Note: stone can be moved, so the list instead of tuple for position is used
+            Stone(image, [x, y], [self.middle_layer_regular_sprites, self.moving_obstacle_sprites],
+                  self.obstacle_map.items, collision_sprites)
 
         collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
         for tile_x, tile_y, image in collectable_diamond_layer.tiles():
@@ -144,7 +163,7 @@ class Level:
                     speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
 
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
-                           speed, self.obstacle_map, (tile_x, tile_y))
+                           speed, self.obstacle_map.items)
 
     def run(self):
         # Run an update method foreach sprite from the group
@@ -166,6 +185,12 @@ class Level:
         # Read inputs and display variables if debugger is enabled
         settings.debugger.input()
         settings.debugger.show()
+
+    def refresh_obstacle_map(self):
+        # Refresh obstacle map if is required
+        for sprite in self.enemy_sprites.sprites():
+            if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
+                sprite.refresh_obstacle_map()
 
     def show_exit_point(self):
         self.blast_effect.run()

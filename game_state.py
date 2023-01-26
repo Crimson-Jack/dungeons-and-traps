@@ -33,7 +33,7 @@ class GameState:
 
     def level_completed(self):
         if self.diamonds == self.required_diamonds:
-            # NOTE: Only for temporary solution
+            # Note: Only for temporary solution
             self.game_over = True
             pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
 

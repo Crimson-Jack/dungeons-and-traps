@@ -1,5 +1,4 @@
 import pygame
-
 import direction
 import settings
 import game_helper
@@ -9,7 +8,7 @@ from custom_draw_sprite import CustomDrawSprite
 
 class Player(CustomDrawSprite):
     def __init__(self, image, position, groups, speed, exit_points, obstacle_sprites,
-                 collectable_sprites, enemy_sprites, game_state):
+                 moving_obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
 
         # Sprite animation
@@ -40,12 +39,13 @@ class Player(CustomDrawSprite):
         self.previous_movement_direction = direction.Direction.RIGHT
         self.speed = speed
 
-        # Real position is required to store the real distance, which is then casted to integer
+        # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
         # Create groups of collision
         self.exit_points = exit_points
+        self.moving_obstacle_sprites = moving_obstacle_sprites
         self.obstacle_sprites = obstacle_sprites
         self.collectable_sprites = collectable_sprites
         self.enemy_sprites = enemy_sprites
@@ -203,8 +203,9 @@ class Player(CustomDrawSprite):
                     self.collided_with_enemy = True
                     self.game_state.decrease_energy()
 
-        # Check collision with obstacle sprites
+        # Check collision with obstacle and moving obstacle sprites
         if direction == 'horizontal':
+            # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
                     if self.movement_vector.x > 0:
@@ -213,7 +214,20 @@ class Player(CustomDrawSprite):
                         self.hit_box.left = sprite.hit_box.right
                     self.real_x_position = float(self.hit_box.x)
                     self.real_y_position = float(self.hit_box.y)
+            # Moving obstacle
+            for sprite in self.moving_obstacle_sprites:
+                if sprite.hit_box.colliderect(self.hit_box):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
+                        # Obstacle has not been moved
+                        if self.movement_vector.x > 0:
+                            self.hit_box.right = sprite.hit_box.left
+                        if self.movement_vector.x < 0:
+                            self.hit_box.left = sprite.hit_box.right
+                        self.real_x_position = float(self.hit_box.x)
+                        self.real_y_position = float(self.hit_box.y)
+
         if direction == 'vertical':
+            # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
                     if self.movement_vector.y > 0:
@@ -222,6 +236,17 @@ class Player(CustomDrawSprite):
                         self.hit_box.top = sprite.hit_box.bottom
                     self.real_x_position = float(self.hit_box.x)
                     self.real_y_position = float(self.hit_box.y)
+            # Moving obstacle
+            for sprite in self.moving_obstacle_sprites:
+                if sprite.hit_box.colliderect(self.hit_box):
+                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
+                        # Obstacle has not been moved
+                        if self.movement_vector.y > 0:
+                            self.hit_box.bottom = sprite.hit_box.top
+                        if self.movement_vector.y < 0:
+                            self.hit_box.top = sprite.hit_box.bottom
+                        self.real_x_position = float(self.hit_box.x)
+                        self.real_y_position = float(self.hit_box.y)
 
     def update(self):
         self.input()

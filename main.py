@@ -71,6 +71,9 @@ class Game:
                 if event.type == settings.GAME_OVER_EVENT:
                     # Game over - show the end panel
                     self.level.game_over()
+                if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
+                    # Refresh obstacle map after modification
+                    self.level.refresh_obstacle_map()
 
             if not self.game_state.game_over:
                 # Refresh game surface
