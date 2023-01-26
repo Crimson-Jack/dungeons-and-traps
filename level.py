@@ -190,7 +190,7 @@ class Level:
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
             if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
-                sprite.refresh_obstacle_map(self.obstacle_map.items)
+                sprite.refresh_obstacle_map()
 
     def show_exit_point(self):
         self.blast_effect.run()

@@ -23,6 +23,3 @@ REFRESH_OBSTACLE_MAP_EVENT = pygame.USEREVENT + 6
 
 # Create debugger
 debugger = Debug()
-
-# TODO: Remove
-wall_follower_path = None
