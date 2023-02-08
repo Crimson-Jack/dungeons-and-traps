@@ -147,7 +147,7 @@ class Level:
                     net_length = enemy_spider.properties.get('net_length')
 
                 SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
-                            speed, net_length)
+                            speed, net_length, self.moving_obstacle_sprites)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
         for enemy_ghost in enemy_ghost_layer:

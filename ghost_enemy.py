@@ -12,7 +12,6 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.hit_box = self.rect
 
         # Create movement variables
-        self.is_moving = True
         self.speed = speed
         self.default_movement_vector = pygame.math.Vector2((1, 0))
         self.movement_vector = pygame.math.Vector2(self.default_movement_vector)
@@ -25,8 +24,11 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         ]
         self.new_position_on_map = list(self.current_position_on_map)
 
+        # Set is_moving flag
+        self.is_moving = self.check_is_moving((self.current_position_on_map[0], self.current_position_on_map[1]))
         # Set movement vector
-        self.set_movement_vector()
+        if self.is_moving:
+            self.set_movement_vector()
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
