@@ -28,7 +28,12 @@ class SpiderEnemy(CustomDrawSprite):
 
         # Cast real position to integer and check the collision
         self.hit_box.y = int(self.real_y_position)
-        self.collision()
+        if not self.collision():
+            # Start position and net length
+            if self.hit_box.y > self.min_y_position + self.max_net_length:
+                self.movement_vector.y = self.movement_vector.y * -1
+            elif self.hit_box.y < self.min_y_position:
+                self.movement_vector.y = self.movement_vector.y * -1
 
         # Set the movement offset
         self.rect.center = self.hit_box.center
@@ -47,6 +52,7 @@ class SpiderEnemy(CustomDrawSprite):
         game_surface.blit(self.image, offset_position)
 
     def collision(self):
+        is_collision_detected = False
         # Moving obstacle
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
@@ -54,14 +60,8 @@ class SpiderEnemy(CustomDrawSprite):
                     self.hit_box.bottom = sprite.hit_box.top
                 if self.movement_vector.y < 0:
                     self.hit_box.top = sprite.hit_box.bottom
+                # Change movement vector
                 self.movement_vector.y = self.movement_vector.y * -1
                 self.real_y_position = float(self.hit_box.y)
-            # Movement characteristic
-            elif self.hit_box.y > self.min_y_position + self.max_net_length:
-                self.movement_vector.y = self.movement_vector.y * -1
-            elif self.hit_box.y < self.min_y_position:
-                self.movement_vector.y = self.movement_vector.y * -1
-
-
-
-
+                is_collide = True
+        return is_collision_detected
