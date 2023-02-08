@@ -63,5 +63,5 @@ class SpiderEnemy(CustomDrawSprite):
                 # Change movement vector
                 self.movement_vector.y = self.movement_vector.y * -1
                 self.real_y_position = float(self.hit_box.y)
-                is_collide = True
+                is_collision_detected = True
         return is_collision_detected
