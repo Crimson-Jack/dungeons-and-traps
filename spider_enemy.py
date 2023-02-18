@@ -84,7 +84,7 @@ class SpiderEnemy(CustomDrawSprite):
 
     def collision(self):
         is_collision_detected = False
-        
+
         # Moving obstacle
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
