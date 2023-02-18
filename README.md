@@ -3,7 +3,7 @@ Simple maze game with a view - from the top. The hero can move blocks and explor
 The goal: teaching how to create a simple game, Pygame exploratory, checking features.
 
 ### How to run the game?
-Python 3.10.x
+Python 3.11.x
 
 The following command may be useful to import all required libraries. The virtual environment is preferred:
 
@@ -22,8 +22,9 @@ Run the game:
 * Support for .tmx and .tsx map files.
   * Custom properties for objects and layers, such as: sprite's speed, read from the map.
 * Player's collisions with: obstacles, items and enemies.
-  * Enemy: Spider with simple "up/down" path.
+  * Enemy: Spider with "up/down" path. Movement is configurable: the pause time, when the spider is at the top, can be defined in the motion_schedule tuple, eg. "30, 10, 50" (cycles). (means: wait 30 cycles, move, wait 10 cycle, move, wait 50 cycles, move to the first step).
   * Enemy: Ghost with "wall follower" path.
+* Moving obstacles like stones. Moving obstacles affect enemy movement paths.
 * Simple game logic: energy, collectables, win and game over.
 
 #### Inspirations and interesting links:
