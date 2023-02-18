@@ -74,7 +74,8 @@ class GhostEnemy(ObstacleMapRefreshSprite):
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
-            print(f'pos on the map: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
+            # TODO: Remove or add log function
+            #print(f'pos on the map: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
             self.set_movement_vector()
 
     def set_movement_vector(self):
