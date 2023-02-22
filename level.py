@@ -119,7 +119,7 @@ class Level:
             # Add tile to visible and obstacle sprites group
             # Note: stone can be moved, so the list instead of tuple for position is used
             Stone(image, [x, y], [self.middle_layer_regular_sprites, self.moving_obstacle_sprites],
-                  self.obstacle_map.items, collision_sprites)
+                  self.obstacle_map.items, collision_sprites, self.game_state)
 
         collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
         for tile_x, tile_y, image in collectable_diamond_layer.tiles():

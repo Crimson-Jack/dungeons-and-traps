@@ -8,8 +8,10 @@ class GameState:
         self.game_over = False
         self.required_diamonds = 0
         self.diamonds = 0
-        self.max_energy_value = 800
-        self.energy = self.max_energy_value
+        self.max_energy = 800
+        self.energy = self.max_energy
+        self.max_power = 100
+        self.power = 0
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
 
@@ -30,6 +32,14 @@ class GameState:
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
         else:
             pygame.event.post(pygame.event.Event(settings.DECREASE_ENERGY_EVENT))
+
+    def change_power(self, value):
+        self.power = value
+        if self.power < 0:
+            self.power = 0
+        if self.power > self.max_power:
+            self.power = self.max_power
+        pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
 
     def level_completed(self):
         if self.diamonds == self.required_diamonds:

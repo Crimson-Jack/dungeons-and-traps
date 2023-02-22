@@ -4,18 +4,19 @@ import direction
 
 
 class MovingObstacle(pygame.sprite.Sprite):
-    def __init__(self, image, position, groups, obstacle_map_items, collision_sprites):
+    def __init__(self, image, position, groups, obstacle_map_items, collision_sprites, game_state):
         super().__init__(groups)
         self.position = position
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.obstacle_map_items = obstacle_map_items
         self.collision_sprites = collision_sprites
+        self.game_state = game_state
 
         # Power variables to move obstacle
         self.power = 0
         self.power_step = 5
-        self.power_needed_to_move_obstacle = 150
+        self.power_needed_to_move_obstacle = self.game_state.max_power
 
     def calculate_new_position(self, movement_direction):
         new_position_x, new_position_y = 0, 0
@@ -95,13 +96,17 @@ class MovingObstacle(pygame.sprite.Sprite):
 
     def decrease_power(self):
         if self.power > 0:
-            self.power -= 1
+            self.power -= self.power_step // 2
+            self.game_state.change_power(self.power)
 
     def increase_power(self):
-        self.power += self.power_step
+        if self.power <= self.power_needed_to_move_obstacle:
+            self.power += self.power_step
+            self.game_state.change_power(self.power)
 
     def reset_power(self):
-        self.power = 0
+        self.power = self.game_state.max_power // 3
+        self.game_state.change_power(self.power)
 
     def update(self):
         super().update()
