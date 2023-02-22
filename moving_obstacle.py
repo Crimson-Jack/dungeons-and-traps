@@ -12,6 +12,11 @@ class MovingObstacle(pygame.sprite.Sprite):
         self.obstacle_map_items = obstacle_map_items
         self.collision_sprites = collision_sprites
 
+        # Power variables to move obstacle
+        self.power = 0
+        self.power_step = 5
+        self.power_needed_to_move_obstacle = 150
+
     def calculate_new_position(self, movement_direction):
         new_position_x, new_position_y = 0, 0
 
@@ -53,6 +58,9 @@ class MovingObstacle(pygame.sprite.Sprite):
         return True
 
     def move_obstacle_if_allowed(self, movement_direction):
+        # Increase power
+        self.increase_power()
+
         # Get old position
         old_position_x, old_position_y = self.position[0], self.position[1]
         # Calculate old position on the map
@@ -66,20 +74,35 @@ class MovingObstacle(pygame.sprite.Sprite):
 
         # Execute the movement if it's allowed
         if self.check_if_destination_tile_is_empty(new_position_x, new_position_y):
-            # Set new coordinates
-            self.position = [new_position_x, new_position_y]
-            # Change position
-            self.rect.x = int(self.position[0])
-            self.rect.y = int(self.position[1])
-            # Change obstacle map
-            self.obstacle_map_items[old_map_y][old_map_x] = 0
-            self.obstacle_map_items[new_map_y][new_map_x] = 1
-            # Raise event to refresh obstacle map
-            pygame.event.post(pygame.event.Event(settings.REFRESH_OBSTACLE_MAP_EVENT))
-            # Obstacle has been moved
-            return True
+            if self.power > self.power_needed_to_move_obstacle:
+                # Set new coordinates
+                self.position = [new_position_x, new_position_y]
+                # Change position
+                self.rect.x = int(self.position[0])
+                self.rect.y = int(self.position[1])
+                # Change obstacle map
+                self.obstacle_map_items[old_map_y][old_map_x] = 0
+                self.obstacle_map_items[new_map_y][new_map_x] = 1
+                # Raise event to refresh obstacle map
+                pygame.event.post(pygame.event.Event(settings.REFRESH_OBSTACLE_MAP_EVENT))
+                # Reset power
+                self.reset_power()
+                # Obstacle has been moved
+                return True
         else:
             # Obstacle has not been moved
             return False
 
+    def decrease_power(self):
+        if self.power > 0:
+            self.power -= 1
 
+    def increase_power(self):
+        self.power += self.power_step
+
+    def reset_power(self):
+        self.power = 0
+
+    def update(self):
+        super().update()
+        self.decrease_power()
