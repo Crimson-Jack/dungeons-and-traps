@@ -11,6 +11,7 @@ from ground import Ground
 from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
+from fire_flame_enemy import FireFlameEnemy
 from player import Player
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
@@ -171,6 +172,34 @@ class Level:
 
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                            speed, self.obstacle_map.items)
+
+        enemy_enemy_fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
+        for enemy_fire_flame in enemy_enemy_fire_flame_layer:
+            if enemy_fire_flame.visible:
+                tile_x = int(enemy_fire_flame.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_fire_flame.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
+
+                if enemy_fire_flame.properties.get('speed') is None:
+                    speed = float(game_helper.calculate_ratio(enemy_enemy_fire_flame_layer.properties.get('speed')))
+                else:
+                    speed = float(game_helper.calculate_ratio(enemy_fire_flame.properties.get('speed')))
+
+                if enemy_fire_flame.properties.get('fire_length') is None:
+                    fire_length = int(enemy_enemy_fire_flame_layer.properties.get('fire_length'))
+                else:
+                    fire_length = int(enemy_fire_flame.properties.get('fire_length'))
+
+                if enemy_fire_flame.properties.get('motion_schedule') is None:
+                    motion_schedule = enemy_enemy_fire_flame_layer.properties.get('motion_schedule')
+                else:
+                    motion_schedule = enemy_fire_flame.properties.get('motion_schedule')
+                # Convert string to tuple
+                motion_schedule = tuple(map(int, motion_schedule.split(',')))
+
+                FireFlameEnemy(enemy_fire_flame.image, (x, y), [self.top_layer_sprites, self.enemy_sprites], speed,
+                                fire_length, motion_schedule, self.moving_obstacle_sprites)
 
     def run(self):
         # Run an update method foreach sprite from the group
