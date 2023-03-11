@@ -1,6 +1,6 @@
 import pygame
 import settings
-import energy_bar
+import bar
 
 
 class Dashboard:
@@ -11,14 +11,21 @@ class Dashboard:
 
         self.accent_color = (155, 155, 155)
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
-        self.margin = 25
+        self.margin = 20
 
-        # Set energy bar
+        # Create energy bar
         bar_width = settings.WIDTH - 2 * self.margin
-        bar_height = 35
+        bar_height = 25
         bar_left = self.margin
-        bar_top = settings.DASHBOARD_HEIGHT - self.margin - bar_height
-        self.energy_bar = energy_bar.EnergyBar(dashboard_surface, (bar_left, bar_top), bar_width, bar_height, self.game_state.energy)
+        bar_top = 3 * self.margin
+        self.energy_bar = bar.Bar(dashboard_surface, (bar_left, bar_top), bar_width, bar_height,
+                                  self.game_state.max_energy, 'Energy')
+        # Create power bar
+        bar_width = settings.WIDTH // 2 - 2 * self.margin
+        bar_height = 25
+        bar_top = 5 * self.margin
+        self.power_bar = bar.Bar(dashboard_surface, (bar_left, bar_top), bar_width, bar_height,
+                                 self.game_state.max_power, None, (102, 51, 0))
 
     def draw(self):
         # Diamonds
@@ -27,6 +34,9 @@ class Dashboard:
 
         # Energy bar
         self.energy_bar.draw(self.game_state.energy)
+
+        # Power bar
+        self.power_bar.draw(self.game_state.power)
 
         # Blit dashboard to the main screen
         self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))

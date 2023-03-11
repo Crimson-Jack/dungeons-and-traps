@@ -14,7 +14,7 @@ class SpiderEnemy(CustomDrawSprite):
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((0, 1))
         self.speed = speed
-        self.min_y_position = self.rect.topleft[1]
+        self.min_y_position = self.rect.top
         self.max_net_length = settings.TILE_SIZE * net_length
 
         # Create motion variables

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="21">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="27">
  <tileset firstgid="1" source="../tsx/tilemap.tsx"/>
  <tileset firstgid="145" source="../tsx/single-wall.tsx"/>
  <layer id="1" name="ground" width="30" height="20">
@@ -28,9 +28,9 @@
  </layer>
  <objectgroup id="16" name="major-game-item">
   <object id="14" name="exit-point" gid="61" x="448" y="32" width="16" height="16"/>
-  <object id="15" name="player" gid="98" x="16" y="48" width="16" height="16">
+  <object id="23" name="player" gid="134" x="16" y="48" width="16" height="16">
    <properties>
-    <property name="speed" type="int" value="8"/>
+    <property name="speed" type="float" value="8"/>
    </properties>
   </object>
  </objectgroup>
@@ -39,9 +39,9 @@
 156,149,149,149,149,149,149,147,149,147,147,149,149,147,149,149,149,149,149,149,149,149,150,149,149,149,149,147,149,146,
 148,0,0,0,0,0,0,148,0,156,157,0,0,148,0,0,0,0,0,0,0,0,148,0,0,0,0,148,0,148,
 148,0,0,0,0,0,0,148,0,153,157,0,0,148,0,65,0,66,0,0,148,0,148,0,0,0,0,148,0,148,
-148,0,0,0,0,0,0,148,0,0,159,0,0,148,0,0,0,0,65,0,148,0,148,0,0,0,0,148,0,148,
+148,0,0,0,0,0,138,148,0,0,159,0,0,148,0,0,0,0,65,0,148,0,148,0,0,0,0,148,0,148,
 148,0,0,0,0,0,0,148,0,0,0,0,0,148,0,0,66,0,0,0,148,0,148,0,0,0,0,148,0,148,
-148,0,0,0,0,0,0,148,0,66,0,0,160,150,152,0,0,65,0,0,148,0,148,0,0,0,0,148,0,148,
+148,0,0,0,0,0,138,148,0,66,0,0,160,150,152,0,0,65,0,0,148,0,148,0,0,0,0,148,0,148,
 148,0,0,0,0,0,0,148,0,0,65,0,0,148,0,65,0,0,0,0,148,0,148,0,0,0,0,148,0,148,
 148,0,0,0,0,0,0,148,0,66,0,0,0,148,0,0,0,0,0,0,159,0,153,149,47,48,149,154,0,148,
 148,0,0,0,0,0,0,159,0,0,0,151,0,148,0,160,149,146,0,151,0,0,0,0,0,0,0,0,0,148,
@@ -65,7 +65,7 @@
 0,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,133,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,133,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -137,6 +137,27 @@
      <property name="motion_schedule" value="50, 0, 80"/>
      <property name="net_length" type="int" value="2"/>
      <property name="speed" type="float" value="8"/>
+    </properties>
+   </object>
+  </objectgroup>
+  <objectgroup id="18" name="enemy-fire-flame">
+   <properties>
+    <property name="fire_length" type="int" value="3"/>
+    <property name="motion_schedule" value="0"/>
+    <property name="speed" type="float" value="1"/>
+   </properties>
+   <object id="24" name="enemy-fire-flame-0" gid="135" x="96" y="96" width="16" height="16">
+    <properties>
+     <property name="fire_length" value="5"/>
+     <property name="motion_schedule" value="30, 0, 50"/>
+     <property name="speed" type="float" value="8"/>
+    </properties>
+   </object>
+   <object id="25" name="enemy-fire-flame-1" gid="135" x="96" y="64" width="16" height="16">
+    <properties>
+     <property name="fire_length" value="3"/>
+     <property name="motion_schedule" value="50, 100"/>
+     <property name="speed" type="float" value="10"/>
     </properties>
    </object>
   </objectgroup>

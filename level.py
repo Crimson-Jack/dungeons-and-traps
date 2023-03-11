@@ -11,6 +11,7 @@ from ground import Ground
 from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
+from fire_flame_enemy import FireFlameEnemy
 from player import Player
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
@@ -30,6 +31,7 @@ class Level:
 
         # Set up visible groups
         self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
+        self.bottom_layer_regular_sprites = CameraGroup(game_surface, size_of_map)
         self.middle_layer_regular_sprites = CameraGroupWithYSort(game_surface, size_of_map)
         self.top_layer_sprites = CameraGroup(game_surface, size_of_map)
 
@@ -119,7 +121,7 @@ class Level:
             # Add tile to visible and obstacle sprites group
             # Note: stone can be moved, so the list instead of tuple for position is used
             Stone(image, [x, y], [self.middle_layer_regular_sprites, self.moving_obstacle_sprites],
-                  self.obstacle_map.items, collision_sprites)
+                  self.obstacle_map.items, collision_sprites, self.game_state)
 
         collectable_diamond_layer = self.tmx_data.get_layer_by_name('collectable-diamond')
         for tile_x, tile_y, image in collectable_diamond_layer.tiles():
@@ -172,8 +174,38 @@ class Level:
                 GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                            speed, self.obstacle_map.items)
 
+        enemy_fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
+        for enemy_fire_flame in enemy_fire_flame_layer:
+            if enemy_fire_flame.visible:
+                tile_x = int(enemy_fire_flame.x // self.tmx_data.tilewidth)
+                tile_y = int(enemy_fire_flame.y // self.tmx_data.tileheight)
+                x = tile_x * settings.TILE_SIZE
+                y = tile_y * settings.TILE_SIZE
+
+                if enemy_fire_flame.properties.get('speed') is None:
+                    speed = float(game_helper.calculate_ratio(enemy_fire_flame_layer.properties.get('speed')))
+                else:
+                    speed = float(game_helper.calculate_ratio(enemy_fire_flame.properties.get('speed')))
+
+                if enemy_fire_flame.properties.get('fire_length') is None:
+                    fire_length = int(enemy_fire_flame_layer.properties.get('fire_length'))
+                else:
+                    fire_length = int(enemy_fire_flame.properties.get('fire_length'))
+
+                if enemy_fire_flame.properties.get('motion_schedule') is None:
+                    motion_schedule = enemy_fire_flame_layer.properties.get('motion_schedule')
+                else:
+                    motion_schedule = enemy_fire_flame.properties.get('motion_schedule')
+                # Convert string to tuple
+                motion_schedule = tuple(map(int, motion_schedule.split(',')))
+
+                FireFlameEnemy(enemy_fire_flame.image, (x, y), [self.bottom_layer_regular_sprites, self.enemy_sprites], speed,
+                                fire_length, motion_schedule, self.moving_obstacle_sprites)
+
     def run(self):
         # Run an update method foreach sprite from the group
+        # NOTE: bottom_layer_background_sprites is static
+        self.bottom_layer_regular_sprites.update()
         self.middle_layer_regular_sprites.update()
         self.top_layer_sprites.update()
         # Run an update method for effects
@@ -181,6 +213,7 @@ class Level:
 
         # Draw all visible sprites
         self.bottom_layer_background_sprites.custom_draw(self.player)
+        self.bottom_layer_regular_sprites.custom_draw(self.player)
         self.middle_layer_regular_sprites.custom_draw(self.player)
         self.top_layer_sprites.custom_draw(self.player)
         # Draw effects
