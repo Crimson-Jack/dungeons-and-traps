@@ -30,24 +30,21 @@ class FireFlameEnemy(CustomDrawSprite):
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
 
+        # Moving obstacles
+        self.moving_obstacle_sprites = moving_obstacle_sprites
+
     def get_merged_image(self, count):
         base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
-        merged = pygame.surface.Surface((settings.TILE_SIZE*count, settings.TILE_SIZE))
-        merged = merged.convert_alpha()
-        merged.fill((0, 0, 0, 0))
+        merged_image = pygame.surface.Surface((settings.TILE_SIZE*count, settings.TILE_SIZE))
+        merged_image = merged_image.convert_alpha()
+        merged_image.fill((0, 0, 0, 0))
 
         for index in range(count):
-            merged.blit(base_image, (settings.TILE_SIZE * index, 0))
+            merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 
-        return merged
+        return merged_image
 
     def custom_draw(self, game_surface, offset):
-        # Draw a fire (line)
-        start_position = pygame.Vector2((self.rect.right, self.rect.centery)) + offset
-        end_position = pygame.Vector2((self.max_right_flame_position, self.rect.centery)) + offset
-        if start_position.x < end_position.x:
-            pygame.draw.line(game_surface, (247, 75, 75), start_position, end_position, 20)
-
         # Draw sprite
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
@@ -56,34 +53,41 @@ class FireFlameEnemy(CustomDrawSprite):
         # Calculate real y position
         self.real_x_position += float(self.movement_vector.x * self.speed)
 
-        # Start position and fire length
-        if self.real_x_position < self.max_left_flame_position - self.max_fire_length:
-            self.real_x_position = self.max_left_flame_position - self.max_fire_length
-            self.movement_vector.x = self.movement_vector.x * -1
-        elif self.real_x_position > self.max_left_flame_position:
-            self.real_x_position = self.max_left_flame_position
-            self.movement_vector.x = self.movement_vector.x * -1
-            # Stop the moving
-            self.is_moving = False
+        if not self.collision():
+            # Check: start position and fire flame length
+            if self.real_x_position < self.max_left_flame_position - self.max_fire_length:
+                self.movement_vector.x = self.movement_vector.x * -1
+            elif self.real_x_position > self.max_left_flame_position:
+                self.movement_vector.x = self.movement_vector.x * -1
+                # Stop the moving
+                self.is_moving = False
 
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
 
-        # Create a new image
+        # Set the movement offset
+        self.rect.center = self.hit_box.center
+
+        # Adjust offset
+        # This is necessary for offsets that are not TILE_SIZE dividers
+        x_remainder = self.rect.right % settings.TILE_SIZE
+
+        if x_remainder < self.speed:
+            self.hit_box.x = self.hit_box.x - x_remainder
+            self.rect.center = self.hit_box.center
+
+        # Recognize the moment when fire flame moves to a new area
         if self.hit_box.x % settings.TILE_SIZE == 0:
+            # Calculate the length
             tail_length = (self.max_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
             if self.movement_vector.x > 0:
                 tail_length -= 1
-            print(f'now {tail_length}')
             # Get a new image
             self.image = self.get_merged_image(tail_length)
-            # Change rectangle and hit_box
+            # Change (increase or decrease) rectangle and hit_box
             current_top_left_position = self.rect.topleft
             self.rect = self.image.get_rect(topleft=current_top_left_position)
             self.hit_box = self.rect
-
-        # Set the movement offset
-        self.rect.center = self.hit_box.center
 
     def change_motion(self):
         # Change motion only if threshold exceeded
@@ -109,4 +113,23 @@ class FireFlameEnemy(CustomDrawSprite):
             self.move()
         else:
             self.change_motion()
+
+    def collision(self):
+        is_collision_detected = False
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                self.hit_box.left = sprite.hit_box.right
+
+                # Change movement vector
+                self.movement_vector.x *= -1
+
+                # Adjust position after collision
+                self.real_x_position = float(self.hit_box.x)
+
+                # Collision was detected
+                is_collision_detected = True
+
+        return is_collision_detected
 
