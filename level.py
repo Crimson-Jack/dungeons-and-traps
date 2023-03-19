@@ -199,8 +199,15 @@ class Level:
                 # Convert string to tuple
                 motion_schedule = tuple(map(int, motion_schedule.split(',')))
 
-                FireFlameEnemy(enemy_fire_flame.image, (x, y), [self.bottom_layer_regular_sprites, self.enemy_sprites], speed,
-                                fire_length, motion_schedule, self.moving_obstacle_sprites)
+                # Get all sprites
+                sprites = []
+                frames = enemy_fire_flame.properties.get('frames')
+                if frames is not None:
+                    for frame in frames:
+                        sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
+
+                FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.enemy_sprites],
+                               speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
 
     def run(self):
         # Run an update method foreach sprite from the group

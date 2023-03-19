@@ -148,16 +148,16 @@
    </properties>
    <object id="24" name="enemy-fire-flame-0" gid="135" x="96" y="96" width="16" height="16">
     <properties>
-     <property name="fire_length" value="5"/>
+     <property name="fire_length" value="3"/>
      <property name="motion_schedule" value="30, 0, 50"/>
      <property name="speed" type="float" value="8"/>
     </properties>
    </object>
    <object id="25" name="enemy-fire-flame-1" gid="135" x="96" y="64" width="16" height="16">
     <properties>
-     <property name="fire_length" value="3"/>
+     <property name="fire_length" value="5"/>
      <property name="motion_schedule" value="50, 100"/>
-     <property name="speed" type="float" value="10"/>
+     <property name="speed" type="float" value="12"/>
     </properties>
    </object>
   </objectgroup>

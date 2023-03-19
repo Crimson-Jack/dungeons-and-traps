@@ -4,10 +4,20 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class FireFlameEnemy(CustomDrawSprite):
-    def __init__(self, image, position, groups, speed, fire_length, motion_schedule, moving_obstacle_sprites):
+    def __init__(self, sprites, position, groups, speed, fire_length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
-        self.base_image = image
-        self.image = self.get_merged_image(2)
+
+        # Create sprite animation variables
+        self.sprites = sprites
+        self.number_of_sprites = len(sprites)
+        self.costume_switching_threshold = 18
+        self.costume_step_counter = 0
+        self.costume_index = 0
+
+        # Enemy image
+        self.tail_length = 2
+        self.base_image = sprites[0]
+        self.image = self.get_merged_image()
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -19,7 +29,7 @@ class FireFlameEnemy(CustomDrawSprite):
 
         # Create motion variables
         self.motion_schedule = motion_schedule
-        self.step_counter = 0
+        self.motion_step_counter = 0
         self.motion_index = 0
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]
 
@@ -33,16 +43,25 @@ class FireFlameEnemy(CustomDrawSprite):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
-    def get_merged_image(self, count):
+    def get_merged_image(self):
         base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
-        merged_image = pygame.surface.Surface((settings.TILE_SIZE*count, settings.TILE_SIZE))
+        merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
         merged_image = merged_image.convert_alpha()
         merged_image.fill((0, 0, 0, 0))
 
-        for index in range(count):
+        for index in range(self.tail_length):
             merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 
         return merged_image
+
+    def set_new_image(self):
+        # Get merged image
+        self.image = self.get_merged_image()
+
+        # Change (increase or decrease) rectangle and hit_box
+        current_top_left_position = self.rect.topleft
+        self.rect = self.image.get_rect(topleft=current_top_left_position)
+        self.hit_box = self.rect
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite
@@ -78,22 +97,23 @@ class FireFlameEnemy(CustomDrawSprite):
 
         # Recognize the moment when fire flame moves to a new area
         if self.hit_box.x % settings.TILE_SIZE == 0:
+
             # Calculate the length
-            tail_length = (self.max_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
+            self.tail_length = (self.max_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
             if self.movement_vector.x > 0:
-                tail_length -= 1
-            # Get a new image
-            self.image = self.get_merged_image(tail_length)
-            # Change (increase or decrease) rectangle and hit_box
-            current_top_left_position = self.rect.topleft
-            self.rect = self.image.get_rect(topleft=current_top_left_position)
-            self.hit_box = self.rect
+                self.tail_length -= 1
+
+            # Set image
+            self.set_new_image()
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
 
     def change_motion(self):
         # Change motion only if threshold exceeded
-        if self.step_counter > self.motion_switching_threshold:
+        if self.motion_step_counter > self.motion_switching_threshold:
             # Reset counter and increase motion index
-            self.step_counter = 0
+            self.motion_step_counter = 0
             self.motion_index += 1
             # If it's the last motion state - start from the first state (index = 0)
             if self.motion_index >= len(self.motion_schedule):
@@ -106,9 +126,13 @@ class FireFlameEnemy(CustomDrawSprite):
             self.is_moving = True
 
         # Increase step counter
-        self.step_counter += 1
+        self.motion_step_counter += 1
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
 
     def update(self):
+        self.change_costume()
         if self.is_moving:
             self.move()
         else:
@@ -133,3 +157,20 @@ class FireFlameEnemy(CustomDrawSprite):
 
         return is_collision_detected
 
+    def change_costume(self):
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_threshold:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the second costume (index = 1)
+            if self.costume_index > self.number_of_sprites:
+                self.costume_index = 1
+
+            # Set image based on costume index
+            self.base_image = self.sprites[self.costume_index-1]
+
+            # Set new image
+            self.set_new_image()
