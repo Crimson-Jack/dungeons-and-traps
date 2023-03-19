@@ -7,7 +7,7 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class Player(CustomDrawSprite):
-    def __init__(self, image, position, groups, speed, exit_points, obstacle_sprites,
+    def __init__(self, position, groups, speed, exit_points, obstacle_sprites,
                  moving_obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
         super().__init__(groups)
 
@@ -258,14 +258,15 @@ class Player(CustomDrawSprite):
         self.move()
 
     def custom_draw(self, game_surface, offset):
-        # Draw glow effect when player is collided with an enemy
-        if self.collided_with_enemy:
-            position = pygame.Vector2(self.rect.center) + offset
-            pygame.draw.circle(game_surface, (255, 0, 0), position, settings.TILE_SIZE // 1.45)
-            pygame.draw.circle(game_surface, (255, 100, 0), position, settings.TILE_SIZE // 1.55)
-            pygame.draw.circle(game_surface, (255, 150, 0), position, settings.TILE_SIZE // 1.8)
-            pygame.draw.circle(game_surface, (255, 200, 0), position, settings.TILE_SIZE // 2.2)
-
         # Draw sprite
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
+
+        # Draw an outline if it collided
+        if self.collided_with_enemy:
+            outline_image = pygame.surface.Surface.copy(self.image)
+            mask = pygame.mask.from_surface(self.image)
+            mask_outline = mask.outline()
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, 3)
+            pygame.draw.polygon(outline_image, (252, 64, 30), mask_outline, 1)
+            game_surface.blit(outline_image, offset_position)

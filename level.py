@@ -81,7 +81,7 @@ class Level:
                 speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
 
             # Add player to visible group
-            return Player(player_object.image, (x, y), [self.middle_layer_regular_sprites], speed,
+            return Player((x, y), [self.middle_layer_regular_sprites], speed,
                           self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
                           self.collectable_sprites, self.enemy_sprites, self.game_state)
 
