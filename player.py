@@ -267,6 +267,10 @@ class Player(CustomDrawSprite):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, 3)
-            pygame.draw.polygon(outline_image, (252, 64, 30), mask_outline, 1)
+
+            brush_thickness = int(game_helper.calculate_ratio(3))
+            if brush_thickness < 1:
+                brush_thickness = 1
+            pygame.draw.polygon(outline_image, (252, 64, 30), mask_outline, brush_thickness)
+
             game_surface.blit(outline_image, offset_position)
