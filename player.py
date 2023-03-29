@@ -7,8 +7,8 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class Player(CustomDrawSprite):
-    def __init__(self, position, groups, speed, exit_points, obstacle_sprites,
-                 moving_obstacle_sprites, collectable_sprites, enemy_sprites, game_state):
+    def __init__(self, position, groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
+                 collectable_sprites, enemy_sprites, hostile_force_sprites, game_state):
         super().__init__(groups)
 
         # Create sprite animation variables
@@ -49,6 +49,7 @@ class Player(CustomDrawSprite):
         self.obstacle_sprites = obstacle_sprites
         self.collectable_sprites = collectable_sprites
         self.enemy_sprites = enemy_sprites
+        self.hostile_force_sprites = hostile_force_sprites
 
         # Set game state
         self.game_state = game_state
@@ -198,6 +199,13 @@ class Player(CustomDrawSprite):
 
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False, pygame.sprite.collide_mask):
+                    self.collided_with_enemy = True
+                    self.game_state.decrease_energy()
+
+        # Check collision with enemy sprites
+        for sprite in self.hostile_force_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False, pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
