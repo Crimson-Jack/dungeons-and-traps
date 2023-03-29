@@ -41,6 +41,7 @@ class Level:
         self.moving_obstacle_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
+        self.hostile_force_sprites = pygame.sprite.Group()
 
         # Set game state
         self.game_state = game_state
@@ -83,7 +84,8 @@ class Level:
             # Add player to visible group
             return Player((x, y), [self.middle_layer_regular_sprites], speed,
                           self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
-                          self.collectable_sprites, self.enemy_sprites, self.game_state)
+                          self.collectable_sprites, self.enemy_sprites, self.hostile_force_sprites,
+                          self.game_state)
 
     def create_exit_point(self):
         exit_object = self.tmx_data.get_object_by_name('exit-point')
@@ -206,7 +208,7 @@ class Level:
                     for frame in frames:
                         sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
 
-                FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.enemy_sprites],
+                FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
                                speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
 
     def run(self):
@@ -236,6 +238,9 @@ class Level:
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
+            if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
+                sprite.refresh_obstacle_map()
+        for sprite in self.hostile_force_sprites.sprites():
             if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
                 sprite.refresh_obstacle_map()
 
