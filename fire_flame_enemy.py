@@ -5,7 +5,7 @@ from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
-    def __init__(self, sprites, position, groups, speed, fire_length, motion_schedule, moving_obstacle_sprites):
+    def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Create sprite animation variables
@@ -15,28 +15,28 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.costume_step_counter = 0
         self.costume_index = 0
 
-        # Enemy image
+        # Create image
         self.tail_length = 2
         self.base_image = sprites[0]
         self.image = self.get_merged_image()
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
+        # Max left and right positions of the flame
+        self.max_rect_left_flame_position = self.rect.left
+        self.max_rect_right_flame_position = self.rect.right
+
         # Create movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((-1, 0))
         self.speed = speed
-        self.max_fire_length = settings.TILE_SIZE * fire_length
+        self.max_fire_length = settings.TILE_SIZE * length
 
         # Create motion variables
         self.motion_schedule = motion_schedule
         self.motion_step_counter = 0
         self.motion_index = 0
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]
-
-        # Left and right positions of the flame
-        self.max_left_flame_position = self.rect.left
-        self.max_right_flame_position = self.rect.right
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
@@ -46,8 +46,6 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
         # Indicates the requirement to return to the initial image state
         self.reset_is_required_for_image = False
-
-        self.is_blocked = False
 
     def get_merged_image(self):
         base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -70,8 +68,8 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.hit_box = self.rect
 
     def custom_draw(self, game_surface, offset):
+        # Draw sprite if reset is not required
         if not self.reset_is_required_for_image:
-            # Draw sprite
             offset_position = self.rect.topleft + offset
             game_surface.blit(self.image, offset_position)
 
@@ -80,7 +78,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.real_x_position += float(self.movement_vector.x * self.speed)
 
         # Check collision with moving obstacles
-        (collision_detected, collision_hit_box_right) = self.collision()
+        (collision_detected, collision_hit_box_right) = self.check_collision()
         if collision_detected:
             # Set fire flame left border
             self.hit_box.left = collision_hit_box_right
@@ -90,11 +88,11 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
             self.real_x_position = float(self.hit_box.x)
         else:
             # Check start position
-            if self.real_x_position < self.max_left_flame_position - self.max_fire_length:
+            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length:
                 # Reverse
                 self.movement_vector.x *= -1
             # Check fire flame length
-            elif self.real_x_position + settings.TILE_SIZE > self.max_right_flame_position:
+            elif self.real_x_position + settings.TILE_SIZE > self.max_rect_right_flame_position:
                 # Reverse
                 self.movement_vector.x *= -1
                 # Stop the moving
@@ -118,7 +116,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         if self.hit_box.x % settings.TILE_SIZE == 0:
 
             # Calculate the length
-            self.tail_length = (self.max_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
+            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
             if self.tail_length < 1:
                 self.tail_length = 1
 
@@ -167,7 +165,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
             # Reset is not required anymore
             self.reset_is_required_for_image = False
 
-    def collision(self):
+    def check_collision(self):
         is_collision_detected = False
         hit_box_right = 0
 
@@ -202,9 +200,9 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
     def refresh_obstacle_map(self):
         # Check if moving obstacle is collided with the flame
-        (collision_detected, collision_hit_box_right) = self.collision()
+        collision_detected, collision_hit_box_right = self.check_collision()
         if collision_detected:
             # Calculate tail length
-            self.tail_length = (self.max_right_flame_position - collision_hit_box_right) // settings.TILE_SIZE
+            self.tail_length = (self.max_rect_right_flame_position - collision_hit_box_right) // settings.TILE_SIZE
             # Set flag - reset is required for the image
             self.reset_is_required_for_image = True
