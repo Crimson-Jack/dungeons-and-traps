@@ -44,6 +44,9 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+        # Indicates the requirement to return to the initial image state
+        self.reset_is_required_for_image = False
+
     def get_merged_image(self):
         base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
         merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
@@ -65,8 +68,10 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.hit_box = self.rect
 
     def custom_draw(self, game_surface, offset):
-        offset_position = self.rect.topleft + offset
-        game_surface.blit(self.image, offset_position)
+        # Draw sprite if reset is not required
+        if not self.reset_is_required_for_image:
+            offset_position = self.rect.topleft + offset
+            game_surface.blit(self.image, offset_position)
 
     def move(self):
         # Calculate real y position
@@ -153,6 +158,13 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         else:
             self.change_motion()
 
+        # Reset the image length if it's required
+        if self.reset_is_required_for_image:
+            # Set a new image
+            self.set_new_image()
+            # Reset is not required anymore
+            self.reset_is_required_for_image = False
+
     def check_collision(self):
         is_collision_detected = False
         hit_box_left = 0
@@ -187,4 +199,10 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
             self.set_new_image()
 
     def refresh_obstacle_map(self):
-        pass
+        # Check if moving obstacle is collided with the flame
+        collision_detected, collision_hit_box_left = self.check_collision()
+        if collision_detected:
+            # Calculate tail length
+            self.tail_length = (collision_hit_box_left - self.max_rect_left_flame_position) // settings.TILE_SIZE
+            # Set flag - reset is required for the image
+            self.reset_is_required_for_image = True

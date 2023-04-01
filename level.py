@@ -232,11 +232,8 @@ class Level:
 
         # Draw all visible sprites
         self.bottom_layer_background_sprites.custom_draw(self.player)
-
-        self.middle_layer_regular_sprites.custom_draw(self.player)
-
         self.bottom_layer_regular_sprites.custom_draw(self.player)
-        #self.middle_layer_regular_sprites.custom_draw(self.player)
+        self.middle_layer_regular_sprites.custom_draw(self.player)
         self.top_layer_sprites.custom_draw(self.player)
         # Draw effects
         self.blast_effect.draw()
