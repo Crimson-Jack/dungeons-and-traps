@@ -41,6 +41,9 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_right_position = float(self.hit_box.right)
 
+        # Moving obstacles
+        self.moving_obstacle_sprites = moving_obstacle_sprites
+
     def get_merged_image(self):
         base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
         merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
@@ -69,16 +72,26 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         # Calculate real y position
         self.real_x_right_position += float(self.movement_vector.x * self.speed)
 
-        # Check start position
-        if self.real_x_right_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
-            # Reverse
-            self.movement_vector.x *= -1
-        # Check fire flame length
-        elif self.real_x_right_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
-            # Reverse
-            self.movement_vector.x *= -1
-        #     # Stop the moving
-            self.is_moving = False
+        # Check collision with moving obstacles
+        (collision_detected, collision_hit_box_left) = self.check_collision()
+        if collision_detected:
+            # Set fire flame left border
+            self.hit_box.right = collision_hit_box_left
+            # Change movement vector always to the right direction
+            self.movement_vector.x = -1
+            # Adjust position after collision
+            self.real_x_right_position = float(self.hit_box.right)
+        else:
+            # Check start position
+            if self.real_x_right_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
+                # Reverse
+                self.movement_vector.x *= -1
+            # Check fire flame length
+            elif self.real_x_right_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
+                # Reverse
+                self.movement_vector.x *= -1
+            #     # Stop the moving
+                self.is_moving = False
 
         # Cast real position to integer
         self.hit_box.right = int(self.real_x_right_position)
@@ -139,6 +152,21 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
             self.move()
         else:
             self.change_motion()
+
+    def check_collision(self):
+        is_collision_detected = False
+        hit_box_left = 0
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                # Save collided sprite right border
+                hit_box_left = sprite.hit_box.left
+                # Collision was detected
+                is_collision_detected = True
+                break
+
+        return is_collision_detected, hit_box_left
 
     def change_costume(self):
         # Change costume only if threshold exceeded
