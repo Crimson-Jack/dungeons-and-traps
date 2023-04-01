@@ -12,6 +12,7 @@ from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from fire_flame_enemy import FireFlameEnemy
+from fire_flame_enemy_right import FireFlameEnemyRight
 from player import Player
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
@@ -208,8 +209,17 @@ class Level:
                     for frame in frames:
                         sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
 
-                FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
-                               speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
+                if enemy_fire_flame.properties.get('direction') is None:
+                    direction = enemy_fire_flame_layer.properties.get('direction')
+                else:
+                    direction = enemy_fire_flame.properties.get('direction')
+
+                if direction == 'left':
+                    FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
+                                   speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
+                else:
+                    FireFlameEnemyRight(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
+                                        speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
 
     def run(self):
         # Run an update method foreach sprite from the group
