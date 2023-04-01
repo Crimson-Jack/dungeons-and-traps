@@ -8,6 +8,13 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
     def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
 
+        # Create sprite animation variables
+        self.sprites = sprites
+        self.number_of_sprites = len(sprites)
+        self.costume_switching_threshold = 14
+        self.costume_step_counter = 0
+        self.costume_index = 0
+
         # Create image
         self.tail_length = 2
         self.base_image = sprites[0]
@@ -24,6 +31,12 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.movement_vector = pygame.math.Vector2((1, 0))
         self.speed = speed
         self.max_fire_length = length * settings.TILE_SIZE
+
+        # Create motion variables
+        self.motion_schedule = motion_schedule
+        self.motion_step_counter = 0
+        self.motion_index = 0
+        self.motion_switching_threshold = self.motion_schedule[self.motion_index]
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_right_position = float(self.hit_box.right)
@@ -65,7 +78,7 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
             # Reverse
             self.movement_vector.x *= -1
         #     # Stop the moving
-        #     self.is_moving = False
+            self.is_moving = False
 
         # Cast real position to integer
         self.hit_box.right = int(self.real_x_right_position)
@@ -95,9 +108,55 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
             # Set image
             self.set_new_image()
 
+        # Increase costume step counter
+        self.costume_step_counter += 1
+
+    def change_motion(self):
+        # Change motion only if threshold exceeded
+        if self.motion_step_counter > self.motion_switching_threshold:
+            # Reset counter and increase motion index
+            self.motion_step_counter = 0
+            self.motion_index += 1
+            # If it's the last motion state - start from the first state (index = 0)
+            if self.motion_index >= len(self.motion_schedule):
+                self.motion_index = 0
+
+            # Set a new threshold from motion schedule
+            self.motion_switching_threshold = self.motion_schedule[self.motion_index]
+
+            # Start the moving
+            self.is_moving = True
+
+        # Increase step counter
+        self.motion_step_counter += 1
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
 
     def update(self):
-        self.move()
+        self.change_costume()
+        if self.is_moving:
+            self.move()
+        else:
+            self.change_motion()
+
+    def change_costume(self):
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_threshold:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the second costume (index = 1)
+            if self.costume_index > self.number_of_sprites:
+                self.costume_index = 1
+
+            # Set image based on costume index
+            self.base_image = self.sprites[self.costume_index-1]
+
+            # Set new image
+            self.set_new_image()
 
     def refresh_obstacle_map(self):
         pass
