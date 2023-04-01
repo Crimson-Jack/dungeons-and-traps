@@ -39,7 +39,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]
 
         # Real position is required to store the real distance, which is then cast to integer
-        self.real_x_position = float(self.hit_box.x)
+        self.real_x_position = float(self.hit_box.left)
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
@@ -88,11 +88,11 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
             self.real_x_position = float(self.hit_box.x)
         else:
             # Check start position
-            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length:
+            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length + settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
             # Check fire flame length
-            elif self.real_x_position + settings.TILE_SIZE > self.max_rect_right_flame_position:
+            elif self.real_x_position > self.max_rect_left_flame_position + settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
                 # Stop the moving

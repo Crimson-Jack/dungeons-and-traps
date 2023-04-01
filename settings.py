@@ -2,7 +2,7 @@ import pygame
 from debug import Debug
 
 # Clock
-FPS = 60
+FPS = 6
 
 # Screen size
 WIDTH = 800

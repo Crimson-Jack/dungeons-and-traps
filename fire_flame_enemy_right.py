@@ -1,0 +1,103 @@
+import pygame
+import settings
+from custom_draw_sprite import CustomDrawSprite
+from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+
+
+class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
+    def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
+        super().__init__(groups)
+
+        # Create image
+        self.tail_length = 2
+        self.base_image = sprites[0]
+        self.image = self.get_merged_image()
+        self.rect = self.image.get_rect(topright=(position[0] + settings.TILE_SIZE, position[1]))
+        self.hit_box = self.rect
+
+        # Max left and right positions of the flame
+        self.max_rect_left_flame_position = self.rect.left
+        self.max_rect_right_flame_position = self.rect.right
+
+        # Create movement variables
+        self.is_moving = False
+        self.movement_vector = pygame.math.Vector2((1, 0))
+        self.speed = speed
+        self.max_fire_length = length * settings.TILE_SIZE
+
+        # Real position is required to store the real distance, which is then cast to integer
+        self.real_x_right_position = float(self.hit_box.right)
+
+    def get_merged_image(self):
+        base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
+        merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
+        merged_image = merged_image.convert_alpha()
+        merged_image.fill((0, 0, 0, 0))
+
+        for index in range(self.tail_length):
+            merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
+
+        return merged_image
+
+    def set_new_image(self):
+        # Get merged image
+        self.image = self.get_merged_image()
+
+        # Change (increase or decrease) rectangle and hit_box
+        current_top_right_position = self.rect.topright
+        self.rect = self.image.get_rect(topright=current_top_right_position)
+        self.hit_box = self.rect
+
+    def custom_draw(self, game_surface, offset):
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
+
+    def move(self):
+        # Calculate real y position
+        self.real_x_right_position += float(self.movement_vector.x * self.speed)
+
+        # Check start position
+        if self.real_x_right_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
+            # Reverse
+            self.movement_vector.x *= -1
+        # Check fire flame length
+        elif self.real_x_right_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
+            # Reverse
+            self.movement_vector.x *= -1
+        #     # Stop the moving
+        #     self.is_moving = False
+
+        # Cast real position to integer
+        self.hit_box.right = int(self.real_x_right_position)
+
+        # Set the movement offset
+        self.rect.center = self.hit_box.center
+
+        # Adjust offset
+        # This is necessary for offsets that are not TILE_SIZE dividers
+        x_remainder = self.rect.right % settings.TILE_SIZE
+
+        if x_remainder < self.speed:
+            self.hit_box.right = self.hit_box.right - x_remainder
+            self.rect.center = self.hit_box.center
+
+        # Recognize the moment when fire flame moves to a new area
+        if self.hit_box.right % settings.TILE_SIZE == 0:
+
+            # Calculate the length
+            self.tail_length = (self.hit_box.right - self.max_rect_left_flame_position) // settings.TILE_SIZE
+            if self.tail_length < 1:
+                self.tail_length = 1
+
+            if self.movement_vector.x < 0:
+                self.tail_length -= 1
+
+            # Set image
+            self.set_new_image()
+
+
+    def update(self):
+        self.move()
+
+    def refresh_obstacle_map(self):
+        pass
