@@ -217,7 +217,7 @@ class Level:
                 if direction == 'left':
                     FireFlameEnemyLeft(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
                                        speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
-                else:
+                elif direction == 'right':
                     FireFlameEnemyRight(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
                                         speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
 
