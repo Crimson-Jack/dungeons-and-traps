@@ -39,7 +39,7 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]
 
         # Real position is required to store the real distance, which is then cast to integer
-        self.real_x_right_position = float(self.hit_box.right)
+        self.real_x_position = float(self.hit_box.right)
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
@@ -63,8 +63,8 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.image = self.get_merged_image()
 
         # Change (increase or decrease) rectangle and hit_box
-        current_top_right_position = self.rect.topright
-        self.rect = self.image.get_rect(topright=current_top_right_position)
+        current_position = self.rect.topright
+        self.rect = self.image.get_rect(topright=current_position)
         self.hit_box = self.rect
 
     def custom_draw(self, game_surface, offset):
@@ -75,7 +75,7 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
 
     def move(self):
         # Calculate real y position
-        self.real_x_right_position += float(self.movement_vector.x * self.speed)
+        self.real_x_position += float(self.movement_vector.x * self.speed)
 
         # Check collision with moving obstacles
         (collision_detected, collision_hit_box_left) = self.check_collision()
@@ -85,21 +85,21 @@ class FireFlameEnemyRight(CustomDrawSprite, ObstacleMapRefreshSprite):
             # Change movement vector always to the right direction
             self.movement_vector.x = -1
             # Adjust position after collision
-            self.real_x_right_position = float(self.hit_box.right)
+            self.real_x_position = float(self.hit_box.right)
         else:
             # Check start position
-            if self.real_x_right_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
+            if self.real_x_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
             # Check fire flame length
-            elif self.real_x_right_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
+            elif self.real_x_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
-            #     # Stop the moving
+                # Stop the moving
                 self.is_moving = False
 
         # Cast real position to integer
-        self.hit_box.right = int(self.real_x_right_position)
+        self.hit_box.right = int(self.real_x_position)
 
         # Set the movement offset
         self.rect.center = self.hit_box.center

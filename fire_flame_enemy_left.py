@@ -4,7 +4,7 @@ from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
-class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
+class FireFlameEnemyLeft(CustomDrawSprite, ObstacleMapRefreshSprite):
     def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
 
@@ -30,7 +30,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((-1, 0))
         self.speed = speed
-        self.max_fire_length = settings.TILE_SIZE * length
+        self.max_fire_length = length * settings.TILE_SIZE
 
         # Create motion variables
         self.motion_schedule = motion_schedule
@@ -63,8 +63,8 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.image = self.get_merged_image()
 
         # Change (increase or decrease) rectangle and hit_box
-        current_top_left_position = self.rect.topleft
-        self.rect = self.image.get_rect(topleft=current_top_left_position)
+        current_position = self.rect.topleft
+        self.rect = self.image.get_rect(topleft=current_position)
         self.hit_box = self.rect
 
     def custom_draw(self, game_surface, offset):
@@ -85,7 +85,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
             # Change movement vector always to the right direction
             self.movement_vector.x = 1
             # Adjust position after collision
-            self.real_x_position = float(self.hit_box.x)
+            self.real_x_position = float(self.hit_box.left)
         else:
             # Check start position
             if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length + settings.TILE_SIZE:
@@ -99,7 +99,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
                 self.is_moving = False
 
         # Cast real position to integer
-        self.hit_box.x = int(self.real_x_position)
+        self.hit_box.left = int(self.real_x_position)
 
         # Set the movement offset
         self.rect.center = self.hit_box.center
@@ -109,14 +109,14 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         x_remainder = self.rect.right % settings.TILE_SIZE
 
         if x_remainder < self.speed:
-            self.hit_box.x = self.hit_box.x - x_remainder
+            self.hit_box.left = self.hit_box.left - x_remainder
             self.rect.center = self.hit_box.center
 
         # Recognize the moment when fire flame moves to a new area
-        if self.hit_box.x % settings.TILE_SIZE == 0:
+        if self.hit_box.left % settings.TILE_SIZE == 0:
 
             # Calculate the length
-            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.x) // settings.TILE_SIZE
+            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.left) // settings.TILE_SIZE
             if self.tail_length < 1:
                 self.tail_length = 1
 

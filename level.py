@@ -11,7 +11,7 @@ from ground import Ground
 from diamond import Diamond
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
-from fire_flame_enemy import FireFlameEnemy
+from fire_flame_enemy_left import FireFlameEnemyLeft
 from fire_flame_enemy_right import FireFlameEnemyRight
 from player import Player
 from exit_point import ExitPoint
@@ -215,8 +215,8 @@ class Level:
                     direction = enemy_fire_flame.properties.get('direction')
 
                 if direction == 'left':
-                    FireFlameEnemy(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
-                                   speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
+                    FireFlameEnemyLeft(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
+                                       speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
                 else:
                     FireFlameEnemyRight(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
                                         speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
