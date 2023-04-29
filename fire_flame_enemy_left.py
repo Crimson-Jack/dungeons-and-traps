@@ -21,8 +21,25 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.left)
 
+    def get_merged_image(self):
+        merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
+        merged_image = merged_image.convert_alpha()
+        merged_image.fill((0, 0, 0, 0))
+
+        for index in range(self.tail_length):
+            # TODO: Add a property to the selected mode:
+            #  [1] - all tiles in a merged sprite have the same costume
+            #  [2] - each tile in a merged sprite has a different costume
+            # frame_costume_index = self.costume_index - 1
+            frame_costume_index = (index + self.costume_index) % self.number_of_sprites
+            base_image = pygame.transform.scale(self.sprites[frame_costume_index], (settings.TILE_SIZE, settings.TILE_SIZE))
+            merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
+
+        return merged_image
+
     def set_new_image(self):
-        super().set_new_image()
+        # super().set_new_image()
+        self.image = self.get_merged_image()
 
         # Change (increase or decrease) rectangle and hit_box
         self.rect = self.image.get_rect(topleft=self.rect.topleft)

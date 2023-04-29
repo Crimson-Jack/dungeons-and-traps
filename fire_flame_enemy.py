@@ -17,7 +17,6 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
         # Create image
         self.tail_length = 2
-        self.base_image = sprites[0]
         self.image = self.get_merged_image()
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
@@ -40,19 +39,10 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.reset_is_required_for_image = False
 
     def get_merged_image(self):
-        base_image = pygame.transform.scale(self.base_image, (settings.TILE_SIZE, settings.TILE_SIZE))
-        merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
-        merged_image = merged_image.convert_alpha()
-        merged_image.fill((0, 0, 0, 0))
-
-        for index in range(self.tail_length):
-            merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
-
-        return merged_image
+        pass
 
     def set_new_image(self):
-        # Get merged image
-        self.image = self.get_merged_image()
+        pass
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite if reset is not required
@@ -110,9 +100,6 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
             # If it's the last costume - start from the second costume (index = 1)
             if self.costume_index > self.number_of_sprites:
                 self.costume_index = 1
-
-            # Set image based on costume index
-            self.base_image = self.sprites[self.costume_index-1]
 
             # Set new image
             self.set_new_image()
