@@ -121,6 +121,6 @@ class FireFlameEnemyRight(FireFlameEnemy):
         collision_detected, collision_hit_box_left = self.check_collision()
         if collision_detected:
             # Calculate tail length
-            self.tail_length = (collision_hit_box_left - self.max_rect_left_flame_position) // settings.TILE_SIZE
+            self.tail_length_after_collision = (collision_hit_box_left - self.max_rect_left_flame_position) // settings.TILE_SIZE
             # Set flag - reset is required for the image
             self.reset_is_required_for_image = True

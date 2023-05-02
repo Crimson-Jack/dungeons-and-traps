@@ -35,8 +35,9 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
-        # Indicates the requirement to return to the initial image state
+        # Indicates the requirement to reset the image
         self.reset_is_required_for_image = False
+        self.tail_length_after_collision = self.tail_length
 
     def get_merged_image(self):
         pass
@@ -85,6 +86,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         # Reset the image length if it's required
         if self.reset_is_required_for_image:
             # Set a new image
+            self.tail_length = self.tail_length_after_collision
             self.set_new_image()
             # Reset is not required anymore
             self.reset_is_required_for_image = False
