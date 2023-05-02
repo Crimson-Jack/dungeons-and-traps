@@ -3,12 +3,12 @@ import settings
 from fire_flame_enemy import FireFlameEnemy
 
 
-class FireFlameEnemyRight(FireFlameEnemy):
+class FireFlameEnemyLeft(FireFlameEnemy):
     def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites)
 
         # Get rectangle from image
-        self.rect = self.image.get_rect(topright=(position[0] + settings.TILE_SIZE, position[1]))
+        self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
         # Max left and right positions of the flame
@@ -16,10 +16,10 @@ class FireFlameEnemyRight(FireFlameEnemy):
         self.max_rect_right_flame_position = self.rect.right
 
         # Create movement variables
-        self.movement_vector = pygame.math.Vector2((1, 0))
+        self.movement_vector = pygame.math.Vector2((-1, 0))
 
         # Real position is required to store the real distance, which is then cast to integer
-        self.real_x_position = float(self.hit_box.right)
+        self.real_x_position = float(self.hit_box.left)
 
     def get_merged_image(self):
         merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
@@ -31,7 +31,7 @@ class FireFlameEnemyRight(FireFlameEnemy):
             #  [1] - all tiles in a merged sprite have the same costume
             #  [2] - each tile in a merged sprite has a different costume
             # frame_costume_index = self.costume_index - 1
-            frame_costume_index = (self.tail_length - index + self.costume_index) % self.number_of_sprites
+            frame_costume_index = (index + self.costume_index) % self.number_of_sprites
             base_image = pygame.transform.scale(self.sprites[frame_costume_index], (settings.TILE_SIZE, settings.TILE_SIZE))
             merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 
@@ -42,7 +42,7 @@ class FireFlameEnemyRight(FireFlameEnemy):
         self.image = self.get_merged_image()
 
         # Change (increase or decrease) rectangle and hit_box
-        self.rect = self.image.get_rect(topright=self.rect.topright)
+        self.rect = self.image.get_rect(topleft=self.rect.topleft)
         self.hit_box = self.rect
 
     def move(self):
@@ -50,28 +50,28 @@ class FireFlameEnemyRight(FireFlameEnemy):
         self.real_x_position += float(self.movement_vector.x * self.speed)
 
         # Check collision with moving obstacles
-        (collision_detected, collision_hit_box_left) = self.check_collision()
+        (collision_detected, collision_hit_box_right) = self.check_collision()
         if collision_detected:
             # Set fire flame left border
-            self.hit_box.right = collision_hit_box_left
+            self.hit_box.left = collision_hit_box_right
             # Change movement vector always to the right direction
-            self.movement_vector.x = -1
+            self.movement_vector.x = 1
             # Adjust position after collision
-            self.real_x_position = float(self.hit_box.right)
+            self.real_x_position = float(self.hit_box.left)
         else:
             # Check start position
-            if self.real_x_position > self.max_rect_right_flame_position + self.max_fire_length - settings.TILE_SIZE:
+            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length + settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
             # Check fire flame length
-            elif self.real_x_position < self.max_rect_right_flame_position - settings.TILE_SIZE:
+            elif self.real_x_position > self.max_rect_left_flame_position + settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
                 # Stop the moving
                 self.is_moving = False
 
         # Cast real position to integer
-        self.hit_box.right = int(self.real_x_position)
+        self.hit_box.left = int(self.real_x_position)
 
         # Set the movement offset
         self.rect.center = self.hit_box.center
@@ -81,18 +81,18 @@ class FireFlameEnemyRight(FireFlameEnemy):
         x_remainder = self.rect.right % settings.TILE_SIZE
 
         if x_remainder < self.speed:
-            self.hit_box.right = self.hit_box.right - x_remainder
+            self.hit_box.left = self.hit_box.left - x_remainder
             self.rect.center = self.hit_box.center
 
         # Recognize the moment when fire flame moves to a new area
-        if self.hit_box.right % settings.TILE_SIZE == 0:
+        if self.hit_box.left % settings.TILE_SIZE == 0:
 
             # Calculate the length
-            self.tail_length = (self.hit_box.right - self.max_rect_left_flame_position) // settings.TILE_SIZE
+            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.left) // settings.TILE_SIZE
             if self.tail_length < 1:
                 self.tail_length = 1
 
-            if self.movement_vector.x < 0:
+            if self.movement_vector.x > 0:
                 self.tail_length -= 1
 
             # Set image
@@ -103,24 +103,24 @@ class FireFlameEnemyRight(FireFlameEnemy):
 
     def check_collision(self):
         is_collision_detected = False
-        hit_box_left = 0
+        hit_box_right = 0
 
         # Moving obstacle
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 # Save collided sprite right border
-                hit_box_left = sprite.hit_box.left
+                hit_box_right = sprite.hit_box.right
                 # Collision was detected
                 is_collision_detected = True
                 break
 
-        return is_collision_detected, hit_box_left
+        return is_collision_detected, hit_box_right
 
     def refresh_obstacle_map(self):
         # Check if moving obstacle is collided with the flame
-        collision_detected, collision_hit_box_left = self.check_collision()
+        collision_detected, collision_hit_box_right = self.check_collision()
         if collision_detected:
             # Calculate tail length
-            self.tail_length_after_collision = (collision_hit_box_left - self.max_rect_left_flame_position) // settings.TILE_SIZE
+            self.tail_length_after_collision = (self.max_rect_right_flame_position - collision_hit_box_right) // settings.TILE_SIZE
             # Set flag - reset is required for the image
             self.reset_is_required_for_image = True
