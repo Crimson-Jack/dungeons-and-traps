@@ -9,7 +9,6 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
-
         # Main - screen surface
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
         # Game surface
@@ -32,7 +31,7 @@ class Game:
     def run(self):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
                     sys.exit()
                 # Player movement direction
