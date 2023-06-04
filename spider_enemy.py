@@ -29,6 +29,10 @@ class SpiderEnemy(CustomDrawSprite):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+    def __del__(self):
+        # TODO: Implement animation
+        pass
+
     def move(self):
         # Calculate real y position
         self.real_y_position += float(self.movement_vector.y * self.speed)

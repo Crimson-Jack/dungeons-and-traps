@@ -3,11 +3,12 @@ import direction
 import settings
 import game_helper
 import spritesheet
+from sword_weapon import SwordWeapon
 from custom_draw_sprite import CustomDrawSprite
 
 
 class Player(CustomDrawSprite):
-    def __init__(self, position, groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
+    def __init__(self, position, groups, weapon_groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
                  collectable_sprites, enemy_sprites, hostile_force_sprites, game_state):
         super().__init__(groups)
 
@@ -57,6 +58,10 @@ class Player(CustomDrawSprite):
         # Player state variables
         self.collided_with_enemy = False
 
+        # Player weapon
+        self.weapon_is_in_use = False
+        self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites)
+
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
         sprite_sheet = spritesheet.SpriteSheet(
@@ -91,6 +96,7 @@ class Player(CustomDrawSprite):
     def input(self):
         self.movement_vector = self.game_state.player_movement_vector
         self.movement_direction = self.game_state.player_movement_direction
+        self.weapon_is_in_use = self.game_state.player_is_using_weapon
 
     def set_costume(self, current_direction, index):
         # Select appropriate costume for sprite
@@ -162,12 +168,12 @@ class Player(CustomDrawSprite):
         self.hit_box.y = int(self.real_y_position)
         self.collision('vertical')
 
+        # If direction was changed - set the first costume
+        if self.movement_direction != self.previous_movement_direction:
+            self.reset_costume()
+
         # Check the movement
         if self.rect.center != self.hit_box.center:
-
-            # If direction was changed - set the first costume
-            if self.movement_direction != self.previous_movement_direction:
-                self.reset_costume()
 
             # Set the movement offset
             self.rect.center = self.hit_box.center
@@ -200,14 +206,16 @@ class Player(CustomDrawSprite):
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False, pygame.sprite.collide_mask):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
                     self.game_state.decrease_energy()
 
         # Check collision with enemy sprites
         for sprite in self.hostile_force_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False, pygame.sprite.collide_mask):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
                     self.game_state.decrease_energy()
 
@@ -260,10 +268,23 @@ class Player(CustomDrawSprite):
                         self.real_x_position = float(self.hit_box.x)
                         self.real_y_position = float(self.hit_box.y)
 
+    def use_weapon(self):
+        if self.weapon_is_in_use and \
+                (self.movement_direction == direction.Direction.LEFT or
+                 self.movement_direction == direction.Direction.RIGHT or
+                 self.movement_direction == direction.Direction.UP or
+                 self.movement_direction == direction.Direction.DOWN):
+            self.sword_weapon.set_direction(self.movement_direction)
+            self.sword_weapon.set_position(self.rect.topleft)
+            self.sword_weapon.is_visible = True
+        else:
+            self.sword_weapon.is_visible = False
+
     def update(self):
         self.input()
         self.change_costume()
         self.move()
+        self.use_weapon()
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite

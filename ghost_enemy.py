@@ -34,6 +34,10 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
+    def __del__(self):
+        # TODO: Implement animation
+        pass
+
     def move(self):
         # Calculate real y position
         self.real_x_position += float(self.movement_vector.x * self.speed)
