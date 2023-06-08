@@ -60,7 +60,8 @@ class Player(CustomDrawSprite):
 
         # Player weapon
         self.weapon_is_in_use = False
-        self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites)
+        self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites,
+                                        moving_obstacle_sprites)
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
@@ -296,11 +297,6 @@ class Player(CustomDrawSprite):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-
-            brush_thickness = int(game_helper.calculate_ratio(5))
-            if brush_thickness < 1:
-                brush_thickness = 1
-            pygame.draw.polygon(outline_image, (252, 64, 30), mask_outline, brush_thickness)
 
             brush_thickness = int(game_helper.calculate_ratio(1))
             if brush_thickness < 1:

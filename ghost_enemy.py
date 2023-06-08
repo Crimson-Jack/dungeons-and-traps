@@ -1,6 +1,5 @@
 import pygame
 import settings
-import game_helper
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 

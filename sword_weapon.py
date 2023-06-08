@@ -1,4 +1,6 @@
 import pygame
+
+import enemy_with_energy
 import game_helper
 import settings
 import spritesheet
@@ -7,7 +9,7 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class SwordWeapon(CustomDrawSprite):
-    def __init__(self, position, groups, enemy_sprites):
+    def __init__(self, position, groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
 
         self.sprites = {
@@ -29,6 +31,10 @@ class SwordWeapon(CustomDrawSprite):
 
         # Enemies
         self.enemy_sprites = enemy_sprites
+
+        # Obstacles
+        self.obstacle_sprites = obstacle_sprites
+        self.moving_obstacle_sprites = moving_obstacle_sprites
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
@@ -80,9 +86,25 @@ class SwordWeapon(CustomDrawSprite):
             # Check collision with enemy sprites
             for sprite in self.enemy_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
-                    if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), True,
+                    if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                    pygame.sprite.collide_mask):
-                        pass
+                        if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
+                            sprite.decrease_energy()
+                            if sprite.get_energy() == 0:
+                                sprite.kill()
+
+            # Check collision with obstacle sprites
+            for sprite in self.obstacle_sprites:
+                if sprite.hit_box.colliderect(self.hit_box):
+                    if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                                   pygame.sprite.collide_mask):
+                        self.is_visible = False
+            # Check collision with moving obstacle sprites
+            for sprite in self.moving_obstacle_sprites:
+                if sprite.hit_box.colliderect(self.hit_box):
+                    if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                                   pygame.sprite.collide_mask):
+                        self.is_visible = False
 
     def custom_draw(self, game_surface, offset):
         if self.is_visible:

@@ -83,7 +83,7 @@ class Level:
                 speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
 
             # Add player to visible group
-            return Player((x, y), [self.middle_layer_regular_sprites], [self.top_layer_sprites],
+            return Player((x, y), [self.middle_layer_regular_sprites], [self.middle_layer_regular_sprites             ],
                           speed, self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
                           self.collectable_sprites, self.enemy_sprites, self.hostile_force_sprites,
                           self.game_state)
@@ -133,32 +133,32 @@ class Level:
             # Add tile to visible and collectable sprites group
             Diamond(image, (x, y), [self.middle_layer_regular_sprites, self.collectable_sprites])
 
-        enemy_spider_layer = self.tmx_data.get_layer_by_name('enemy-spider')
-        for enemy_spider in enemy_spider_layer:
-            if enemy_spider.visible:
-                tile_x = int(enemy_spider.x // self.tmx_data.tilewidth)
-                tile_y = int(enemy_spider.y // self.tmx_data.tileheight)
+        spider_enemy_layer = self.tmx_data.get_layer_by_name('spider-enemy')
+        for spider_enemy in spider_enemy_layer:
+            if spider_enemy.visible:
+                tile_x = int(spider_enemy.x // self.tmx_data.tilewidth)
+                tile_y = int(spider_enemy.y // self.tmx_data.tileheight)
                 x = tile_x * settings.TILE_SIZE
                 y = tile_y * settings.TILE_SIZE
 
-                if enemy_spider.properties.get('speed') is None:
-                    speed = float(game_helper.calculate_ratio(enemy_spider_layer.properties.get('speed')))
+                if spider_enemy.properties.get('speed') is None:
+                    speed = float(game_helper.calculate_ratio(spider_enemy_layer.properties.get('speed')))
                 else:
-                    speed = float(game_helper.calculate_ratio(enemy_spider.properties.get('speed')))
+                    speed = float(game_helper.calculate_ratio(spider_enemy.properties.get('speed')))
 
-                if enemy_spider.properties.get('net_length') is None:
-                    net_length = int(enemy_spider_layer.properties.get('net_length'))
+                if spider_enemy.properties.get('net_length') is None:
+                    net_length = int(spider_enemy_layer.properties.get('net_length'))
                 else:
-                    net_length = int(enemy_spider.properties.get('net_length'))
+                    net_length = int(spider_enemy.properties.get('net_length'))
 
-                if enemy_spider.properties.get('motion_schedule') is None:
-                    motion_schedule = enemy_spider_layer.properties.get('motion_schedule')
+                if spider_enemy.properties.get('motion_schedule') is None:
+                    motion_schedule = spider_enemy_layer.properties.get('motion_schedule')
                 else:
-                    motion_schedule = enemy_spider.properties.get('motion_schedule')
+                    motion_schedule = spider_enemy.properties.get('motion_schedule')
                 # Convert string to tuple
                 motion_schedule = tuple(map(int, motion_schedule.split(',')))
 
-                SpiderEnemy(enemy_spider.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                SpiderEnemy(spider_enemy.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                             speed, net_length, motion_schedule, self.moving_obstacle_sprites)
 
         enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
