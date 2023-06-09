@@ -9,7 +9,6 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
-
         # Main - screen surface
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
         # Game surface
@@ -32,7 +31,7 @@ class Game:
     def run(self):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
                     sys.exit()
                 # Player movement direction
@@ -45,6 +44,8 @@ class Game:
                         self.game_state.set_player_movement(1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.game_state.set_player_movement(-1, 0)
+                    if event.key == pygame.K_SPACE:
+                        self.game_state.set_player_is_using_weapon(True)
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.game_state.set_player_movement(0, -1)
@@ -54,6 +55,8 @@ class Game:
                         self.game_state.set_player_movement(-1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.game_state.set_player_movement(1, 0)
+                    if event.key == pygame.K_SPACE:
+                        self.game_state.set_player_is_using_weapon(False)
 
                 #  Custom events
                 if event.type == settings.ADD_DIAMOND_EVENT:

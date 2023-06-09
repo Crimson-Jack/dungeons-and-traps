@@ -5,7 +5,7 @@ from debug import Debug
 FPS = 60
 
 # Screen size
-WIDTH = 800
+WIDTH = 1024
 HEIGHT = 600
 # Dashboard size
 DASHBOARD_HEIGHT = 150

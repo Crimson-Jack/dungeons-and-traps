@@ -1,6 +1,5 @@
 import pygame
 import settings
-import game_helper
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
@@ -33,6 +32,10 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
+
+    def __del__(self):
+        # TODO: Implement animation
+        pass
 
     def move(self):
         # Calculate real y position

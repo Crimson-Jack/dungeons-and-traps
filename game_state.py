@@ -14,6 +14,7 @@ class GameState:
         self.power = 0
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
+        self.player_is_using_weapon = False
 
     def set_number_of_required_diamonds(self, value):
         self.required_diamonds = value
@@ -69,3 +70,6 @@ class GameState:
             self.player_movement_direction = direction.Direction.UP
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
             self.player_movement_direction = direction.Direction.RIGHT_UP
+
+    def set_player_is_using_weapon(self, status):
+        self.player_is_using_weapon = status

@@ -1,23 +1,40 @@
 import pygame
+import game_helper
 import settings
+import spritesheet
 from custom_draw_sprite import CustomDrawSprite
+from enemy_with_energy import EnemyWithEnergy
 
 
-class SpiderEnemy(CustomDrawSprite):
+class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
     def __init__(self, image, position, groups, speed, net_length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        # Create movement variables
+        # Energy
+        self.max_energy = 100
+        self.energy = self.max_energy
+        self.energy_decrease_step = 5
+        self.energy_increase_step = 0.25
+
+        # Animation variables
+        self.number_of_sprites = 5
+        self.costume_switching_threshold = self.max_energy // self.number_of_sprites
+        self.costume_index = 0
+        self.sprites = {
+            'down': []}
+        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+
+        # Movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((0, 1))
         self.speed = speed
         self.min_y_position = self.rect.top
         self.max_net_length = settings.TILE_SIZE * net_length
 
-        # Create motion variables
+        # Motion variables
         self.motion_schedule = motion_schedule
         self.step_counter = 0
         self.motion_index = 0
@@ -28,6 +45,30 @@ class SpiderEnemy(CustomDrawSprite):
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
+
+        # State variables
+        self.collided_with_weapon = False
+
+    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
+        # Load image with all sprite sheets
+        sprite_sheet = spritesheet.SpriteSheet(
+            pygame.image.load('img/spider-enemy.png').convert_alpha(),
+            source_sprite_width,
+            source_sprite_height,
+            scale,
+            key_color
+        )
+
+        # Sprites with the state: healthy
+        self.sprites['down'].append(sprite_sheet.get_image(0, 0))
+
+        # Sprites with the state: injured
+        for number in range(0, self.number_of_sprites):
+            self.sprites['down'].append(sprite_sheet.get_image(1, number))
+
+    def __del__(self):
+        # TODO: Implement animation
+        pass
 
     def move(self):
         # Calculate real y position
@@ -67,6 +108,7 @@ class SpiderEnemy(CustomDrawSprite):
         self.step_counter += 1
 
     def update(self):
+        self.heal_injuries()
         if self.is_moving:
             self.move()
         else:
@@ -76,11 +118,22 @@ class SpiderEnemy(CustomDrawSprite):
         # Draw a net (line) from the beginning to the end spider position
         start_position = pygame.Vector2((self.rect.center[0], self.min_y_position)) + offset
         end_position = pygame.Vector2(self.rect.center) + offset
-        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, 2)
+        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, game_helper.calculate_thickness(2))
 
         # Draw sprite
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
+
+        # Draw an outline if it is collided
+        if self.collided_with_weapon:
+            outline_image = pygame.surface.Surface.copy(self.image)
+            mask = pygame.mask.from_surface(self.image)
+            mask_outline = mask.outline()
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, game_helper.calculate_thickness(1))
+            game_surface.blit(outline_image, offset_position)
+
+            # Reset status of collided with weapon
+            self.collided_with_weapon = False
 
     def collision(self):
         is_collision_detected = False
@@ -105,3 +158,41 @@ class SpiderEnemy(CustomDrawSprite):
                 is_collision_detected = True
 
         return is_collision_detected
+
+    def heal_injuries(self):
+        # Heal injuries slowly
+        if self.energy < self.max_energy:
+            self.energy += self.energy_increase_step
+
+        new_costume_index = self.calculate_costume_index()
+        if new_costume_index != self.costume_index:
+            self.costume_index = int(new_costume_index)
+            self.change_costume()
+
+    def decrease_energy(self):
+        self.collided_with_weapon = True
+
+        if self.energy > 0:
+            self.energy -= self.energy_decrease_step
+            if self.energy < 0:
+                self.energy = 0
+
+        new_costume_index = self.calculate_costume_index()
+        if new_costume_index != self.costume_index:
+            self.costume_index = int(new_costume_index)
+            self.change_costume()
+
+    def get_energy(self):
+        return self.energy
+
+    def calculate_costume_index(self):
+        new_costume_index = self.energy // self.costume_switching_threshold
+        new_costume_index = self.number_of_sprites - new_costume_index
+
+        if new_costume_index >= self.number_of_sprites:
+            new_costume_index = self.number_of_sprites - 1
+
+        return new_costume_index
+
+    def change_costume(self):
+        self.image = self.sprites['down'][self.costume_index]
