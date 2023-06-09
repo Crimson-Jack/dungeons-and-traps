@@ -1,4 +1,5 @@
 import pygame
+import game_helper
 import settings
 import spritesheet
 from custom_draw_sprite import CustomDrawSprite
@@ -13,7 +14,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.hit_box = self.rect
 
         # Power
-        self.max_energy = 70
+        self.max_energy = 100
         self.energy = self.max_energy
 
         # Create sprite animation variables
@@ -42,6 +43,9 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
+
+        # Enemy state variables
+        self.collided_with_weapon = False
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
@@ -112,11 +116,30 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Draw a net (line) from the beginning to the end spider position
         start_position = pygame.Vector2((self.rect.center[0], self.min_y_position)) + offset
         end_position = pygame.Vector2(self.rect.center) + offset
-        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, 2)
+        line_thickness = int(game_helper.calculate_ratio(2))
+        if line_thickness < 1:
+            line_thickness = 1
+        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, line_thickness)
 
         # Draw sprite
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
+
+        # Draw an outline if it collided
+        if self.collided_with_weapon:
+            outline_image = pygame.surface.Surface.copy(self.image)
+            mask = pygame.mask.from_surface(self.image)
+            mask_outline = mask.outline()
+
+            brush_thickness = int(game_helper.calculate_ratio(1))
+            if brush_thickness < 1:
+                brush_thickness = 1
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, brush_thickness)
+
+            game_surface.blit(outline_image, offset_position)
+
+            # Reset status
+            self.collided_with_weapon = False
 
     def collision(self):
         is_collision_detected = False
@@ -152,6 +175,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             self.change_costume()
 
     def decrease_energy(self):
+        self.collided_with_weapon = True
+
         if self.energy > 0:
             self.energy -= 5
             if self.energy < 0:

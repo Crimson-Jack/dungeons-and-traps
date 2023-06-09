@@ -92,7 +92,6 @@ class SwordWeapon(CustomDrawSprite):
                             sprite.decrease_energy()
                             if sprite.get_energy() == 0:
                                 sprite.kill()
-
             # Check collision with obstacle sprites
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
