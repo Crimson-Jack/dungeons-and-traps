@@ -13,11 +13,13 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        # Power
+        # Energy
         self.max_energy = 100
         self.energy = self.max_energy
+        self.energy_decrease_step = 5
+        self.energy_increase_step = 0.25
 
-        # Create sprite animation variables
+        # Animation variables
         self.number_of_sprites = 5
         self.costume_switching_threshold = self.max_energy // self.number_of_sprites
         self.costume_index = 0
@@ -25,14 +27,14 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             'down': []}
         self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
-        # Create movement variables
+        # Movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((0, 1))
         self.speed = speed
         self.min_y_position = self.rect.top
         self.max_net_length = settings.TILE_SIZE * net_length
 
-        # Create motion variables
+        # Motion variables
         self.motion_schedule = motion_schedule
         self.step_counter = 0
         self.motion_index = 0
@@ -44,7 +46,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
-        # Enemy state variables
+        # State variables
         self.collided_with_weapon = False
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
@@ -116,29 +118,21 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Draw a net (line) from the beginning to the end spider position
         start_position = pygame.Vector2((self.rect.center[0], self.min_y_position)) + offset
         end_position = pygame.Vector2(self.rect.center) + offset
-        line_thickness = int(game_helper.calculate_ratio(2))
-        if line_thickness < 1:
-            line_thickness = 1
-        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, line_thickness)
+        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, game_helper.calculate_thickness(2))
 
         # Draw sprite
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
 
-        # Draw an outline if it collided
+        # Draw an outline if it is collided
         if self.collided_with_weapon:
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-
-            brush_thickness = int(game_helper.calculate_ratio(1))
-            if brush_thickness < 1:
-                brush_thickness = 1
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, brush_thickness)
-
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, game_helper.calculate_thickness(1))
             game_surface.blit(outline_image, offset_position)
 
-            # Reset status
+            # Reset status of collided with weapon
             self.collided_with_weapon = False
 
     def collision(self):
@@ -166,23 +160,24 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         return is_collision_detected
 
     def heal_injuries(self):
+        # Heal injuries slowly
         if self.energy < self.max_energy:
-            self.energy += 0.1
+            self.energy += self.energy_increase_step
 
-        mew_costume_index = self.get_new_costume_index()
-        if mew_costume_index != self.costume_index:
-            self.costume_index = int(mew_costume_index)
+        new_costume_index = self.calculate_costume_index()
+        if new_costume_index != self.costume_index:
+            self.costume_index = int(new_costume_index)
             self.change_costume()
 
     def decrease_energy(self):
         self.collided_with_weapon = True
 
         if self.energy > 0:
-            self.energy -= 5
+            self.energy -= self.energy_decrease_step
             if self.energy < 0:
                 self.energy = 0
 
-        new_costume_index = self.get_new_costume_index()
+        new_costume_index = self.calculate_costume_index()
         if new_costume_index != self.costume_index:
             self.costume_index = int(new_costume_index)
             self.change_costume()
@@ -190,7 +185,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
     def get_energy(self):
         return self.energy
 
-    def get_new_costume_index(self):
+    def calculate_costume_index(self):
         new_costume_index = self.energy // self.costume_switching_threshold
         new_costume_index = self.number_of_sprites - new_costume_index
 
@@ -201,11 +196,3 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
     def change_costume(self):
         self.image = self.sprites['down'][self.costume_index]
-
-
-
-
-
-
-
-

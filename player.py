@@ -292,15 +292,10 @@ class Player(CustomDrawSprite):
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
 
-        # Draw an outline if it collided
+        # Draw an outline if it is collided
         if self.collided_with_enemy:
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-
-            brush_thickness = int(game_helper.calculate_ratio(1))
-            if brush_thickness < 1:
-                brush_thickness = 1
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, brush_thickness)
-
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, game_helper.calculate_thickness(1))
             game_surface.blit(outline_image, offset_position)
