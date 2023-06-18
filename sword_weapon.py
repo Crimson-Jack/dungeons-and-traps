@@ -67,7 +67,7 @@ class SwordWeapon(CustomDrawSprite):
     def set_position(self, position):
         # Calculate additional offset
         new_position = [position[0], position[1]]
-        position_offset = game_helper.calculate_ratio(24)
+        position_offset = game_helper.calculate_with_ratio(24)
         # Add additional offset to the base position
         if self.direction == direction.Direction.RIGHT:
             new_position[0] += position_offset

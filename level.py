@@ -1,8 +1,8 @@
 import pygame
-
 import obstacle_map_refresh_sprite
 import settings
 import game_helper
+import tmx_helper
 from pytmx.util_pygame import load_pygame
 from obstacle_map import ObstacleMap
 from wall import Wall
@@ -78,9 +78,9 @@ class Level:
 
             if player_object.properties.get('speed') is None:
                 # Default player speed
-                speed = game_helper.calculate_ratio(7)
+                speed = game_helper.calculate_with_ratio(7)
             else:
-                speed = game_helper.calculate_ratio(player_object.properties.get('speed'))
+                speed = game_helper.calculate_with_ratio(player_object.properties.get('speed'))
 
             # Add player to visible group
             return Player((x, y), [self.middle_layer_regular_sprites], [self.middle_layer_regular_sprites             ],
@@ -133,86 +133,52 @@ class Level:
             # Add tile to visible and collectable sprites group
             Diamond(image, (x, y), [self.middle_layer_regular_sprites, self.collectable_sprites])
 
-        spider_enemy_layer = self.tmx_data.get_layer_by_name('spider-enemy')
-        for spider_enemy in spider_enemy_layer:
-            if spider_enemy.visible:
-                tile_x = int(spider_enemy.x // self.tmx_data.tilewidth)
-                tile_y = int(spider_enemy.y // self.tmx_data.tileheight)
-                x = tile_x * settings.TILE_SIZE
-                y = tile_y * settings.TILE_SIZE
+        spider_layer = self.tmx_data.get_layer_by_name('spider-enemy')
+        for spider_item in spider_layer:
+            if spider_item.visible:
+                # Position
+                x, y = tmx_helper.convert_position(spider_item.x, spider_item.y, self.tmx_data.tilewidth,
+                                                   self.tmx_data.tileheight)
+                # Custom properties
+                net_length = tmx_helper.get_int_property('net_length', 1, spider_item, spider_layer)
+                speed = tmx_helper.get_float_with_ratio_property('speed', 1, spider_item, spider_layer)
+                motion_schedule = tmx_helper.get_tuple_property('motion_schedule', '', spider_item, spider_layer)
 
-                if spider_enemy.properties.get('speed') is None:
-                    speed = float(game_helper.calculate_ratio(spider_enemy_layer.properties.get('speed')))
-                else:
-                    speed = float(game_helper.calculate_ratio(spider_enemy.properties.get('speed')))
-
-                if spider_enemy.properties.get('net_length') is None:
-                    net_length = int(spider_enemy_layer.properties.get('net_length'))
-                else:
-                    net_length = int(spider_enemy.properties.get('net_length'))
-
-                if spider_enemy.properties.get('motion_schedule') is None:
-                    motion_schedule = spider_enemy_layer.properties.get('motion_schedule')
-                else:
-                    motion_schedule = spider_enemy.properties.get('motion_schedule')
-                # Convert string to tuple
-                motion_schedule = tuple(map(int, motion_schedule.split(',')))
-
-                SpiderEnemy(spider_enemy.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                SpiderEnemy(spider_item.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                             speed, net_length, motion_schedule, self.moving_obstacle_sprites)
 
-        enemy_ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
-        for enemy_ghost in enemy_ghost_layer:
-            if enemy_ghost.visible:
-                tile_x = int(enemy_ghost.x // self.tmx_data.tilewidth)
-                tile_y = int(enemy_ghost.y // self.tmx_data.tileheight)
-                x = tile_x * settings.TILE_SIZE
-                y = tile_y * settings.TILE_SIZE
+        ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
+        for ghost_item in ghost_layer:
+            if ghost_item.visible:
+                # Position
+                x, y = tmx_helper.convert_position(ghost_item.x, ghost_item.y, self.tmx_data.tilewidth,
+                                                   self.tmx_data.tileheight)
+                # Custom properties
+                speed = tmx_helper.get_float_with_ratio_property('speed', 1, ghost_item, ghost_layer)
+                # Get all sprites with duration (frames)
+                frames = tmx_helper.get_frames(self.tmx_data, ghost_item)
 
-                if enemy_ghost.properties.get('speed') is None:
-                    speed = game_helper.calculate_ratio(enemy_ghost_layer.properties.get('speed'))
-                else:
-                    speed = game_helper.calculate_ratio(enemy_ghost.properties.get('speed'))
-
-                GhostEnemy(enemy_ghost.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                GhostEnemy(frames, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                            speed, self.obstacle_map.items)
 
-        enemy_fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
-        for enemy_fire_flame in enemy_fire_flame_layer:
-            if enemy_fire_flame.visible:
-                tile_x = int(enemy_fire_flame.x // self.tmx_data.tilewidth)
-                tile_y = int(enemy_fire_flame.y // self.tmx_data.tileheight)
-                x = tile_x * settings.TILE_SIZE
-                y = tile_y * settings.TILE_SIZE
-
-                if enemy_fire_flame.properties.get('speed') is None:
-                    speed = float(game_helper.calculate_ratio(enemy_fire_flame_layer.properties.get('speed')))
-                else:
-                    speed = float(game_helper.calculate_ratio(enemy_fire_flame.properties.get('speed')))
-
-                if enemy_fire_flame.properties.get('fire_length') is None:
-                    fire_length = int(enemy_fire_flame_layer.properties.get('fire_length'))
-                else:
-                    fire_length = int(enemy_fire_flame.properties.get('fire_length'))
-
-                if enemy_fire_flame.properties.get('motion_schedule') is None:
-                    motion_schedule = enemy_fire_flame_layer.properties.get('motion_schedule')
-                else:
-                    motion_schedule = enemy_fire_flame.properties.get('motion_schedule')
-                # Convert string to tuple
-                motion_schedule = tuple(map(int, motion_schedule.split(',')))
+        fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
+        for fire_flame_item in fire_flame_layer:
+            if fire_flame_item.visible:
+                # Position
+                x, y = tmx_helper.convert_position(fire_flame_item.x, fire_flame_item.y, self.tmx_data.tilewidth,
+                                                   self.tmx_data.tileheight)
+                # Custom properties
+                direction = tmx_helper.get_property('direction', 'right', fire_flame_item, fire_flame_layer)
+                fire_length = tmx_helper.get_int_property('fire_length', 1, fire_flame_item, fire_flame_layer)
+                motion_schedule = tmx_helper.get_tuple_property('motion_schedule', '', fire_flame_item, fire_flame_layer)
+                speed = tmx_helper.get_float_with_ratio_property('speed', 1, fire_flame_item, fire_flame_layer)
 
                 # Get all sprites
                 sprites = []
-                frames = enemy_fire_flame.properties.get('frames')
+                frames = fire_flame_item.properties.get('frames')
                 if frames is not None:
                     for frame in frames:
                         sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
-
-                if enemy_fire_flame.properties.get('direction') is None:
-                    direction = enemy_fire_flame_layer.properties.get('direction')
-                else:
-                    direction = enemy_fire_flame.properties.get('direction')
 
                 if direction == 'left':
                     FireFlameEnemyLeft(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],

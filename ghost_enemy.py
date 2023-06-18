@@ -1,16 +1,31 @@
 import pygame
+
+import game_helper
 import settings
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
 class GhostEnemy(ObstacleMapRefreshSprite):
-    def __init__(self, image, position, groups, speed, obstacle_map):
+    def __init__(self, frames, position, groups, speed, obstacle_map):
         super().__init__(groups)
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
+
+        # Sprite animation variables
+        self.sprites = []
+        self.costume_switching_thresholds = []
+        # Split frames into sprites and durations
+        for frame in frames:
+            self.sprites.append(pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE)))
+            self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+        self.number_of_sprites = len(self.sprites)
+        self.costume_step_counter = 0
+        self.costume_index = 0
+
+        # Image
+        self.image = self.sprites[0]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        # Create movement variables
+        # Movement variables
         self.speed = speed
         self.default_movement_vector = pygame.math.Vector2((1, 0))
         self.movement_vector = pygame.math.Vector2(self.default_movement_vector)
@@ -77,9 +92,11 @@ class GhostEnemy(ObstacleMapRefreshSprite):
                 self.current_position_on_map[0] = self.new_position_on_map[0]
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
-            # TODO: Remove or add log function
-            #print(f'pos on the map: {self.current_position_on_map[0]} {self.current_position_on_map[1]}')
+
             self.set_movement_vector()
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
 
     def set_movement_vector(self):
         # Start position is current position
@@ -122,7 +139,8 @@ class GhostEnemy(ObstacleMapRefreshSprite):
                 current_position_top = [next_position[0] + 1, next_position[1] - 1]
                 previous_position_top = [next_position[0] + 1, next_position[1] - 2]
 
-            if self.obstacle_map[previous_position_top[1]][previous_position_top[0]] and not self.obstacle_map[current_position_top[1]][current_position_top[0]]:
+            if self.obstacle_map[previous_position_top[1]][previous_position_top[0]] \
+                    and not self.obstacle_map[current_position_top[1]][current_position_top[0]]:
                 # [ppt]   [   ]
                 # [   ]   [ x ]
                 vector = pygame.math.Vector2(movement_vector)
@@ -143,6 +161,8 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         return result_vector
 
     def update(self):
+        if self.number_of_sprites > 1:
+            self.change_costume()
         if self.is_moving:
             self.move()
 
@@ -158,4 +178,19 @@ class GhostEnemy(ObstacleMapRefreshSprite):
         if not previous_moving_state and self.is_moving:
             # Start moving
             self.movement_vector = self.get_wall_follower_movement_vector(start_position, self.default_movement_vector)
+
+    def change_costume(self):
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the second costume (index = 1)
+            if self.costume_index >= self.number_of_sprites:
+                self.costume_index = 0
+
+            # Set new image
+            self.image = self.sprites[self.costume_index]
 

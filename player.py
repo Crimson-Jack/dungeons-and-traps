@@ -31,7 +31,7 @@ class Player(CustomDrawSprite):
         # Player image
         self.image = self.sprites['right'][0]
         self.rect = self.image.get_rect(topleft=position)
-        self.hit_box = self.rect.inflate(game_helper.calculate_ratio(-5), 0)
+        self.hit_box = self.rect.inflate(game_helper.calculate_with_ratio(-5), 0)
 
         # Create movement variables
         self.is_moving = False
