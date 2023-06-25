@@ -31,7 +31,7 @@ class Player(CustomDrawSprite):
         # Player image
         self.image = self.sprites['right'][0]
         self.rect = self.image.get_rect(topleft=position)
-        self.hit_box = self.rect.inflate(game_helper.calculate_with_ratio(-5), 0)
+        self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
 
         # Create movement variables
         self.is_moving = False
@@ -297,5 +297,5 @@ class Player(CustomDrawSprite):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, game_helper.calculate_thickness(1))
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)

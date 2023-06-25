@@ -118,7 +118,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Draw a net (line) from the beginning to the end spider position
         start_position = pygame.Vector2((self.rect.center[0], self.min_y_position)) + offset
         end_position = pygame.Vector2(self.rect.center) + offset
-        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, game_helper.calculate_thickness(2))
+        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, int(game_helper.multiply_by_tile_size_ratio(2, 1)))
 
         # Draw sprite
         offset_position = self.rect.topleft + offset
@@ -129,7 +129,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, game_helper.calculate_thickness(1))
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)
 
             # Reset status of collided with weapon

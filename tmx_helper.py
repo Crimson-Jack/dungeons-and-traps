@@ -34,18 +34,6 @@ def get_property(name: str, default, item: pytmx.TiledObject | None, layer: pytm
     return value
 
 
-def get_int_property(name, default, item, layer):
-    return int(get_property(name, default, item, layer))
-
-
-def get_tuple_property(name, default, item, layer):
-    return tuple(map(int, get_property(name, default, item, layer).split(',')))
-
-
-def get_float_with_ratio_property(name, default, item, layer):
-    return game_helper.calculate_with_ratio(get_property(name, default, item, layer))
-
-
 def get_frames(tmx_data, item):
     frames = []
     tmx_frames = item.properties.get('frames')

@@ -71,19 +71,14 @@ class Level:
         player_object = self.tmx_data.get_object_by_name('player')
 
         if player_object.visible:
-            tile_x = int(player_object.x // self.tmx_data.tilewidth)
-            tile_y = int(player_object.y // self.tmx_data.tileheight)
-            x = tile_x * settings.TILE_SIZE
-            y = tile_y * settings.TILE_SIZE
-
-            if player_object.properties.get('speed') is None:
-                # Default player speed
-                speed = game_helper.calculate_with_ratio(7)
-            else:
-                speed = game_helper.calculate_with_ratio(player_object.properties.get('speed'))
+            # Position
+            x, y = tmx_helper.convert_position(player_object.x, player_object.y, self.tmx_data.tilewidth,
+                                               self.tmx_data.tileheight)
+            # Custom properties
+            speed = game_helper.convert_to_tile_size_ratio_decorator(tmx_helper.get_property)('speed', 7, player_object, None)
 
             # Add player to visible group
-            return Player((x, y), [self.middle_layer_regular_sprites], [self.middle_layer_regular_sprites             ],
+            return Player((x, y), [self.middle_layer_regular_sprites], [self.middle_layer_regular_sprites],
                           speed, self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
                           self.collectable_sprites, self.enemy_sprites, self.hostile_force_sprites,
                           self.game_state)
@@ -140,9 +135,9 @@ class Level:
                 x, y = tmx_helper.convert_position(spider_item.x, spider_item.y, self.tmx_data.tilewidth,
                                                    self.tmx_data.tileheight)
                 # Custom properties
-                net_length = tmx_helper.get_int_property('net_length', 1, spider_item, spider_layer)
-                speed = tmx_helper.get_float_with_ratio_property('speed', 1, spider_item, spider_layer)
-                motion_schedule = tmx_helper.get_tuple_property('motion_schedule', '', spider_item, spider_layer)
+                net_length = int(tmx_helper.get_property('net_length', 1, spider_item, spider_layer))
+                speed = game_helper.convert_to_tile_size_ratio_decorator(tmx_helper.get_property)('speed', 1, spider_item, spider_layer)
+                motion_schedule = game_helper.convert_to_tuple_decorator(tmx_helper.get_property)('motion_schedule', '', spider_item, spider_layer)
 
                 SpiderEnemy(spider_item.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
                             speed, net_length, motion_schedule, self.moving_obstacle_sprites)
@@ -154,7 +149,7 @@ class Level:
                 x, y = tmx_helper.convert_position(ghost_item.x, ghost_item.y, self.tmx_data.tilewidth,
                                                    self.tmx_data.tileheight)
                 # Custom properties
-                speed = tmx_helper.get_float_with_ratio_property('speed', 1, ghost_item, ghost_layer)
+                speed = game_helper.convert_to_tile_size_ratio_decorator(tmx_helper.get_property)('speed', 1, ghost_item, ghost_layer)
                 # Get all sprites with duration (frames)
                 frames = tmx_helper.get_frames(self.tmx_data, ghost_item)
 
@@ -169,9 +164,9 @@ class Level:
                                                    self.tmx_data.tileheight)
                 # Custom properties
                 direction = tmx_helper.get_property('direction', 'right', fire_flame_item, fire_flame_layer)
-                fire_length = tmx_helper.get_int_property('fire_length', 1, fire_flame_item, fire_flame_layer)
-                motion_schedule = tmx_helper.get_tuple_property('motion_schedule', '', fire_flame_item, fire_flame_layer)
-                speed = tmx_helper.get_float_with_ratio_property('speed', 1, fire_flame_item, fire_flame_layer)
+                fire_length = int(tmx_helper.get_property('fire_length', 1, fire_flame_item, fire_flame_layer))
+                speed = game_helper.convert_to_tile_size_ratio_decorator(tmx_helper.get_property)('speed', 1, fire_flame_item, fire_flame_layer)
+                motion_schedule = game_helper.convert_to_tuple_decorator(tmx_helper.get_property)('motion_schedule', '', fire_flame_item, fire_flame_layer)
 
                 # Get all sprites
                 sprites = []

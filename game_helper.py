@@ -5,29 +5,21 @@ import settings
 BASE_TILE_SIZE = 64
 
 
-def calculate_with_ratio(value: float | int) -> float:
+def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None = None) -> float:
     """
-    Calculate a value with ratio.
-    The value is multiplied by a factor that adjusts it to the current tile size.
+    Return argument multiplied by a factor that adjusts it to the current tile size.
+    If result is lower than 'minimum' argument, return the 'minimum' value.
 
     :param value: raw value
+    :param minimum: minimum value
     :return: calculated value
     """
-    return value * settings.TILE_SIZE / BASE_TILE_SIZE
+    result = value * settings.TILE_SIZE / BASE_TILE_SIZE
 
+    if minimum is not None and result < minimum:
+        result = minimum
 
-def calculate_thickness(value: float | int) -> int:
-    """
-    Calculate a value with ratio using calculate_with_ratio() function and convert to integer.
-    The minimum thickness value is 1.
-
-    :param value: raw value
-    :return: calculated value
-    """
-    thickness = int(calculate_with_ratio(value))
-    if thickness < 1:
-        thickness = 1
-    return thickness
+    return result
 
 
 def calculate_frames(time: float | int) -> int:
@@ -40,3 +32,31 @@ def calculate_frames(time: float | int) -> int:
     result = (time / 1000) / (1 / settings.FPS)
 
     return int(result)
+
+
+def convert_to_tuple_decorator(func_name):
+    """
+    Return a wrapper where the result (string with coma separator) is converted to a tuple.
+
+    :param func_name: function name
+    :return: wrapper
+    """
+    def wrapper(*args):
+        func_result = func_name(*args)
+        result = tuple(map(int, func_result.split(',')))
+        return result
+    return wrapper
+
+
+def convert_to_tile_size_ratio_decorator(func_name):
+    """
+    Return a wrapper where the result is multiplied by the tile size ratio.
+
+    :param func_name: function name
+    :return: wrapper
+    """
+    def wrapper(*args):
+        func_result = func_name(*args)
+        result = multiply_by_tile_size_ratio(func_result)
+        return result
+    return wrapper
