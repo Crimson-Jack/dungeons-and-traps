@@ -60,3 +60,15 @@ def convert_to_tile_size_ratio_decorator(func_name):
         result = multiply_by_tile_size_ratio(func_result)
         return result
     return wrapper
+
+
+def calculate_game_surface_position(game_surface_width, game_surface_height, map_width, map_height):
+    position = [0, 0]
+
+    if map_width < game_surface_width:
+        position[0] = (game_surface_width - map_width) // 2
+
+    if map_height < game_surface_height:
+        position[1] = (game_surface_height - map_height) // 2
+
+    return tuple(position)

@@ -30,6 +30,20 @@ class Level:
         self.tmx_data = load_pygame('data/tmx/basic.tmx')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
+        # Calculate game surface position
+        map_rect = pygame.Rect(0, 0, size_of_map[0] * settings.TILE_SIZE, size_of_map[1] * settings.TILE_SIZE)
+        self.game_surface_position = game_helper.calculate_game_surface_position(self.game_surface.get_width(),
+                                                                                 self.game_surface.get_height(),
+                                                                                 map_rect.width,
+                                                                                 map_rect.height)
+        # Set game surface rect
+        self.game_surface_rect = self.game_surface.get_rect()
+
+        if self.game_surface_rect.width > map_rect.width:
+            self.game_surface_rect.width = map_rect.width
+        if self.game_surface_rect.height > map_rect.height:
+            self.game_surface_rect.height = map_rect.height
+
         # Set up visible groups
         self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
         self.bottom_layer_regular_sprites = CameraGroup(game_surface, size_of_map)
@@ -64,8 +78,7 @@ class Level:
         self.game_state.set_number_of_required_diamonds(len(self.collectable_sprites))
 
         # Set blast effect details
-        self.blast_effect = BlastEffect(self.game_surface, self.game_surface.get_width(),
-                                        self.game_surface.get_height(), 8, 'White')
+        self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
 
     def create_player(self):
         player_object = self.tmx_data.get_object_by_name('player')
@@ -200,7 +213,7 @@ class Level:
         self.blast_effect.draw()
 
         # Blit game_surface on the main screen
-        self.screen.blit(self.game_surface, (0, 0))
+        self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
 
         # Read inputs and display variables if debugger is enabled
         settings.debugger.input()

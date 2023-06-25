@@ -1,11 +1,12 @@
 import pygame
 
 
-class BlastEffect():
-    def __init__(self, game_surface, width, height, steps, color):
+class BlastEffect:
+    def __init__(self, game_surface, game_surface_rect, steps, color):
         self.game_surface = game_surface
-        self.width = width
-        self.height = height
+        # Set all parameters
+        self.width = game_surface_rect.width
+        self.height = game_surface_rect.height
         self.step_x = self.width // steps
         self.step_y = self.height // steps
         self.color = color
