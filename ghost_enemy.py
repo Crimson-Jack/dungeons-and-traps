@@ -1,11 +1,10 @@
 import pygame
-
 import game_helper
 import settings
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
-class GhostEnemy(ObstacleMapRefreshSprite):
+class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
     def __init__(self, frames, position, groups, speed, obstacle_map):
         super().__init__(groups)
 
