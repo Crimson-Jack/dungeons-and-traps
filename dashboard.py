@@ -29,7 +29,8 @@ class Dashboard:
 
     def draw(self):
         # Diamonds
-        diamonds_counter_text = self.basic_font.render(f'Diamonds {self.game_state.diamonds} ({self.game_state.required_diamonds})', True, self.accent_color)
+        diamonds_counter_text = self.basic_font.render(
+            f'Diamonds {self.game_state.diamonds} ({self.game_state.required_diamonds})', True, self.accent_color)
         self.dashboard_surface.blit(diamonds_counter_text, (self.margin, self.margin))
 
         # Energy bar

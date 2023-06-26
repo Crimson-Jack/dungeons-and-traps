@@ -1,5 +1,4 @@
 import settings
-import game_helper
 import pytmx
 
 

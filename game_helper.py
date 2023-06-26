@@ -1,4 +1,3 @@
-import pygame
 import settings
 
 # Base tile size - reference tile size - base on this parameter, all other values are calculated

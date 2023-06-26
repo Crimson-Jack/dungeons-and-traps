@@ -1,6 +1,5 @@
 import pygame
 import custom_draw_sprite
-import obstacle_map_refresh_sprite
 import settings
 
 
@@ -32,8 +31,6 @@ class CameraGroup(pygame.sprite.Group):
     def custom_draw(self, player):
         # Calculate map offset
         self.set_map_offset(player)
-
-        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
 
         # Draw each tile with an offset on game_surface
         for sprite in self.sprites():

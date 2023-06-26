@@ -188,7 +188,7 @@ class Player(CustomDrawSprite):
         # Increase step counter
         self.step_counter += 1
 
-    def collision(self, direction):
+    def collision(self, direction_name):
         self.collided_with_enemy = False
 
         # Check collision with exit points
@@ -212,7 +212,7 @@ class Player(CustomDrawSprite):
                     self.collided_with_enemy = True
                     self.game_state.decrease_energy()
 
-        # Check collision with enemy sprites
+        # Check collision with hostile force sprites
         for sprite in self.hostile_force_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
@@ -221,7 +221,7 @@ class Player(CustomDrawSprite):
                     self.game_state.decrease_energy()
 
         # Check collision with obstacle and moving obstacle sprites
-        if direction == 'horizontal':
+        if direction_name == 'horizontal':
             # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
@@ -245,7 +245,7 @@ class Player(CustomDrawSprite):
                         self.real_x_position = float(self.hit_box.x)
                         self.real_y_position = float(self.hit_box.y)
 
-        if direction == 'vertical':
+        if direction_name == 'vertical':
             # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
@@ -297,5 +297,6 @@ class Player(CustomDrawSprite):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
+                                int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)

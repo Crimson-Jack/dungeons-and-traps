@@ -40,6 +40,7 @@ class Bar:
         # Text
         if self.label is None:
             text = None
+            text_position = [0, 0]
         else:
             # Create text
             text = self.basic_font.render(f'{self.label} {percent} %', True, self.text_color)
@@ -64,7 +65,7 @@ class Bar:
                 accent_color = self.accent_color_60
             elif percent > 20:
                 accent_color = self.accent_color_40
-            elif percent >= 0:
+            else:
                 accent_color = self.accent_color_20
         else:
             accent_color = self.accent_color
@@ -74,4 +75,3 @@ class Bar:
         if self.label:
             self.dashboard_surface.blit(text, text_position)
         pygame.draw.rect(self.dashboard_surface, self.outline_color, self.outline, 1)
-

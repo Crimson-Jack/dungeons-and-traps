@@ -192,4 +192,3 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
             # Set new image
             self.image = self.sprites[self.costume_index]
-

@@ -1,6 +1,3 @@
-import pygame
-
-
 class ObstacleMap:
     def __init__(self, layers=[]):
         self.layers = layers

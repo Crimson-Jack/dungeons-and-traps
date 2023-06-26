@@ -1,4 +1,3 @@
-import pygame
 import settings
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
