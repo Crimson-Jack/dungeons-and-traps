@@ -18,14 +18,12 @@ class Dashboard:
         bar_height = 25
         bar_left = self.margin
         bar_top = 3 * self.margin
-        self.energy_bar = bar.Bar(dashboard_surface, (bar_left, bar_top), bar_width, bar_height,
-                                  self.game_state.max_energy, 'Energy')
+        self.energy_bar = bar.Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_energy, 'Energy')
         # Create power bar
         bar_width = settings.WIDTH // 2 - 2 * self.margin
         bar_height = 25
         bar_top = 5 * self.margin
-        self.power_bar = bar.Bar(dashboard_surface, (bar_left, bar_top), bar_width, bar_height,
-                                 self.game_state.max_power, None, (102, 51, 0))
+        self.power_bar = bar.Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_power, None, (102, 51, 0))
 
     def draw(self):
         # Diamonds
@@ -34,10 +32,10 @@ class Dashboard:
         self.dashboard_surface.blit(diamonds_counter_text, (self.margin, self.margin))
 
         # Energy bar
-        self.energy_bar.draw(self.game_state.energy)
+        self.energy_bar.draw(self.dashboard_surface, self.game_state.energy)
 
         # Power bar
-        self.power_bar.draw(self.game_state.power)
+        self.power_bar.draw(self.dashboard_surface, self.game_state.power)
 
         # Blit dashboard to the main screen
         self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))

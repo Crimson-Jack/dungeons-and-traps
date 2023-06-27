@@ -1,9 +1,12 @@
 import pygame
+import game_helper
 import settings
 import direction
+from custom_draw_sprite import CustomDrawSprite
+from bar import Bar
 
 
-class MovingObstacle(pygame.sprite.Sprite):
+class MovingObstacle(CustomDrawSprite):
     def __init__(self, image, position, groups, obstacle_map_items, collision_sprites, game_state):
         super().__init__(groups)
         self.position = position
@@ -17,6 +20,12 @@ class MovingObstacle(pygame.sprite.Sprite):
         self.power = 0
         self.power_step = 5
         self.power_needed_to_move_obstacle = self.game_state.max_power
+
+        # Create power bar
+        bar_width = settings.TILE_SIZE
+        bar_height = game_helper.multiply_by_tile_size_ratio(12)
+        bar_left, bar_top = self.get_bar_position()
+        self.power_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_power, None, (102, 51, 0))
 
     def calculate_new_position(self, movement_direction):
         new_position_x, new_position_y = 0, 0
@@ -78,6 +87,9 @@ class MovingObstacle(pygame.sprite.Sprite):
             if self.power > self.power_needed_to_move_obstacle:
                 # Set new coordinates
                 self.position = [new_position_x, new_position_y]
+                # Set a new bar position
+                bar_left, bar_top = self.get_bar_position()
+                self.power_bar.change_position((bar_left, bar_top))
                 # Change position
                 self.rect.x = int(self.position[0])
                 self.rect.y = int(self.position[1])
@@ -111,3 +123,16 @@ class MovingObstacle(pygame.sprite.Sprite):
     def update(self):
         super().update()
         self.decrease_power()
+
+    def custom_draw(self, game_surface, offset):
+        if self.power > 0:
+            self.power_bar.draw(game_surface, self.power, offset)
+
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
+
+    def get_bar_position(self):
+        bar_left = self.position[0]
+        bar_top = self.position[1] - game_helper.multiply_by_tile_size_ratio(16)
+        return bar_left, bar_top
+

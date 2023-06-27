@@ -2,8 +2,7 @@ import pygame
 
 
 class Bar:
-    def __init__(self, dashboard_surface, position, width, height, max_value, label, color=None):
-        self.dashboard_surface = dashboard_surface
+    def __init__(self, position, width, height, max_value, label, color=None):
         self.position = position
         self.width = width
         self.height = height
@@ -26,13 +25,17 @@ class Bar:
         # Fonts
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
 
-        # Create outline rectangle
-        self.outline = pygame.rect.Rect(position, (width, height))
+    def change_position(self, position):
+        self.position = position
 
-    def draw(self, value):
+    def draw(self, surface, value, offset=None):
+        if offset is None:
+            offset = pygame.math.Vector2()
+
         # Create bar rectangle
         bar_width = (self.width * value) / self.max_value
-        bar_rectangle = pygame.rect.Rect(self.position, (bar_width, self.height)).inflate(-8, -8)
+        bar_rectangle = pygame.rect.Rect(self.position + offset, (bar_width, self.height)).inflate(-8, -8)
+        outline = pygame.rect.Rect(self.position + offset, (self.width, self.height))
 
         # Calculate percent
         percent = int(100 * value / self.max_value)
@@ -71,7 +74,7 @@ class Bar:
             accent_color = self.accent_color
 
         # Draw bar, blit the text and draw outline
-        pygame.draw.rect(self.dashboard_surface, accent_color, bar_rectangle)
+        pygame.draw.rect(surface, accent_color, bar_rectangle)
         if self.label:
-            self.dashboard_surface.blit(text, text_position)
-        pygame.draw.rect(self.dashboard_surface, self.outline_color, self.outline, 1)
+            surface.blit(text, text_position)
+        pygame.draw.rect(surface, self.outline_color, outline, 1)
