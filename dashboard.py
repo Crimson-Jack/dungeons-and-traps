@@ -1,6 +1,7 @@
 import pygame
 import settings
-import bar
+from bar import Bar
+from color_set import ColorSet
 
 
 class Dashboard:
@@ -18,12 +19,15 @@ class Dashboard:
         bar_height = 25
         bar_left = self.margin
         bar_top = 3 * self.margin
-        self.energy_bar = bar.Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_energy, 'Energy')
-        # Create power bar
-        bar_width = settings.WIDTH // 2 - 2 * self.margin
-        bar_height = 25
-        bar_top = 5 * self.margin
-        self.power_bar = bar.Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_power, None, (102, 51, 0))
+        bar_colors = ColorSet([
+                ((0, 20), (102, 0, 0)),     # Red
+                ((21, 40), (102, 51, 0)),   # Dark orange
+                ((41, 60), (102, 102, 0)),  # Rotten green
+                ((61, 80), (51, 102, 0)),   # Light green
+                ((81, 100), (0, 51, 0))     # Dark green
+            ])
+        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_energy,
+                              bar_colors, True, (135, 135, 135), False, None, True, 'Energy', (180, 180, 180))
 
     def draw(self):
         # Diamonds
@@ -33,9 +37,6 @@ class Dashboard:
 
         # Energy bar
         self.energy_bar.draw(self.dashboard_surface, self.game_state.energy)
-
-        # Power bar
-        self.power_bar.draw(self.dashboard_surface, self.game_state.power)
 
         # Blit dashboard to the main screen
         self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))

@@ -1,29 +1,33 @@
 import pygame
+from color_set import ColorSet
 
 
 class Bar:
-    def __init__(self, position, width, height, max_value, label, color=None):
+    def __init__(self, position, width, height, max_value, bar_colors, draw_outline, outline_color,
+                 draw_background, background_color, draw_text, text, text_color):
         self.position = position
         self.width = width
         self.height = height
         self.max_value = max_value
-        self.label = label
 
-        # Color
-        self.accent_color = color
-        # Colors
-        if self.accent_color is None:
-            self.accent_color_100 = (0, 51, 0)
-            self.accent_color_80 = (51, 102, 0)
-            self.accent_color_60 = (102, 102, 0)
-            self.accent_color_40 = (102, 51, 0)
-            self.accent_color_20 = (102, 0, 0)
+        # Bar colors
+        self.bar_colors = bar_colors
 
-        self.outline_color = (135, 135, 135)
-        self.text_color = (180, 180, 180)
+        # Outline
+        self.draw_outline = draw_outline
+        self.outline_color = outline_color
 
-        # Fonts
-        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
+        # Background
+        self.draw_background = draw_background
+        self.background_color = background_color
+
+        # Text
+        self.draw_text = draw_text
+        self.text = text
+        self.text_color = text_color
+        # Load font
+        if self.draw_text:
+            self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 18)
 
     def change_position(self, position):
         self.position = position
@@ -35,46 +39,40 @@ class Bar:
         # Create bar rectangle
         bar_width = (self.width * value) / self.max_value
         bar_rectangle = pygame.rect.Rect(self.position + offset, (bar_width, self.height)).inflate(-8, -8)
-        outline = pygame.rect.Rect(self.position + offset, (self.width, self.height))
+
+        if self.draw_background:
+            background = pygame.rect.Rect(self.position + offset, (self.width, self.height))
+
+        if self.draw_outline:
+            outline = pygame.rect.Rect(self.position + offset, (self.width, self.height))
 
         # Calculate percent
         percent = int(100 * value / self.max_value)
 
-        # Text
-        if self.label is None:
-            text = None
-            text_position = [0, 0]
-        else:
+        # Draw background
+        if self.draw_background:
+            pygame.draw.rect(surface, self.background_color, background)
+
+        # Draw bar
+        pygame.draw.rect(surface, self.bar_colors.get_color(percent), bar_rectangle)
+
+        # Blit the text
+        if self.draw_text:
             # Create text
-            text = self.basic_font.render(f'{self.label} {percent} %', True, self.text_color)
+            rendered_text = self.basic_font.render(f'{self.text} {percent} %', True, self.text_color)
 
             # Set text position
-            text_rect = text.get_rect()
-            text_position = [self.position[0] + bar_width - text_rect.width - 10,
+            text_rect = rendered_text.get_rect()
+            rendered_text_position = [self.position[0] + bar_width - text_rect.width - 10,
                              self.position[1] + self.height // 2 - text_rect.height // 2]
 
             # Change text and adjust position if it's too long
-            if text_position[0] < text.get_rect().width:
-                text = self.basic_font.render(f'{percent} %', True, self.text_color)
-                text_position[0] = self.position[0] + bar_width + 10
+            if rendered_text_position[0] < rendered_text.get_rect().width:
+                rendered_text = self.basic_font.render(f'{percent} %', True, self.text_color)
+                rendered_text_position[0] = self.position[0] + bar_width + 10
 
-        if self.accent_color is None:
-            # Choose bar color
-            if percent > 80:
-                accent_color = self.accent_color_100
-            elif percent > 60:
-                accent_color = self.accent_color_80
-            elif percent > 40:
-                accent_color = self.accent_color_60
-            elif percent > 20:
-                accent_color = self.accent_color_40
-            else:
-                accent_color = self.accent_color_20
-        else:
-            accent_color = self.accent_color
+            surface.blit(rendered_text, rendered_text_position)
 
-        # Draw bar, blit the text and draw outline
-        pygame.draw.rect(surface, accent_color, bar_rectangle)
-        if self.label:
-            surface.blit(text, text_position)
-        pygame.draw.rect(surface, self.outline_color, outline, 1)
+        # Draw outline
+        if self.draw_outline:
+            pygame.draw.rect(surface, self.outline_color, outline, 1)
