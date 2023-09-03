@@ -169,9 +169,13 @@ class Player(CustomDrawSprite):
         self.hit_box.y = int(self.real_y_position)
         self.collision('vertical')
 
-        # If direction was changed - set the first costume
+        # If direction was changed
         if self.movement_direction != self.previous_movement_direction:
+            # - set the first costume
             self.reset_costume()
+            # - set the first costume for sword weapon and unblock the movement
+            self.sword_weapon.set_costume(self.movement_direction, 0)
+            self.sword_weapon.is_blocked = False
 
         # Check the movement
         if self.rect.center != self.hit_box.center:
@@ -275,11 +279,11 @@ class Player(CustomDrawSprite):
                  self.movement_direction == direction.Direction.RIGHT or
                  self.movement_direction == direction.Direction.UP or
                  self.movement_direction == direction.Direction.DOWN):
-            self.sword_weapon.set_direction(self.movement_direction)
             self.sword_weapon.set_position(self.rect.topleft)
-            self.sword_weapon.is_visible = True
+            if not self.sword_weapon.is_moving:
+                self.sword_weapon.is_moving = True
         else:
-            self.sword_weapon.is_visible = False
+            self.sword_weapon.is_moving = False
 
     def update(self):
         self.input()
