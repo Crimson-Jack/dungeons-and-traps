@@ -1,6 +1,7 @@
 import pygame
 import custom_draw_sprite
 import settings
+import monster_enemy
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -45,3 +46,11 @@ class CameraGroup(pygame.sprite.Group):
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
                 pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
+
+                # Draw a path from the player to monster enemy
+                if isinstance(sprite, monster_enemy.MonsterEnemy):
+                    for path_item in sprite.path:
+                        new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
+                                                    settings.TILE_SIZE, settings.TILE_SIZE)
+                        new_rect.topleft += self.offset
+                        pygame.draw.rect(self.game_surface, (0, 255, 255), new_rect, 2)

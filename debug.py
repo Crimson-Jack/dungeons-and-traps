@@ -38,7 +38,7 @@ class Debug:
         elif keys[pygame.K_F2]:
             self.enabled = True
             self.text_color = "White"
-        elif keys[pygame.K_ESCAPE]:
+        elif keys[pygame.K_F3]:
             self.enabled = False
 
 

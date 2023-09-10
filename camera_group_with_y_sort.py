@@ -1,6 +1,8 @@
 import pygame
 import custom_draw_sprite
+import game_helper
 import settings
+from player import Player
 from camera_group import CameraGroup
 
 
@@ -25,3 +27,10 @@ class CameraGroupWithYSort(CameraGroup):
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
                 pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
+
+                # Draw a tile where the player exists
+                if isinstance(sprite, Player):
+                    x_tile, y_tile = game_helper.get_tile_by_point(sprite.get_center_point())
+                    new_rect = pygame.rect.Rect(x_tile*settings.TILE_SIZE, y_tile*settings.TILE_SIZE, settings.TILE_SIZE, settings.TILE_SIZE)
+                    new_rect.topleft += self.offset
+                    pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 3)

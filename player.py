@@ -28,12 +28,12 @@ class Player(CustomDrawSprite):
             'right_up': []}
         self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
-        # Player image
+        # Image
         self.image = self.sprites['right'][0]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
 
-        # Create movement variables
+        # Movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2()
         self.movement_direction = direction.Direction.RIGHT
@@ -44,7 +44,7 @@ class Player(CustomDrawSprite):
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
-        # Create groups of collision
+        # Groups of collision
         self.exit_points = exit_points
         self.moving_obstacle_sprites = moving_obstacle_sprites
         self.obstacle_sprites = obstacle_sprites
@@ -52,16 +52,20 @@ class Player(CustomDrawSprite):
         self.enemy_sprites = enemy_sprites
         self.hostile_force_sprites = hostile_force_sprites
 
-        # Set game state
+        # Game state
         self.game_state = game_state
 
-        # Player state variables
+        # State variables
         self.collided_with_enemy = False
 
         # Player weapon
         self.weapon_is_in_use = False
         self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites,
                                         moving_obstacle_sprites)
+
+        # Tile position
+        self.tile_position = None
+        self.game_state.set_player_tile_position(self.tile_position)
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
@@ -189,6 +193,12 @@ class Player(CustomDrawSprite):
             # Save previous direction
             self.previous_movement_direction = self.movement_direction
 
+            # Set player's new tile position
+            new_tile_position = game_helper.get_tile_by_point(self.get_center_point())
+            if new_tile_position != self.tile_position:
+                self.tile_position = new_tile_position
+                self.game_state.set_player_tile_position(self.tile_position)
+
         # Increase step counter
         self.step_counter += 1
 
@@ -304,3 +314,6 @@ class Player(CustomDrawSprite):
             pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
                                 int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)
+
+    def get_center_point(self):
+        return self.hit_box.center

@@ -12,6 +12,7 @@ class GameState:
         self.energy = self.max_energy
         self.max_power = 100
         self.power = 0
+        self.player_tile_position = (0, 0)
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
@@ -73,3 +74,8 @@ class GameState:
 
     def set_player_is_using_weapon(self, status):
         self.player_is_using_weapon = status
+
+    def set_player_tile_position(self, position):
+        # print(position)
+        self.player_tile_position = position
+        pygame.event.post(pygame.event.Event(settings.PLAYER_TILE_POSITION_CHANGED_EVENT))

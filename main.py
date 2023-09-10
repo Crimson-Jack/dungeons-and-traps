@@ -80,6 +80,9 @@ class Game:
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     # Refresh obstacle map after modification
                     self.level.refresh_obstacle_map()
+                if event.type == settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
+                    # Inform about the change of player tile position
+                    self.level.inform_about_player_tile_position()
 
             if not self.game_state.game_over:
                 # Refresh game surface

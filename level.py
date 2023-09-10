@@ -1,4 +1,6 @@
 import pygame
+
+import enemy_with_brain
 import obstacle_map_refresh_sprite
 import settings
 import game_helper
@@ -13,6 +15,7 @@ from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from fire_flame_enemy_left import FireFlameEnemyLeft
 from fire_flame_enemy_right import FireFlameEnemyRight
+from monster_enemy import MonsterEnemy
 from player import Player
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
@@ -195,6 +198,18 @@ class Level:
                     FireFlameEnemyRight(sprites, (x, y), [self.bottom_layer_regular_sprites, self.hostile_force_sprites],
                                         speed, fire_length, motion_schedule, self.moving_obstacle_sprites)
 
+        monster_layer = self.tmx_data.get_layer_by_name('monster-enemy')
+        for monster_item in monster_layer:
+            if monster_item.visible:
+                # Position
+                x, y = tmx_helper.convert_position(monster_item.x, monster_item.y, self.tmx_data.tilewidth,
+                                                   self.tmx_data.tileheight)
+                # Custom properties
+                # TODO: TBD
+
+                MonsterEnemy(monster_item.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
+                             self.obstacle_map.items, self.game_state)
+
     def run(self):
         # Run an update method foreach sprite from the group
         # NOTE: bottom_layer_background_sprites is static
@@ -227,6 +242,11 @@ class Level:
         for sprite in self.hostile_force_sprites.sprites():
             if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
                 sprite.refresh_obstacle_map()
+
+    def inform_about_player_tile_position(self):
+        for sprite in self.enemy_sprites.sprites():
+            if isinstance(sprite, enemy_with_brain.EnemyWithBrain):
+                sprite.set_player_tile_position()
 
     def show_exit_point(self):
         self.blast_effect.run()

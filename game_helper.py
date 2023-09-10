@@ -71,3 +71,16 @@ def calculate_game_surface_position(game_surface_width, game_surface_height, map
         position[1] = (game_surface_height - map_height) // 2
 
     return tuple(position)
+
+
+def get_tile_by_point(position: tuple):
+    """
+    Return a tuple with the tile position
+
+    :param position: tuple with x, y coordinates
+    :return: tuple with the tile position
+    """
+    x_tile = position[0] // settings.TILE_SIZE
+    y_tile = position[1] // settings.TILE_SIZE
+
+    return x_tile, y_tile
