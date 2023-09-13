@@ -29,7 +29,7 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
-                self.all_tiles.append((x, y))
+                self.all_tiles.append((y, x))
                 if self.obstacle_map[x][y] > 0:
                     self.obstacles.append((y, x))
 
