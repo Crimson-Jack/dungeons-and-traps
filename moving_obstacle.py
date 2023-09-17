@@ -88,8 +88,8 @@ class MovingObstacle(CustomDrawSprite):
         ] = self.calculate_new_position(movement_direction)
 
         # Execute the movement if it's allowed
-        if self.check_if_destination_tile_is_empty(new_position_x, new_position_y):
-            if self.power > self.power_needed_to_move_obstacle:
+        if self.power > self.power_needed_to_move_obstacle:
+            if self.check_if_destination_tile_is_empty(new_position_x, new_position_y):
                 # Set new coordinates
                 self.position = [new_position_x, new_position_y]
                 # Set a new bar position
@@ -107,6 +107,9 @@ class MovingObstacle(CustomDrawSprite):
                 self.reset_power()
                 # Obstacle has been moved
                 return True
+            else:
+                # Obstacle has not been moved
+                return False
         else:
             # Obstacle has not been moved
             return False
