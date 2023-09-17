@@ -22,8 +22,11 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.game_state = game_state
 
         # Movement variables
-        self.speed = 4
+        self.speed = 3.8
         self.movement_vector = pygame.math.Vector2(0, 0)
+        self.is_moving = False
+        self.start_delay = 1
+        self.start_delay_counter = self.start_delay
 
         # Set positions on map
         self.current_position_on_map = [
@@ -43,9 +46,6 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
-        self.start_ready = True
-        self.start_counter = 10
-
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
@@ -54,16 +54,17 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
                     self.obstacles.append((y, x))
 
     def update(self):
-        self.move()
-        # print(f'{self.current_position_on_map} {self.new_position_on_map}')
-
-        if self.start_ready:
-            self.start_counter -= 1
-            if self.start_counter < 0:
-                self.start_counter = 50
+        if self.is_moving:
+            self.move()
+        else:
+            self.start_delay_counter -= 1
+            if self.start_delay_counter < 0:
+                # Reset counter
+                self.start_delay_counter = self.start_delay
+                # If the vector is found, the movement is on
                 self.set_movement_vector()
-                if self.movement_vector != pygame.math.Vector2(0, 0):
-                    self.start_ready = False
+                if self.movement_vector:
+                    self.is_moving = True
 
     def move(self):
         # Calculate real y position
@@ -106,46 +107,42 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
             if self.current_position_on_map[1] != self.new_position_on_map[1]:
                 self.current_position_on_map[1] = self.new_position_on_map[1]
 
-            # Set a new vector
             self.set_movement_vector()
 
-            # If there is no direction in the current path
-            if self.movement_vector == pygame.math.Vector2(0, 0):
-                # Recalculate the path
+            # If the vector is not found, recalculate the path and set a new vector
+            if not self.movement_vector:
                 self.calculate_path_to_player()
-                # Set a new vector
                 self.set_movement_vector()
 
-                if self.movement_vector == pygame.math.Vector2(0, 0):
-                    self.start_ready = True
+                # If the vector is not found, the movement is off
+                if not self.movement_vector:
+                    self.is_moving = False
 
     def set_movement_vector(self):
-        vector = pygame.math.Vector2(0, 0)
+        movement_vector = None
 
         for index, item in enumerate(self.path):
             if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
                 next_position_on_map = self.path[index + 1]
-                vector = pygame.math.Vector2(next_position_on_map[0] - self.current_position_on_map[0],
-                                             next_position_on_map[1] - self.current_position_on_map[1])
+                movement_vector = pygame.math.Vector2(
+                    next_position_on_map[0] - self.current_position_on_map[0],
+                    next_position_on_map[1] - self.current_position_on_map[1])
                 break
 
-        self.movement_vector = vector
+        self.movement_vector = movement_vector
 
     def refresh_obstacle_map(self):
-        # The map has changed - regenerate lists
+        # The obstacle map has changed - regenerate lists and calculate a new path
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-
-        # Calculate path
         self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # Calculate path
+        # Calculate a new path
         self.calculate_path_to_player()
 
     def calculate_path_to_player(self):
-        # start_position = game_helper.get_tile_by_point(self.rect)
         start_position = tuple(self.current_position_on_map)
         end_position = self.game_state.player_tile_position
 
@@ -159,5 +156,3 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.path.reverse()
         # Add player position to the end of the path
         self.path.append(self.game_state.player_tile_position)
-
-        return is_end_reached

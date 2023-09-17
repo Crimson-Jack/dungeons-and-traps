@@ -2,7 +2,7 @@ import pygame
 from debug import Debug
 
 # Clock
-FPS = 60
+FPS = 6
 
 # Screen size
 WIDTH = 1024
@@ -11,7 +11,7 @@ HEIGHT = 600
 DASHBOARD_HEIGHT = 150
 
 # Tile size
-TILE_SIZE = 64
+TILE_SIZE = 128
 
 # Events
 GAME_OVER_EVENT = pygame.USEREVENT + 1

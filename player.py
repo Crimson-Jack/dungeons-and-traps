@@ -64,7 +64,8 @@ class Player(CustomDrawSprite):
                                         moving_obstacle_sprites)
 
         # Tile position
-        self.tile_position = None
+        self.tile_position = game_helper.get_tile_by_point(self.get_center_point())
+        self.game_state.set_player_tile_position(self.tile_position)
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
