@@ -38,7 +38,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.new_position_on_map = list(self.current_position_on_map)
 
         # Set is_moving flag
-        self.is_moving = self.check_is_moving((self.current_position_on_map[0], self.current_position_on_map[1]))
+        self.is_moving = self.check_can_move((self.current_position_on_map[0], self.current_position_on_map[1]))
         # Set movement vector
         if self.is_moving:
             self.set_movement_vector()
@@ -102,7 +102,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
         self.movement_vector = self.get_wall_follower_movement_vector(start_position, self.movement_vector)
 
-    def check_is_moving(self, position):
+    def check_can_move(self, position):
         # If all neighbours are obstacles - stop the movement
         tile_top = self.obstacle_map[position[1] - 1][position[0]]
         tile_bottom = self.obstacle_map[position[1] + 1][position[0]]
@@ -172,7 +172,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         # Start position is current position
         start_position = (self.current_position_on_map[0], self.current_position_on_map[1])
         # Check current moving state
-        self.is_moving = self.check_is_moving(start_position)
+        self.is_moving = self.check_can_move(start_position)
 
         if not previous_moving_state and self.is_moving:
             # Start moving

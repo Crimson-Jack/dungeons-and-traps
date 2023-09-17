@@ -54,9 +54,9 @@ class BreadthFirstSearchHelper:
         return result
 
     def get_path(self, current_item, items):
-        return_path = set()
+        return_path = list()
         while items[current_item] is not None:
-            return_path.add(items[current_item])
+            return_path.append(items[current_item])
             current_item = items[current_item]
 
         return return_path
@@ -67,7 +67,7 @@ class BreadthFirstSearchHelper:
         came_from = dict()
         came_from[start_tile] = None
         is_end_reached = False
-        path = set()
+        path = list()
 
         while not is_end_reached and not frontier.empty():
             current_tile = frontier.get()

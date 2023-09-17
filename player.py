@@ -65,7 +65,6 @@ class Player(CustomDrawSprite):
 
         # Tile position
         self.tile_position = None
-        self.game_state.set_player_tile_position(self.tile_position)
 
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
