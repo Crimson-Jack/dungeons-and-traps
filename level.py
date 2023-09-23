@@ -208,7 +208,7 @@ class Level:
                 # TODO: TBD
 
                 MonsterEnemy(monster_item.image, (x, y), [self.top_layer_sprites, self.enemy_sprites],
-                             self.obstacle_map.items, self.game_state)
+                             self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
 
     def run(self):
         # Run an update method foreach sprite from the group

@@ -7,7 +7,7 @@ from breadth_first_search_helper import BreadthFirstSearchHelper
 
 
 class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprite):
-    def __init__(self, image, position, groups, obstacle_map, game_state):
+    def __init__(self, image, position, groups, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Image
@@ -22,7 +22,7 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.game_state = game_state
 
         # Movement variables
-        self.speed = 3.8
+        self.speed = 10
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
         self.start_delay = 1
@@ -45,6 +45,9 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
+
+        # Moving obstacles
+        self.moving_obstacle_sprites = moving_obstacle_sprites
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
@@ -71,12 +74,23 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.real_x_position += float(self.movement_vector.x * self.speed)
         self.real_y_position += float(self.movement_vector.y * self.speed)
 
+        if self.check_collision():
+            # Collision with moving obstacle sprites was detected
+            # Monster must be moved to the last valid position (using current map position)
+            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+
+            # Adjust position after collision
+            self.real_x_position = float(self.hit_box.x)
+            self.real_y_position = float(self.hit_box.y)
+
+            # Stop moving and early return
+            self.is_moving = False
+            return
+
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
         self.hit_box.y = int(self.real_y_position)
-
-        # Set the movement offset
-        self.rect.center = self.hit_box.center
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
@@ -84,14 +98,18 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         y_remainder = self.rect.bottom % settings.TILE_SIZE
 
         if x_remainder < self.speed:
+            # TODO: Calculate value based on the direction
             self.hit_box.x = self.hit_box.x - x_remainder
-            self.rect.center = self.hit_box.center
 
         if y_remainder < self.speed:
+            # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
-            self.rect.center = self.hit_box.center
 
-        # Recognize the moment when ghost moves to a new area
+        # Adjust position
+        self.real_x_position = self.hit_box.x
+        self.real_y_position = self.hit_box.y
+
+        # Recognize the moment when monster moves to a new area
         # In this case TILE_SIZE is a divisor of "right" or "bottom"
         if self.rect.right % settings.TILE_SIZE == 0:
             self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
@@ -114,9 +132,21 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
                 self.calculate_path_to_player()
                 self.set_movement_vector()
 
-                # If the vector is not found, the movement is off
+                # If the vector is still not found, the movement is off
                 if not self.movement_vector:
                     self.is_moving = False
+
+    def check_collision(self):
+        is_collision_detected = False
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                # Collision was detected
+                is_collision_detected = True
+                break
+
+        return is_collision_detected
 
     def set_movement_vector(self):
         movement_vector = None
