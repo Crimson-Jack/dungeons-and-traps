@@ -64,10 +64,10 @@ class MovingObstacle(CustomDrawSprite):
         return [(new_position_x, new_position_y), (new_map_x, new_map_y)]
 
     def check_if_destination_tile_is_empty(self, new_position_x, new_position_y):
+        source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE,
+                                          settings.TILE_SIZE)
         for collision_sprite_group in self.collision_sprites:
             for sprite in collision_sprite_group:
-                source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE,
-                                                  settings.TILE_SIZE)
                 if sprite.hit_box.colliderect(source_hit_box):
                     return False
         return True
