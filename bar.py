@@ -1,5 +1,4 @@
 import pygame
-from color_set import ColorSet
 
 
 class Bar:
@@ -40,17 +39,12 @@ class Bar:
         bar_width = (self.width * value) / self.max_value
         bar_rectangle = pygame.rect.Rect(self.position + offset, (bar_width, self.height)).inflate(-8, -8)
 
-        if self.draw_background:
-            background = pygame.rect.Rect(self.position + offset, (self.width, self.height))
-
-        if self.draw_outline:
-            outline = pygame.rect.Rect(self.position + offset, (self.width, self.height))
-
         # Calculate percent
         percent = int(100 * value / self.max_value)
 
         # Draw background
         if self.draw_background:
+            background = pygame.rect.Rect(self.position + offset, (self.width, self.height))
             pygame.draw.rect(surface, self.background_color, background)
 
         # Draw bar
@@ -64,7 +58,7 @@ class Bar:
             # Set text position
             text_rect = rendered_text.get_rect()
             rendered_text_position = [self.position[0] + bar_width - text_rect.width - 10,
-                             self.position[1] + self.height // 2 - text_rect.height // 2]
+                                      self.position[1] + self.height // 2 - text_rect.height // 2]
 
             # Change text and adjust position if it's too long
             if rendered_text_position[0] < rendered_text.get_rect().width:
@@ -75,4 +69,5 @@ class Bar:
 
         # Draw outline
         if self.draw_outline:
+            outline = pygame.rect.Rect(self.position + offset, (self.width, self.height))
             pygame.draw.rect(surface, self.outline_color, outline, 1)
