@@ -5,7 +5,7 @@ from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 
 
 class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, speed, obstacle_map):
+    def __init__(self, frames, position, groups, speed, obstacle_map, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Sprite animation variables
@@ -47,6 +47,9 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
+        # Moving obstacles
+        self.moving_obstacle_sprites = moving_obstacle_sprites
+
     def __del__(self):
         # TODO: Implement animation
         pass
@@ -56,12 +59,25 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.real_x_position += float(self.movement_vector.x * self.speed)
         self.real_y_position += float(self.movement_vector.y * self.speed)
 
+        if self.check_collision():
+            # Collision with moving obstacle sprites was detected
+            # Ghost must be moved to the last valid position (using current map position)
+            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+
+            # Reverse vector
+            self.movement_vector = self.movement_vector.rotate(180)
+
+            # Adjust position after collision
+            self.real_x_position = float(self.hit_box.x)
+            self.real_y_position = float(self.hit_box.y)
+
+            # Early return
+            return
+
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
         self.hit_box.y = int(self.real_y_position)
-
-        # Set the movement offset
-        self.rect.center = self.hit_box.center
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
@@ -69,12 +85,16 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         y_remainder = self.rect.bottom % settings.TILE_SIZE
 
         if x_remainder < self.speed:
+            # TODO: Calculate value based on the direction
             self.hit_box.x = self.hit_box.x - x_remainder
-            self.rect.center = self.hit_box.center
 
         if y_remainder < self.speed:
+            # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
-            self.rect.center = self.hit_box.center
+
+        # Adjust position
+        self.real_x_position = self.hit_box.x
+        self.real_y_position = self.hit_box.y
 
         # Recognize the moment when ghost moves to a new area
         # In this case TILE_SIZE is a divisor of "right" or "bottom"
@@ -96,6 +116,18 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
         # Increase costume step counter
         self.costume_step_counter += 1
+
+    def check_collision(self):
+        is_collision_detected = False
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                # Collision was detected
+                is_collision_detected = True
+                break
+
+        return is_collision_detected
 
     def set_movement_vector(self):
         # Start position is current position
@@ -174,8 +206,17 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         # Check current moving state
         self.is_moving = self.check_can_move(start_position)
 
-        if not previous_moving_state and self.is_moving:
+        if previous_moving_state and not self.is_moving:
+            # Stop moving
+            # Ghost must be moved to the last valid position (using current map position)
+            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+            # Adjust position
+            self.real_x_position = float(self.hit_box.x)
+            self.real_y_position = float(self.hit_box.y)
+        elif not previous_moving_state and self.is_moving:
             # Start moving
+            # Find a new vector
             self.movement_vector = self.get_wall_follower_movement_vector(start_position, self.default_movement_vector)
 
     def change_costume(self):

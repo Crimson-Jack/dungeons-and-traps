@@ -177,7 +177,7 @@ class Level:
                 frames = tmx_helper.get_frames(self.tmx_data, ghost_item)
 
                 GhostEnemy(frames, (x, y), (self.top_layer_sprites, self.enemy_sprites),
-                           speed, self.obstacle_map.items)
+                           speed, self.obstacle_map.items, self.moving_obstacle_sprites)
 
         fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
         for fire_flame_item in fire_flame_layer:
