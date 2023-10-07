@@ -59,22 +59,6 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.real_x_position += float(self.movement_vector.x * self.speed)
         self.real_y_position += float(self.movement_vector.y * self.speed)
 
-        if self.check_collision():
-            # Collision with moving obstacle sprites was detected
-            # Ghost must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
-
-            # Reverse vector
-            self.movement_vector = self.movement_vector.rotate(180)
-
-            # Adjust position after collision
-            self.real_x_position = float(self.hit_box.x)
-            self.real_y_position = float(self.hit_box.y)
-
-            # Early return
-            return
-
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
         self.hit_box.y = int(self.real_y_position)
@@ -96,23 +80,36 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.real_x_position = self.hit_box.x
         self.real_y_position = self.hit_box.y
 
-        # Recognize the moment when ghost moves to a new area
-        # In this case TILE_SIZE is a divisor of "right" or "bottom"
-        if self.rect.right % settings.TILE_SIZE == 0:
-            self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
+        if self.check_collision():
+            # Collision with moving obstacle sprites was detected
+            # Ghost must be moved to the last valid position (using current map position)
+            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
 
-        if self.rect.bottom % settings.TILE_SIZE == 0:
-            self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 1
+            # Adjust position after collision
+            self.real_x_position = float(self.hit_box.x)
+            self.real_y_position = float(self.hit_box.y)
 
-        # If position was changed, change position and determine new direction
-        if self.current_position_on_map != self.new_position_on_map:
-            # Change current position (x or y or both)
-            if self.current_position_on_map[0] != self.new_position_on_map[0]:
-                self.current_position_on_map[0] = self.new_position_on_map[0]
-            if self.current_position_on_map[1] != self.new_position_on_map[1]:
-                self.current_position_on_map[1] = self.new_position_on_map[1]
+            # Reverse vector
+            self.movement_vector = self.movement_vector.rotate(180)
+        else:
+            # Recognize the moment when ghost moves to a new area
+            # In this case TILE_SIZE is a divisor of "right" or "bottom"
+            if self.rect.right % settings.TILE_SIZE == 0:
+                self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
 
-            self.set_movement_vector()
+            if self.rect.bottom % settings.TILE_SIZE == 0:
+                self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 1
+
+            # If position was changed, change position and determine new direction
+            if self.current_position_on_map != self.new_position_on_map:
+                # Change current position (x or y or both)
+                if self.current_position_on_map[0] != self.new_position_on_map[0]:
+                    self.current_position_on_map[0] = self.new_position_on_map[0]
+                if self.current_position_on_map[1] != self.new_position_on_map[1]:
+                    self.current_position_on_map[1] = self.new_position_on_map[1]
+
+                self.set_movement_vector()
 
         # Increase costume step counter
         self.costume_step_counter += 1
