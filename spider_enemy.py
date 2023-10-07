@@ -74,19 +74,49 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Calculate real y position
         self.real_y_position += float(self.movement_vector.y * self.speed)
 
-        # Cast real position to integer and check the collision
+        # Cast real position to integer
         self.hit_box.y = int(self.real_y_position)
-        if not self.collision():
-            # Start position and net length
-            if self.hit_box.y > self.min_y_position + self.max_net_length:
-                self.movement_vector.y = self.movement_vector.y * -1
-            elif self.hit_box.y < self.min_y_position:
-                self.movement_vector.y = self.movement_vector.y * -1
+
+        # Check collision with moving obstacles
+        (collision_detected, collision_hit_box) = self.check_collision()
+        if collision_detected:
+            if self.movement_vector.y > 0:
+                self.hit_box.bottom = collision_hit_box.top
+            if self.movement_vector.y < 0:
+                self.hit_box.top = collision_hit_box.bottom
                 # Stop the moving
                 self.is_moving = False
 
-        # Set the movement offset
-        self.rect.center = self.hit_box.center
+            # Change movement vector
+            self.movement_vector.y *= -1
+
+            # Adjust position after collision
+            self.real_y_position = float(self.hit_box.y)
+        else:
+            # Check start position and net length
+            if self.hit_box.y > self.min_y_position + self.max_net_length:
+                # Change movement vector
+                self.movement_vector.y *= -1
+            elif self.hit_box.y < self.min_y_position:
+                # Change movement vector
+                self.movement_vector.y *= -1
+                # Stop the moving
+                self.is_moving = False
+
+    def check_collision(self):
+        is_collision_detected = False
+        collision_hit_box = None
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                # Collision was detected
+                is_collision_detected = True
+                # Save collided sprite hit box
+                collision_hit_box = sprite.hit_box
+                break
+
+        return is_collision_detected, collision_hit_box
 
     def change_motion(self):
         # Change motion only if threshold exceeded
@@ -134,30 +164,6 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
             # Reset status of collided with weapon
             self.collided_with_weapon = False
-
-    def collision(self):
-        is_collision_detected = False
-
-        # Moving obstacle
-        for sprite in self.moving_obstacle_sprites:
-            if sprite.hit_box.colliderect(self.hit_box):
-                if self.movement_vector.y > 0:
-                    self.hit_box.bottom = sprite.hit_box.top
-                if self.movement_vector.y < 0:
-                    self.hit_box.top = sprite.hit_box.bottom
-                    # Stop the moving
-                    self.is_moving = False
-
-                # Change movement vector
-                self.movement_vector.y = self.movement_vector.y * -1
-
-                # Adjust position after collision
-                self.real_y_position = float(self.hit_box.y)
-
-                # Collision was detected
-                is_collision_detected = True
-
-        return is_collision_detected
 
     def heal_injuries(self):
         # Heal injuries slowly
