@@ -1,13 +1,21 @@
 import pygame
+import game_helper
 import settings
+from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from enemy_with_brain import EnemyWithBrain
 from breadth_first_search_helper import BreadthFirstSearchHelper
+from enemy_with_energy import EnemyWithEnergy
 
 
-class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprite):
+class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, image, position, groups, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Energy
+        self.max_energy = 500
+        self.energy = self.max_energy
+        self.energy_decrease_step = 5
 
         # Image
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -21,10 +29,10 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.game_state = game_state
 
         # Movement variables
-        self.speed = 10
+        self.speed = 3
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
-        self.start_delay = 1
+        self.start_delay = 5
         self.start_delay_counter = self.start_delay
 
         # Set positions on map
@@ -47,6 +55,9 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
+
+        # State variables
+        self.collided_with_weapon = False
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
@@ -184,3 +195,31 @@ class MonsterEnemy(pygame.sprite.Sprite, EnemyWithBrain, ObstacleMapRefreshSprit
         self.path.reverse()
         # Add player position to the end of the path
         self.path.append(self.game_state.player_tile_position)
+
+    def decrease_energy(self):
+        self.collided_with_weapon = True
+        self.is_moving = False
+
+        if self.energy > 0:
+            self.energy -= self.energy_decrease_step
+            if self.energy < 0:
+                self.energy = 0
+
+    def get_energy(self):
+        return self.energy
+
+    def custom_draw(self, game_surface, offset):
+        # Draw sprite
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
+
+        # Draw an outline if it is collided
+        if self.collided_with_weapon:
+            outline_image = pygame.surface.Surface.copy(self.image)
+            mask = pygame.mask.from_surface(self.image)
+            mask_outline = mask.outline()
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+            game_surface.blit(outline_image, offset_position)
+
+            # Reset status of collided with weapon
+            self.collided_with_weapon = False

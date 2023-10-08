@@ -10,7 +10,7 @@ class GameState:
         self.diamonds = 0
         self.max_energy = 800
         self.energy = self.max_energy
-        self.max_power = 20
+        self.max_power = 100
         self.power = 0
         self.player_tile_position = (0, 0)
         self.player_movement_vector = pygame.Vector2()

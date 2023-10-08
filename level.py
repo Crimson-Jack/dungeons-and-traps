@@ -219,7 +219,7 @@ class Level:
                 # Custom properties
                 # TODO: TBD
 
-                MonsterEnemy(monster_item.image, (x, y), (self.top_layer_sprites, self.enemy_sprites),
+                MonsterEnemy(monster_item.image, (x, y), (self.middle_layer_regular_sprites, self.enemy_sprites),
                              self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
 
     def run(self):
