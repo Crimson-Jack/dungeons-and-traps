@@ -55,8 +55,6 @@ class Game:
                         self.game_state.set_player_movement(-1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.game_state.set_player_movement(1, 0)
-                    if event.key == pygame.K_SPACE:
-                        self.game_state.set_player_is_using_weapon(False)
 
                 #  Custom events
                 if event.type == settings.ADD_DIAMOND_EVENT:
@@ -83,6 +81,9 @@ class Game:
                 if event.type == settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
                     # Inform about the change of player tile position
                     self.level.inform_about_player_tile_position()
+                if event.type == settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
+                    # Weapon is not used
+                    self.game_state.set_player_is_using_weapon(False)
 
             if not self.game_state.game_over:
                 # Refresh game surface

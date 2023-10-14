@@ -13,7 +13,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         super().__init__(groups)
 
         # Energy
-        self.max_energy = 500
+        self.max_energy = 100
         self.energy = self.max_energy
         self.energy_decrease_step = 5
 
@@ -218,7 +218,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
+                                int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)
 
             # Reset status of collided with weapon

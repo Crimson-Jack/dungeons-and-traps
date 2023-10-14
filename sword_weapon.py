@@ -19,9 +19,10 @@ class SwordWeapon(CustomDrawSprite):
             'down': []
         }
         self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
-        self.costume_switching_threshold = 2
-        self.number_of_sprites = 9
+        self.costume_switching_threshold = 1
+        self.number_of_sprites = 8
         self.costume_step_counter = 0
+        self.costume_step_counter_increment = 2
         self.costume_index = 0
 
         # Image
@@ -57,9 +58,8 @@ class SwordWeapon(CustomDrawSprite):
         self.sprites['right'].append(sprite_sheet.get_image(0, 3))
         self.sprites['right'].append(sprite_sheet.get_image(0, 3))
         self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 2))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 1))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 0))
+        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
+        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
 
         self.sprites['left'].append(sprite_sheet.get_image(1, 0))
         self.sprites['left'].append(sprite_sheet.get_image(1, 1))
@@ -67,9 +67,8 @@ class SwordWeapon(CustomDrawSprite):
         self.sprites['left'].append(sprite_sheet.get_image(1, 3))
         self.sprites['left'].append(sprite_sheet.get_image(1, 3))
         self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 2))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 1))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 0))
+        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
+        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
 
         self.sprites['up'].append(sprite_sheet.get_image(2, 0))
         self.sprites['up'].append(sprite_sheet.get_image(2, 1))
@@ -77,9 +76,8 @@ class SwordWeapon(CustomDrawSprite):
         self.sprites['up'].append(sprite_sheet.get_image(2, 3))
         self.sprites['up'].append(sprite_sheet.get_image(2, 3))
         self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 2))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 1))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 0))
+        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
+        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
 
         self.sprites['down'].append(sprite_sheet.get_image(3, 0))
         self.sprites['down'].append(sprite_sheet.get_image(3, 1))
@@ -87,9 +85,8 @@ class SwordWeapon(CustomDrawSprite):
         self.sprites['down'].append(sprite_sheet.get_image(3, 3))
         self.sprites['down'].append(sprite_sheet.get_image(3, 3))
         self.sprites['down'].append(sprite_sheet.get_image(3, 3))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 2))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 1))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 0))
+        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
+        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
 
     def set_costume(self, new_direction, index):
         self.direction = new_direction
@@ -135,7 +132,7 @@ class SwordWeapon(CustomDrawSprite):
         # Check collision
         self.collision()
         # Increase costume step counter
-        self.costume_step_counter += 1
+        self.costume_step_counter += self.costume_step_counter_increment
 
     def collision(self):
         # Check collision with enemy sprites
@@ -165,7 +162,6 @@ class SwordWeapon(CustomDrawSprite):
     def change_costume(self):
         # Change costume only if threshold exceeded
         if self.costume_step_counter > self.costume_switching_threshold:
-
             # Reset counter and increase costume index
             self.costume_step_counter = 0
             self.costume_index += 1
@@ -173,6 +169,7 @@ class SwordWeapon(CustomDrawSprite):
             # If it's the last costume - start from the first costume (index = 0)
             if self.costume_index >= self.number_of_sprites:
                 self.costume_index = 0
+                pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
             # Set new image
             self.set_costume(self.direction, self.costume_index)
