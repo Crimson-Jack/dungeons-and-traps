@@ -9,7 +9,7 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, image, position, groups, obstacle_map, game_state, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Energy
@@ -17,8 +17,19 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.energy = self.max_energy
         self.energy_decrease_step = 5
 
+        # Sprite animation variables
+        self.sprites = []
+        self.costume_switching_thresholds = []
+        # Split frames into sprites and durations
+        for frame in frames:
+            self.sprites.append(pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE)))
+            self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+        self.number_of_sprites = len(self.sprites)
+        self.costume_step_counter = 0
+        self.costume_index = 0
+
         # Image
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
+        self.image = self.sprites[0]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -67,6 +78,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     self.obstacles.append((y, x))
 
     def update(self):
+        if self.number_of_sprites > 1:
+            self.change_costume()
         if self.is_moving:
             self.move()
         else:
@@ -144,6 +157,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     # If the vector is still not found, the movement is off
                     if not self.movement_vector:
                         self.is_moving = False
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
 
     def check_collision(self):
         is_collision_detected = False
@@ -224,3 +240,18 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
             # Reset status of collided with weapon
             self.collided_with_weapon = False
+
+    def change_costume(self):
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the second costume (index = 1)
+            if self.costume_index >= self.number_of_sprites:
+                self.costume_index = 0
+
+            # Set new image
+            self.image = self.sprites[self.costume_index]
