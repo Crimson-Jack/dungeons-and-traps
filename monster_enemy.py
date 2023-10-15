@@ -1,6 +1,7 @@
 import pygame
 import game_helper
 import settings
+import spritesheet
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from enemy_with_brain import EnemyWithBrain
@@ -9,7 +10,7 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, obstacle_map, game_state, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, speed, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Energy
@@ -33,6 +34,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
+        # Sprite in a damage state
+        self.sprite_in_damage_state = None
+        self.load_sprites_in_damage_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+
         # Obstacle map
         self.obstacle_map = obstacle_map
 
@@ -40,10 +45,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.game_state = game_state
 
         # Movement variables
-        self.speed = 3
+        self.speed = speed
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
-        self.start_delay = 5
+        self.start_delay = 15
         self.start_delay_counter = self.start_delay
 
         # Set positions on map
@@ -69,6 +74,20 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # State variables
         self.collided_with_weapon = False
+        self.is_resting = False
+
+    def load_sprites_in_damage_state(self, source_sprite_width, source_sprite_height, scale, key_color):
+        # Load image with all sprite sheets
+        sprite_sheet = spritesheet.SpriteSheet(
+            pygame.image.load('img/monster-enemy.png').convert_alpha(),
+            source_sprite_width,
+            source_sprite_height,
+            scale,
+            key_color
+        )
+
+        # Sprites with the state: damage
+        self.sprite_in_damage_state = sprite_sheet.get_image(1, 0)
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
@@ -91,6 +110,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 self.set_movement_vector()
                 if self.movement_vector:
                     self.is_moving = True
+                    self.is_resting = False
 
     def move(self):
         # Calculate real y position
@@ -214,6 +234,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def decrease_energy(self):
         self.collided_with_weapon = True
+        self.is_resting = True
         self.is_moving = False
 
         if self.energy > 0:
@@ -242,6 +263,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.collided_with_weapon = False
 
     def change_costume(self):
+        if self.is_resting:
+            self.image = self.sprite_in_damage_state
+
         # Change costume only if threshold exceeded
         if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
 
