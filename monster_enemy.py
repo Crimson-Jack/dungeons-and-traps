@@ -134,17 +134,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
 
-        # Adjust position
-        self.real_x_position = self.hit_box.x
-        self.real_y_position = self.hit_box.y
-
         if self.check_collision():
             # Collision with moving obstacle sprites was detected
             # Monster must be moved to the last valid position (using current map position)
             self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
             self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
 
-            # Adjust position after collision
+            # Adjust real position after collision
             self.real_x_position = float(self.hit_box.x)
             self.real_y_position = float(self.hit_box.y)
 
@@ -161,6 +157,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
             # If position was changed, change position and determine new direction
             if self.current_position_on_map != self.new_position_on_map:
+                # Adjust real position
+                self.real_x_position = self.hit_box.x
+                self.real_y_position = self.hit_box.y
+
                 # Change current position (x or y or both)
                 if self.current_position_on_map[0] != self.new_position_on_map[0]:
                     self.current_position_on_map[0] = self.new_position_on_map[0]
