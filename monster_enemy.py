@@ -1,4 +1,5 @@
 import pygame
+import random
 import game_helper
 import settings
 import spritesheet
@@ -64,7 +65,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
         self.breadth_first_search_helper = BreadthFirstSearchHelper()
-        self.path = None
+        self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
@@ -107,11 +108,21 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             if self.start_delay_counter < 0:
                 # Reset counter
                 self.start_delay_counter = self.start_delay
-                # If the vector is found, the movement is on
+                # Try to find a vector from path
                 self.set_movement_vector()
                 if self.movement_vector:
+                    # If a vector is found, the movement is on
                     self.is_moving = True
                     self.is_resting = False
+                else:
+                    # Otherwise, try moving randomly (if is allowed)
+                    self.set_random_movement_vector()
+                    if self.movement_vector:
+                        # If a random vector is found, the movement is on
+                        self.is_moving = True
+                        self.is_resting = False
+                        # The path is not relevant in the random movement
+                        self.path.clear()
 
     def move(self):
         # Calculate real y position
@@ -172,8 +183,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
                 # If the vector is not found, recalculate the path and set a new vector
                 if not self.movement_vector:
-                    self.calculate_path_to_player()
-                    self.set_movement_vector()
+                    if self.is_player_in_range():
+                        self.calculate_path_to_player()
+                        self.set_movement_vector()
 
                     # If the vector is still not found, the movement is off
                     if not self.movement_vector:
@@ -205,6 +217,37 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                         next_position_on_map[0] - self.current_position_on_map[0],
                         next_position_on_map[1] - self.current_position_on_map[1])
                     break
+
+        self.movement_vector = movement_vector
+
+    def set_random_movement_vector(self):
+        movement_vector = None
+
+        # Find the first empty tile nearby the monster
+        possible_vectors = [
+            pygame.math.Vector2(-1, 0),
+            pygame.math.Vector2(1, 0),
+            pygame.math.Vector2(0, -1),
+            pygame.math.Vector2(0, 1),
+        ]
+
+        possible_vectors_length = len(possible_vectors)
+
+        while possible_vectors_length > 0:
+            random_value = random.randint(0, possible_vectors_length-1)
+            verified_tile = (
+                int(self.current_position_on_map[0] + possible_vectors[random_value][0]),
+                int(self.current_position_on_map[1] + possible_vectors[random_value][1])
+            )
+
+            if verified_tile in self.obstacles:
+                # Chose another tile
+                possible_vectors.remove(possible_vectors[random_value])
+                possible_vectors_length -= 1
+            else:
+                # The vector has been found and the tile is empty
+                movement_vector = possible_vectors[random_value]
+                break
 
         self.movement_vector = movement_vector
 
@@ -293,4 +336,3 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             monster_tile_position[1] - player_tile_position[1])
 
         return distance[0] < self.range and distance[1] < self.range
-
