@@ -50,6 +50,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.is_moving = False
         self.start_delay = 15
         self.start_delay_counter = self.start_delay
+        self.range = 10
 
         # Set positions on map
         self.current_position_on_map = [
@@ -196,13 +197,14 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def set_movement_vector(self):
         movement_vector = None
 
-        for index, item in enumerate(self.path):
-            if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
-                next_position_on_map = self.path[index + 1]
-                movement_vector = pygame.math.Vector2(
-                    next_position_on_map[0] - self.current_position_on_map[0],
-                    next_position_on_map[1] - self.current_position_on_map[1])
-                break
+        if self.is_player_in_range():
+            for index, item in enumerate(self.path):
+                if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
+                    next_position_on_map = self.path[index + 1]
+                    movement_vector = pygame.math.Vector2(
+                        next_position_on_map[0] - self.current_position_on_map[0],
+                        next_position_on_map[1] - self.current_position_on_map[1])
+                    break
 
         self.movement_vector = movement_vector
 
@@ -211,11 +213,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.calculate_path_to_player()
+        if self.is_player_in_range():
+            self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # Calculate a new path
-        self.calculate_path_to_player()
+        # Player has changed position - calculate a new path
+        if self.is_player_in_range():
+            self.calculate_path_to_player()
 
     def calculate_path_to_player(self):
         start_position = tuple(self.current_position_on_map)
@@ -227,10 +231,11 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                                                                                                  start_position,
                                                                                                  end_position)
 
-        # Reverse the path (direction: from monster to player)
-        self.path.reverse()
-        # Add player position to the end of the path
-        self.path.append(self.game_state.player_tile_position)
+        if is_end_reached:
+            # Reverse the path (direction: from monster to player)
+            self.path.reverse()
+            # Add player position to the end of the path
+            self.path.append(self.game_state.player_tile_position)
 
     def decrease_energy(self):
         self.collided_with_weapon = True
@@ -279,3 +284,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
             # Set new image
             self.image = self.sprites[self.costume_index]
+
+    def is_player_in_range(self):
+        monster_tile_position = tuple(self.current_position_on_map)
+        player_tile_position = self.game_state.player_tile_position
+
+        distance = abs(monster_tile_position[0] - player_tile_position[0]), abs(
+            monster_tile_position[1] - player_tile_position[1])
+
+        return distance[0] < self.range and distance[1] < self.range
+

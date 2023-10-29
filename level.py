@@ -223,7 +223,7 @@ class Level:
                 # Get all sprites with duration (frames)
                 frames = tmx_helper.get_frames(self.tmx_data, monster_item)
 
-                MonsterEnemy(frames, (x, y), (self.middle_layer_regular_sprites, self.enemy_sprites),
+                MonsterEnemy(frames, (x, y), (self.bottom_layer_regular_sprites, self.enemy_sprites),
                              speed, self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
 
     def run(self):
