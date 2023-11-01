@@ -57,7 +57,7 @@ class Game:
                         self.game_state.set_player_movement(1, 0)
 
                 #  Custom events
-                if event.type == settings.ADD_DIAMOND_EVENT:
+                if event.type == settings.COLLECT_DIAMOND_EVENT:
                     # Refresh dashboard surface
                     self.refresh_dashboard_surface()
                 if event.type == settings.DECREASE_ENERGY_EVENT:

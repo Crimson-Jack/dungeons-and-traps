@@ -214,7 +214,7 @@ class Player(CustomDrawSprite):
         for sprite in self.collectable_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 # Increase number of collected diamonds
-                self.game_state.add_diamond()
+                self.game_state.collect_diamond()
                 # Remove diamond
                 sprite.kill()
 

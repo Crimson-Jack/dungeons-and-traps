@@ -76,9 +76,6 @@ class Level:
         # Create exit point
         self.exit_point = self.create_exit_point()
 
-        # Complete required diamonds parameter based on current level data
-        self.game_state.set_number_of_required_diamonds(len(self.collectable_sprites))
-
         # Set blast effect details
         self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
 
@@ -143,7 +140,8 @@ class Level:
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
             # Add tile to visible and collectable sprites group
-            Diamond(image, (x, y), (self.middle_layer_regular_sprites, self.collectable_sprites))
+            diamond = Diamond(image, (x, y), (self.middle_layer_regular_sprites, self.collectable_sprites))
+            self.game_state.add_diamond(diamond)
 
         spider_layer = self.tmx_data.get_layer_by_name('spider-enemy')
         for spider_item in spider_layer:

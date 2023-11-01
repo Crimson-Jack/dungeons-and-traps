@@ -6,8 +6,8 @@ import direction
 class GameState:
     def __init__(self):
         self.game_over = False
-        self.required_diamonds = 0
-        self.diamonds = 0
+        self.diamonds = list()
+        self.collected_diamonds = 0
         self.max_energy = 800
         self.energy = self.max_energy
         self.max_power = 100
@@ -17,13 +17,13 @@ class GameState:
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
 
-    def set_number_of_required_diamonds(self, value):
-        self.required_diamonds = value
+    def add_diamond(self, diamond):
+        self.diamonds.append(diamond)
 
-    def add_diamond(self):
-        self.diamonds += 1
-        pygame.event.post(pygame.event.Event(settings.ADD_DIAMOND_EVENT))
-        if self.diamonds == self.required_diamonds:
+    def collect_diamond(self):
+        self.collected_diamonds += 1
+        pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
+        if self.collected_diamonds == len(self.diamonds):
             pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
 
     def decrease_energy(self):
@@ -44,7 +44,7 @@ class GameState:
         pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
 
     def level_completed(self):
-        if self.diamonds == self.required_diamonds:
+        if self.collected_diamonds == len(self.diamonds):
             # Note: Only for temporary solution
             self.game_over = True
             pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
