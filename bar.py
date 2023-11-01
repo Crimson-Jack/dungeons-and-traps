@@ -53,17 +53,18 @@ class Bar:
         # Blit the text
         if self.draw_text:
             # Create text
-            rendered_text = self.basic_font.render(f'{self.text} {percent} %', True, self.text_color)
+            rendered_text = self.basic_font.render(f'{self.text} {percent}%', True, self.text_color)
 
             # Set text position
             text_rect = rendered_text.get_rect()
-            rendered_text_position = [self.position[0] + bar_width - text_rect.width - 10,
+            rendered_text_position = [self.position[0] + bar_width // 2 - text_rect.width // 2,
                                       self.position[1] + self.height // 2 - text_rect.height // 2]
 
             # Change text and adjust position if it's too long
-            if rendered_text_position[0] < rendered_text.get_rect().width:
-                rendered_text = self.basic_font.render(f'{percent} %', True, self.text_color)
-                rendered_text_position[0] = self.position[0] + bar_width + 10
+            if rendered_text.get_rect().width + 50 > bar_width:
+                rendered_text = self.basic_font.render(f'{percent}%', True, self.text_color)
+                text_rect = rendered_text.get_rect()
+                rendered_text_position[0] = self.position[0] + bar_width // 2 - text_rect.width // 2
 
             surface.blit(rendered_text, rendered_text_position)
 

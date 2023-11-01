@@ -25,7 +25,7 @@ class Game:
         self.refresh_dashboard_surface()
 
     def refresh_dashboard_surface(self):
-        self.dashboard_surface.fill((50, 50, 50))
+        self.dashboard.clean()
         self.dashboard.draw()
 
     def run(self):
