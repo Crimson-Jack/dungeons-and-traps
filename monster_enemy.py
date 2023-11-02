@@ -11,7 +11,7 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, speed, obstacle_map, game_state, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, speed, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Energy
@@ -36,6 +36,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.hit_box = self.rect
 
         # Sprite in a damage state
+        self.name = name
         self.sprite_in_damage_state = None
         self.load_sprites_in_damage_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
@@ -81,7 +82,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def load_sprites_in_damage_state(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
         sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/monster-enemy.png').convert_alpha(),
+            pygame.image.load(f'img/{self.name}.png').convert_alpha(),
             source_sprite_width,
             source_sprite_height,
             scale,
