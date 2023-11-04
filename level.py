@@ -218,11 +218,16 @@ class Level:
                 speed = game_helper.convert_to_tile_size_ratio_decorator(tmx_helper.get_property)('speed', 1,
                                                                                                   monster_item,
                                                                                                   monster_layer)
+
+                # Start delay
+                start_delay = tmx_helper.get_property('start_delay', 10, monster_item, monster_layer)
+
                 # Get all sprites with duration (frames)
                 frames = tmx_helper.get_frames(self.tmx_data, monster_item)
 
                 MonsterEnemy(frames, (x, y), (self.bottom_layer_regular_sprites, self.enemy_sprites),
-                             monster_item.name, speed, self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
+                             monster_item.name, speed, start_delay, self.obstacle_map.items, self.game_state,
+                             self.moving_obstacle_sprites)
 
     def run(self):
         # Run an update method foreach sprite from the group

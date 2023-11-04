@@ -11,7 +11,7 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, name, speed, obstacle_map, game_state, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, speed, start_delay, obstacle_map, game_state, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Energy
@@ -50,7 +50,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.speed = speed
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
-        self.start_delay = 15
+        self.start_delay = start_delay
         self.start_delay_counter = self.start_delay
         self.range = 10
 

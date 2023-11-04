@@ -36,7 +36,7 @@
   <object id="14" name="exit-point" gid="61" x="448" y="32" width="16" height="16"/>
   <object id="31" name="player" gid="185" x="16" y="48" width="16" height="16">
    <properties>
-    <property name="speed" type="float" value="7"/>
+    <property name="speed" type="float" value="5"/>
    </properties>
   </object>
  </objectgroup>
@@ -105,7 +105,7 @@
    </object>
    <object id="44" name="enemy-ghost-3" gid="249" x="64" y="272" width="16" height="16">
     <properties>
-     <property name="speed" type="float" value="6"/>
+     <property name="speed" type="float" value="5"/>
     </properties>
    </object>
   </objectgroup>
@@ -119,7 +119,7 @@
     <properties>
      <property name="motion_schedule" value="0, 60"/>
      <property name="net_length" type="int" value="4"/>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="4"/>
     </properties>
    </object>
    <object id="33" name="spider-enemy-2" gid="225" x="128" y="256" width="16" height="16">
@@ -148,7 +148,7 @@
      <property name="direction" value="left"/>
      <property name="fire_length" value="5"/>
      <property name="motion_schedule" value="0, 5"/>
-     <property name="speed" type="float" value="7"/>
+     <property name="speed" type="float" value="2"/>
     </properties>
    </object>
    <object id="28" name="enemy-fire-flame-2" gid="139" x="128" y="80" width="16" height="16">
@@ -171,22 +171,26 @@
   <objectgroup id="19" name="monster-enemy">
    <object id="45" name="monster-enemy" gid="257" x="64" y="160" width="16" height="16">
     <properties>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="4"/>
+     <property name="start_delay" type="int" value="0"/>
     </properties>
    </object>
    <object id="50" name="monster-enemy-blue" gid="289" x="288" y="256" width="16" height="16">
     <properties>
-     <property name="speed" type="float" value="2"/>
+     <property name="speed" type="float" value="1"/>
+     <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
    <object id="49" name="monster-enemy-green" gid="273" x="256" y="240" width="16" height="16">
     <properties>
-     <property name="speed" type="float" value="4"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="10"/>
     </properties>
    </object>
    <object id="46" name="monster-enemy" gid="257" x="256" y="224" width="16" height="16">
     <properties>
-     <property name="speed" type="float" value="6"/>
+     <property name="speed" type="float" value="4"/>
+     <property name="start_delay" type="int" value="0"/>
     </properties>
    </object>
   </objectgroup>
