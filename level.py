@@ -170,7 +170,7 @@ class Level:
                 SpiderEnemy(spider_item.image, (x, y), (self.top_layer_sprites, self.enemy_sprites),
                             speed, net_length, motion_schedule, self.moving_obstacle_sprites)
 
-        ghost_layer = self.tmx_data.get_layer_by_name('enemy-ghost')
+        ghost_layer = self.tmx_data.get_layer_by_name('ghost-enemy')
         for ghost_item in ghost_layer:
             if ghost_item.visible:
                 # Position
@@ -186,7 +186,7 @@ class Level:
                 GhostEnemy(frames, (x, y), (self.top_layer_sprites, self.enemy_sprites),
                            speed, self.obstacle_map.items, self.moving_obstacle_sprites)
 
-        fire_flame_layer = self.tmx_data.get_layer_by_name('enemy-fire-flame')
+        fire_flame_layer = self.tmx_data.get_layer_by_name('fire-flame-enemy')
         for fire_flame_item in fire_flame_layer:
             if fire_flame_item.visible:
                 # Position
