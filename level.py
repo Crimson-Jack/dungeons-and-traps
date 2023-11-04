@@ -10,6 +10,7 @@ from wall import Wall
 from stone import Stone
 from ground import Ground
 from diamond import Diamond
+from key import Key
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
 from fire_flame_enemy_left import FireFlameEnemyLeft
@@ -142,6 +143,14 @@ class Level:
             # Add tile to visible and collectable sprites group
             diamond = Diamond(image, (x, y), (self.middle_layer_regular_sprites, self.collectable_sprites))
             self.game_state.add_diamond(diamond)
+
+        collectable_key_layer = self.tmx_data.get_layer_by_name('collectable-key')
+        for tile_x, tile_y, image in collectable_key_layer.tiles():
+            x = tile_x * settings.TILE_SIZE
+            y = tile_y * settings.TILE_SIZE
+            # Add tile to visible and collectable sprites group
+            key = Key(image, (x, y), (self.middle_layer_regular_sprites, self.collectable_sprites))
+            self.game_state.add_key(key)
 
         spider_layer = self.tmx_data.get_layer_by_name('spider-enemy')
         for spider_item in spider_layer:

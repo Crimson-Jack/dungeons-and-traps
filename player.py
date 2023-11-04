@@ -1,5 +1,8 @@
 import pygame
+
+import diamond
 import direction
+import key
 import settings
 import game_helper
 import spritesheet
@@ -213,9 +216,11 @@ class Player(CustomDrawSprite):
         # Check collision with collectable sprites
         for sprite in self.collectable_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                # Increase number of collected diamonds
-                self.game_state.collect_diamond()
-                # Remove diamond
+                if isinstance(sprite, diamond.Diamond):
+                    self.game_state.collect_diamond()
+                elif isinstance(sprite, key.Key):
+                    self.game_state.collect_key()
+                # Remove
                 sprite.kill()
 
         # Check collision with enemy sprites

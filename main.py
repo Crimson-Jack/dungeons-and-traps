@@ -60,6 +60,9 @@ class Game:
                 if event.type == settings.COLLECT_DIAMOND_EVENT:
                     # Refresh dashboard surface
                     self.refresh_dashboard_surface()
+                if event.type == settings.COLLECT_KEY_EVENT:
+                    # Refresh dashboard surface
+                    self.refresh_dashboard_surface()
                 if event.type == settings.DECREASE_ENERGY_EVENT:
                     # Refresh dashboard surface
                     self.refresh_dashboard_surface()
