@@ -33,32 +33,15 @@ def calculate_frames(time: float | int) -> int:
     return int(result)
 
 
-def convert_to_tuple_decorator(func_name):
+def convert_string_to_tuple(value, separator=','):
     """
-    Return a wrapper where the result (string with coma separator) is converted to a tuple.
+    Return a tuple of integers from the string.
 
-    :param func_name: function name
-    :return: wrapper
+    :param value: input
+    :param separator: separator
+    :return: tuple of integers
     """
-    def wrapper(*args):
-        func_result = func_name(*args)
-        result = tuple(map(int, func_result.split(',')))
-        return result
-    return wrapper
-
-
-def convert_to_tile_size_ratio_decorator(func_name):
-    """
-    Return a wrapper where the result is multiplied by the tile size ratio.
-
-    :param func_name: function name
-    :return: wrapper
-    """
-    def wrapper(*args):
-        func_result = func_name(*args)
-        result = multiply_by_tile_size_ratio(func_result)
-        return result
-    return wrapper
+    return tuple(map(int, value.split(separator)))
 
 
 def calculate_game_surface_position(game_surface_width, game_surface_height, map_width, map_height):
@@ -75,7 +58,7 @@ def calculate_game_surface_position(game_surface_width, game_surface_height, map
 
 def get_tile_by_point(position: tuple):
     """
-    Return a tuple with the tile position
+    Return a tuple with the tile position.
 
     :param position: tuple with x, y coordinates
     :return: tuple with the tile position
