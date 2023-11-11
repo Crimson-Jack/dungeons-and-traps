@@ -7,8 +7,9 @@ class GameState:
     def __init__(self):
         self.game_over = False
         self.diamonds = list()
-        self.collected_diamonds = 0
+        self.collected_diamonds = list()
         self.keys = list()
+        self.collected_keys = list()
         self.max_energy = 800
         self.energy = self.max_energy
         self.max_power = 100
@@ -24,14 +25,19 @@ class GameState:
     def add_key(self, key):
         self.keys.append(key)
 
-    def collect_diamond(self):
-        self.collected_diamonds += 1
+    def collect_diamond(self, diamond):
+        self.collected_diamonds.append(diamond)
         pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
-        if self.collected_diamonds == len(self.diamonds):
+        if len(self.collected_diamonds) == len(self.diamonds):
             pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
 
-    def collect_key(self):
+    def collect_key(self, key):
+        self.collected_keys.append(key)
         pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
+
+    def check_is_key_collected(self, key_name):
+        count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
+        return count
 
     def decrease_energy(self):
         self.energy -= 1
@@ -51,7 +57,7 @@ class GameState:
         pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
 
     def level_completed(self):
-        if self.collected_diamonds == len(self.diamonds):
+        if len(self.collected_diamonds) == len(self.diamonds):
             # Note: Only for temporary solution
             self.game_over = True
             pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))

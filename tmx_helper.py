@@ -2,6 +2,23 @@ import settings
 import pytmx
 
 
+def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height):
+    rows = list()
+    for row_counter in range(0, size_of_map[1]):
+        columns = list()
+        for columns_counter in range(0, size_of_map[0]):
+            columns.append(0)
+        rows.append(columns)
+
+    for item in object_group:
+        tile_x = int(item.x // tile_width)
+        tile_y = int(item.y // tile_height)
+        rows[tile_y][tile_x] = 1
+        print(tile_x, tile_y)
+
+    return rows
+
+
 def convert_position(position_x, position_y, tile_width, tile_height):
     tile_x = int(position_x // tile_width)
     tile_y = int(position_y // tile_height)

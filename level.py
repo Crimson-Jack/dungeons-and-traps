@@ -10,6 +10,7 @@ from wall import Wall
 from stone import Stone
 from ground import Ground
 from diamond import Diamond
+from door import Door
 from key import Key
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
@@ -57,6 +58,7 @@ class Level:
         self.exit_points = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
         self.moving_obstacle_sprites = pygame.sprite.Group()
+        self.passage_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
         self.hostile_force_sprites = pygame.sprite.Group()
@@ -67,7 +69,9 @@ class Level:
         # Create obstacle map and combine all layers with obstacles
         self.obstacle_map = ObstacleMap([
             self.tmx_data.get_layer_by_name('obstacle').data,
-            self.tmx_data.get_layer_by_name('moving-obstacle').data
+            self.tmx_data.get_layer_by_name('moving-obstacle').data,
+            tmx_helper.get_object_group_data_map(self.tmx_data.get_layer_by_name('door'), size_of_map,
+                                                 self.tmx_data.tilewidth, self.tmx_data.tileheight)
         ])
 
         # Create sprites
@@ -89,8 +93,8 @@ class Level:
             speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
             return Player((x, y), (self.middle_layer_regular_sprites,), [self.middle_layer_regular_sprites],
                           speed, self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
-                          self.collectable_sprites, self.enemy_sprites, self.hostile_force_sprites,
-                          self.game_state)
+                          self.passage_sprites, self.collectable_sprites, self.enemy_sprites,
+                          self.hostile_force_sprites, self.game_state)
 
     def create_exit_point(self):
         exit_object = self.tmx_data.get_object_by_name('exit-point')
@@ -109,6 +113,7 @@ class Level:
         self.create_sprites_from_layer('obstacle')
         self.create_sprites_from_layer('moving-obstacle')
         self.create_sprites_from_layer('diamond')
+        self.create_sprites_from_object_layer('door')
         self.create_sprites_from_object_layer('key')
         self.create_sprites_from_object_layer('spider-enemy')
         self.create_sprites_from_object_layer('ghost-enemy')
@@ -147,6 +152,11 @@ class Level:
             for item in layer:
                 if item.visible:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
+
+                    if layer_name == 'door':
+                        groups = (self.middle_layer_regular_sprites, self.obstacle_sprites, self.passage_sprites)
+                        key_name = tmx_helper.get_property('key_name', '', item, layer)
+                        Door(item.image, (x, y), groups, key_name, self.obstacle_map.items)
 
                     if layer_name == 'key':
                         groups = (self.middle_layer_regular_sprites, self.collectable_sprites)

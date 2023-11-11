@@ -12,7 +12,7 @@ from custom_draw_sprite import CustomDrawSprite
 
 class Player(CustomDrawSprite):
     def __init__(self, position, groups, weapon_groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
-                 collectable_sprites, enemy_sprites, hostile_force_sprites, game_state):
+                 passage_sprites, collectable_sprites, enemy_sprites, hostile_force_sprites, game_state):
         super().__init__(groups)
 
         # Create sprite animation variables
@@ -51,6 +51,7 @@ class Player(CustomDrawSprite):
         self.exit_points = exit_points
         self.moving_obstacle_sprites = moving_obstacle_sprites
         self.obstacle_sprites = obstacle_sprites
+        self.passage_sprites = passage_sprites
         self.collectable_sprites = collectable_sprites
         self.enemy_sprites = enemy_sprites
         self.hostile_force_sprites = hostile_force_sprites
@@ -217,9 +218,9 @@ class Player(CustomDrawSprite):
         for sprite in self.collectable_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if isinstance(sprite, diamond.Diamond):
-                    self.game_state.collect_diamond()
+                    self.game_state.collect_diamond(sprite)
                 elif isinstance(sprite, key.Key):
-                    self.game_state.collect_key()
+                    self.game_state.collect_key(sprite)
                 # Remove
                 sprite.kill()
 
@@ -244,6 +245,9 @@ class Player(CustomDrawSprite):
             # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
+                    if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                        # Remove if key_name matches
+                        sprite.kill()
                     if self.movement_vector.x > 0:
                         self.hit_box.right = sprite.hit_box.left
                     if self.movement_vector.x < 0:
@@ -268,6 +272,9 @@ class Player(CustomDrawSprite):
             # Obstacle
             for sprite in self.obstacle_sprites:
                 if sprite.hit_box.colliderect(self.hit_box):
+                    if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                        # Remove if key_name matches
+                        sprite.kill()
                     if self.movement_vector.y > 0:
                         self.hit_box.bottom = sprite.hit_box.top
                     if self.movement_vector.y < 0:
