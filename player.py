@@ -1,12 +1,13 @@
 import pygame
-
 import diamond
 import direction
 import key
 import settings
 import game_helper
 import spritesheet
+import weapon
 from sword_weapon import SwordWeapon
+from bow_weapon import BowWeapon
 from custom_draw_sprite import CustomDrawSprite
 
 
@@ -66,6 +67,7 @@ class Player(CustomDrawSprite):
         self.weapon_is_in_use = False
         self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites,
                                         moving_obstacle_sprites)
+        self.bow_weapon = BowWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
 
         # Tile position
         self.tile_position = game_helper.get_tile_by_point(self.get_center_point())
@@ -184,6 +186,8 @@ class Player(CustomDrawSprite):
             # - set the first costume for sword weapon and unblock the movement
             self.sword_weapon.set_costume(self.movement_direction, 0)
             self.sword_weapon.is_blocked = False
+            # - set costume for bow
+            self.bow_weapon.set_costume(self.movement_direction)
 
         # Check the movement
         if self.rect.center != self.hit_box.center:
@@ -202,6 +206,7 @@ class Player(CustomDrawSprite):
             if new_tile_position != self.tile_position:
                 self.tile_position = new_tile_position
                 self.game_state.set_player_tile_position(self.tile_position)
+                pygame.event.post(pygame.event.Event(settings.PLAYER_TILE_POSITION_CHANGED_EVENT))
 
         # Increase step counter
         self.step_counter += 1
@@ -301,11 +306,19 @@ class Player(CustomDrawSprite):
                  self.movement_direction == direction.Direction.RIGHT or
                  self.movement_direction == direction.Direction.UP or
                  self.movement_direction == direction.Direction.DOWN):
-            self.sword_weapon.set_position(self.rect.topleft)
-            if not self.sword_weapon.is_moving:
-                self.sword_weapon.is_moving = True
+            if self.game_state.weapon == weapon.Weapon.SWORD:
+                # Sword - start cutting
+                self.sword_weapon.set_position(self.rect.topleft)
+                if not self.sword_weapon.is_moving:
+                    self.sword_weapon.is_moving = True
+            elif self.game_state.weapon == weapon.Weapon.BOW:
+                # Bow - fire an arrow
+                self.bow_weapon.set_position(self.rect.topleft)
+                self.bow_weapon.fire()
         else:
-            self.sword_weapon.is_moving = False
+            if self.game_state.weapon == weapon.Weapon.SWORD:
+                # Sword - stop cutting
+                self.sword_weapon.is_moving = False
 
     def update(self):
         self.input()

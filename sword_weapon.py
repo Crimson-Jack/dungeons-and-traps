@@ -130,11 +130,11 @@ class SwordWeapon(CustomDrawSprite):
 
     def move(self):
         # Check collision
-        self.collision()
+        self.check_collision()
         # Increase costume step counter
         self.costume_step_counter += self.costume_step_counter_increment
 
-    def collision(self):
+    def check_collision(self):
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
             if sprite.hit_box.colliderect(self.hit_box):

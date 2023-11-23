@@ -46,6 +46,10 @@ class Game:
                         self.game_state.set_player_movement(-1, 0)
                     if event.key == pygame.K_SPACE:
                         self.game_state.set_player_is_using_weapon(True)
+                    if event.key == pygame.K_x:
+                        self.game_state.set_next_weapon()
+                    if event.key == pygame.K_z:
+                        self.game_state.set_previous_weapon()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.game_state.set_player_movement(0, -1)

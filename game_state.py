@@ -1,6 +1,7 @@
 import pygame
 import settings
 import direction
+import weapon
 
 
 class GameState:
@@ -18,6 +19,7 @@ class GameState:
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
+        self.weapon = weapon.Weapon.SWORD
 
     def add_diamond(self, diamond):
         self.diamonds.append(diamond)
@@ -89,6 +91,12 @@ class GameState:
         self.player_is_using_weapon = status
 
     def set_player_tile_position(self, position):
-        # print(position)
         self.player_tile_position = position
-        pygame.event.post(pygame.event.Event(settings.PLAYER_TILE_POSITION_CHANGED_EVENT))
+
+    def set_next_weapon(self):
+        self.weapon = self.weapon.next()
+        print(self.weapon.name)
+
+    def set_previous_weapon(self):
+        self.weapon = self.weapon.previous()
+        print(self.weapon.name)
