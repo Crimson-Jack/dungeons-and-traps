@@ -39,9 +39,13 @@ class Arrow(CustomDrawSprite):
             image = sprite_sheet.get_image(0, 0)
         elif self.direction == direction.Direction.LEFT:
             image = sprite_sheet.get_image(1, 0)
-        elif self.direction == direction.Direction.UP:
+        elif (self.direction == direction.Direction.UP or
+              self.direction == direction.Direction.LEFT_UP or
+              self.direction == direction.Direction.RIGHT_UP):
             image = sprite_sheet.get_image(2, 0)
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             image = sprite_sheet.get_image(3, 0)
 
         return image
@@ -58,9 +62,13 @@ class Arrow(CustomDrawSprite):
             self.hit_box.x += self.speed
         elif self.direction == direction.Direction.LEFT:
             self.hit_box.x -= self.speed
-        if self.direction == direction.Direction.UP:
+        if (self.direction == direction.Direction.UP or
+                self.direction == direction.Direction.LEFT_UP or
+                self.direction == direction.Direction.RIGHT_UP):
             self.hit_box.y -= self.speed
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             self.hit_box.y += self.speed
 
         # Check collision
@@ -87,4 +95,3 @@ class Arrow(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
-                    

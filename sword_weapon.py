@@ -95,9 +95,13 @@ class SwordWeapon(CustomDrawSprite):
             self.image = self.sprites['right'][index]
         elif self.direction == direction.Direction.LEFT:
             self.image = self.sprites['left'][index]
-        elif self.direction == direction.Direction.UP:
+        elif (self.direction == direction.Direction.UP or
+              self.direction == direction.Direction.LEFT_UP or
+              self.direction == direction.Direction.RIGHT_UP):
             self.image = self.sprites['up'][index]
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             self.image = self.sprites['down'][index]
 
     def set_position(self, position):
@@ -109,9 +113,13 @@ class SwordWeapon(CustomDrawSprite):
             new_position[0] += position_offset
         elif self.direction == direction.Direction.LEFT:
             new_position[0] -= position_offset
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             new_position[1] += position_offset
-        elif self.direction == direction.Direction.UP:
+        elif (self.direction == direction.Direction.UP or
+              self.direction == direction.Direction.LEFT_UP or
+              self.direction == direction.Direction.RIGHT_UP):
             new_position[1] -= position_offset
 
         self.rect = self.image.get_rect(topleft=new_position)

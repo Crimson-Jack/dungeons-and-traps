@@ -1,4 +1,6 @@
 import pygame
+
+import debug
 import settings
 import game_helper
 import spritesheet
@@ -32,6 +34,7 @@ class BowWeapon(CustomDrawSprite):
 
         # Direction and states
         self.direction = direction.Direction.RIGHT
+        self.is_armed = False
 
         # Arrows
         self.arrows = list()
@@ -52,11 +55,10 @@ class BowWeapon(CustomDrawSprite):
         self.sprites['down'].append(sprite_sheet.get_image(3, 0))
 
     def custom_draw(self, game_surface, offset):
-        pass
-        # if self.is_enabled:
-        #     # Draw sprite
-        #     offset_position = self.rect.topleft + offset
-        #     game_surface.blit(self.image, offset_position)
+        if self.is_armed:
+            # Draw sprite
+            offset_position = self.rect.topleft + offset
+            game_surface.blit(self.image, offset_position)
 
     def set_position(self, position):
         # Calculate additional offset
@@ -67,9 +69,13 @@ class BowWeapon(CustomDrawSprite):
             new_position[0] += position_offset
         elif self.direction == direction.Direction.LEFT:
             new_position[0] -= position_offset
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             new_position[1] += position_offset
-        elif self.direction == direction.Direction.UP:
+        elif (self.direction == direction.Direction.UP or
+              self.direction == direction.Direction.LEFT_UP or
+              self.direction == direction.Direction.RIGHT_UP):
             new_position[1] -= position_offset
 
         self.rect = self.image.get_rect(topleft=new_position)
@@ -82,12 +88,22 @@ class BowWeapon(CustomDrawSprite):
             self.image = self.sprites['right'][0]
         elif self.direction == direction.Direction.LEFT:
             self.image = self.sprites['left'][0]
-        elif self.direction == direction.Direction.UP:
+        elif (self.direction == direction.Direction.UP or
+              self.direction == direction.Direction.LEFT_UP or
+              self.direction == direction.Direction.RIGHT_UP):
             self.image = self.sprites['up'][0]
-        elif self.direction == direction.Direction.DOWN:
+        elif (self.direction == direction.Direction.DOWN or
+              self.direction == direction.Direction.LEFT_DOWN or
+              self.direction == direction.Direction.RIGHT_DOWN):
             self.image = self.sprites['down'][0]
 
     def fire(self):
         self.arrows.append(Arrow(self.rect.topleft, self.groups(), self.enemy_sprites, self.obstacle_sprites,
                                  self.moving_obstacle_sprites, self.direction))
         pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+
+    def arm_weapon(self):
+        self.is_armed = True
+
+    def disarm_weapon(self):
+        self.is_armed = False

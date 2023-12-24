@@ -44,7 +44,7 @@ class Game:
                         self.game_state.set_player_movement(1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.game_state.set_player_movement(-1, 0)
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
                         self.game_state.set_player_is_using_weapon(True)
                     if event.key == pygame.K_x:
                         self.game_state.set_next_weapon()

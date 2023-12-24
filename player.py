@@ -5,7 +5,7 @@ import key
 import settings
 import game_helper
 import spritesheet
-import weapon
+import weapon_type
 from sword_weapon import SwordWeapon
 from bow_weapon import BowWeapon
 from custom_draw_sprite import CustomDrawSprite
@@ -301,22 +301,24 @@ class Player(CustomDrawSprite):
                         self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
-        if self.weapon_is_in_use and \
-                (self.movement_direction == direction.Direction.LEFT or
-                 self.movement_direction == direction.Direction.RIGHT or
-                 self.movement_direction == direction.Direction.UP or
-                 self.movement_direction == direction.Direction.DOWN):
-            if self.game_state.weapon == weapon.Weapon.SWORD:
+        if self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+            self.bow_weapon.set_position(self.rect.topleft)
+            self.bow_weapon.arm_weapon()
+        else:
+            self.bow_weapon.disarm_weapon()
+
+        if self.weapon_is_in_use:
+            if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
                 # Sword - start cutting
                 self.sword_weapon.set_position(self.rect.topleft)
                 if not self.sword_weapon.is_moving:
                     self.sword_weapon.is_moving = True
-            elif self.game_state.weapon == weapon.Weapon.BOW:
+            elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
                 # Bow - fire an arrow
                 self.bow_weapon.set_position(self.rect.topleft)
                 self.bow_weapon.fire()
         else:
-            if self.game_state.weapon == weapon.Weapon.SWORD:
+            if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
                 # Sword - stop cutting
                 self.sword_weapon.is_moving = False
 

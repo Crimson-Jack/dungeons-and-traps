@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class Weapon(IntEnum):
+class WeaponType(IntEnum):
     SWORD = 1
     BOW = 2
 
