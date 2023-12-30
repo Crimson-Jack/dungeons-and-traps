@@ -43,6 +43,9 @@ class SwordWeapon(CustomDrawSprite):
         self.obstacle_sprites = obstacle_sprites
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+        # Other
+        self.power = 5
+
     def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
         sprite_sheet = spritesheet.SpriteSheet(
@@ -150,7 +153,7 @@ class SwordWeapon(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
-                        sprite.decrease_energy()
+                        sprite.decrease_energy(self.power)
                         if sprite.get_energy() == 0:
                             sprite.kill()
         # Check collision with obstacle sprites

@@ -16,7 +16,6 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Energy
         self.max_energy = 100
         self.energy = self.max_energy
-        self.energy_decrease_step = 5
         self.energy_increase_step = 0.25
 
         # Animation variables
@@ -175,11 +174,11 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             self.costume_index = int(new_costume_index)
             self.change_costume()
 
-    def decrease_energy(self):
+    def decrease_energy(self, energy_decrease_step):
         self.collided_with_weapon = True
 
         if self.energy > 0:
-            self.energy -= self.energy_decrease_step
+            self.energy -= energy_decrease_step
             if self.energy < 0:
                 self.energy = 0
 

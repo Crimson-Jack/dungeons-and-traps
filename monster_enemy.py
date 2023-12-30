@@ -17,7 +17,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Energy
         self.max_energy = 100
         self.energy = self.max_energy
-        self.energy_decrease_step = 5
 
         # Sprite animation variables
         self.sprites = []
@@ -281,13 +280,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # Add player position to the end of the path
             self.path.append(self.game_state.player_tile_position)
 
-    def decrease_energy(self):
+    def decrease_energy(self, energy_decrease_step):
         self.collided_with_weapon = True
         self.is_resting = True
         self.is_moving = False
 
         if self.energy > 0:
-            self.energy -= self.energy_decrease_step
+            self.energy -= energy_decrease_step
             if self.energy < 0:
                 self.energy = 0
 

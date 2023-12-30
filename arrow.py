@@ -18,11 +18,16 @@ class Arrow(CustomDrawSprite):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
+        # Enemies
         self.enemy_sprites = enemy_sprites
+
+        # Obstacles
         self.obstacle_sprites = obstacle_sprites
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+        # Properties
         self.speed = 13
+        self.power = 60
 
     def get_image(self, source_sprite_width, source_sprite_height, scale, key_color):
         # Load image with all sprite sheets
@@ -81,7 +86,9 @@ class Arrow(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
-                        sprite.kill()
+                        sprite.decrease_energy(self.power)
+                        if sprite.get_energy() == 0:
+                            sprite.kill()
                         self.kill()
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
