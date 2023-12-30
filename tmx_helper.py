@@ -14,7 +14,6 @@ def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height
         tile_x = int(item.x // tile_width)
         tile_y = int(item.y // tile_height)
         rows[tile_y][tile_x] = 1
-        # print(tile_x, tile_y)
 
     return rows
 

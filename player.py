@@ -301,26 +301,23 @@ class Player(CustomDrawSprite):
                         self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
-        if self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+            self.sword_weapon.set_position(self.rect.topleft)
+            self.sword_weapon.arm_weapon()
+            self.bow_weapon.disarm_weapon()
+        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
             self.bow_weapon.set_position(self.rect.topleft)
             self.bow_weapon.arm_weapon()
-        else:
-            self.bow_weapon.disarm_weapon()
+            self.sword_weapon.disarm_weapon()
 
         if self.weapon_is_in_use:
             if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-                # Sword - start cutting
-                self.sword_weapon.set_position(self.rect.topleft)
-                if not self.sword_weapon.is_moving:
-                    self.sword_weapon.is_moving = True
+                self.sword_weapon.start_cutting()
             elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
-                # Bow - fire an arrow
-                self.bow_weapon.set_position(self.rect.topleft)
                 self.bow_weapon.fire()
         else:
             if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-                # Sword - stop cutting
-                self.sword_weapon.is_moving = False
+                self.sword_weapon.stop_cutting()
 
     def update(self):
         self.input()

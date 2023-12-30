@@ -32,8 +32,9 @@ class SwordWeapon(CustomDrawSprite):
 
         # Direction and states
         self.direction = direction.Direction.RIGHT
-        self.is_blocked = False
+        self.is_armed = True
         self.is_moving = False
+        self.is_blocked = False
 
         # Enemies
         self.enemy_sprites = enemy_sprites
@@ -127,11 +128,11 @@ class SwordWeapon(CustomDrawSprite):
 
     def update(self):
         self.change_costume()
-        if self.is_moving:
+        if self.is_armed and self.is_moving:
             self.move()
 
     def custom_draw(self, game_surface, offset):
-        if self.is_moving and not self.is_blocked:
+        if self.is_armed and self.is_moving and not self.is_blocked:
             # Draw sprite
             offset_position = self.rect.topleft + offset
             game_surface.blit(self.image, offset_position)
@@ -181,3 +182,15 @@ class SwordWeapon(CustomDrawSprite):
 
             # Set new image
             self.set_costume(self.direction, self.costume_index)
+
+    def arm_weapon(self):
+        self.is_armed = True
+
+    def disarm_weapon(self):
+        self.is_armed = False
+
+    def start_cutting(self):
+        self.is_moving = True
+
+    def stop_cutting(self):
+        self.is_moving = False

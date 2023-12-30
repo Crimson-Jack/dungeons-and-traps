@@ -87,8 +87,6 @@ class GameState:
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
             self.player_movement_direction = direction.Direction.RIGHT_UP
 
-        print(self.player_movement_direction)
-
     def set_player_is_using_weapon(self, status):
         self.player_is_using_weapon = status
 
@@ -97,8 +95,6 @@ class GameState:
 
     def set_next_weapon(self):
         self.weapon_type = self.weapon_type.next()
-        print(self.weapon_type.name)
 
     def set_previous_weapon(self):
         self.weapon_type = self.weapon_type.previous()
-        print(self.weapon_type.name)

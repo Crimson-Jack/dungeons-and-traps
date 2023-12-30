@@ -1,6 +1,4 @@
 import pygame
-
-import debug
 import settings
 import game_helper
 import spritesheet
