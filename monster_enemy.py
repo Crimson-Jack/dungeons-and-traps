@@ -336,3 +336,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             monster_tile_position[1] - player_tile_position[1])
 
         return distance[0] < self.range and distance[1] < self.range
+
+    def kill(self):
+        super().kill()
+        pygame.event.post(pygame.event.Event(settings.SHOW_TOMBSTONE_EVENT, {"position": self.rect.topleft}))

@@ -22,6 +22,7 @@ from exit_point import ExitPoint
 from blast_effect import BlastEffect
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
+from tombstone import Tombstone
 
 
 class Level:
@@ -83,6 +84,8 @@ class Level:
 
         # Set blast effect details
         self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
+        # Tombstones
+        self.tombstones = list()
 
     def create_player(self):
         player_object = self.tmx_data.get_object_by_name('player')
@@ -279,3 +282,6 @@ class Level:
         game_over = basic_font.render('GAME OVER', True, accent_color, background_color)
         game_over_size = game_over.get_size()
         self.screen.blit(game_over, (half_width - game_over_size[0] // 2, half_height - game_over_size[1] // 2))
+
+    def show_tombstone(self, position):
+        self.tombstones.append(Tombstone(position, self.bottom_layer_background_sprites))

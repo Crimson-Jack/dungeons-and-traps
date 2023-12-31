@@ -29,11 +29,11 @@ class Game:
         self.dashboard.draw()
 
     def run(self):
-        while True:
+        is_running = True
+        while is_running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    pygame.quit()
-                    sys.exit()
+                    is_running = False
                 # Player movement direction
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -91,6 +91,9 @@ class Game:
                 if event.type == settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
                     # Weapon is not used
                     self.game_state.set_player_is_using_weapon(False)
+                if event.type == settings.SHOW_TOMBSTONE_EVENT:
+                    # Show tombstone
+                    self.level.show_tombstone(event.dict.get("position"))
 
             if not self.game_state.game_over:
                 # Refresh game surface
@@ -104,3 +107,5 @@ if __name__ == '__main__':
     # Initialize and run the game
     game = Game()
     game.run()
+    pygame.quit()
+    sys.exit()

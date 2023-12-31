@@ -65,10 +65,6 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         for number in range(0, self.number_of_sprites):
             self.sprites['down'].append(sprite_sheet.get_image(1, number))
 
-    def __del__(self):
-        # TODO: Implement animation
-        pass
-
     def move(self):
         # Calculate real y position
         self.real_y_position += float(self.movement_vector.y * self.speed)
@@ -201,3 +197,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
     def change_costume(self):
         self.image = self.sprites['down'][self.costume_index]
+
+    def kill(self):
+        super().kill()
+        pygame.event.post(pygame.event.Event(settings.SHOW_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
