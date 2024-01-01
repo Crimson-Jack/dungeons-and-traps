@@ -207,7 +207,7 @@ class Level:
                                                 self.moving_obstacle_sprites)
 
                     elif layer_name == 'monster-enemy':
-                        groups = (self.bottom_layer_regular_sprites, self.enemy_sprites)
+                        groups = (self.middle_layer_regular_sprites, self.enemy_sprites)
                         speed = game_helper.multiply_by_tile_size_ratio(
                             tmx_helper.get_property('speed', 1, item, layer))
                         start_delay = tmx_helper.get_property('start_delay', 10, item, layer)
@@ -216,6 +216,8 @@ class Level:
                                      self.game_state, self.moving_obstacle_sprites)
 
     def run(self):
+        self.clean_up()
+
         # Run an update method foreach sprite from the group
         # NOTE: bottom_layer_background_sprites is static
         self.bottom_layer_regular_sprites.update()
@@ -284,4 +286,12 @@ class Level:
         self.screen.blit(game_over, (half_width - game_over_size[0] // 2, half_height - game_over_size[1] // 2))
 
     def show_tombstone(self, position):
-        self.tombstones.append(Tombstone(position, self.bottom_layer_background_sprites))
+        self.tombstones.append(Tombstone(position, self.bottom_layer_regular_sprites))
+
+    def clean_up(self):
+        # Remove unnecessary items
+        for tombstone in self.tombstones:
+            if tombstone.check_if_it_can_be_removed():
+                self.tombstones.remove(tombstone)
+                tombstone.kill()
+
