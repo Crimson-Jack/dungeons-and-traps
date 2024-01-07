@@ -1,4 +1,5 @@
 import settings
+import pygame
 
 # Base tile size - reference tile size - base on this parameter, all other values are calculated
 BASE_TILE_SIZE = 64
@@ -67,3 +68,12 @@ def get_tile_by_point(position: tuple):
     y_tile = position[1] // settings.TILE_SIZE
 
     return x_tile, y_tile
+
+
+def get_collided_rectangle(rectangle_one, rectangle_two):
+    left = max(rectangle_one.left, rectangle_two.left)
+    width = min(rectangle_one.right, rectangle_two.right) - left
+    top = max(rectangle_one.top, rectangle_two.top)
+    height = min(rectangle_one.bottom, rectangle_two.bottom) - top
+
+    return pygame.Rect(left, top, width, height)

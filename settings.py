@@ -24,7 +24,9 @@ NEXT_LEVEL_EVENT = pygame.event.custom_type()
 REFRESH_OBSTACLE_MAP_EVENT = pygame.event.custom_type()
 PLAYER_TILE_POSITION_CHANGED_EVENT = pygame.event.custom_type()
 PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
-SHOW_TOMBSTONE_EVENT = pygame.event.custom_type()
+ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
+ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
+PARTICLE_EVENT = pygame.event.custom_type()
 
 # Create debugger
 debugger = Debug()

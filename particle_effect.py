@@ -1,0 +1,38 @@
+from particle_spark import ParticleSpark
+
+
+class ParticleEffect:
+    def __init__(self, surface, position, color):
+        self.surface = surface
+        self.position = position
+        self.color = color
+        self.sparks = []
+        self.max_number_of_sparks = 5
+
+    def emit(self):
+        if self.sparks:
+            self.delete_expired_sparks()
+            for spark in self.sparks:
+                spark.move()
+                spark.draw(self.surface)
+
+    def add_spark(self):
+        if self.max_number_of_sparks > 0:
+            spark_position = list(self.position)
+            spark = ParticleSpark(spark_position, self.color)
+            self.sparks.append(spark)
+            self.max_number_of_sparks -= 1
+
+    def delete_expired_sparks(self):
+        sparks_copy = [spark for spark in self.sparks if not spark.is_expired()]
+        self.sparks = sparks_copy
+
+    def is_expired(self):
+        is_expired = False
+
+        if self.max_number_of_sparks == 0:
+            sparks_copy = [spark for spark in self.sparks if not spark.is_expired()]
+            if len(sparks_copy) == 0:
+                is_expired = True
+
+        return is_expired

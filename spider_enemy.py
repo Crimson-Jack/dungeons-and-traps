@@ -200,4 +200,4 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
     def kill(self):
         super().kill()
-        pygame.event.post(pygame.event.Event(settings.SHOW_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))

@@ -29,6 +29,9 @@ class CameraGroup(pygame.sprite.Group):
         else:
             self.offset.y = self.half_height - player.rect.centery
 
+    def get_map_offset(self):
+        return self.offset
+
     def custom_draw(self, player):
         # Calculate map offset
         self.set_map_offset(player)

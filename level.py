@@ -23,6 +23,7 @@ from blast_effect import BlastEffect
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 from tombstone import Tombstone
+from particle_effect import ParticleEffect
 
 
 class Level:
@@ -86,6 +87,8 @@ class Level:
         self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
         # Tombstones
         self.tombstones = list()
+        # Particle effects
+        self.particle_effects = list()
 
     def create_player(self):
         player_object = self.tmx_data.get_object_by_name('player')
@@ -233,6 +236,7 @@ class Level:
         self.top_layer_sprites.custom_draw(self.player)
         # Draw effects
         self.blast_effect.draw()
+        self.emit_particle_effects()
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
@@ -285,8 +289,24 @@ class Level:
         game_over_size = game_over.get_size()
         self.screen.blit(game_over, (half_width - game_over_size[0] // 2, half_height - game_over_size[1] // 2))
 
-    def show_tombstone(self, position):
+    def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_layer_regular_sprites))
+
+    def add_particle_effect(self, position):
+        self.particle_effects.append(
+            ParticleEffect(self.game_surface, position + self.top_layer_sprites.get_map_offset(),
+                           pygame.color.Color('White')))
+
+    def emit_particle_effects(self):
+        for particle_effect in self.particle_effects:
+            if particle_effect.is_expired():
+                self.particle_effects.remove(particle_effect)
+            else:
+                particle_effect.emit()
+
+    def add_spark_to_particle_effect(self):
+        for particle_effect in self.particle_effects:
+            particle_effect.add_spark()
 
     def clean_up(self):
         # Remove unnecessary items
@@ -294,4 +314,3 @@ class Level:
             if tombstone.check_if_it_can_be_removed():
                 self.tombstones.remove(tombstone)
                 tombstone.kill()
-
