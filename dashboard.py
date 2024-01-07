@@ -77,12 +77,12 @@ class Dashboard:
         for item in self.game_state.keys:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = diamond.Diamond(item.image, item.rect.topleft, list())
-                transparent_image.image.set_alpha(100)
-                self.left_bottom_surface.blit(transparent_image.image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                transparent_image = diamond.Diamond(item.base_size_image, item.rect.topleft, list())
+                transparent_image.base_size_image.set_alpha(100)
+                self.left_bottom_surface.blit(transparent_image.base_size_image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                self.left_bottom_surface.blit(item.image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                self.left_bottom_surface.blit(item.base_size_image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             count += 1
 
         self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
@@ -95,12 +95,12 @@ class Dashboard:
         for item in self.game_state.diamonds:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = diamond.Diamond(item.image, item.rect.topleft, list())
-                transparent_image.image.set_alpha(100)
-                self.right_bottom_surface.blit(transparent_image.image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                transparent_image = diamond.Diamond(item.base_size_image, item.rect.topleft, list())
+                transparent_image.base_size_image.set_alpha(100)
+                self.right_bottom_surface.blit(transparent_image.base_size_image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                self.right_bottom_surface.blit(item.image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                self.right_bottom_surface.blit(item.base_size_image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             count += 1
 
         self.dashboard_surface.blit(self.right_bottom_surface, (settings.WIDTH // 2 + self.margin // 2, settings.DASHBOARD_HEIGHT // 2))

@@ -11,7 +11,7 @@ HEIGHT = 600
 DASHBOARD_HEIGHT = 150
 
 # Tile size
-TILE_SIZE = 128
+TILE_SIZE = 64
 
 # Events
 GAME_OVER_EVENT = pygame.event.custom_type()
