@@ -11,7 +11,7 @@ class Tombstone(pygame.sprite.Sprite):
         self.sprites = []
         self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
         self.number_of_sprites = 3
-        self.costume_switching_threshold = 6
+        self.costume_switching_threshold = 4
         self.costume_step_counter = 0
         self.costume_step_counter_increment = 1
         self.costume_index = 0
