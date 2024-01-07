@@ -11,20 +11,20 @@ HEIGHT = 600
 DASHBOARD_HEIGHT = 150
 
 # Tile size
-TILE_SIZE = 64
+TILE_SIZE = 128
 
 # Events
-GAME_OVER_EVENT = pygame.USEREVENT + 1
-COLLECT_DIAMOND_EVENT = pygame.USEREVENT + 2
-COLLECT_KEY_EVENT = pygame.USEREVENT + 3
-DECREASE_ENERGY_EVENT = pygame.USEREVENT + 4
-CHANGE_POWER_EVENT = pygame.USEREVENT + 5
-EXIT_POINT_IS_OPEN_EVENT = pygame.USEREVENT + 6
-NEXT_LEVEL_EVENT = pygame.USEREVENT + 7
-REFRESH_OBSTACLE_MAP_EVENT = pygame.USEREVENT + 8
-PLAYER_TILE_POSITION_CHANGED_EVENT = pygame.USEREVENT + 9
-PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.USEREVENT + 10
-SHOW_TOMBSTONE_EVENT = pygame.USEREVENT + 11
+GAME_OVER_EVENT = pygame.event.custom_type()
+COLLECT_DIAMOND_EVENT = pygame.event.custom_type()
+COLLECT_KEY_EVENT = pygame.event.custom_type()
+DECREASE_ENERGY_EVENT = pygame.event.custom_type()
+CHANGE_POWER_EVENT = pygame.event.custom_type()
+EXIT_POINT_IS_OPEN_EVENT = pygame.event.custom_type()
+NEXT_LEVEL_EVENT = pygame.event.custom_type()
+REFRESH_OBSTACLE_MAP_EVENT = pygame.event.custom_type()
+PLAYER_TILE_POSITION_CHANGED_EVENT = pygame.event.custom_type()
+PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
+SHOW_TOMBSTONE_EVENT = pygame.event.custom_type()
 
 # Create debugger
 debugger = Debug()
