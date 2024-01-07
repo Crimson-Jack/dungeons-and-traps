@@ -1,5 +1,6 @@
 import pygame
 import settings
+import game_helper
 import enemy_with_energy
 import spritesheet
 import direction
@@ -26,7 +27,7 @@ class Arrow(CustomDrawSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Properties
-        self.speed = 13
+        self.speed = game_helper.multiply_by_tile_size_ratio(13)
         self.power = 60
 
     def get_image(self, source_sprite_width, source_sprite_height, scale, key_color):
