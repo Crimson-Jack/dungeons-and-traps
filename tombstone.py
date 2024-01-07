@@ -56,5 +56,5 @@ class Tombstone(pygame.sprite.Sprite):
             else:
                 self.can_be_removed_counter -= 1
 
-    def check_if_it_can_be_removed(self):
+    def is_expired(self):
         return self.can_be_removed_counter < 0

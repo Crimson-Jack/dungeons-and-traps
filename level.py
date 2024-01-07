@@ -227,6 +227,7 @@ class Level:
         self.middle_layer_regular_sprites.update()
         self.top_layer_sprites.update()
         # Run an update method for effects
+        self.update_particle_effects()
         self.blast_effect.update()
 
         # Draw all visible sprites
@@ -235,8 +236,8 @@ class Level:
         self.middle_layer_regular_sprites.custom_draw(self.player)
         self.top_layer_sprites.custom_draw(self.player)
         # Draw effects
+        self.draw_particle_effects()
         self.blast_effect.draw()
-        self.emit_particle_effects()
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
@@ -292,17 +293,19 @@ class Level:
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_layer_regular_sprites))
 
-    def add_particle_effect(self, position):
+    def add_particle_effect(self, position, number_of_sparks):
         self.particle_effects.append(
-            ParticleEffect(self.game_surface, position + self.top_layer_sprites.get_map_offset(),
-                           pygame.color.Color('White')))
+            ParticleEffect(self.game_surface, position, pygame.color.Color('White'), number_of_sparks))
 
-    def emit_particle_effects(self):
+    def update_particle_effects(self):
+        map_offset = self.top_layer_sprites.get_map_offset()
         for particle_effect in self.particle_effects:
-            if particle_effect.is_expired():
-                self.particle_effects.remove(particle_effect)
-            else:
-                particle_effect.emit()
+            if not particle_effect.is_expired():
+                particle_effect.update(map_offset)
+
+    def draw_particle_effects(self):
+        for particle_effect in self.particle_effects:
+            particle_effect.draw()
 
     def add_spark_to_particle_effect(self):
         for particle_effect in self.particle_effects:
@@ -311,6 +314,9 @@ class Level:
     def clean_up(self):
         # Remove unnecessary items
         for tombstone in self.tombstones:
-            if tombstone.check_if_it_can_be_removed():
+            if tombstone.is_expired():
                 self.tombstones.remove(tombstone)
                 tombstone.kill()
+        for particle_effect in self.particle_effects:
+            if particle_effect.is_expired():
+                self.particle_effects.remove(particle_effect)
