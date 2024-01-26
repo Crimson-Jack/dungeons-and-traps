@@ -51,10 +51,10 @@ class Level:
             self.game_surface_rect.height = map_rect.height
 
         # Set up visible groups
-        self.bottom_layer_background_sprites = CameraGroup(game_surface, size_of_map)
-        self.bottom_layer_regular_sprites = CameraGroup(game_surface, size_of_map)
-        self.middle_layer_regular_sprites = CameraGroupWithYSort(game_surface, size_of_map)
-        self.top_layer_sprites = CameraGroup(game_surface, size_of_map)
+        self.bottom_background_layer = CameraGroup(game_surface, size_of_map)
+        self.bottom_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self.middle_sprites_layer = CameraGroupWithYSort(game_surface, size_of_map)
+        self.top_sprites_layer = CameraGroup(game_surface, size_of_map)
 
         # Set up functional groups
         self.exit_points = pygame.sprite.Group()
@@ -97,7 +97,7 @@ class Level:
             x, y = tmx_helper.convert_position(player_object.x, player_object.y, self.tmx_data.tilewidth,
                                                self.tmx_data.tileheight)
             speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
-            return Player((x, y), (self.middle_layer_regular_sprites,), [self.middle_layer_regular_sprites],
+            return Player((x, y), (self.middle_sprites_layer,), [self.middle_sprites_layer],
                           speed, self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
                           self.passage_sprites, self.collectable_sprites, self.enemy_sprites,
                           self.hostile_force_sprites, self.game_state)
@@ -112,19 +112,19 @@ class Level:
             y = tile_y * settings.TILE_SIZE
 
             # Add exit point to visible group
-            return ExitPoint(exit_object.image, (x, y), (self.bottom_layer_background_sprites, self.exit_points), False)
+            return ExitPoint(exit_object.image, (x, y), (self.bottom_background_layer, self.exit_points), False)
 
     def create_sprites(self):
         self.create_sprites_from_layer('ground')
+        self.create_sprites_from_layer('diamond')
         self.create_sprites_from_layer('obstacle')
         self.create_sprites_from_layer('moving-obstacle')
-        self.create_sprites_from_layer('diamond')
-        self.create_sprites_from_object_layer('door')
         self.create_sprites_from_object_layer('key')
+        self.create_sprites_from_object_layer('fire-flame-enemy')
+        self.create_sprites_from_object_layer('door')
+        self.create_sprites_from_object_layer('monster-enemy')
         self.create_sprites_from_object_layer('spider-enemy')
         self.create_sprites_from_object_layer('ghost-enemy')
-        self.create_sprites_from_object_layer('fire-flame-enemy')
-        self.create_sprites_from_object_layer('monster-enemy')
 
     def create_sprites_from_layer(self, layer_name):
         layer = self.tmx_data.get_layer_by_name(layer_name)
@@ -134,23 +134,23 @@ class Level:
                 y = tile_y * settings.TILE_SIZE
 
                 if layer_name == 'ground':
-                    groups = (self.bottom_layer_background_sprites,)
+                    groups = (self.bottom_background_layer,)
                     Ground(image, (x, y), groups)
 
+                elif layer_name == 'diamond':
+                    groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                    self.game_state.add_diamond(Diamond(image, (x, y), groups))
+
                 elif layer_name == 'obstacle':
-                    groups = (self.middle_layer_regular_sprites, self.obstacle_sprites)
+                    groups = (self.middle_sprites_layer, self.obstacle_sprites)
                     Wall(image, (x, y), groups)
 
                 elif layer_name == 'moving-obstacle':
-                    groups = (self.middle_layer_regular_sprites, self.moving_obstacle_sprites)
+                    groups = (self.middle_sprites_layer, self.moving_obstacle_sprites)
                     collision_sprites = [self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites,
                                          self.collectable_sprites]
                     # Note: stone can be moved, so the list instead of tuple for position is used
                     Stone(image, [x, y], groups, self.obstacle_map.items, collision_sprites, self.game_state)
-
-                elif layer_name == 'diamond':
-                    groups = (self.middle_layer_regular_sprites, self.collectable_sprites)
-                    self.game_state.add_diamond(Diamond(image, (x, y), groups))
 
     def create_sprites_from_object_layer(self, layer_name):
         layer = self.tmx_data.get_layer_by_name(layer_name)
@@ -159,35 +159,13 @@ class Level:
                 if item.visible:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
 
-                    if layer_name == 'door':
-                        groups = (self.middle_layer_regular_sprites, self.obstacle_sprites, self.passage_sprites)
-                        key_name = tmx_helper.get_property('key_name', '', item, layer)
-                        Door(item.image, (x, y), groups, key_name, self.obstacle_map.items)
-
                     if layer_name == 'key':
-                        groups = (self.middle_layer_regular_sprites, self.collectable_sprites)
+                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
                         key_name = tmx_helper.get_property('key_name', '', item, layer)
                         self.game_state.add_key(Key(item.image, (x, y), groups, key_name))
 
-                    elif layer_name == 'spider-enemy':
-                        groups = (self.top_layer_sprites, self.enemy_sprites)
-                        net_length = int(tmx_helper.get_property('net_length', 1, item, layer))
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
-                        motion_schedule = game_helper.convert_string_to_tuple(
-                            tmx_helper.get_property('motion_schedule', '', item, layer))
-                        SpiderEnemy(item.image, (x, y), groups, speed, net_length, motion_schedule,
-                                    self.moving_obstacle_sprites)
-
-                    elif layer_name == 'ghost-enemy':
-                        groups = (self.top_layer_sprites, self.enemy_sprites)
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
-                        GhostEnemy(frames, (x, y), groups, speed, self.obstacle_map.items, self.moving_obstacle_sprites)
-
                     elif layer_name == 'fire-flame-enemy':
-                        groups = (self.bottom_layer_regular_sprites, self.hostile_force_sprites)
+                        groups = (self.bottom_sprites_layer, self.hostile_force_sprites)
                         direction = tmx_helper.get_property('direction', 'right', item, layer)
                         fire_length = int(tmx_helper.get_property('fire_length', 1, item, layer))
                         speed = game_helper.multiply_by_tile_size_ratio(
@@ -209,8 +187,13 @@ class Level:
                             FireFlameEnemyRight(sprites, (x, y), groups, speed, fire_length, motion_schedule,
                                                 self.moving_obstacle_sprites)
 
+                    elif layer_name == 'door':
+                        groups = (self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites)
+                        key_name = tmx_helper.get_property('key_name', '', item, layer)
+                        Door(item.image, (x, y), groups, key_name, self.obstacle_map.items)
+
                     elif layer_name == 'monster-enemy':
-                        groups = (self.middle_layer_regular_sprites, self.enemy_sprites)
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
                         speed = game_helper.multiply_by_tile_size_ratio(
                             tmx_helper.get_property('speed', 1, item, layer))
                         start_delay = tmx_helper.get_property('start_delay', 10, item, layer)
@@ -218,23 +201,40 @@ class Level:
                         MonsterEnemy(frames, (x, y), groups, item.name, speed, start_delay, self.obstacle_map.items,
                                      self.game_state, self.moving_obstacle_sprites)
 
+                    elif layer_name == 'spider-enemy':
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        net_length = int(tmx_helper.get_property('net_length', 1, item, layer))
+                        speed = game_helper.multiply_by_tile_size_ratio(
+                            tmx_helper.get_property('speed', 1, item, layer))
+                        motion_schedule = game_helper.convert_string_to_tuple(
+                            tmx_helper.get_property('motion_schedule', '', item, layer))
+                        SpiderEnemy(item.image, (x, y), groups, speed, net_length, motion_schedule,
+                                    self.moving_obstacle_sprites)
+
+                    elif layer_name == 'ghost-enemy':
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        speed = game_helper.multiply_by_tile_size_ratio(
+                            tmx_helper.get_property('speed', 1, item, layer))
+                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        GhostEnemy(frames, (x, y), groups, speed, self.obstacle_map.items, self.moving_obstacle_sprites)
+
     def run(self):
         self.clean_up()
 
         # Run an update method foreach sprite from the group
         # NOTE: bottom_layer_background_sprites is static
-        self.bottom_layer_regular_sprites.update()
-        self.middle_layer_regular_sprites.update()
-        self.top_layer_sprites.update()
+        self.bottom_sprites_layer.update()
+        self.middle_sprites_layer.update()
+        self.top_sprites_layer.update()
         # Run an update method for effects
         self.update_particle_effects()
         self.blast_effect.update()
 
         # Draw all visible sprites
-        self.bottom_layer_background_sprites.custom_draw(self.player)
-        self.bottom_layer_regular_sprites.custom_draw(self.player)
-        self.middle_layer_regular_sprites.custom_draw(self.player)
-        self.top_layer_sprites.custom_draw(self.player)
+        self.bottom_background_layer.custom_draw(self.player)
+        self.bottom_sprites_layer.custom_draw(self.player)
+        self.middle_sprites_layer.custom_draw(self.player)
+        self.top_sprites_layer.custom_draw(self.player)
         # Draw effects
         self.draw_particle_effects()
         self.blast_effect.draw()
@@ -291,14 +291,14 @@ class Level:
         self.screen.blit(game_over, (half_width - game_over_size[0] // 2, half_height - game_over_size[1] // 2))
 
     def add_tombstone(self, position):
-        self.tombstones.append(Tombstone(position, self.bottom_layer_regular_sprites))
+        self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))
 
     def add_particle_effect(self, position, number_of_sparks):
         self.particle_effects.append(
             ParticleEffect(self.game_surface, position, pygame.color.Color('White'), number_of_sparks))
 
     def update_particle_effects(self):
-        map_offset = self.top_layer_sprites.get_map_offset()
+        map_offset = self.top_sprites_layer.get_map_offset()
         for particle_effect in self.particle_effects:
             if not particle_effect.is_expired():
                 particle_effect.update(map_offset)
