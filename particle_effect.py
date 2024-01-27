@@ -2,12 +2,13 @@ from particle_spark import ParticleSpark
 
 
 class ParticleEffect:
-    def __init__(self, surface, position, color, number_of_sparks=5):
+    def __init__(self, surface, position, color, number_of_sparks, ratio):
         self.surface = surface
         self.position = position
         self.color = color
         self.sparks = []
         self.max_number_of_sparks = number_of_sparks
+        self.ratio = ratio
 
     def update(self, map_offset):
         if self.sparks:
@@ -24,7 +25,7 @@ class ParticleEffect:
     def add_spark(self):
         if self.max_number_of_sparks > 0:
             spark_position = list(self.position)
-            spark = ParticleSpark(spark_position, self.color)
+            spark = ParticleSpark(spark_position, self.color, self.ratio)
             self.sparks.append(spark)
             self.max_number_of_sparks -= 1
 

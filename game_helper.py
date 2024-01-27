@@ -5,9 +5,18 @@ import pygame
 BASE_TILE_SIZE = 64
 
 
+def get_tile_size_ratio() -> float:
+    """
+    Get the ratio of the current tile size to the base tile size.
+
+    :return: tile size ratio
+    """
+    return settings.TILE_SIZE / BASE_TILE_SIZE
+
+
 def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None = None) -> float:
     """
-    Return argument multiplied by a factor that adjusts it to the current tile size.
+    Multiply value by the ratio of the current tile size to the base tile size.
     If result is lower than 'minimum' argument, return the 'minimum' value.
 
     :param value: raw value

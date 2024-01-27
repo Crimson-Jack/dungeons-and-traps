@@ -295,7 +295,8 @@ class Level:
 
     def add_particle_effect(self, position, number_of_sparks):
         self.particle_effects.append(
-            ParticleEffect(self.game_surface, position, pygame.color.Color('White'), number_of_sparks))
+            ParticleEffect(self.game_surface, position, pygame.color.Color('White'), number_of_sparks,
+                           game_helper.get_tile_size_ratio()))
 
     def update_particle_effects(self):
         map_offset = self.top_sprites_layer.get_map_offset()
