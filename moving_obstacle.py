@@ -27,7 +27,10 @@ class MovingObstacle(CustomDrawSprite):
         bar_height = game_helper.multiply_by_tile_size_ratio(12)
         bar_left, bar_top = self.get_bar_position()
         bar_colors = ColorSet([
-            ((0, 100), (252, 64, 30))
+            ((0, 20), (255, 100, 80)),
+            ((20, 50), (252, 64, 30)),
+            ((50, 80), (170, 30, 4)),
+            ((80, 100), (125, 20, 0))
         ])
         self.power_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_power, bar_colors,
                              True, (64, 78, 107), True, (254, 240, 202), False, None, None)
@@ -136,8 +139,11 @@ class MovingObstacle(CustomDrawSprite):
         offset_position = self.rect.topleft + offset
         game_surface.blit(self.image, offset_position)
 
-        if self.power > 0:
-            self.power_bar.draw(game_surface, self.power, offset)
+        power_value = self.power if self.power <= self.power_needed_to_move_obstacle \
+            else self.power_needed_to_move_obstacle
+
+        if power_value > 0:
+            self.power_bar.draw(game_surface, power_value, offset)
 
     def get_bar_position(self):
         left_offset = game_helper.multiply_by_tile_size_ratio(10) // 2
