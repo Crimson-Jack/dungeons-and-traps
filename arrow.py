@@ -101,9 +101,17 @@ class Arrow(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
+                    collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
+                    pygame.event.post(
+                        pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                                           {"position": collided_position, "number_of_sparks": 12}))
         # Check collision with moving obstacle sprites
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
+                    collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
+                    pygame.event.post(
+                        pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                                           {"position": collided_position, "number_of_sparks": 12}))
