@@ -13,6 +13,10 @@ DASHBOARD_HEIGHT = 150
 # Tile size
 TILE_SIZE = 64
 
+# Colors
+ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]
+OBSTACLE_PARTICLE_COLORS = [(255, 255, 255), (240, 240, 240), (230, 230, 230), (220, 220, 220)]
+
 # Events
 GAME_OVER_EVENT = pygame.event.custom_type()
 COLLECT_DIAMOND_EVENT = pygame.event.custom_type()

@@ -293,9 +293,9 @@ class Level:
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))
 
-    def add_particle_effect(self, position, number_of_sparks):
+    def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
-            ParticleEffect(self.game_surface, position, pygame.color.Color('White'), number_of_sparks,
+            ParticleEffect(self.game_surface, position, colors, number_of_sparks,
                            game_helper.get_tile_size_ratio()))
 
     def update_particle_effects(self):

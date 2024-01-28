@@ -81,7 +81,9 @@ class Game:
                 if event.type == settings.ADD_TOMBSTONE_EVENT:
                     self.level.add_tombstone(event.dict.get("position"))
                 if event.type == settings.ADD_PARTICLE_EFFECT_EVENT:
-                    self.level.add_particle_effect(event.dict.get("position"), event.dict.get("number_of_sparks"))
+                    self.level.add_particle_effect(event.dict.get("position"),
+                                                   event.dict.get("number_of_sparks"),
+                                                   event.dict.get("colors"))
                 if event.type == settings.PARTICLE_EVENT:
                     self.level.add_spark_to_particle_effect()
 
