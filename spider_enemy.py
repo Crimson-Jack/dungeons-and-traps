@@ -7,24 +7,37 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
-    def __init__(self, image, position, groups, speed, net_length, motion_schedule, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, speed, net_length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
-        self.rect = self.image.get_rect(topleft=position)
-        self.hit_box = self.rect
+
+        # Base
+        self.name = name
 
         # Energy
         self.max_energy = 100
         self.energy = self.max_energy
         self.energy_increase_step = 0.25
 
-        # Animation variables
-        self.number_of_sprites = 5
-        self.costume_switching_threshold = self.max_energy // self.number_of_sprites
+        # Sprite animation variables
+        self.sprites = []
+        self.costume_switching_thresholds = []
+        # Split frames into sprites (with the state healthy) and durations
+        for frame in frames:
+            self.sprites.append([pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE))])
+            self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+        # Number of sprites == number of columns
+        self.number_of_sprites = len(self.sprites)
+        self.costume_step_counter = 0
         self.costume_index = 0
-        self.sprites = {
-            'down': []}
-        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        # Load sprites in the state: damaged
+        self.number_of_rows = 5
+        self.costume_switching_threshold_for_damaged_state = self.max_energy // self.number_of_rows
+        self.load_sprites_in_damaged_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+
+        # Image
+        self.image = self.sprites[0][0]
+        self.rect = self.image.get_rect(topleft=position)
+        self.hit_box = self.rect
 
         # Movement variables
         self.is_moving = False
@@ -48,22 +61,18 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # State variables
         self.collided_with_weapon = False
 
-    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
+    def load_sprites_in_damaged_state(self, source_sprite_width, source_sprite_height, scale, key_color):
         sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/spider-enemy.png').convert_alpha(),
+            pygame.image.load(f'img/{self.name}.png').convert_alpha(),
             source_sprite_width,
             source_sprite_height,
             scale,
             key_color
         )
 
-        # Sprites with the state: healthy
-        self.sprites['down'].append(sprite_sheet.get_image(0, 0))
-
-        # Sprites with the state: injured
-        for number in range(0, self.number_of_sprites):
-            self.sprites['down'].append(sprite_sheet.get_image(1, number))
+        for cell in range(0, self.number_of_sprites):
+            for row in range(0, self.number_of_rows):
+                self.sprites[cell].append(sprite_sheet.get_image(row+1, cell))
 
     def move(self):
         # Calculate real y position
@@ -133,11 +142,17 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.step_counter += 1
 
     def update(self):
+        if self.number_of_sprites > 1:
+            self.change_costume()
+
         self.heal_injuries()
+
         if self.is_moving:
             self.move()
         else:
             self.change_motion()
+
+        self.costume_step_counter += 1
 
     def custom_draw(self, game_surface, offset):
         # Draw a net (line) from the beginning to the end spider position
@@ -165,10 +180,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         if self.energy < self.max_energy:
             self.energy += self.energy_increase_step
 
-        new_costume_index = self.calculate_costume_index()
-        if new_costume_index != self.costume_index:
-            self.costume_index = int(new_costume_index)
-            self.change_costume()
+        self.image = self.sprites[self.costume_index][int(self.calculate_costume_index_for_damaged_state())]
 
     def decrease_energy(self, energy_decrease_step):
         self.collided_with_weapon = True
@@ -178,25 +190,33 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             if self.energy < 0:
                 self.energy = 0
 
-        new_costume_index = self.calculate_costume_index()
-        if new_costume_index != self.costume_index:
-            self.costume_index = int(new_costume_index)
-            self.change_costume()
+        self.image = self.sprites[self.costume_index][int(self.calculate_costume_index_for_damaged_state())]
 
     def get_energy(self):
         return self.energy
 
-    def calculate_costume_index(self):
-        new_costume_index = self.energy // self.costume_switching_threshold
-        new_costume_index = self.number_of_sprites - new_costume_index
+    def calculate_costume_index_for_damaged_state(self):
+        new_index = self.energy // self.costume_switching_threshold_for_damaged_state
+        new_index = self.number_of_rows - new_index
 
-        if new_costume_index >= self.number_of_sprites:
-            new_costume_index = self.number_of_sprites - 1
+        if new_index >= self.number_of_rows:
+            new_index = self.number_of_rows - 1
 
-        return new_costume_index
+        return new_index
 
     def change_costume(self):
-        self.image = self.sprites['down'][self.costume_index]
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the first costume
+            if self.costume_index >= self.number_of_sprites:
+                self.costume_index = 0
+
+            self.image = self.sprites[self.costume_index][int(self.calculate_costume_index_for_damaged_state())]
 
     def kill(self):
         super().kill()

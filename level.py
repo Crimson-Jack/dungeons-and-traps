@@ -208,7 +208,8 @@ class Level:
                             tmx_helper.get_property('speed', 1, item, layer))
                         motion_schedule = game_helper.convert_string_to_tuple(
                             tmx_helper.get_property('motion_schedule', '', item, layer))
-                        SpiderEnemy(item.image, (x, y), groups, speed, net_length, motion_schedule,
+                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        SpiderEnemy(frames, (x, y), groups, item.name, speed, net_length, motion_schedule,
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
