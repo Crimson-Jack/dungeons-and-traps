@@ -29,7 +29,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0
         self.costume_index = 0
-        # Load sprites in the state: damaged
+
+        # Sprites in a damage state
         self.number_of_rows = 5
         self.costume_switching_threshold_for_damaged_state = self.max_energy // self.number_of_rows
         self.load_sprites_in_damaged_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
@@ -158,7 +159,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Draw a net (line) from the beginning to the end spider position
         start_position = pygame.Vector2((self.rect.center[0], self.min_y_position)) + offset
         end_position = pygame.Vector2(self.rect.center) + offset
-        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position, int(game_helper.multiply_by_tile_size_ratio(2, 1)))
+        pygame.draw.line(game_surface, (215, 215, 215), start_position, end_position,
+                         int(game_helper.multiply_by_tile_size_ratio(2, 1)))
 
         # Draw sprite
         offset_position = self.rect.topleft + offset
@@ -169,7 +171,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             outline_image = pygame.surface.Surface.copy(self.image)
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline, int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
+                                int(game_helper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)
 
             # Reset status of collided with weapon

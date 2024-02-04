@@ -11,8 +11,12 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, name, speed, start_delay, obstacle_map, game_state, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, speed, start_delay, obstacle_map, game_state,
+                 moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Base
+        self.name = name
 
         # Energy
         self.max_energy = 100
@@ -25,19 +29,19 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         for frame in frames:
             self.sprites.append(pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE)))
             self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+        # Number of sprites == number of columns
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0
         self.costume_index = 0
+
+        # Sprite in a damage state
+        self.sprite_in_damage_state = None
+        self.load_sprites_in_damage_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
         # Image
         self.image = self.sprites[0]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
-
-        # Sprite in a damage state
-        self.name = name
-        self.sprite_in_damage_state = None
-        self.load_sprites_in_damage_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
         # Obstacle map
         self.obstacle_map = obstacle_map

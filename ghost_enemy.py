@@ -15,6 +15,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         for frame in frames:
             self.sprites.append(pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE)))
             self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+        # Number of sprites == number of columns
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0
         self.costume_index = 0
@@ -49,10 +50,6 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
-
-    def __del__(self):
-        # TODO: Implement animation
-        pass
 
     def move(self):
         # Calculate real y position

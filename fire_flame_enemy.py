@@ -7,25 +7,25 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
     def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(groups)
 
-        # Create sprite animation variables
+        # Sprite animation variables
         self.sprites = sprites
         self.number_of_sprites = len(sprites)
         self.costume_switching_threshold = 14
         self.costume_step_counter = 0
         self.costume_index = 0
 
-        # Create image
+        # Image
         self.tail_length = 2
         self.image = self.get_merged_image()
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        # Create movement variables
+        # Movement variables
         self.is_moving = False
         self.speed = speed
         self.max_fire_length = length * settings.TILE_SIZE
 
-        # Create motion variables
+        # Motion variables
         self.motion_schedule = motion_schedule
         self.motion_step_counter = 0
         self.motion_index = 0

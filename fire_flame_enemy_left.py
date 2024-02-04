@@ -7,7 +7,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
     def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
         super().__init__(sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites)
 
-        # Get rectangle from image
+        # Rectangle from image
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -15,7 +15,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         self.max_rect_left_flame_position = self.rect.left
         self.max_rect_right_flame_position = self.rect.right
 
-        # Create movement variables
+        # Movement variables
         self.movement_vector = pygame.math.Vector2((-1, 0))
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -122,6 +122,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         collision_detected, collision_hit_box_right = self.check_collision()
         if collision_detected:
             # Calculate tail length
-            self.tail_length_after_collision = (self.max_rect_right_flame_position - collision_hit_box_right) // settings.TILE_SIZE
+            self.tail_length_after_collision = ((self.max_rect_right_flame_position - collision_hit_box_right)
+                                                // settings.TILE_SIZE)
             # Set flag - reset is required for the image
             self.reset_is_required_for_image = True
