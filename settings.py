@@ -7,6 +7,8 @@ FPS = 60
 # Screen size
 WIDTH = 1080
 HEIGHT = 720
+# Header size
+HEADER_HEIGHT = 84
 # Dashboard size
 DASHBOARD_HEIGHT = 150
 

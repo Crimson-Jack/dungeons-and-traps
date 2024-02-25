@@ -38,11 +38,16 @@ class Level:
 
         # Calculate game surface position
         map_rect = pygame.Rect(0, 0, size_of_map[0] * settings.TILE_SIZE, size_of_map[1] * settings.TILE_SIZE)
-        self.game_surface_position = game_helper.calculate_game_surface_position(self.game_surface.get_width(),
-                                                                                 self.game_surface.get_height(),
-                                                                                 map_rect.width,
-                                                                                 map_rect.height)
-        # Set game surface rect
+        self.game_surface_position = [0, 0]
+
+        if map_rect.width < self.game_surface.get_width():
+            self.game_surface_position[0] = (self.game_surface.get_width() - map_rect.width) // 2
+        if map_rect.height < self.game_surface.get_height():
+            self.game_surface_position[1] = (self.game_surface.get_height() - map_rect.height) // 2
+
+        self.game_surface_position[1] += settings.HEADER_HEIGHT
+
+        # Calculate game surface rectangle
         self.game_surface_rect = self.game_surface.get_rect()
 
         if self.game_surface_rect.width > map_rect.width:

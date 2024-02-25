@@ -2,6 +2,7 @@ import pygame, sys
 import settings
 from game_state import GameState
 from level import Level
+from header import Header
 from dashboard import Dashboard
 
 
@@ -11,16 +12,24 @@ class Game:
         pygame.display.set_caption('Dungeons and traps')
 
         self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
-        self.game_surface = pygame.Surface((settings.WIDTH, settings.HEIGHT - settings.DASHBOARD_HEIGHT))
+        self.game_surface = pygame.Surface(
+            (settings.WIDTH, settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT))
+        self.header_surface = pygame.Surface((settings.WIDTH, settings.HEADER_HEIGHT))
         self.dashboard_surface = pygame.Surface((settings.WIDTH, settings.DASHBOARD_HEIGHT))
 
         self.game_state = GameState()
 
         self.level = Level(self.screen, self.game_surface, self.game_state)
+        self.header = Header(self.screen, self.header_surface, self.game_state)
+        self.refresh_header_surface()
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
         self.refresh_dashboard_surface()
 
         self.clock = pygame.time.Clock()
+
+    def refresh_header_surface(self):
+        self.header.clean()
+        self.header.draw()
 
     def refresh_dashboard_surface(self):
         self.dashboard.clean()

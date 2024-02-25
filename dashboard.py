@@ -61,8 +61,7 @@ class Dashboard:
     def draw(self):
         # Left top
         lives_counter_text = self.basic_font.render(f'Lives', True, self.accent_color)
-        self.left_top_surface.blit(lives_counter_text, (self.margin, self.right_bottom_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2))
-        self.dashboard_surface.blit(self.left_top_surface, (settings.WIDTH // 2 + self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
+        self.left_top_surface.blit(lives_counter_text, (self.margin, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2))
         self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
 
         # Right top

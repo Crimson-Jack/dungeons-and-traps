@@ -54,18 +54,6 @@ def convert_string_to_tuple(value, separator=','):
     return tuple(map(int, value.split(separator)))
 
 
-def calculate_game_surface_position(game_surface_width, game_surface_height, map_width, map_height):
-    position = [0, 0]
-
-    if map_width < game_surface_width:
-        position[0] = (game_surface_width - map_width) // 2
-
-    if map_height < game_surface_height:
-        position[1] = (game_surface_height - map_height) // 2
-
-    return tuple(position)
-
-
 def get_tile_by_point(position: tuple):
     """
     Return a tuple with the tile position.
