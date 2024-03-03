@@ -19,7 +19,9 @@ class GameState:
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
-        self.weapon_type = weapon_type.WeaponType.SWORD
+        self.weapon_type = weapon_type.WeaponType.NONE
+        self.collected_weapons = [self.weapon_type]
+        self.number_of_arrows = 0
 
     def add_diamond(self, diamond):
         self.diamonds.append(diamond)
@@ -36,6 +38,22 @@ class GameState:
     def collect_key(self, key):
         self.collected_keys.append(key)
         pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
+
+    def collect_sword_powerup(self):
+        self.collected_weapons.append(weapon_type.WeaponType.SWORD)
+        self.remove_none_weapon()
+        self.set_next_weapon()
+
+    def collect_bow_powerup(self, number_of_arrows):
+        self.number_of_arrows += number_of_arrows
+        self.collected_weapons.append(weapon_type.WeaponType.BOW)
+        self.remove_none_weapon()
+        self.set_next_weapon()
+
+    def remove_none_weapon(self):
+        if weapon_type.WeaponType.NONE in self.collected_weapons:
+            self.collected_weapons.remove(weapon_type.WeaponType.NONE)
+            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def check_is_key_collected(self, key_name):
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
@@ -57,6 +75,10 @@ class GameState:
         if self.power > self.max_power:
             self.power = self.max_power
         pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
+
+    def decrease_number_of_arrows(self):
+        self.number_of_arrows -= 1
+        pygame.event.post(pygame.event.Event(settings.DECREASE_NUMBER_OF_ARROWS_EVENT))
 
     def level_completed(self):
         if len(self.collected_diamonds) == len(self.diamonds):
@@ -95,6 +117,12 @@ class GameState:
 
     def set_next_weapon(self):
         self.weapon_type = self.weapon_type.next()
+        while self.weapon_type not in self.collected_weapons:
+            self.weapon_type = self.weapon_type.next()
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
         self.weapon_type = self.weapon_type.previous()
+        while self.weapon_type not in self.collected_weapons:
+            self.weapon_type = self.weapon_type.previous()
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))

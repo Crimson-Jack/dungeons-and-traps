@@ -2,6 +2,7 @@ from enum import IntEnum
 
 
 class WeaponType(IntEnum):
+    NONE = 0
     SWORD = 1
     BOW = 2
 

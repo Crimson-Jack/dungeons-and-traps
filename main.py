@@ -1,5 +1,6 @@
 import pygame, sys
 import settings
+import weapon_type
 from game_state import GameState
 from level import Level
 from header import Header
@@ -71,10 +72,14 @@ class Game:
                     self.refresh_dashboard_surface()
                 if event.type == settings.COLLECT_KEY_EVENT:
                     self.refresh_dashboard_surface()
+                if event.type == settings.DECREASE_NUMBER_OF_ARROWS_EVENT:
+                    self.refresh_header_surface()
                 if event.type == settings.DECREASE_ENERGY_EVENT:
                     self.refresh_dashboard_surface()
                 if event.type == settings.CHANGE_POWER_EVENT:
                     self.refresh_dashboard_surface()
+                if event.type == settings.CHANGE_WEAPON_EVENT:
+                    self.refresh_header_surface()
                 if event.type == settings.EXIT_POINT_IS_OPEN_EVENT:
                     self.level.show_exit_point()
                 if event.type == settings.NEXT_LEVEL_EVENT:

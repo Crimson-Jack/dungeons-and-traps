@@ -1,6 +1,7 @@
 import pygame
 import diamond
 import direction
+import powerup
 import key
 import settings
 import game_helper
@@ -226,6 +227,8 @@ class Player(CustomDrawSprite):
                     self.game_state.collect_diamond(sprite)
                 elif isinstance(sprite, key.Key):
                     self.game_state.collect_key(sprite)
+                elif isinstance(sprite, powerup.Powerup):
+                    sprite.activate()
                 # Remove
                 sprite.kill()
 
@@ -301,6 +304,9 @@ class Player(CustomDrawSprite):
                         self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
+        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
+            self.sword_weapon.disarm_weapon()
+            self.bow_weapon.disarm_weapon()
         if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
             self.sword_weapon.set_position(self.rect.topleft)
             self.sword_weapon.arm_weapon()
@@ -314,7 +320,10 @@ class Player(CustomDrawSprite):
             if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
                 self.sword_weapon.start_cutting()
             elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
-                self.bow_weapon.fire()
+                if self.game_state.number_of_arrows > 0:
+                    self.bow_weapon.fire()
+                    self.game_state.decrease_number_of_arrows()
+
         else:
             if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
                 self.sword_weapon.stop_cutting()

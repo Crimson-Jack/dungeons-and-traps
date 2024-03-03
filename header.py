@@ -1,5 +1,6 @@
 import pygame
 import settings
+import weapon_type
 
 
 class Header:
@@ -41,7 +42,13 @@ class Header:
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
 
         # Center
-        weapon_text = self.basic_font.render(f'Weapon', True, self.accent_color)
+        weapon_type_string = "-"
+        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+            weapon_type_string = "S"
+        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+            weapon_type_string = f"B ({self.game_state.number_of_arrows})"
+
+        weapon_text = self.basic_font.render(f'Weapon {weapon_type_string}', True, self.accent_color)
         self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
         self.header_surface.blit(self.center_surface, (settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
 

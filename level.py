@@ -11,6 +11,7 @@ from stone import Stone
 from ground import Ground
 from diamond import Diamond
 from door import Door
+from powerup_factory import PowerupFactory
 from key import Key
 from spider_enemy import SpiderEnemy
 from ghost_enemy import GhostEnemy
@@ -28,6 +29,9 @@ from particle_effect import ParticleEffect
 
 class Level:
     def __init__(self, screen, game_surface, game_state):
+        # Factories
+        self.powerup_factory = PowerupFactory()
+
         # Set screen and game_surface
         self.screen = screen
         self.game_surface = game_surface
@@ -124,6 +128,7 @@ class Level:
         self.create_sprites_from_layer('diamond')
         self.create_sprites_from_layer('obstacle')
         self.create_sprites_from_layer('moving-obstacle')
+        self.create_sprites_from_object_layer('powerup')
         self.create_sprites_from_object_layer('key')
         self.create_sprites_from_object_layer('fire-flame-enemy')
         self.create_sprites_from_object_layer('door')
@@ -163,6 +168,12 @@ class Level:
             for item in layer:
                 if item.visible:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
+
+                    if layer_name == 'powerup':
+                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                        powerup_name = tmx_helper.get_property('powerup_name', '', item, layer)
+                        powerup_volume = tmx_helper.get_property('powerup_volume', 0, item, layer)
+                        self.powerup_factory.create(item.image, (x, y), groups, self.game_state, powerup_name, powerup_volume)
 
                     if layer_name == 'key':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
