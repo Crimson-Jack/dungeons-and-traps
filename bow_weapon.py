@@ -98,7 +98,6 @@ class BowWeapon(CustomDrawSprite):
     def fire(self):
         self.arrows.append(Arrow(self.rect.topleft, self.groups(), self.enemy_sprites, self.obstacle_sprites,
                                  self.moving_obstacle_sprites, self.direction))
-        pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def arm_weapon(self):
         self.is_armed = True

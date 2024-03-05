@@ -307,26 +307,26 @@ class Player(CustomDrawSprite):
         if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.disarm_weapon()
+            pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+
         if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+            self.bow_weapon.disarm_weapon()
             self.sword_weapon.set_position(self.rect.topleft)
             self.sword_weapon.arm_weapon()
-            self.bow_weapon.disarm_weapon()
+            if self.weapon_is_in_use:
+                self.sword_weapon.start_cutting()
+            else:
+                self.sword_weapon.stop_cutting()
+
         elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+            self.sword_weapon.disarm_weapon()
             self.bow_weapon.set_position(self.rect.topleft)
             self.bow_weapon.arm_weapon()
-            self.sword_weapon.disarm_weapon()
-
-        if self.weapon_is_in_use:
-            if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-                self.sword_weapon.start_cutting()
-            elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+            if self.weapon_is_in_use:
                 if self.game_state.number_of_arrows > 0:
                     self.bow_weapon.fire()
                     self.game_state.decrease_number_of_arrows()
-
-        else:
-            if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-                self.sword_weapon.stop_cutting()
+                pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):
         self.input()
