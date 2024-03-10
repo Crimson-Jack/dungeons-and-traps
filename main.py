@@ -74,7 +74,7 @@ class Game:
                     self.refresh_dashboard_surface()
                 if event.type == settings.DECREASE_NUMBER_OF_ARROWS_EVENT:
                     self.refresh_header_surface()
-                if event.type == settings.DECREASE_ENERGY_EVENT:
+                if event.type == settings.CHANGE_ENERGY_EVENT:
                     self.refresh_dashboard_surface()
                 if event.type == settings.CHANGE_POWER_EVENT:
                     self.refresh_dashboard_surface()
