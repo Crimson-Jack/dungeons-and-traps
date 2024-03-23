@@ -27,7 +27,8 @@ def convert_position(position_x, position_y, tile_width, tile_height):
     return x, y
 
 
-def get_property(name: str, default, item: pytmx.TiledObject | None, layer: pytmx.TiledObjectGroup | None):
+# def get_property(name: str, default, item: pytmx.TiledObject | None, layer: pytmx.TiledObjectGroup | None):
+def get_property(name: str, default, item, layer):
     """
     Get the value from the item if it exists.
     If not, get the value from the layer if it exists.

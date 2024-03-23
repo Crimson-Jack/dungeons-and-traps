@@ -173,7 +173,8 @@ class Level:
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
                         powerup_name = tmx_helper.get_property('powerup_name', '', item, layer)
                         powerup_volume = tmx_helper.get_property('powerup_volume', 0, item, layer)
-                        self.powerup_factory.create(item.image, (x, y), groups, self.game_state, powerup_name, powerup_volume)
+                        self.powerup_factory.create(powerup_name, image=item.image, position=(x, y), groups=groups,
+                                                    game_state=self.game_state, powerup_volume=powerup_volume)
 
                     if layer_name == 'key':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)

@@ -66,7 +66,16 @@ class GameState:
             self.game_over = True
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
         else:
-            pygame.event.post(pygame.event.Event(settings.DECREASE_ENERGY_EVENT))
+            pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
+
+    def increase_energy(self, volume, is_percentage=True):
+        if is_percentage:
+            self.energy += volume * self.max_energy / 100
+        else:
+            self.energy += volume
+        if self.energy > self.max_energy:
+            self.energy = self.max_energy
+        pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
     def change_power(self, value):
         self.power = value

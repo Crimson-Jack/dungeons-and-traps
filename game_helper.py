@@ -14,7 +14,9 @@ def get_tile_size_ratio() -> float:
     return settings.TILE_SIZE / BASE_TILE_SIZE
 
 
-def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None = None) -> float:
+# def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None = None) -> float:
+def multiply_by_tile_size_ratio(value, minimum = None) -> float:
+
     """
     Multiply value by the ratio of the current tile size to the base tile size.
     If result is lower than 'minimum' argument, return the 'minimum' value.
@@ -31,7 +33,8 @@ def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None 
     return result
 
 
-def calculate_frames(time: float | int) -> int:
+# def calculate_frames(time: float | int) -> int:
+def calculate_frames(time) -> int:
     """
     Calculate a number of frames in the period of time (provided in milliseconds), taking into account current FPS.
 
