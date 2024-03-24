@@ -18,6 +18,9 @@ TILE_SIZE = 64
 # Colors
 ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]
 OBSTACLE_PARTICLE_COLORS = [(255, 255, 255), (240, 240, 240), (230, 230, 230), (220, 220, 220)]
+BACKGROUND_COLOR = 42, 53, 70
+BORDER_COLOR = 244, 244, 244
+MESSAGE_COLOR = 187, 187, 204
 
 # Events
 GAME_OVER_EVENT = pygame.event.custom_type()
@@ -35,6 +38,12 @@ PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
 ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
 ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
 PARTICLE_EVENT = pygame.event.custom_type()
+
+# Levels
+LEVELS = [
+    'level_01.tmx',
+    'level_02.tmx'
+]
 
 # Create debugger
 debugger = Debug()

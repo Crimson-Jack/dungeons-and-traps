@@ -1,10 +1,11 @@
 import pygame, sys
 import settings
-import weapon_type
 from game_state import GameState
 from level import Level
 from header import Header
 from dashboard import Dashboard
+from message_box import MessageBox
+from message import Message
 
 
 class Game:
@@ -21,11 +22,14 @@ class Game:
         self.game_state = GameState()
 
         self.level = Level(self.screen, self.game_surface, self.game_state)
+        self.message_box = None
         self.header = Header(self.screen, self.header_surface, self.game_state)
         self.refresh_header_surface()
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
         self.refresh_dashboard_surface()
 
+        self.paused = False
+        self.level_completed = False
         self.clock = pygame.time.Clock()
 
     def refresh_header_surface(self):
@@ -59,6 +63,25 @@ class Game:
                         self.game_state.set_next_weapon()
                     if event.key == pygame.K_z:
                         self.game_state.set_previous_weapon()
+                    if event.key == pygame.K_SPACE:
+                        if not self.level_completed and not self.game_state.game_over:
+                            self.paused = not self.paused
+                            if self.paused:
+                                messages = list()
+                                messages.append(Message('PAUSE', settings.MESSAGE_COLOR, 40))
+                                messages.append(Message('Press the SPACE button to return to the game', settings.MESSAGE_COLOR, 20))
+                                self.message_box = MessageBox(self.screen, 800, 130, 20, settings.BACKGROUND_COLOR, settings.BORDER_COLOR, messages)
+                            else:
+                                self.message_box = None
+                        elif self.level_completed:
+                            self.level_completed = False
+                            self.message_box = None
+                            self.game_state.set_next_level()
+                            self.level = Level(self.screen, self.game_surface, self.game_state)
+                            self.refresh_header_surface()
+                            self.refresh_dashboard_surface()
+                        elif self.game_state.game_over:
+                            is_running = False
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.game_state.set_player_movement(0, -1)
@@ -83,9 +106,18 @@ class Game:
                 if event.type == settings.EXIT_POINT_IS_OPEN_EVENT:
                     self.level.show_exit_point()
                 if event.type == settings.NEXT_LEVEL_EVENT:
-                    self.level.next_level()
+                    self.level_completed = True
+                    messages = list()
+                    messages.append(Message('CONGRATULATIONS', settings.MESSAGE_COLOR, 40))
+                    messages.append(Message('Level completed', settings.MESSAGE_COLOR, 20))
+                    messages.append(Message('Press the SPACE button to go to the next level', settings.MESSAGE_COLOR, 16))
+                    self.message_box = MessageBox(self.screen, 800, 150, 20, settings.BACKGROUND_COLOR,
+                                                  settings.BORDER_COLOR, messages)
                 if event.type == settings.GAME_OVER_EVENT:
-                    self.level.game_over()
+                    messages = list()
+                    messages.append(Message('GAME OVER', settings.MESSAGE_COLOR, 40))
+                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.BACKGROUND_COLOR,
+                                                  settings.BORDER_COLOR, messages)
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     self.level.refresh_obstacle_map()
                 if event.type == settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
@@ -101,9 +133,12 @@ class Game:
                 if event.type == settings.PARTICLE_EVENT:
                     self.level.add_spark_to_particle_effect()
 
-            if not self.game_state.game_over:
+            if not self.paused and not self.level_completed and not self.game_state.game_over:
                 # Refresh game surface
                 self.level.run()
+            if self.message_box is not None:
+                # Draw message box
+                self.message_box.draw()
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
