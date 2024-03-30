@@ -19,13 +19,17 @@ class CameraGroup(pygame.sprite.Group):
         # The maximum height (y) for the whole map
         max_height = settings.TILE_SIZE * self.size_of_map[1]
 
-        if player.rect.centerx < self.half_width or max_width - player.rect.centerx < self.half_width:
-            pass
+        if player.rect.centerx < self.half_width:
+            self.offset.x = 0
+        elif max_width - player.rect.centerx < self.half_width:
+            self.offset.y = self.game_surface.get_size()[0] - max_width
         else:
             self.offset.x = self.half_width - player.rect.centerx
 
-        if player.rect.centery < self.half_height or max_height - player.rect.centery < self.half_height:
-            pass
+        if player.rect.centery < self.half_height:
+            self.offset.y = 0
+        elif max_height - player.rect.centery < self.half_height:
+            self.offset.y = self.game_surface.get_size()[1] - max_height
         else:
             self.offset.y = self.half_height - player.rect.centery
 

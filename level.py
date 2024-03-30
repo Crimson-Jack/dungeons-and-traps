@@ -313,3 +313,6 @@ class Level:
         for particle_effect in self.particle_effects:
             if particle_effect.is_expired():
                 self.particle_effects.remove(particle_effect)
+
+    def player_lost_life(self):
+        self.player.respawn()

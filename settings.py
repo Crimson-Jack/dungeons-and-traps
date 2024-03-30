@@ -38,6 +38,7 @@ PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
 ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
 ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
 PARTICLE_EVENT = pygame.event.custom_type()
+PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
 
 # Levels
 LEVELS = [

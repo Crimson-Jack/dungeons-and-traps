@@ -132,6 +132,8 @@ class Game:
                                                    event.dict.get("colors"))
                 if event.type == settings.PARTICLE_EVENT:
                     self.level.add_spark_to_particle_effect()
+                if event.type == settings.PLAYER_LOST_LIFE_EVENT:
+                    self.level.player_lost_life()
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:
                 # Refresh game surface

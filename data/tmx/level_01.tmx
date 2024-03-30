@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="7">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="8">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="17" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="33" source="../tsx/player.tsx"/>
  <tileset firstgid="73" source="../tsx/misc.tsx"/>
  <tileset firstgid="89" source="../tsx/spider-enemy-small.tsx"/>
  <tileset firstgid="109" source="../tsx/collectable.tsx"/>
+ <tileset firstgid="125" source="../tsx/monster-enemy-red.tsx"/>
  <layer id="1" name="ground" width="16" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -96,7 +97,14 @@
    </object>
   </objectgroup>
   <objectgroup id="13" name="fire-flame-enemy"/>
-  <objectgroup id="14" name="monster-enemy"/>
+  <objectgroup id="14" name="monster-enemy">
+   <object id="7" name="monster-enemy-red" gid="125" x="208" y="64" width="16" height="16" visible="0">
+    <properties>
+     <property name="speed" type="float" value="1"/>
+     <property name="start_delay" type="int" value="0"/>
+    </properties>
+   </object>
+  </objectgroup>
  </group>
  <group id="9" name="collectable">
   <layer id="6" name="diamond" width="16" height="16">

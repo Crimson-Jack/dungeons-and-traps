@@ -28,7 +28,7 @@
  </layer>
  <objectgroup id="4" name="major-game-item">
   <object id="3" name="exit-point" gid="73" x="160" y="32" width="16" height="16"/>
-  <object id="1" name="player" gid="33" x="16" y="32" width="16" height="16"/>
+  <object id="1" name="player" gid="33" x="16" y="224" width="16" height="16"/>
  </objectgroup>
  <layer id="3" name="obstacle" width="20" height="16">
   <data encoding="csv">

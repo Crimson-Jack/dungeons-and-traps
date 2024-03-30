@@ -34,8 +34,9 @@ class Player(CustomDrawSprite):
         self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
 
         # Image
+        self.position = position
         self.image = self.sprites['right'][0]
-        self.rect = self.image.get_rect(topleft=position)
+        self.rect = self.image.get_rect(topleft=self.position)
         self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
 
         # Movement variables
@@ -350,3 +351,13 @@ class Player(CustomDrawSprite):
 
     def get_center_point(self):
         return self.hit_box.center
+
+    def respawn(self):
+        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        self.change_position(self.position)
+
+    def change_position(self, new_position):
+        self.rect = self.image.get_rect(topleft=new_position)
+        self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
+        self.real_x_position = float(self.hit_box.x)
+        self.real_y_position = float(self.hit_box.y)

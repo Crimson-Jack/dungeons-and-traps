@@ -7,12 +7,13 @@ import weapon_type
 class GameState:
     def __init__(self):
         self.level = 0
+        self.lives = 3
         self.game_over = False
         self.diamonds = list()
         self.collected_diamonds = list()
         self.keys = list()
         self.collected_keys = list()
-        self.max_energy = 800
+        self.max_energy = 80
         self.energy = self.max_energy
         self.max_power = 100
         self.power = 0
@@ -78,8 +79,7 @@ class GameState:
         self.energy -= 1
         if self.energy < 0:
             self.energy = 0
-            self.game_over = True
-            pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+            self.life_lost()
         else:
             pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
@@ -153,3 +153,12 @@ class GameState:
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.previous()
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+
+    def life_lost(self):
+        if self.lives > 1:
+            self.lives -= 1
+            self.energy = self.max_energy
+            pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
+        else:
+            self.game_over = True
+            pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
