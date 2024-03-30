@@ -37,7 +37,7 @@ class Header:
 
     def draw(self):
         # Left
-        level_text = self.basic_font.render(f'Level', True, self.accent_color)
+        level_text = self.basic_font.render(f'Level {self.game_state.level + 1}', True, self.accent_color)
         self.left_surface.blit(level_text, (self.margin, self.left_surface.get_height() // 2 - level_text.get_rect().height // 2))
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
 

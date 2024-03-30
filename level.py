@@ -36,8 +36,11 @@ class Level:
         self.screen = screen
         self.game_surface = game_surface
 
+        # Set game state
+        self.game_state = game_state
+
         # Load tmx data - world map
-        self.tmx_data = load_pygame('data/tmx/basic.tmx')
+        self.tmx_data = load_pygame(f'data/tmx/{self.game_state.get_level()}')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
         # Calculate game surface position
@@ -73,9 +76,6 @@ class Level:
         self.collectable_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
         self.hostile_force_sprites = pygame.sprite.Group()
-
-        # Set game state
-        self.game_state = game_state
 
         # Create obstacle map and combine all layers with obstacles
         self.obstacle_map = ObstacleMap([
@@ -281,32 +281,6 @@ class Level:
     def show_exit_point(self):
         self.blast_effect.run()
         self.exit_point.visible = True
-
-    def next_level(self):
-        # Show message
-        half_width = self.screen.get_size()[0] // 2
-        half_height = self.screen.get_size()[1] // 2
-
-        accent_color = (255, 255, 255)
-        background_color = (100, 100, 100)
-        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 50)
-
-        text_layer = basic_font.render('YOU WIN!', True, accent_color, background_color)
-        text_layer_size = text_layer.get_size()
-        self.screen.blit(text_layer, (half_width - text_layer_size[0] // 2, half_height - text_layer_size[1] // 2))
-
-    def game_over(self):
-        # Show message
-        half_width = self.screen.get_size()[0] // 2
-        half_height = self.screen.get_size()[1] // 2
-
-        accent_color = (255, 255, 255)
-        background_color = (100, 100, 100)
-        basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 50)
-
-        game_over = basic_font.render('GAME OVER', True, accent_color, background_color)
-        game_over_size = game_over.get_size()
-        self.screen.blit(game_over, (half_width - game_over_size[0] // 2, half_height - game_over_size[1] // 2))
 
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))

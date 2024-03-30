@@ -6,6 +6,7 @@ import weapon_type
 
 class GameState:
     def __init__(self):
+        self.level = 0
         self.game_over = False
         self.diamonds = list()
         self.collected_diamonds = list()
@@ -22,6 +23,20 @@ class GameState:
         self.weapon_type = weapon_type.WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
+
+    def get_level(self):
+        return settings.LEVELS[self.level]
+
+    def check_is_last_level(self):
+        return self.level == len(settings.LEVELS) - 1
+
+    def set_next_level(self):
+        self.level += 1
+        # Reset before next level
+        self.diamonds.clear()
+        self.collected_diamonds.clear()
+        self.keys.clear()
+        self.collected_keys.clear()
 
     def add_diamond(self, diamond):
         self.diamonds.append(diamond)
@@ -91,9 +106,12 @@ class GameState:
 
     def level_completed(self):
         if len(self.collected_diamonds) == len(self.diamonds):
-            # Note: Only for temporary solution
-            self.game_over = True
-            pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+            if self.check_is_last_level():
+                # Note: Only for temporary solution
+                self.game_over = True
+                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+            else:
+                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
 
     def set_player_movement(self, x, y):
         # Set vector
