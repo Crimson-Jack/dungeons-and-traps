@@ -24,6 +24,7 @@ MESSAGE_COLOR = 187, 187, 204
 
 # Events
 GAME_OVER_EVENT = pygame.event.custom_type()
+GAME_OVER_SUMMARY_EVENT = pygame.event.custom_type()
 COLLECT_DIAMOND_EVENT = pygame.event.custom_type()
 COLLECT_KEY_EVENT = pygame.event.custom_type()
 DECREASE_NUMBER_OF_ARROWS_EVENT = pygame.event.custom_type()
@@ -39,9 +40,11 @@ ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
 ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
 PARTICLE_EVENT = pygame.event.custom_type()
 PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
+RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
 
 # Levels
 LEVELS = [
+    'basic.tmx',
     'level_01.tmx',
     'level_02.tmx'
 ]

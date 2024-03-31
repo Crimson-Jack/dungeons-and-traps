@@ -30,6 +30,7 @@ class Game:
 
         self.paused = False
         self.level_completed = False
+
         self.clock = pygame.time.Clock()
 
     def refresh_header_surface(self):
@@ -46,8 +47,10 @@ class Game:
         is_running = True
         while is_running:
             for event in pygame.event.get():
+                # Input events: keyboard, mouse
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     is_running = False
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.game_state.set_player_movement(0, 1)
@@ -68,7 +71,7 @@ class Game:
                             self.paused = not self.paused
                             if self.paused:
                                 messages = list()
-                                messages.append(Message('PAUSE', settings.MESSAGE_COLOR, 40))
+                                messages.append(Message('PAUSED', settings.MESSAGE_COLOR, 40))
                                 messages.append(Message('Press the SPACE button to return to the game', settings.MESSAGE_COLOR, 20))
                                 self.message_box = MessageBox(self.screen, 800, 130, 20, settings.BACKGROUND_COLOR, settings.BORDER_COLOR, messages)
                             else:
@@ -82,6 +85,7 @@ class Game:
                             self.refresh_dashboard_surface()
                         elif self.game_state.game_over:
                             is_running = False
+
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.game_state.set_player_movement(0, -1)
@@ -91,20 +95,29 @@ class Game:
                         self.game_state.set_player_movement(-1, 0)
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.game_state.set_player_movement(1, 0)
+
+                # Custom events
                 if event.type == settings.COLLECT_DIAMOND_EVENT:
                     self.refresh_dashboard_surface()
+
                 if event.type == settings.COLLECT_KEY_EVENT:
                     self.refresh_dashboard_surface()
+
                 if event.type == settings.DECREASE_NUMBER_OF_ARROWS_EVENT:
                     self.refresh_header_surface()
+
                 if event.type == settings.CHANGE_ENERGY_EVENT:
                     self.refresh_dashboard_surface()
+
                 if event.type == settings.CHANGE_POWER_EVENT:
                     self.refresh_dashboard_surface()
+
                 if event.type == settings.CHANGE_WEAPON_EVENT:
                     self.refresh_header_surface()
+
                 if event.type == settings.EXIT_POINT_IS_OPEN_EVENT:
                     self.level.show_exit_point()
+
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     self.level_completed = True
                     messages = list()
@@ -113,27 +126,48 @@ class Game:
                     messages.append(Message('Press the SPACE button to go to the next level', settings.MESSAGE_COLOR, 16))
                     self.message_box = MessageBox(self.screen, 800, 150, 20, settings.BACKGROUND_COLOR,
                                                   settings.BORDER_COLOR, messages)
-                if event.type == settings.GAME_OVER_EVENT:
-                    messages = list()
-                    messages.append(Message('GAME OVER', settings.MESSAGE_COLOR, 40))
-                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.BACKGROUND_COLOR,
-                                                  settings.BORDER_COLOR, messages)
+
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     self.level.refresh_obstacle_map()
+
                 if event.type == settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
                     self.level.inform_about_player_tile_position()
+
                 if event.type == settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
                     self.game_state.set_player_is_using_weapon(False)
-                if event.type == settings.ADD_TOMBSTONE_EVENT:
-                    self.level.add_tombstone(event.dict.get("position"))
+
                 if event.type == settings.ADD_PARTICLE_EFFECT_EVENT:
                     self.level.add_particle_effect(event.dict.get("position"),
                                                    event.dict.get("number_of_sparks"),
                                                    event.dict.get("colors"))
+
                 if event.type == settings.PARTICLE_EVENT:
                     self.level.add_spark_to_particle_effect()
+
+                if event.type == settings.ADD_TOMBSTONE_EVENT:
+                    self.level.add_tombstone(event.dict.get("position"))
+
                 if event.type == settings.PLAYER_LOST_LIFE_EVENT:
-                    self.level.player_lost_life()
+                    self.level.show_player_tombstone()
+                    pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 1500)
+
+                if event.type == settings.RESPAWN_PLAYER_EVENT:
+                    pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 0)
+                    self.game_state.set_max_energy()
+                    self.level.respawn_player()
+                    self.refresh_dashboard_surface()
+
+                if event.type == settings.GAME_OVER_EVENT:
+                    self.level.show_player_tombstone()
+                    pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 1500)
+
+                if event.type == settings.GAME_OVER_SUMMARY_EVENT:
+                    pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
+                    self.game_state.game_over = True
+                    messages = list()
+                    messages.append(Message('GAME OVER', settings.MESSAGE_COLOR, 40))
+                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.BACKGROUND_COLOR,
+                                                  settings.BORDER_COLOR, messages)
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:
                 # Refresh game surface

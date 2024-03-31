@@ -7,7 +7,7 @@ import weapon_type
 class GameState:
     def __init__(self):
         self.level = 0
-        self.lives = 3
+        self.lives = 2
         self.game_over = False
         self.diamonds = list()
         self.collected_diamonds = list()
@@ -33,11 +33,11 @@ class GameState:
 
     def set_next_level(self):
         self.level += 1
-        # Reset before next level
         self.diamonds.clear()
         self.collected_diamonds.clear()
         self.keys.clear()
         self.collected_keys.clear()
+        self.reset_player_direction()
 
     def add_diamond(self, diamond):
         self.diamonds.append(diamond)
@@ -77,8 +77,7 @@ class GameState:
 
     def decrease_energy(self):
         self.energy -= 1
-        if self.energy < 0:
-            self.energy = 0
+        if self.energy == 0:
             self.life_lost()
         else:
             pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
@@ -136,6 +135,9 @@ class GameState:
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
             self.player_movement_direction = direction.Direction.RIGHT_UP
 
+    def reset_player_direction(self):
+        self.player_movement_direction = direction.Direction.RIGHT
+
     def set_player_is_using_weapon(self, status):
         self.player_is_using_weapon = status
 
@@ -155,10 +157,13 @@ class GameState:
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def life_lost(self):
-        if self.lives > 1:
-            self.lives -= 1
-            self.energy = self.max_energy
+        self.lives -= 1
+        if self.lives > 0:
+            self.reset_player_direction()
             pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
         else:
-            self.game_over = True
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+
+    def set_max_energy(self):
+        self.energy = self.max_energy
+

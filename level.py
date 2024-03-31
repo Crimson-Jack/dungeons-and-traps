@@ -304,6 +304,12 @@ class Level:
         for particle_effect in self.particle_effects:
             particle_effect.add_spark()
 
+    def show_player_tombstone(self):
+        self.player.show_tombstone()
+
+    def respawn_player(self):
+        self.player.respawn()
+
     def clean_up(self):
         # Remove unnecessary items
         for tombstone in self.tombstones:
@@ -313,6 +319,3 @@ class Level:
         for particle_effect in self.particle_effects:
             if particle_effect.is_expired():
                 self.particle_effects.remove(particle_effect)
-
-    def player_lost_life(self):
-        self.player.respawn()

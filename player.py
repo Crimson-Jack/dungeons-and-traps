@@ -63,6 +63,7 @@ class Player(CustomDrawSprite):
         self.game_state = game_state
 
         # State variables
+        self.visible = True
         self.collided_with_enemy = False
 
         # Player weapon
@@ -330,31 +331,39 @@ class Player(CustomDrawSprite):
                 pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):
-        self.input()
-        self.change_costume()
-        self.move()
-        self.use_weapon()
+        if self.visible:
+            self.input()
+            self.change_costume()
+            self.move()
+            self.use_weapon()
 
     def custom_draw(self, game_surface, offset):
-        # Draw sprite
-        offset_position = self.rect.topleft + offset
-        game_surface.blit(self.image, offset_position)
+        if self.visible:
+            # Draw sprite
+            offset_position = self.rect.topleft + offset
+            game_surface.blit(self.image, offset_position)
 
-        # Draw an outline if it is collided
-        if self.collided_with_enemy:
-            outline_image = pygame.surface.Surface.copy(self.image)
-            mask = pygame.mask.from_surface(self.image)
-            mask_outline = mask.outline()
-            pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
-                                int(game_helper.multiply_by_tile_size_ratio(1, 1)))
-            game_surface.blit(outline_image, offset_position)
+            # Draw an outline if it is collided
+            if self.collided_with_enemy:
+                outline_image = pygame.surface.Surface.copy(self.image)
+                mask = pygame.mask.from_surface(self.image)
+                mask_outline = mask.outline()
+                pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
+                                    int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+                game_surface.blit(outline_image, offset_position)
 
     def get_center_point(self):
         return self.hit_box.center
 
-    def respawn(self):
+    def show_tombstone(self):
+        self.visible = False
+        self.sword_weapon.disarm_weapon()
+        self.bow_weapon.disarm_weapon()
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+
+    def respawn(self):
         self.change_position(self.position)
+        self.visible = True
 
     def change_position(self, new_position):
         self.rect = self.image.get_rect(topleft=new_position)
