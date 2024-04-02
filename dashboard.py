@@ -1,6 +1,7 @@
 import pygame
 import game_helper
 import settings
+import sprite_helper
 from bar import Bar
 from color_set import ColorSet
 from diamond import Diamond
@@ -12,6 +13,9 @@ class Dashboard:
         self.screen = screen
         self.dashboard_surface = dashboard_surface
         self.game_state = game_state
+
+        # Player image
+        self.player_image = sprite_helper.get_first_player_sprite()
 
         # Fonts
         self.accent_color = (187, 187, 204)
@@ -61,8 +65,14 @@ class Dashboard:
 
     def draw(self):
         # Left top
-        lives_counter_text = self.basic_font.render(f'Lives {self.game_state.lives}', True, self.accent_color)
+        lives_counter_text = self.basic_font.render(f'Lives', True, self.accent_color)
         self.left_top_surface.blit(lives_counter_text, (self.margin, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2))
+
+        count = 0
+        for item in range(self.game_state.lives):
+            self.left_top_surface.blit(self.player_image, (self.margin * 2 + lives_counter_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+            count += 1
+
         self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
 
         # Right top

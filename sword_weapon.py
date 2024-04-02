@@ -3,7 +3,7 @@ import random
 import enemy_with_energy
 import game_helper
 import settings
-import spritesheet
+import sprite_helper
 import direction
 from custom_draw_sprite import CustomDrawSprite
 
@@ -13,13 +13,7 @@ class SwordWeapon(CustomDrawSprite):
         super().__init__(groups)
 
         # Sprite animation variables
-        self.sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': []
-        }
-        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprites = sprite_helper.get_all_sword_sprites()
         self.costume_switching_threshold = 1
         self.number_of_sprites = 8
         self.costume_step_counter = 0
@@ -46,52 +40,6 @@ class SwordWeapon(CustomDrawSprite):
 
         # Other
         self.power = 5
-
-    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/sword_v2.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        self.sprites['right'].append(sprite_sheet.get_image(0, 0))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 1))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 2))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-        self.sprites['right'].append(sprite_sheet.get_image(0, 3))
-
-        self.sprites['left'].append(sprite_sheet.get_image(1, 0))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 1))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 2))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 3))
-
-        self.sprites['up'].append(sprite_sheet.get_image(2, 0))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 1))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 2))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 3))
-
-        self.sprites['down'].append(sprite_sheet.get_image(3, 0))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 1))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 2))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 3))
 
     def set_costume(self, new_direction, index):
         self.direction = new_direction

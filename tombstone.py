@@ -1,6 +1,5 @@
 import pygame
-import settings
-import spritesheet
+import sprite_helper
 
 
 class Tombstone(pygame.sprite.Sprite):
@@ -8,8 +7,7 @@ class Tombstone(pygame.sprite.Sprite):
         super().__init__(groups)
 
         # Sprite animation variables
-        self.sprites = []
-        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprites = sprite_helper.get_all_tombstone_sprites()
         self.number_of_sprites = 3
         self.costume_switching_threshold = 4
         self.costume_step_counter = 0
@@ -22,21 +20,6 @@ class Tombstone(pygame.sprite.Sprite):
         self.hit_box = self.rect
 
         self.can_be_removed_counter = 10
-
-    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/skull.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        self.sprites.append(sprite_sheet.get_image(0, 0))
-        self.sprites.append(sprite_sheet.get_image(1, 0))
-        self.sprites.append(sprite_sheet.get_image(2, 0))
-        self.sprites.append(sprite_sheet.get_image(3, 0))
 
     def update(self):
         # Increase costume step counter

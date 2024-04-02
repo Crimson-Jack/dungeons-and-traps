@@ -1,7 +1,5 @@
-import pygame
-import settings
 import game_helper
-import spritesheet
+import sprite_helper
 import direction
 from arrow import Arrow
 from custom_draw_sprite import CustomDrawSprite
@@ -12,13 +10,7 @@ class BowWeapon(CustomDrawSprite):
         super().__init__(groups)
 
         # Sprite animation variables
-        self.sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': []
-        }
-        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprites = sprite_helper.get_all_bow_sprites()
 
         # Image
         self.image = self.sprites['right'][0]
@@ -36,21 +28,6 @@ class BowWeapon(CustomDrawSprite):
 
         # Arrows
         self.arrows = list()
-
-    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/bow.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        self.sprites['right'].append(sprite_sheet.get_image(0, 0))
-        self.sprites['left'].append(sprite_sheet.get_image(1, 0))
-        self.sprites['up'].append(sprite_sheet.get_image(2, 0))
-        self.sprites['down'].append(sprite_sheet.get_image(3, 0))
 
     def custom_draw(self, game_surface, offset):
         if self.is_armed:

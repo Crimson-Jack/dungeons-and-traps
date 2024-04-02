@@ -2,7 +2,7 @@ import pygame
 import random
 import game_helper
 import settings
-import spritesheet
+import sprite_helper
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from enemy_with_brain import EnemyWithBrain
@@ -35,8 +35,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.costume_index = 0
 
         # Sprite in a damage state
-        self.sprite_in_damage_state = None
-        self.load_sprites_in_damage_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprite_in_damage_state = sprite_helper.get_monster_sprite_in_damaged_state(self.name)
 
         # Image
         self.image = self.sprites[0]
@@ -81,19 +80,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # State variables
         self.collided_with_weapon = False
         self.is_resting = False
-
-    def load_sprites_in_damage_state(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load(f'img/{self.name}.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        # Sprites with the state: damage
-        self.sprite_in_damage_state = sprite_sheet.get_image(1, 0)
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):

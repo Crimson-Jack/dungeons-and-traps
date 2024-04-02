@@ -14,6 +14,8 @@ DASHBOARD_HEIGHT = 150
 
 # Tile size
 TILE_SIZE = 64
+# Source (originate) tile size
+SOURCE_TILE_SIZE = 16
 
 # Colors
 ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]

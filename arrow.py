@@ -2,7 +2,7 @@ import pygame
 import settings
 import game_helper
 import enemy_with_energy
-import spritesheet
+import sprite_helper
 import direction
 from custom_draw_sprite import CustomDrawSprite
 
@@ -15,7 +15,7 @@ class Arrow(CustomDrawSprite):
         self.direction = arrow_direction
 
         # Image
-        self.image = self.get_image(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.image = self.get_image()
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -30,29 +30,22 @@ class Arrow(CustomDrawSprite):
         self.speed = game_helper.multiply_by_tile_size_ratio(13)
         self.power = 60
 
-    def get_image(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/arrow.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
+    def get_image(self):
+        sprites = sprite_helper.get_all_arrow_sprites()
 
         image = None
         if self.direction == direction.Direction.RIGHT:
-            image = sprite_sheet.get_image(0, 0)
+            image = sprites['right'][0]
         elif self.direction == direction.Direction.LEFT:
-            image = sprite_sheet.get_image(1, 0)
+            image = sprites['left'][0]
         elif (self.direction == direction.Direction.UP or
               self.direction == direction.Direction.LEFT_UP or
               self.direction == direction.Direction.RIGHT_UP):
-            image = sprite_sheet.get_image(2, 0)
+            image = sprites['up'][0]
         elif (self.direction == direction.Direction.DOWN or
               self.direction == direction.Direction.LEFT_DOWN or
               self.direction == direction.Direction.RIGHT_DOWN):
-            image = sprite_sheet.get_image(3, 0)
+            image = sprites['down'][0]
 
         return image
 

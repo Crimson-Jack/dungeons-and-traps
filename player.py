@@ -5,8 +5,8 @@ import powerup
 import key
 import settings
 import game_helper
-import spritesheet
 import weapon_type
+import sprite_helper
 from sword_weapon import SwordWeapon
 from bow_weapon import BowWeapon
 from custom_draw_sprite import CustomDrawSprite
@@ -22,16 +22,7 @@ class Player(CustomDrawSprite):
         self.number_of_sprites = 4
         self.step_counter = 0
         self.costume_index = 0
-        self.sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': [],
-            'right_down': [],
-            'left_down': [],
-            'left_up': [],
-            'right_up': []}
-        self.load_all_sprites(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprites = sprite_helper.get_all_player_sprites(self.number_of_sprites)
 
         # Image
         self.position = position
@@ -75,37 +66,6 @@ class Player(CustomDrawSprite):
         # Tile position
         self.tile_position = game_helper.get_tile_by_point(self.get_center_point())
         self.game_state.set_player_tile_position(self.tile_position)
-
-    def load_all_sprites(self, source_sprite_width, source_sprite_height, scale, key_color):
-        # Load image with all sprite sheets
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load('img/player.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        # Sprites with the state: standing
-        self.sprites['right'].append(sprite_sheet.get_image(0, 0))
-        self.sprites['left'].append(sprite_sheet.get_image(2, 0))
-        self.sprites['up'].append(sprite_sheet.get_image(4, 0))
-        self.sprites['down'].append(sprite_sheet.get_image(6, 0))
-        self.sprites['right_down'].append(sprite_sheet.get_image(6, 0))
-        self.sprites['right_up'].append(sprite_sheet.get_image(4, 0))
-        self.sprites['left_down'].append(sprite_sheet.get_image(6, 0))
-        self.sprites['left_up'].append(sprite_sheet.get_image(4, 0))
-
-        # Sprites with the state: walking
-        for number in range(0, self.number_of_sprites):
-            self.sprites['right'].append(sprite_sheet.get_image(1, number))
-            self.sprites['left'].append(sprite_sheet.get_image(3, number))
-            self.sprites['up'].append(sprite_sheet.get_image(5, number))
-            self.sprites['down'].append(sprite_sheet.get_image(7, number))
-            self.sprites['right_down'].append(sprite_sheet.get_image(7, number))
-            self.sprites['right_up'].append(sprite_sheet.get_image(5, number))
-            self.sprites['left_down'].append(sprite_sheet.get_image(7, number))
-            self.sprites['left_up'].append(sprite_sheet.get_image(5, number))
 
     def input(self):
         self.movement_vector = self.game_state.player_movement_vector

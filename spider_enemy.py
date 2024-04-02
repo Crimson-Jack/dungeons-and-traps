@@ -1,7 +1,7 @@
 import pygame
 import game_helper
 import settings
-import spritesheet
+import sprite_helper
 from custom_draw_sprite import CustomDrawSprite
 from enemy_with_energy import EnemyWithEnergy
 
@@ -33,7 +33,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Sprites in a damage state
         self.number_of_rows = 5
         self.costume_switching_threshold_for_damaged_state = self.max_energy // self.number_of_rows
-        self.load_sprites_in_damaged_state(16, 16, (int(settings.TILE_SIZE), int(settings.TILE_SIZE)), (0, 0, 0))
+        self.sprites = sprite_helper.add_spider_sprites_in_damaged_state(self.name, self.number_of_sprites,
+                                                                         self.number_of_rows, self.sprites)
 
         # Image
         self.image = self.sprites[0][0]
@@ -61,19 +62,6 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
         # State variables
         self.collided_with_weapon = False
-
-    def load_sprites_in_damaged_state(self, source_sprite_width, source_sprite_height, scale, key_color):
-        sprite_sheet = spritesheet.SpriteSheet(
-            pygame.image.load(f'img/{self.name}.png').convert_alpha(),
-            source_sprite_width,
-            source_sprite_height,
-            scale,
-            key_color
-        )
-
-        for cell in range(0, self.number_of_sprites):
-            for row in range(0, self.number_of_rows):
-                self.sprites[cell].append(sprite_sheet.get_image(row+1, cell))
 
     def move(self):
         # Calculate real y position
