@@ -43,6 +43,7 @@ ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
 PARTICLE_EVENT = pygame.event.custom_type()
 PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
 RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
+COLLECT_LIFE_EVENT = pygame.event.custom_type()
 
 # Levels
 LEVELS = [

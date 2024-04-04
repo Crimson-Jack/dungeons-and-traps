@@ -103,6 +103,9 @@ class Game:
                 if event.type == settings.COLLECT_KEY_EVENT:
                     self.refresh_dashboard_surface()
 
+                if event.type == settings.COLLECT_LIFE_EVENT:
+                    self.refresh_dashboard_surface()
+
                 if event.type == settings.DECREASE_NUMBER_OF_ARROWS_EVENT:
                     self.refresh_header_surface()
 

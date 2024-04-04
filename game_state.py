@@ -66,6 +66,10 @@ class GameState:
         self.remove_none_weapon()
         self.set_next_weapon()
 
+    def collect_life_powerup(self):
+        self.lives += 1
+        pygame.event.post(pygame.event.Event(settings.COLLECT_LIFE_EVENT))
+
     def remove_none_weapon(self):
         if weapon_type.WeaponType.NONE in self.collected_weapons:
             self.collected_weapons.remove(weapon_type.WeaponType.NONE)
