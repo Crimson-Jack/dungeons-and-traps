@@ -1,6 +1,7 @@
 import pygame
 import settings
 import weapon_type
+import sprite_helper
 
 
 class Header:
@@ -9,9 +10,14 @@ class Header:
         self.header_surface = header_surface
         self.game_state = game_state
 
+        # Sword and bow images
+        self.sword_image = sprite_helper.get_sword_to_header_view()
+        self.bow_image = sprite_helper.get_bow_to_header_view()
+
         # Fonts
         self.accent_color = (187, 187, 204)
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 32)
+        self.additional_info_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.margin = 16
 
         # Background and border
@@ -42,14 +48,19 @@ class Header:
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
 
         # Center
-        weapon_type_string = "-"
+        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
+            weapon_text = self.basic_font.render(f'Weapon -', True, self.accent_color)
+            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
         if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-            weapon_type_string = "S"
+            weapon_text = self.basic_font.render(f'Weapon', True, self.accent_color)
+            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
+            self.center_surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), self.center_surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
         elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
-            weapon_type_string = f"B ({self.game_state.number_of_arrows})"
-
-        weapon_text = self.basic_font.render(f'Weapon {weapon_type_string}', True, self.accent_color)
-        self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
+            weapon_text = self.basic_font.render(f'Weapon', True, self.accent_color)
+            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
+            self.center_surface.blit(self.bow_image, (self.margin * 2 + weapon_text.get_width(), self.center_surface.get_height() // 2 - self.bow_image.get_rect().height // 2))
+            number_of_arrows_text = self.additional_info_font.render(f'({self.game_state.number_of_arrows})', True, self.accent_color)
+            self.center_surface.blit(number_of_arrows_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, self.center_surface.get_height() // 2 - number_of_arrows_text.get_rect().height // 2))
         self.header_surface.blit(self.center_surface, (settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
 
         # Right

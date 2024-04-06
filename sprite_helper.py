@@ -168,3 +168,13 @@ def add_spider_sprites_in_damaged_state(name, number_of_sprites, number_of_rows,
 def get_monster_sprite_in_damaged_state(name):
     sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
     return sprite_sheet.get_image(1, 0)
+
+
+def get_sword_to_header_view():
+    sprite_sheet = get_sprite_sheet(f'img/powerup.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    return sprite_sheet.get_image(0, 0)
+
+
+def get_bow_to_header_view():
+    sprite_sheet = get_sprite_sheet(f'img/powerup.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    return sprite_sheet.get_image(0, 1)
