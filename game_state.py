@@ -58,7 +58,8 @@ class GameState:
     def collect_sword_powerup(self):
         self.collected_weapons.append(weapon_type.WeaponType.SWORD)
         self.remove_none_weapon()
-        self.set_next_weapon()
+        if self.weapon_type != weapon_type.WeaponType.BOW:
+            self.set_next_weapon()
 
     def collect_bow_powerup(self, number_of_arrows):
         self.number_of_arrows += number_of_arrows
@@ -73,7 +74,6 @@ class GameState:
     def remove_none_weapon(self):
         if weapon_type.WeaponType.NONE in self.collected_weapons:
             self.collected_weapons.remove(weapon_type.WeaponType.NONE)
-            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def check_is_key_collected(self, key_name):
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
