@@ -58,14 +58,16 @@ class GameState:
     def collect_sword_powerup(self):
         self.collected_weapons.append(weapon_type.WeaponType.SWORD)
         self.remove_none_weapon()
-        if self.weapon_type != weapon_type.WeaponType.BOW:
-            self.set_next_weapon()
+        if not (self.weapon_type == weapon_type.WeaponType.BOW and self.number_of_arrows > 0):
+            self.weapon_type = weapon_type.WeaponType.SWORD
+            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
         self.number_of_arrows += number_of_arrows
         self.collected_weapons.append(weapon_type.WeaponType.BOW)
         self.remove_none_weapon()
-        self.set_next_weapon()
+        self.weapon_type = weapon_type.WeaponType.BOW
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def collect_life_powerup(self):
         self.lives += 1
@@ -106,6 +108,8 @@ class GameState:
     def decrease_number_of_arrows(self):
         self.number_of_arrows -= 1
         pygame.event.post(pygame.event.Event(settings.DECREASE_NUMBER_OF_ARROWS_EVENT))
+        if self.number_of_arrows == 0:
+            self.set_next_weapon()
 
     def level_completed(self):
         if len(self.collected_diamonds) == len(self.diamonds):
