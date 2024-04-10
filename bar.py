@@ -51,7 +51,7 @@ class Bar:
         pygame.draw.rect(surface, self.bar_colors.get_color(percent), bar_rectangle)
 
         # Blit the text
-        if self.draw_text:
+        if self.draw_text and percent >= 10:
             # Create text
             rendered_text = self.basic_font.render(f'{self.text} {percent}%', True, self.text_color)
 

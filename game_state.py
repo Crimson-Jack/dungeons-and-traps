@@ -8,12 +8,13 @@ class GameState:
     def __init__(self):
         self.level = 0
         self.lives = 2
+        self.score = 0
         self.game_over = False
         self.diamonds = list()
         self.collected_diamonds = list()
         self.keys = list()
         self.collected_keys = list()
-        self.max_energy = 80
+        self.max_energy = 800
         self.energy = self.max_energy
         self.max_power = 100
         self.power = 0

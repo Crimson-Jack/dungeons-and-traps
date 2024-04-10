@@ -18,17 +18,17 @@ class Dashboard:
         self.player_image = sprite_helper.get_first_player_sprite()
 
         # Fonts
-        self.accent_color = (187, 187, 204)
+        self.text_color = settings.TEXT_COLOR
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 32)
         self.margin = 16
 
         # Background and border
         self.border = self.dashboard_surface.get_rect()
         self.border = self.border.inflate(-8, -8)
-        self.dashboard_surface.fill((64, 78, 107))
-        pygame.draw.rect(self.dashboard_surface, (42, 53, 70), self.border)
-        pygame.draw.rect(self.dashboard_surface, (244, 244, 244), self.border, 4)
-        self.inner_background_color = 42, 53, 70
+        self.dashboard_surface.fill(settings.SURFACE_COLOR)
+        pygame.draw.rect(self.dashboard_surface, settings.BACKGROUND_COLOR, self.border)
+        pygame.draw.rect(self.dashboard_surface, settings.BORDER_COLOR, self.border, 4)
+        self.inner_background_color = settings.BACKGROUND_COLOR
 
         # Surfaces
         self.left_top_surface = pygame.Surface(
@@ -54,8 +54,8 @@ class Dashboard:
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
         self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_energy,
-                              bar_colors, True, (167, 185, 194), True,
-                              (33, 59, 99), True, 'Energy', (33, 59, 99))
+                              bar_colors, True, settings.BORDER_COLOR, True,
+                              settings.SURFACE_COLOR, True, 'Energy', settings.BAR_TEXT_COLOR)
 
     def clean(self):
         self.left_top_surface.fill(self.inner_background_color)
@@ -65,7 +65,7 @@ class Dashboard:
 
     def draw(self):
         # Left top
-        lives_counter_text = self.basic_font.render(f'Lives', True, self.accent_color)
+        lives_counter_text = self.basic_font.render(f'Lives', True, self.text_color)
         self.left_top_surface.blit(lives_counter_text, (self.margin, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2))
 
         count = 0
@@ -80,7 +80,7 @@ class Dashboard:
         self.dashboard_surface.blit(self.right_top_surface, (settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
 
         # Left bottom
-        keys_text = self.basic_font.render(f'Keys', True, self.accent_color)
+        keys_text = self.basic_font.render(f'Keys', True, self.text_color)
         self.left_bottom_surface.blit(keys_text, (self.margin, self.right_bottom_surface.get_height() // 2 - keys_text.get_rect().height // 2))
 
         count = 0
@@ -98,7 +98,7 @@ class Dashboard:
         self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
 
         # Right bottom
-        diamonds_text = self.basic_font.render(f'Diamonds', True, self.accent_color)
+        diamonds_text = self.basic_font.render(f'Diamonds', True, self.text_color)
         self.right_bottom_surface.blit(diamonds_text, (self.margin, self.right_bottom_surface.get_height() // 2 - diamonds_text.get_rect().height // 2))
 
         count = 0

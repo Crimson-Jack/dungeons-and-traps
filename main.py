@@ -71,9 +71,9 @@ class Game:
                             self.paused = not self.paused
                             if self.paused:
                                 messages = list()
-                                messages.append(Message('PAUSED', settings.MESSAGE_COLOR, 40))
-                                messages.append(Message('Press the SPACE button to return to the game', settings.MESSAGE_COLOR, 20))
-                                self.message_box = MessageBox(self.screen, 800, 130, 20, settings.BACKGROUND_COLOR, settings.BORDER_COLOR, messages)
+                                messages.append(Message('PAUSED', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+                                messages.append(Message('Press the SPACE button to return to the game', settings.TEXT_COLOR, 20))
+                                self.message_box = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR, settings.MESSAGE_BORDER_COLOR, messages)
                             else:
                                 self.message_box = None
                         elif self.level_completed:
@@ -124,11 +124,11 @@ class Game:
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     self.level_completed = True
                     messages = list()
-                    messages.append(Message('CONGRATULATIONS', settings.MESSAGE_COLOR, 40))
-                    messages.append(Message('Level completed', settings.MESSAGE_COLOR, 20))
-                    messages.append(Message('Press the SPACE button to go to the next level', settings.MESSAGE_COLOR, 16))
-                    self.message_box = MessageBox(self.screen, 800, 150, 20, settings.BACKGROUND_COLOR,
-                                                  settings.BORDER_COLOR, messages)
+                    messages.append(Message('CONGRATULATIONS', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+                    messages.append(Message('Level completed', settings.TEXT_COLOR, 20))
+                    messages.append(Message('Press the SPACE button to go to the next level', settings.TEXT_COLOR, 16))
+                    self.message_box = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                                  settings.MESSAGE_BORDER_COLOR, messages)
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     self.level.refresh_obstacle_map()
@@ -168,9 +168,9 @@ class Game:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
                     self.game_state.game_over = True
                     messages = list()
-                    messages.append(Message('GAME OVER', settings.MESSAGE_COLOR, 40))
-                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.BACKGROUND_COLOR,
-                                                  settings.BORDER_COLOR, messages)
+                    messages.append(Message('GAME OVER', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                                  settings.MESSAGE_BORDER_COLOR, messages)
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:
                 # Refresh game surface
