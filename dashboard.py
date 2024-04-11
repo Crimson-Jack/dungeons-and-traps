@@ -14,12 +14,13 @@ class Dashboard:
         self.dashboard_surface = dashboard_surface
         self.game_state = game_state
 
-        # Player image
-        self.player_image = sprite_helper.get_first_player_sprite()
+        # Life image
+        self.life_image = sprite_helper.get_life_sprite()
 
         # Fonts
         self.text_color = settings.TEXT_COLOR
-        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 32)
+        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
+        self.text_adjustment = 2
         self.margin = 16
 
         # Background and border
@@ -64,24 +65,35 @@ class Dashboard:
         self.right_bottom_surface.fill(self.inner_background_color)
 
     def draw(self):
-        # Left top
+        self.draw_energy_bar(self.left_top_surface)
+        self.draw_keys(self.right_top_surface)
+        self.draw_lives(self.left_bottom_surface)
+        self.draw_diamonds(self.right_bottom_surface)
+
+        # Blit each surface to the dashboard
+        self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
+        self.dashboard_surface.blit(self.right_top_surface, (settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
+        self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
+        self.dashboard_surface.blit(self.right_bottom_surface, (settings.WIDTH // 2 + self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
+
+        # Blit dashboard to the main screen
+        self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))
+
+    def draw_lives(self, surface):
         lives_counter_text = self.basic_font.render(f'Lives', True, self.text_color)
-        self.left_top_surface.blit(lives_counter_text, (self.margin, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2))
+        surface.blit(lives_counter_text, (self.margin * 2, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
         for item in range(self.game_state.lives):
-            self.left_top_surface.blit(self.player_image, (self.margin * 2 + lives_counter_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+            surface.blit(self.life_image, (self.margin * 3 + lives_counter_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             count += 1
 
-        self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
+    def draw_energy_bar(self, surface):
+        self.energy_bar.draw(surface, self.game_state.energy)
 
-        # Right top
-        self.energy_bar.draw(self.right_top_surface, self.game_state.energy)
-        self.dashboard_surface.blit(self.right_top_surface, (settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
-
-        # Left bottom
+    def draw_keys(self, surface):
         keys_text = self.basic_font.render(f'Keys', True, self.text_color)
-        self.left_bottom_surface.blit(keys_text, (self.margin, self.right_bottom_surface.get_height() // 2 - keys_text.get_rect().height // 2))
+        surface.blit(keys_text, (self.margin * 2, self.right_bottom_surface.get_height() // 2 - keys_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
         for item in self.game_state.keys:
@@ -89,17 +101,15 @@ class Dashboard:
                 # Copy sprite for dashboard - semi transparent
                 transparent_image = Key(item.base_size_image, item.rect.topleft, list(), item.key_name)
                 transparent_image.base_size_image.set_alpha(100)
-                self.left_bottom_surface.blit(transparent_image.base_size_image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                self.left_bottom_surface.blit(item.base_size_image, (self.margin * 2 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(item.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             count += 1
 
-        self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
-
-        # Right bottom
-        diamonds_text = self.basic_font.render(f'Diamonds', True, self.text_color)
-        self.right_bottom_surface.blit(diamonds_text, (self.margin, self.right_bottom_surface.get_height() // 2 - diamonds_text.get_rect().height // 2))
+    def draw_diamonds(self, surface):
+        diamonds_text = self.basic_font.render(f'Gems', True, self.text_color)
+        surface.blit(diamonds_text, (self.margin * 2, self.right_bottom_surface.get_height() // 2 - diamonds_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
         for item in self.game_state.diamonds:
@@ -107,13 +117,8 @@ class Dashboard:
                 # Copy sprite for dashboard - semi transparent
                 transparent_image = Diamond(item.base_size_image, item.rect.topleft, list())
                 transparent_image.base_size_image.set_alpha(100)
-                self.right_bottom_surface.blit(transparent_image.base_size_image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                self.right_bottom_surface.blit(item.base_size_image, (self.margin * 2 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(item.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             count += 1
-
-        self.dashboard_surface.blit(self.right_bottom_surface, (settings.WIDTH // 2 + self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
-
-        # Blit dashboard to the main screen
-        self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))

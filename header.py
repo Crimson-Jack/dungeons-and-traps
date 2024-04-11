@@ -17,8 +17,9 @@ class Header:
         # Fonts
         self.text_color = settings.TEXT_COLOR
         self.highlighted_text_color = settings.HIGHLIGHTED_TEXT_COLOR
-        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 32)
+        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.additional_info_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
+        self.text_adjustment = 2
         self.margin = 16
 
         # Background and border
@@ -43,67 +44,79 @@ class Header:
         self.right_surface.fill(self.inner_background_color)
 
     def draw(self):
-        # Left
-        left_rect = self.left_surface.get_rect()
+        self.draw_left_decorations(self.left_surface)
+        self.draw_right_decorations(self.right_surface)
 
-        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 12, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        self.draw_level(self.left_surface)
+        self.draw_weapon(self.center_surface)
+        self.draw_score(self.right_surface)
 
-        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 16, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
-
-        level_text = self.basic_font.render('Level ', True, self.text_color)
-        self.left_surface.blit(level_text, (self.margin, self.left_surface.get_height() // 2 - level_text.get_rect().height // 2))
-        level_number = self.basic_font.render(f'{self.game_state.level + 1}', True, self.highlighted_text_color)
-        self.left_surface.blit(level_number, (self.margin + level_text.get_rect().width, self.left_surface.get_height() // 2 - level_text.get_rect().height // 2))
+        # Blit each surface to the dashboard
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
-
-        # Center
-        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
-            weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
-            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
-        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
-            weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
-            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
-            self.center_surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), self.center_surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
-        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
-            weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
-            self.center_surface.blit(weapon_text, (self.margin, self.center_surface.get_height() // 2 - weapon_text.get_rect().height // 2))
-            self.center_surface.blit(self.bow_image, (self.margin * 2 + weapon_text.get_width(), self.center_surface.get_height() // 2 - self.bow_image.get_rect().height // 2))
-            number_of_arrows_text = self.additional_info_font.render(f'({self.game_state.number_of_arrows})', True, self.text_color)
-            self.center_surface.blit(number_of_arrows_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, self.center_surface.get_height() // 2 - number_of_arrows_text.get_rect().height // 2))
         self.header_surface.blit(self.center_surface, (settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
-
-        # Right
-        right_rect = self.right_surface.get_rect()
-
-        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 12, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-
-        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 16, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
-
-        score_text = self.basic_font.render('Score ', True, self.text_color)
-        self.right_surface.blit(score_text, (self.margin, self.right_surface.get_height() // 2 - score_text.get_rect().height // 2))
-        score_number = self.basic_font.render(f'{self.game_state.score}', True, self.highlighted_text_color)
-        self.right_surface.blit(score_number, (self.margin + score_text.get_rect().width, self.left_surface.get_height() // 2 - level_text.get_rect().height // 2))
         self.header_surface.blit(self.right_surface, (settings.WIDTH * 2 // 3 + self.margin // 2, self.margin // 2))
 
         # Blit dashboard to the main screen
         self.screen.blit(self.header_surface, (0, 0))
+
+    def draw_left_decorations(self, surface):
+        left_rect = surface.get_rect()
+
+        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 4, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.top + 4, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 12, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+
+        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 8, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.bottom - 8, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 16, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+
+    def draw_right_decorations(self, surface):
+        right_rect = surface.get_rect()
+
+        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 4, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.top + 4, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 12, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+
+        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 8, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.bottom - 8, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+        decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 16, 4, 4)
+        pygame.draw.rect(surface, settings.BORDER_COLOR, decoration)
+
+    def draw_level(self, surface):
+        level_text = self.basic_font.render('Level ', True, self.text_color)
+        surface.blit(level_text, (self.margin * 2, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
+        level_number = self.basic_font.render(f'{self.game_state.level + 1}', True, self.highlighted_text_color)
+        surface.blit(level_number, (self.margin * 2 + level_text.get_rect().width, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
+
+    def draw_weapon(self, surface):
+        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
+            weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
+            surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
+        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+            weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
+            surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
+            surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
+        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+            weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
+            surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
+            surface.blit(self.bow_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.bow_image.get_rect().height // 2))
+            number_of_arrows_text = self.additional_info_font.render(f'({self.game_state.number_of_arrows})', True,
+                                                                     self.highlighted_text_color)
+            surface.blit(number_of_arrows_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, surface.get_height() // 2 - number_of_arrows_text.get_rect().height // 2 - self.text_adjustment))
+
+    def draw_score(self, surface):
+        score_text = self.basic_font.render('Score ', True, self.text_color)
+        surface.blit(score_text, (self.margin * 2, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
+        score_number = self.basic_font.render(f'{self.game_state.score}', True, self.highlighted_text_color)
+        surface.blit(score_number, (self.margin * 2 + score_text.get_rect().width, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))

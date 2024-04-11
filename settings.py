@@ -5,12 +5,13 @@ from debug import Debug
 FPS = 60
 
 # Screen size
+FULL_SCREEN_MODE = False
 WIDTH = 1080
 HEIGHT = 600
 # Header size
-HEADER_HEIGHT = 84
+HEADER_HEIGHT = 80
 # Dashboard size
-DASHBOARD_HEIGHT = 150
+DASHBOARD_HEIGHT = 144
 
 # Tile size
 TILE_SIZE = 64

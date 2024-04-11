@@ -13,7 +13,15 @@ class Game:
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
 
-        self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+        if settings.FULL_SCREEN_MODE:
+            # NOTE: full screen mode
+            monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
+            settings.WIDTH = pygame.display.Info().current_w
+            settings.HEIGHT = pygame.display.Info().current_h
+            self.screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+        else:
+            self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+
         self.game_surface = pygame.Surface(
             (settings.WIDTH, settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT))
         self.header_surface = pygame.Surface((settings.WIDTH, settings.HEADER_HEIGHT))
