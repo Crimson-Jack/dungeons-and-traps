@@ -214,9 +214,10 @@ class Level:
                         speed = game_helper.multiply_by_tile_size_ratio(
                             tmx_helper.get_property('speed', 1, item, layer))
                         start_delay = tmx_helper.get_property('start_delay', 10, item, layer)
+                        energy = int(tmx_helper.get_property('energy', 100, item, layer))
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        MonsterEnemy(frames, (x, y), groups, item.name, speed, start_delay, self.obstacle_map.items,
-                                     self.game_state, self.moving_obstacle_sprites)
+                        MonsterEnemy(frames, (x, y), groups, item.name, speed, start_delay, energy,
+                                     self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
 
                     elif layer_name == 'spider-enemy':
                         groups = (self.top_sprites_layer, self.enemy_sprites)
@@ -225,8 +226,9 @@ class Level:
                             tmx_helper.get_property('speed', 1, item, layer))
                         motion_schedule = game_helper.convert_string_to_tuple(
                             tmx_helper.get_property('motion_schedule', '', item, layer))
+                        energy = int(tmx_helper.get_property('energy', 100, item, layer))
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        SpiderEnemy(frames, (x, y), groups, item.name, speed, net_length, motion_schedule,
+                        SpiderEnemy(frames, (x, y), groups, item.name, speed, net_length, motion_schedule, energy,
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':

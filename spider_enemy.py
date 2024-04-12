@@ -7,16 +7,16 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
-    def __init__(self, frames, position, groups, name, speed, net_length, motion_schedule, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, speed, net_length, motion_schedule, energy, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
         self.name = name
 
         # Energy
-        self.max_energy = 100
+        self.max_energy = energy
         self.energy = self.max_energy
-        self.energy_increase_step = 0.25
+        self.energy_increase_step = energy / 400
 
         # Sprite animation variables
         self.sprites = []

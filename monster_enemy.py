@@ -11,7 +11,7 @@ from enemy_with_energy import EnemyWithEnergy
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, name, speed, start_delay, obstacle_map, game_state,
+    def __init__(self, frames, position, groups, name, speed, start_delay, energy, obstacle_map, game_state,
                  moving_obstacle_sprites):
         super().__init__(groups)
 
@@ -19,7 +19,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.name = name
 
         # Energy
-        self.max_energy = 100
+        self.max_energy = energy
         self.energy = self.max_energy
 
         # Sprite animation variables
