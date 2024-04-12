@@ -164,7 +164,7 @@ class Game:
 
                 if event.type == settings.RESPAWN_PLAYER_EVENT:
                     pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 0)
-                    self.game_state.set_max_energy()
+                    self.game_state.set_player_max_energy()
                     self.level.respawn_player()
                     self.refresh_dashboard_surface()
 

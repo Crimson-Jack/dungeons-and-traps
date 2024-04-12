@@ -19,15 +19,15 @@ class GameState:
         self.keys = list()
         self.collected_keys = list()
 
-        self.max_power = 100
-        self.power = 0
-
         self.player_max_energy = 800
         self.player_energy = self.player_max_energy
         self.player_tile_position = (0, 0)
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
+
+        self.max_power = 100
+        self.power = 0
 
     def get_level(self):
         return settings.LEVELS[self.level]
@@ -43,21 +43,22 @@ class GameState:
         self.collected_keys.clear()
         self.reset_player_direction()
 
-    def add_diamond(self, diamond):
-        self.diamonds.append(diamond)
-
-    def add_key(self, key):
-        self.keys.append(key)
-
-    def collect_diamond(self, diamond):
-        self.collected_diamonds.append(diamond)
-        pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
+    def level_completed(self):
         if len(self.collected_diamonds) == len(self.diamonds):
-            pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
+            if self.check_is_last_level():
+                # Note: Only for temporary solution
+                self.game_over = True
+                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+            else:
+                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
 
-    def collect_key(self, key):
-        self.collected_keys.append(key)
-        pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
+    def life_lost(self):
+        self.lives -= 1
+        if self.lives > 0:
+            self.reset_player_direction()
+            pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
+        else:
+            pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
 
     def collect_sword_powerup(self):
         self.collected_weapons.append(weapon_type.WeaponType.SWORD)
@@ -73,17 +74,51 @@ class GameState:
         self.weapon_type = weapon_type.WeaponType.BOW
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
-    def collect_life_powerup(self):
-        self.lives += 1
-        pygame.event.post(pygame.event.Event(settings.COLLECT_LIFE_EVENT))
-
     def remove_none_weapon(self):
         if weapon_type.WeaponType.NONE in self.collected_weapons:
             self.collected_weapons.remove(weapon_type.WeaponType.NONE)
 
+    def set_next_weapon(self):
+        self.weapon_type = self.weapon_type.next()
+        while self.weapon_type not in self.collected_weapons:
+            self.weapon_type = self.weapon_type.next()
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+
+    def set_previous_weapon(self):
+        self.weapon_type = self.weapon_type.previous()
+        while self.weapon_type not in self.collected_weapons:
+            self.weapon_type = self.weapon_type.previous()
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+
+    def decrease_number_of_arrows(self):
+        self.number_of_arrows -= 1
+        pygame.event.post(pygame.event.Event(settings.DECREASE_NUMBER_OF_ARROWS_EVENT))
+        if self.number_of_arrows == 0:
+            self.set_next_weapon()
+
+    def add_diamond(self, diamond):
+        self.diamonds.append(diamond)
+
+    def collect_diamond(self, diamond):
+        self.collected_diamonds.append(diamond)
+        pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
+        if len(self.collected_diamonds) == len(self.diamonds):
+            pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
+
+    def add_key(self, key):
+        self.keys.append(key)
+
+    def collect_key(self, key):
+        self.collected_keys.append(key)
+        pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
+
     def check_is_key_collected(self, key_name):
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
         return count
+
+    def collect_life_powerup(self):
+        self.lives += 1
+        pygame.event.post(pygame.event.Event(settings.COLLECT_LIFE_EVENT))
 
     def decrease_player_energy(self):
         self.player_energy -= 1
@@ -101,28 +136,8 @@ class GameState:
             self.player_energy = self.player_max_energy
         pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
-    def change_power(self, value):
-        self.power = value
-        if self.power < 0:
-            self.power = 0
-        if self.power > self.max_power:
-            self.power = self.max_power
-        pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
-
-    def decrease_number_of_arrows(self):
-        self.number_of_arrows -= 1
-        pygame.event.post(pygame.event.Event(settings.DECREASE_NUMBER_OF_ARROWS_EVENT))
-        if self.number_of_arrows == 0:
-            self.set_next_weapon()
-
-    def level_completed(self):
-        if len(self.collected_diamonds) == len(self.diamonds):
-            if self.check_is_last_level():
-                # Note: Only for temporary solution
-                self.game_over = True
-                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
-            else:
-                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+    def set_player_max_energy(self):
+        self.player_energy = self.player_max_energy
 
     def set_player_movement(self, x, y):
         # Set vector
@@ -156,26 +171,11 @@ class GameState:
     def set_player_tile_position(self, position):
         self.player_tile_position = position
 
-    def set_next_weapon(self):
-        self.weapon_type = self.weapon_type.next()
-        while self.weapon_type not in self.collected_weapons:
-            self.weapon_type = self.weapon_type.next()
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
-
-    def set_previous_weapon(self):
-        self.weapon_type = self.weapon_type.previous()
-        while self.weapon_type not in self.collected_weapons:
-            self.weapon_type = self.weapon_type.previous()
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
-
-    def life_lost(self):
-        self.lives -= 1
-        if self.lives > 0:
-            self.reset_player_direction()
-            pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
-        else:
-            pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
-
-    def set_max_energy(self):
-        self.player_energy = self.player_max_energy
+    def change_power(self, value):
+        self.power = value
+        if self.power < 0:
+            self.power = 0
+        if self.power > self.max_power:
+            self.power = self.max_power
+        pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
 
