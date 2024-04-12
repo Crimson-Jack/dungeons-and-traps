@@ -39,7 +39,7 @@ class SwordWeapon(CustomDrawSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Other
-        self.power = 5
+        self.damage_power = 5
 
     def set_costume(self, new_direction, index):
         self.direction = new_direction
@@ -102,7 +102,7 @@ class SwordWeapon(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
-                        sprite.decrease_energy(self.power)
+                        sprite.decrease_energy(self.damage_power)
                         if sprite.get_energy() == 0:
                             sprite.kill()
                         collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center

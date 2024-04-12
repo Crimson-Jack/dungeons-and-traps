@@ -6,25 +6,28 @@ import weapon_type
 
 class GameState:
     def __init__(self):
+        self.game_over = False
         self.level = 0
         self.lives = 2
         self.score = 0
-        self.game_over = False
+
+        self.weapon_type = weapon_type.WeaponType.NONE
+        self.collected_weapons = [self.weapon_type]
+        self.number_of_arrows = 0
         self.diamonds = list()
         self.collected_diamonds = list()
         self.keys = list()
         self.collected_keys = list()
-        self.max_energy = 800
-        self.energy = self.max_energy
+
         self.max_power = 100
         self.power = 0
+
+        self.player_max_energy = 800
+        self.player_energy = self.player_max_energy
         self.player_tile_position = (0, 0)
         self.player_movement_vector = pygame.Vector2()
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
-        self.weapon_type = weapon_type.WeaponType.NONE
-        self.collected_weapons = [self.weapon_type]
-        self.number_of_arrows = 0
 
     def get_level(self):
         return settings.LEVELS[self.level]
@@ -82,20 +85,20 @@ class GameState:
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
         return count
 
-    def decrease_energy(self):
-        self.energy -= 1
-        if self.energy == 0:
+    def decrease_player_energy(self):
+        self.player_energy -= 1
+        if self.player_energy == 0:
             self.life_lost()
         else:
             pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
-    def increase_energy(self, volume, is_percentage=True):
+    def increase_player_energy(self, volume, is_percentage=True):
         if is_percentage:
-            self.energy += volume * self.max_energy / 100
+            self.player_energy += volume * self.player_max_energy / 100
         else:
-            self.energy += volume
-        if self.energy > self.max_energy:
-            self.energy = self.max_energy
+            self.player_energy += volume
+        if self.player_energy > self.player_max_energy:
+            self.player_energy = self.player_max_energy
         pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
     def change_power(self, value):
@@ -174,5 +177,5 @@ class GameState:
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
 
     def set_max_energy(self):
-        self.energy = self.max_energy
+        self.player_energy = self.player_max_energy
 

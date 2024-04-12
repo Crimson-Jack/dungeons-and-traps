@@ -28,7 +28,7 @@ class Arrow(CustomDrawSprite):
 
         # Properties
         self.speed = game_helper.multiply_by_tile_size_ratio(13)
-        self.power = 60
+        self.damage_power = 60
 
     def get_image(self):
         sprites = sprite_helper.get_all_arrow_sprites()
@@ -80,7 +80,7 @@ class Arrow(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
-                        sprite.decrease_energy(self.power)
+                        sprite.decrease_energy(self.damage_power)
                         if sprite.get_energy() == 0:
                             sprite.kill()
                         collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center

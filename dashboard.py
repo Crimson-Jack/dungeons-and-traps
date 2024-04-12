@@ -54,7 +54,7 @@ class Dashboard:
                 ((61, 80), (189, 244, 180)),    # Light green
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
-        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_energy,
+        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.player_max_energy,
                               bar_colors, True, settings.BORDER_COLOR, True,
                               settings.SURFACE_COLOR, True, 'Energy', settings.BAR_TEXT_COLOR)
 
@@ -89,7 +89,7 @@ class Dashboard:
             count += 1
 
     def draw_energy_bar(self, surface):
-        self.energy_bar.draw(surface, self.game_state.energy)
+        self.energy_bar.draw(surface, self.game_state.player_energy)
 
     def draw_keys(self, surface):
         keys_text = self.basic_font.render(f'Keys', True, self.text_color)

@@ -7,4 +7,4 @@ class EnergyPowerup(Powerup):
         self.volume = powerup_volume
 
     def activate(self):
-        self.game_state.increase_energy(self.volume)
+        self.game_state.increase_player_energy(self.volume)
