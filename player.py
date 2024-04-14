@@ -200,7 +200,7 @@ class Player(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
-                    self.game_state.decrease_player_energy()
+                    self.game_state.decrease_player_energy(sprite.get_damage_power())
 
         # Check collision with hostile force sprites
         for sprite in self.hostile_force_sprites:
@@ -208,7 +208,7 @@ class Player(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
-                    self.game_state.decrease_player_energy()
+                    self.game_state.decrease_player_energy(sprite.get_damage_power())
 
         # Check collision with obstacle and moving obstacle sprites
         if direction_name == 'horizontal':

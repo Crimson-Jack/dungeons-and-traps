@@ -6,8 +6,11 @@ from ghost_tile_details import GhostTileDetails
 
 
 class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, tile_details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Base
+        self.damage_power = details.damage_power
 
         # Sprite animation variables
         self.sprites = []
@@ -27,7 +30,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.hit_box = self.rect
 
         # Movement variables
-        self.speed = tile_details.speed
+        self.speed = details.speed
         self.default_movement_vector = pygame.math.Vector2((1, 0))
         self.movement_vector = pygame.math.Vector2(self.default_movement_vector)
         self.obstacle_map = obstacle_map
@@ -228,3 +231,6 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
             # Set new image
             self.image = self.sprites[self.costume_index]
+
+    def get_damage_power(self):
+        return self.damage_power

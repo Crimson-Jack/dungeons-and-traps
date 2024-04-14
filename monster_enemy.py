@@ -18,6 +18,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Base
         self.name = name
+        self.damage_power = details.damage_power
 
         # Energy
         self.max_energy = details.energy
@@ -331,3 +332,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+
+    def get_damage_power(self):
+        return self.damage_power

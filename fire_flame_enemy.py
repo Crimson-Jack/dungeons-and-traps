@@ -8,6 +8,9 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
     def __init__(self, frames, position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
+        # Base
+        self.damage_power = details.damage_power
+
         # Sprite animation variables
         self.sprites = frames
         self.number_of_sprites = len(frames)
@@ -105,3 +108,6 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
             # Set new image
             self.set_new_image()
+
+    def get_damage_power(self):
+        return self.damage_power

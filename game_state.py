@@ -117,12 +117,13 @@ class GameState:
         self.lives += 1
         pygame.event.post(pygame.event.Event(settings.COLLECT_LIFE_EVENT))
 
-    def decrease_player_energy(self):
-        self.player_energy -= 1
-        if self.player_energy == 0:
-            self.life_lost()
-        else:
-            pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
+    def decrease_player_energy(self, damage_power=1):
+        if self.player_energy > 0:
+            self.player_energy -= damage_power
+            if self.player_energy <= 0:
+                self.life_lost()
+            else:
+                pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
 
     def increase_player_energy(self, volume, is_percentage=True):
         if is_percentage:
