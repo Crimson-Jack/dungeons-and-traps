@@ -20,7 +20,7 @@ class MovingObstacle(CustomDrawSprite):
         # Power variables to move obstacle
         self.power = 0
         self.power_step = 5
-        self.power_needed_to_move_obstacle = self.game_state.max_power
+        self.power_needed_to_move_obstacle = 100
 
         # Create power bar
         bar_width = settings.TILE_SIZE - game_helper.multiply_by_tile_size_ratio(10)
@@ -32,7 +32,7 @@ class MovingObstacle(CustomDrawSprite):
             ((50, 75), (114, 0, 20)),
             ((75, 100), (0, 0, 0))
         ])
-        self.power_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.max_power, bar_colors,
+        self.power_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.power_needed_to_move_obstacle, bar_colors,
                              True, (64, 78, 107), True, (254, 240, 202), False, None, None)
 
     def calculate_new_position(self, movement_direction):
@@ -120,16 +120,13 @@ class MovingObstacle(CustomDrawSprite):
     def decrease_power(self):
         if self.power > 0:
             self.power -= self.power_step // 2
-            self.game_state.change_power(self.power)
 
     def increase_power(self):
         if self.power <= self.power_needed_to_move_obstacle:
             self.power += self.power_step
-            self.game_state.change_power(self.power)
 
     def reset_power(self):
-        self.power = self.game_state.max_power // 3
-        self.game_state.change_power(self.power)
+        self.power = self.power_needed_to_move_obstacle // 3
 
     def update(self):
         super().update()

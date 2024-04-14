@@ -26,9 +26,6 @@ class GameState:
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
 
-        self.max_power = 100
-        self.power = 0
-
     def get_level(self):
         return settings.LEVELS[self.level]
 
@@ -170,12 +167,3 @@ class GameState:
 
     def set_player_tile_position(self, position):
         self.player_tile_position = position
-
-    def change_power(self, value):
-        self.power = value
-        if self.power < 0:
-            self.power = 0
-        if self.power > self.max_power:
-            self.power = self.max_power
-        pygame.event.post(pygame.event.Event(settings.CHANGE_POWER_EVENT))
-

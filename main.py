@@ -120,9 +120,6 @@ class Game:
                 if event.type == settings.CHANGE_ENERGY_EVENT:
                     self.refresh_dashboard_surface()
 
-                if event.type == settings.CHANGE_POWER_EVENT:
-                    self.refresh_dashboard_surface()
-
                 if event.type == settings.CHANGE_WEAPON_EVENT:
                     self.refresh_header_surface()
 
