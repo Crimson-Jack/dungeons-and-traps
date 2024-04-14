@@ -6,6 +6,7 @@ from bar import Bar
 from color_set import ColorSet
 from diamond import Diamond
 from key import Key
+from key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Dashboard:
@@ -99,7 +100,7 @@ class Dashboard:
         for item in self.game_state.keys:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Key(item.base_size_image, item.rect.topleft, list(), item.key_name)
+                transparent_image = Key(item.base_size_image, item.rect.topleft, list(), KeyAndDoorTileDetails.from_properties(item.key_name))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:

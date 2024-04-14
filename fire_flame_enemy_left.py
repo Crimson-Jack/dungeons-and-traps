@@ -1,11 +1,12 @@
 import pygame
 import settings
 from fire_flame_enemy import FireFlameEnemy
+from fire_flame_details import FireFlameTileDetails
 
 
 class FireFlameEnemyLeft(FireFlameEnemy):
-    def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
-        super().__init__(sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites)
+    def __init__(self, sprites, position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
+        super().__init__(sprites, position, groups, details, moving_obstacle_sprites)
 
         # Rectangle from image
         self.rect = self.image.get_rect(topleft=position)

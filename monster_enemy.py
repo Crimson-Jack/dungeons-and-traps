@@ -8,10 +8,11 @@ from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from enemy_with_brain import EnemyWithBrain
 from breadth_first_search_helper import BreadthFirstSearchHelper
 from enemy_with_energy import EnemyWithEnergy
+from monster_tile_details import MonsterTileDetails
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, name, speed, start_delay, energy, obstacle_map, game_state,
+    def __init__(self, frames, position, groups, name, details: MonsterTileDetails, obstacle_map, game_state,
                  moving_obstacle_sprites):
         super().__init__(groups)
 
@@ -19,7 +20,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.name = name
 
         # Energy
-        self.max_energy = energy
+        self.max_energy = details.energy
         self.energy = self.max_energy
 
         # Sprite animation variables
@@ -49,10 +50,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.game_state = game_state
 
         # Movement variables
-        self.speed = speed
+        self.speed = details.speed
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
-        self.start_delay = start_delay
+        self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
         self.range = 10
 

@@ -1,16 +1,17 @@
 import pygame
 import settings
 import game_helper
+from key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Door(pygame.sprite.Sprite):
-    def __init__(self, image, position, groups, key_name, obstacle_map):
+    def __init__(self, image, position, groups, details: KeyAndDoorTileDetails, obstacle_map):
         super().__init__(groups)
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect.inflate(int(game_helper.multiply_by_tile_size_ratio(0)),
                                          int(game_helper.multiply_by_tile_size_ratio(-40)))
-        self.key_name = key_name
+        self.key_name = details.key_name
         self.obstacle_map = obstacle_map
 
     def kill(self):

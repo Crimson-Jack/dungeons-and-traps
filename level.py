@@ -11,13 +11,17 @@ from stone import Stone
 from ground import Ground
 from diamond import Diamond
 from door import Door
-from powerup_factory import PowerupFactory
 from key import Key
+from key_and_door_tile_details import KeyAndDoorTileDetails
 from spider_enemy import SpiderEnemy
+from spider_tile_details import SpiderTileDetails
 from ghost_enemy import GhostEnemy
+from ghost_tile_details import GhostTileDetails
 from fire_flame_enemy_left import FireFlameEnemyLeft
 from fire_flame_enemy_right import FireFlameEnemyRight
+from fire_flame_details import FireFlameTileDetails
 from monster_enemy import MonsterEnemy
+from monster_tile_details import MonsterTileDetails
 from player import Player
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
@@ -25,6 +29,7 @@ from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 from tombstone import Tombstone
 from particle_effect import ParticleEffect
+from powerup_factory import PowerupFactory
 
 
 class Level:
@@ -173,22 +178,21 @@ class Level:
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
                         powerup_name = tmx_helper.get_property('powerup_name', '', item, layer)
                         powerup_volume = tmx_helper.get_property('powerup_volume', 0, item, layer)
-                        self.powerup_factory.create(powerup_name, image=item.image, position=(x, y), groups=groups,
-                                                    game_state=self.game_state, powerup_volume=powerup_volume)
+                        self.powerup_factory.create(powerup_name,
+                                                    image=item.image,
+                                                    position=(x, y),
+                                                    groups=groups,
+                                                    game_state=self.game_state,
+                                                    powerup_volume=powerup_volume)
 
                     if layer_name == 'key':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
-                        key_name = tmx_helper.get_property('key_name', '', item, layer)
-                        self.game_state.add_key(Key(item.image, (x, y), groups, key_name))
+                        tile_details = KeyAndDoorTileDetails(item, layer)
+                        self.game_state.add_key(Key(item.image, (x, y), groups, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
                         groups = (self.bottom_sprites_layer, self.hostile_force_sprites)
-                        direction = tmx_helper.get_property('direction', 'right', item, layer)
-                        fire_length = int(tmx_helper.get_property('fire_length', 1, item, layer))
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
-                        motion_schedule = game_helper.convert_string_to_tuple(
-                            tmx_helper.get_property('motion_schedule', '', item, layer))
+                        tile_details = FireFlameTileDetails(item, layer)
 
                         # Get all sprites
                         sprites = []
@@ -197,46 +201,34 @@ class Level:
                             for frame in frames:
                                 sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
 
-                        if direction == 'left':
-                            FireFlameEnemyLeft(sprites, (x, y), groups, speed, fire_length, motion_schedule,
-                                               self.moving_obstacle_sprites)
-                        elif direction == 'right':
-                            FireFlameEnemyRight(sprites, (x, y), groups, speed, fire_length, motion_schedule,
-                                                self.moving_obstacle_sprites)
+                        if tile_details.direction == 'left':
+                            FireFlameEnemyLeft(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
+                        elif tile_details.direction == 'right':
+                            FireFlameEnemyRight(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
 
                     elif layer_name == 'door':
                         groups = (self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites)
-                        key_name = tmx_helper.get_property('key_name', '', item, layer)
-                        Door(item.image, (x, y), groups, key_name, self.obstacle_map.items)
+                        tile_details = KeyAndDoorTileDetails(item, layer)
+                        Door(item.image, (x, y), groups, tile_details, self.obstacle_map.items)
 
                     elif layer_name == 'monster-enemy':
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
-                        start_delay = tmx_helper.get_property('start_delay', 10, item, layer)
-                        energy = int(tmx_helper.get_property('energy', 100, item, layer))
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        MonsterEnemy(frames, (x, y), groups, item.name, speed, start_delay, energy,
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        tile_details = MonsterTileDetails(item, layer)
+                        MonsterEnemy(frames, (x, y), groups, item.name, tile_details,
                                      self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
 
                     elif layer_name == 'spider-enemy':
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
-                        net_length = int(tmx_helper.get_property('net_length', 1, item, layer))
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
-                        motion_schedule = game_helper.convert_string_to_tuple(
-                            tmx_helper.get_property('motion_schedule', '', item, layer))
-                        energy = int(tmx_helper.get_property('energy', 100, item, layer))
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        SpiderEnemy(frames, (x, y), groups, item.name, speed, net_length, motion_schedule, energy,
-                                    self.moving_obstacle_sprites)
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        tile_details = SpiderTileDetails(item, layer)
+                        SpiderEnemy(frames, (x, y), groups, item.name, tile_details, self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
-                        speed = game_helper.multiply_by_tile_size_ratio(
-                            tmx_helper.get_property('speed', 1, item, layer))
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        GhostEnemy(frames, (x, y), groups, speed, self.obstacle_map.items, self.moving_obstacle_sprites)
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        tile_details = GhostTileDetails(item, layer)
+                        GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items, self.moving_obstacle_sprites)
 
     def run(self):
         self.clean_up()

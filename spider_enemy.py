@@ -4,19 +4,20 @@ import settings
 import sprite_helper
 from custom_draw_sprite import CustomDrawSprite
 from enemy_with_energy import EnemyWithEnergy
+from spider_tile_details import SpiderTileDetails
 
 
 class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
-    def __init__(self, frames, position, groups, name, speed, net_length, motion_schedule, energy, moving_obstacle_sprites):
+    def __init__(self, frames, position, groups, name, details: SpiderTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
         self.name = name
 
         # Energy
-        self.max_energy = energy
+        self.max_energy = details.energy
         self.energy = self.max_energy
-        self.energy_increase_step = energy / 400
+        self.energy_increase_step = self.energy / 400
 
         # Sprite animation variables
         self.sprites = []
@@ -44,12 +45,12 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         # Movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2((0, 1))
-        self.speed = speed
+        self.speed = details.speed
         self.min_y_position = self.rect.top
-        self.max_net_length = settings.TILE_SIZE * net_length
+        self.max_net_length = settings.TILE_SIZE * details.net_length
 
         # Motion variables
-        self.motion_schedule = motion_schedule
+        self.motion_schedule = details.motion_schedule
         self.step_counter = 0
         self.motion_index = 0
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]

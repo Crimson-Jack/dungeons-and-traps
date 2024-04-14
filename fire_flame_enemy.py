@@ -1,10 +1,11 @@
 import settings
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from fire_flame_details import  FireFlameTileDetails
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
-    def __init__(self, sprites, position, groups, speed, length, motion_schedule, moving_obstacle_sprites):
+    def __init__(self, sprites, position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Sprite animation variables
@@ -22,11 +23,11 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
         # Movement variables
         self.is_moving = False
-        self.speed = speed
-        self.max_fire_length = length * settings.TILE_SIZE
+        self.speed = details.speed
+        self.max_fire_length = details.fire_length * settings.TILE_SIZE
 
         # Motion variables
-        self.motion_schedule = motion_schedule
+        self.motion_schedule = details.motion_schedule
         self.motion_step_counter = 0
         self.motion_index = 0
         self.motion_switching_threshold = self.motion_schedule[self.motion_index]
