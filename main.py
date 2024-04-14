@@ -41,6 +41,9 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
+    def clean_screen(self):
+        self.screen.fill((0, 0, 0))
+
     def refresh_header_surface(self):
         self.header.clean()
         self.header.draw()
@@ -88,6 +91,7 @@ class Game:
                             self.level_completed = False
                             self.message_box = None
                             self.game_state.set_next_level()
+                            self.clean_screen()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
                             self.refresh_header_surface()
                             self.refresh_dashboard_surface()
