@@ -191,20 +191,13 @@ class Level:
                         self.game_state.add_key(Key(item.image, (x, y), groups, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
+                        frames = tmx_helper.get_frames(self.tmx_data, item)
                         groups = (self.bottom_sprites_layer, self.hostile_force_sprites)
                         tile_details = FireFlameTileDetails(item, layer)
-
-                        # Get all sprites
-                        sprites = []
-                        frames = item.properties.get('frames')
-                        if frames is not None:
-                            for frame in frames:
-                                sprites.append(self.tmx_data.get_tile_image_by_gid(frame.gid))
-
                         if tile_details.direction == 'left':
-                            FireFlameEnemyLeft(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
+                            FireFlameEnemyLeft(frames, (x, y), groups, tile_details, self.moving_obstacle_sprites)
                         elif tile_details.direction == 'right':
-                            FireFlameEnemyRight(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
+                            FireFlameEnemyRight(frames, (x, y), groups, tile_details, self.moving_obstacle_sprites)
 
                     elif layer_name == 'door':
                         groups = (self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites)
