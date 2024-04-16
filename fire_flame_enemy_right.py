@@ -1,7 +1,7 @@
 import pygame
 import settings
 from fire_flame_enemy import FireFlameEnemy
-from fire_flame_details import FireFlameTileDetails
+from fire_flame_tile_details import FireFlameTileDetails
 
 
 class FireFlameEnemyRight(FireFlameEnemy):

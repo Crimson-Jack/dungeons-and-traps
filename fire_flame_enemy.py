@@ -1,7 +1,7 @@
 import settings
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
-from fire_flame_details import  FireFlameTileDetails
+from fire_flame_tile_details import  FireFlameTileDetails
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):

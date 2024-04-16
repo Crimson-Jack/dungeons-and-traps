@@ -20,7 +20,7 @@ from ghost_enemy import GhostEnemy
 from ghost_tile_details import GhostTileDetails
 from fire_flame_enemy_left import FireFlameEnemyLeft
 from fire_flame_enemy_right import FireFlameEnemyRight
-from fire_flame_details import FireFlameTileDetails
+from fire_flame_tile_details import FireFlameTileDetails
 from monster_enemy import MonsterEnemy
 from monster_tile_details import MonsterTileDetails
 from player import Player
@@ -31,6 +31,7 @@ from camera_group_with_y_sort import CameraGroupWithYSort
 from tombstone import Tombstone
 from particle_effect import ParticleEffect
 from powerup_factory import PowerupFactory
+from powerup_tile_details import PowerupTileDetails
 
 
 class Level:
@@ -178,14 +179,12 @@ class Level:
 
                     if layer_name == 'powerup':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
-                        powerup_name = tmx_helper.get_property('powerup_name', '', item, layer)
-                        powerup_volume = tmx_helper.get_property('powerup_volume', 0, item, layer)
-                        self.powerup_factory.create(powerup_name,
+                        tile_details = PowerupTileDetails(item, layer)
+                        self.powerup_factory.create(tile_details,
                                                     image=item.image,
                                                     position=(x, y),
                                                     groups=groups,
-                                                    game_state=self.game_state,
-                                                    powerup_volume=powerup_volume)
+                                                    game_state=self.game_state)
 
                     if layer_name == 'key':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
