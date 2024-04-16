@@ -23,21 +23,26 @@ class Game:
             # Regular window
             self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
 
-        self.game_surface = pygame.Surface((settings.WIDTH,
-                                            settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT))
-        self.header_surface = pygame.Surface((settings.WIDTH, settings.HEADER_HEIGHT))
-        self.dashboard_surface = pygame.Surface((settings.WIDTH, settings.DASHBOARD_HEIGHT))
+        # Game surfaces
+        game_surface_size = settings.WIDTH, settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT
+        header_surface_size = settings.WIDTH, settings.HEADER_HEIGHT
+        dashboard_surface_size = settings.WIDTH, settings.DASHBOARD_HEIGHT
+        self.game_surface = pygame.Surface(game_surface_size)
+        self.header_surface = pygame.Surface(header_surface_size)
+        self.dashboard_surface = pygame.Surface(dashboard_surface_size)
 
+        # Game states
         self.game_state = GameState()
-        self.level = Level(self.screen, self.game_surface, self.game_state)
-        self.message_box = None
-        self.header = Header(self.screen, self.header_surface, self.game_state)
-        self.refresh_header_surface()
-        self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
-        self.refresh_dashboard_surface()
-
         self.paused = False
         self.level_completed = False
+
+        # Game components
+        self.level = Level(self.screen, self.game_surface, self.game_state)
+        self.header = Header(self.screen, self.header_surface, self.game_state)
+        self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
+        self.message_dialog = None
+        self.refresh_header_surface()
+        self.refresh_dashboard_surface()
 
         self.clock = pygame.time.Clock()
 
@@ -81,12 +86,12 @@ class Game:
                         if not self.level_completed and not self.game_state.game_over:
                             self.paused = not self.paused
                             if self.paused:
-                                self.show_paused_message()
+                                self.show_paused_message_dialog()
                             else:
-                                self.message_box = None
+                                self.dispose_message_dialog()
                         elif self.level_completed:
                             self.level_completed = False
-                            self.message_box = None
+                            self.dispose_message_dialog()
                             self.game_state.set_next_level()
                             self.clean_screen()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
@@ -130,7 +135,7 @@ class Game:
 
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     self.level_completed = True
-                    self.show_level_completed_message()
+                    self.show_level_completed_message_dialog()
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     self.level.refresh_obstacle_map()
@@ -169,38 +174,40 @@ class Game:
                 if event.type == settings.GAME_OVER_SUMMARY_EVENT:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
                     self.game_state.game_over = True
-                    self.show_game_over_message()
+                    self.show_game_over_message_dialog()
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:
-                # Refresh game surface
                 self.level.run()
-            if self.message_box is not None:
-                # Draw message box
-                self.message_box.draw()
+
+            if self.message_dialog is not None:
+                self.message_dialog.draw()
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
 
-    def show_paused_message(self):
+    def dispose_message_dialog(self):
+        self.message_dialog = None
+
+    def show_paused_message_dialog(self):
         messages = list()
         messages.append(Message('PAUSED', settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Press the SPACE button to return to the game', settings.TEXT_COLOR, 20))
-        self.message_box = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR,
-                                      settings.MESSAGE_BORDER_COLOR, messages)
+        self.message_dialog = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                         settings.MESSAGE_BORDER_COLOR, messages)
 
-    def show_level_completed_message(self):
+    def show_level_completed_message_dialog(self):
         messages = list()
         messages.append(Message('CONGRATULATIONS', settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Level completed', settings.TEXT_COLOR, 20))
         messages.append(Message('Press the SPACE button to go to the next level', settings.TEXT_COLOR, 16))
-        self.message_box = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
-                                      settings.MESSAGE_BORDER_COLOR, messages)
+        self.message_dialog = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                         settings.MESSAGE_BORDER_COLOR, messages)
 
-    def show_game_over_message(self):
+    def show_game_over_message_dialog(self):
         messages = list()
         messages.append(Message('GAME OVER', settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        self.message_box = MessageBox(self.screen, 800, 100, 20, settings.MESSAGE_BACKGROUND_COLOR,
-                                      settings.MESSAGE_BORDER_COLOR, messages)
+        self.message_dialog = MessageBox(self.screen, 800, 100, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                         settings.MESSAGE_BORDER_COLOR, messages)
 
 
 if __name__ == '__main__':

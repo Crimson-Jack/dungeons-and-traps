@@ -226,7 +226,7 @@ class Level:
                         GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items, self.moving_obstacle_sprites)
 
     def run(self):
-        self.clean_up()
+        self.remove_unnecessary_effects()
 
         # Run an update method foreach sprite from the group
         # NOTE: bottom_layer_background_sprites is static
@@ -299,8 +299,7 @@ class Level:
     def respawn_player(self):
         self.player.respawn()
 
-    def clean_up(self):
-        # Remove unnecessary items
+    def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:
             if tombstone.is_expired():
                 self.tombstones.remove(tombstone)
