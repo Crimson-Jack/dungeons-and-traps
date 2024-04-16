@@ -14,21 +14,21 @@ class Game:
         pygame.display.set_caption('Dungeons and traps')
 
         if settings.FULL_SCREEN_MODE:
-            # NOTE: full screen mode
+            # Full screen mode
             monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
             settings.WIDTH = pygame.display.Info().current_w
             settings.HEIGHT = pygame.display.Info().current_h
             self.screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
         else:
+            # Regular window
             self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
 
-        self.game_surface = pygame.Surface(
-            (settings.WIDTH, settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT))
+        self.game_surface = pygame.Surface((settings.WIDTH,
+                                            settings.HEIGHT - settings.HEADER_HEIGHT - settings.DASHBOARD_HEIGHT))
         self.header_surface = pygame.Surface((settings.WIDTH, settings.HEADER_HEIGHT))
         self.dashboard_surface = pygame.Surface((settings.WIDTH, settings.DASHBOARD_HEIGHT))
 
         self.game_state = GameState()
-
         self.level = Level(self.screen, self.game_surface, self.game_state)
         self.message_box = None
         self.header = Header(self.screen, self.header_surface, self.game_state)
@@ -81,10 +81,7 @@ class Game:
                         if not self.level_completed and not self.game_state.game_over:
                             self.paused = not self.paused
                             if self.paused:
-                                messages = list()
-                                messages.append(Message('PAUSED', settings.HIGHLIGHTED_TEXT_COLOR, 40))
-                                messages.append(Message('Press the SPACE button to return to the game', settings.TEXT_COLOR, 20))
-                                self.message_box = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR, settings.MESSAGE_BORDER_COLOR, messages)
+                                self.show_paused_message()
                             else:
                                 self.message_box = None
                         elif self.level_completed:
@@ -133,12 +130,7 @@ class Game:
 
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     self.level_completed = True
-                    messages = list()
-                    messages.append(Message('CONGRATULATIONS', settings.HIGHLIGHTED_TEXT_COLOR, 40))
-                    messages.append(Message('Level completed', settings.TEXT_COLOR, 20))
-                    messages.append(Message('Press the SPACE button to go to the next level', settings.TEXT_COLOR, 16))
-                    self.message_box = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
-                                                  settings.MESSAGE_BORDER_COLOR, messages)
+                    self.show_level_completed_message()
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
                     self.level.refresh_obstacle_map()
@@ -172,15 +164,12 @@ class Game:
 
                 if event.type == settings.GAME_OVER_EVENT:
                     self.level.show_player_tombstone()
-                    pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 1500)
+                    pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 500)
 
                 if event.type == settings.GAME_OVER_SUMMARY_EVENT:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
                     self.game_state.game_over = True
-                    messages = list()
-                    messages.append(Message('GAME OVER', settings.HIGHLIGHTED_TEXT_COLOR, 40))
-                    self.message_box = MessageBox(self.screen, 800, 100, 20, settings.MESSAGE_BACKGROUND_COLOR,
-                                                  settings.MESSAGE_BORDER_COLOR, messages)
+                    self.show_game_over_message()
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:
                 # Refresh game surface
@@ -191,6 +180,27 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(settings.FPS)
+
+    def show_paused_message(self):
+        messages = list()
+        messages.append(Message('PAUSED', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        messages.append(Message('Press the SPACE button to return to the game', settings.TEXT_COLOR, 20))
+        self.message_box = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                      settings.MESSAGE_BORDER_COLOR, messages)
+
+    def show_level_completed_message(self):
+        messages = list()
+        messages.append(Message('CONGRATULATIONS', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        messages.append(Message('Level completed', settings.TEXT_COLOR, 20))
+        messages.append(Message('Press the SPACE button to go to the next level', settings.TEXT_COLOR, 16))
+        self.message_box = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                      settings.MESSAGE_BORDER_COLOR, messages)
+
+    def show_game_over_message(self):
+        messages = list()
+        messages.append(Message('GAME OVER', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        self.message_box = MessageBox(self.screen, 800, 100, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                      settings.MESSAGE_BORDER_COLOR, messages)
 
 
 if __name__ == '__main__':
