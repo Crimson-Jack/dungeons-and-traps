@@ -173,7 +173,6 @@ class Game:
 
                 if event.type == settings.GAME_OVER_SUMMARY_EVENT:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
-                    self.game_state.game_over = True
                     self.show_game_over_message_dialog()
 
             if not self.paused and not self.level_completed and not self.game_state.game_over:

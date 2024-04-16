@@ -7,6 +7,12 @@ from diamond import Diamond
 
 class GameState:
     def __init__(self):
+        self.LEVELS = [
+            'basic.tmx',
+            'level_01.tmx',
+            'level_02.tmx'
+        ]
+
         self.game_over = False
         self.level = 0
         self.lives = 2
@@ -28,10 +34,10 @@ class GameState:
         self.player_is_using_weapon = False
 
     def get_level(self):
-        return settings.LEVELS[self.level]
+        return self.LEVELS[self.level]
 
     def check_is_last_level(self):
-        return self.level == len(settings.LEVELS) - 1
+        return self.level == len(self.LEVELS) - 1
 
     def set_next_level(self):
         self.level += 1
@@ -56,6 +62,7 @@ class GameState:
             self.reset_player_direction()
             pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
         else:
+            self.game_over = True
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
 
     def collect_sword_powerup(self):

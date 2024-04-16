@@ -50,12 +50,5 @@ PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
 RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
 COLLECT_LIFE_EVENT = pygame.event.custom_type()
 
-# Levels
-LEVELS = [
-    'basic.tmx',
-    'level_01.tmx',
-    'level_02.tmx'
-]
-
 # Create debugger
 debugger = Debug()
