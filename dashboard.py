@@ -101,7 +101,7 @@ class Dashboard:
         for item in self.game_state.keys:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Key(item.base_size_image, item.rect.topleft, list(), KeyAndDoorTileDetails.from_properties(item.key_name))
+                transparent_image = Key(item.base_size_image, item.rect.topleft, list(), item.game_state, KeyAndDoorTileDetails.from_properties(item.key_name))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
@@ -117,7 +117,7 @@ class Dashboard:
         for item in self.game_state.diamonds:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Diamond(item.base_size_image, item.rect.topleft, list(), DiamondTileDetails.from_properties(item.score))
+                transparent_image = Diamond(item.base_size_image, item.rect.topleft, list(), item.game_state, DiamondTileDetails.from_properties(item.score))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:

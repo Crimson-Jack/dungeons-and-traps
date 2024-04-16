@@ -157,7 +157,7 @@ class Level:
                 elif layer_name == 'diamond':
                     groups = (self.bottom_sprites_layer, self.collectable_sprites)
                     tile_details = DiamondTileDetails(None, layer)
-                    self.game_state.add_diamond(Diamond(image, (x, y), groups, tile_details))
+                    self.game_state.add_diamond(Diamond(image, (x, y), groups, self.game_state, tile_details))
 
                 elif layer_name == 'obstacle':
                     groups = (self.middle_sprites_layer, self.obstacle_sprites)
@@ -189,7 +189,7 @@ class Level:
                     if layer_name == 'key':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
                         tile_details = KeyAndDoorTileDetails(item, layer)
-                        self.game_state.add_key(Key(item.image, (x, y), groups, tile_details))
+                        self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)

@@ -62,8 +62,10 @@ class GameState:
             self.reset_player_direction()
             pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
         else:
-            self.game_over = True
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+
+    def set_game_over(self):
+        self.game_over = True
 
     def collect_sword_powerup(self):
         self.collected_weapons.append(weapon_type.WeaponType.SWORD)

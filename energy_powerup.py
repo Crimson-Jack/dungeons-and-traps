@@ -8,3 +8,4 @@ class EnergyPowerup(Powerup):
 
     def activate(self):
         self.game_state.increase_player_energy(self.volume)
+        super().kill()

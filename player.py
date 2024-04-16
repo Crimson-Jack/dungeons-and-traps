@@ -186,13 +186,12 @@ class Player(CustomDrawSprite):
         for sprite in self.collectable_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if isinstance(sprite, diamond.Diamond):
-                    self.game_state.collect_diamond(sprite)
+                    sprite.collect()
                 elif isinstance(sprite, key.Key):
-                    self.game_state.collect_key(sprite)
+                    sprite.collect()
                 elif isinstance(sprite, powerup.Powerup):
+                    sprite.collect()
                     sprite.activate()
-                # Remove
-                sprite.kill()
 
         # Check collision with enemy sprites
         for sprite in self.enemy_sprites:
