@@ -282,8 +282,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             if self.energy < 0:
                 self.energy = 0
 
-    def get_energy(self):
-        return self.energy
+        if self.energy == 0:
+            super().kill()
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite

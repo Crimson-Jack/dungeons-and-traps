@@ -113,10 +113,18 @@ class Level:
             x, y = tmx_helper.convert_position(player_object.x, player_object.y, self.tmx_data.tilewidth,
                                                self.tmx_data.tileheight)
             speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
-            return Player((x, y), (self.middle_sprites_layer,), [self.middle_sprites_layer],
-                          speed, self.exit_points, self.obstacle_sprites, self.moving_obstacle_sprites,
-                          self.passage_sprites, self.collectable_sprites, self.enemy_sprites,
-                          self.hostile_force_sprites, self.game_state)
+            return Player((x, y),
+                          (self.middle_sprites_layer,),
+                          [self.middle_sprites_layer],
+                          speed,
+                          self.exit_points,
+                          self.obstacle_sprites,
+                          self.moving_obstacle_sprites,
+                          self.passage_sprites,
+                          self.collectable_sprites,
+                          self.enemy_sprites,
+                          self.hostile_force_sprites,
+                          self.game_state)
 
     def create_exit_point(self):
         exit_object = self.tmx_data.get_object_by_name('exit-point')

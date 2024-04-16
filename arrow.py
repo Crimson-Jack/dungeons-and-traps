@@ -81,8 +81,6 @@ class Arrow(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
                         sprite.decrease_energy(self.damage_power)
-                        if sprite.get_energy() == 0:
-                            sprite.kill()
                         collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
                         pygame.event.post(
                             pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,

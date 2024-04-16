@@ -185,8 +185,8 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
         self.image = self.sprites[self.costume_index][int(self.calculate_costume_index_for_damaged_state())]
 
-    def get_energy(self):
-        return self.energy
+        if self.energy == 0:
+            self.kill()
 
     def calculate_costume_index_for_damaged_state(self):
         new_index = self.energy // self.costume_switching_threshold_for_damaged_state
