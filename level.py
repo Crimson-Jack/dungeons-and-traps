@@ -10,6 +10,7 @@ from wall import Wall
 from stone import Stone
 from ground import Ground
 from diamond import Diamond
+from diamond_tile_details import DiamondTileDetails
 from door import Door
 from key import Key
 from key_and_door_tile_details import KeyAndDoorTileDetails
@@ -154,7 +155,8 @@ class Level:
 
                 elif layer_name == 'diamond':
                     groups = (self.bottom_sprites_layer, self.collectable_sprites)
-                    self.game_state.add_diamond(Diamond(image, (x, y), groups))
+                    tile_details = DiamondTileDetails(None, layer)
+                    self.game_state.add_diamond(Diamond(image, (x, y), groups, tile_details))
 
                 elif layer_name == 'obstacle':
                     groups = (self.middle_sprites_layer, self.obstacle_sprites)

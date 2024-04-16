@@ -110,6 +110,7 @@ class Game:
 
                 # Custom events
                 if event.type == settings.COLLECT_DIAMOND_EVENT:
+                    self.refresh_header_surface()
                     self.refresh_dashboard_surface()
 
                 if event.type == settings.COLLECT_KEY_EVENT:

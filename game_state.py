@@ -2,6 +2,7 @@ import pygame
 import settings
 import direction
 import weapon_type
+from diamond import Diamond
 
 
 class GameState:
@@ -96,8 +97,9 @@ class GameState:
     def add_diamond(self, diamond):
         self.diamonds.append(diamond)
 
-    def collect_diamond(self, diamond):
+    def collect_diamond(self, diamond: Diamond):
         self.collected_diamonds.append(diamond)
+        self.score += diamond.score
         pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
             pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))

@@ -7,6 +7,7 @@ from color_set import ColorSet
 from diamond import Diamond
 from key import Key
 from key_and_door_tile_details import KeyAndDoorTileDetails
+from diamond_tile_details import DiamondTileDetails
 
 
 class Dashboard:
@@ -109,14 +110,14 @@ class Dashboard:
             count += 1
 
     def draw_diamonds(self, surface):
-        diamonds_text = self.basic_font.render(f'Gems', True, self.text_color)
+        diamonds_text = self.basic_font.render(f'Gems', True, self.text_color, )
         surface.blit(diamonds_text, (self.margin * 2, self.right_bottom_surface.get_height() // 2 - diamonds_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
         for item in self.game_state.diamonds:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Diamond(item.base_size_image, item.rect.topleft, list())
+                transparent_image = Diamond(item.base_size_image, item.rect.topleft, list(), DiamondTileDetails.from_properties(item.score))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
             else:
