@@ -129,6 +129,7 @@
      <property name="energy" type="int" value="200"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="3"/>
+     <property name="score" type="int" value="125"/>
      <property name="speed" type="float" value="4"/>
     </properties>
    </object>
@@ -138,6 +139,7 @@
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="3"/>
+     <property name="score" type="int" value="80"/>
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
@@ -147,6 +149,7 @@
      <property name="energy" type="int" value="400"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="1"/>
+     <property name="score" type="int" value="150"/>
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
@@ -191,6 +194,7 @@
     <properties>
      <property name="damage_power" type="int" value="8"/>
      <property name="energy" type="int" value="400"/>
+     <property name="score" type="int" value="250"/>
      <property name="speed" type="float" value="4"/>
      <property name="start_delay" type="int" value="0"/>
     </properties>
@@ -199,6 +203,7 @@
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
+     <property name="score" type="int" value="50"/>
      <property name="speed" type="float" value="2"/>
      <property name="start_delay" type="int" value="15"/>
     </properties>
@@ -207,6 +212,7 @@
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
      <property name="speed" type="float" value="3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
@@ -215,6 +221,7 @@
     <properties>
      <property name="damage_power" type="int" value="8"/>
      <property name="energy" type="int" value="400"/>
+     <property name="score" type="int" value="250"/>
      <property name="speed" type="float" value="4"/>
      <property name="start_delay" type="int" value="0"/>
     </properties>
@@ -224,7 +231,7 @@
  <group id="22" name="collectable">
   <layer id="4" name="diamond" width="30" height="20">
    <properties>
-    <property name="score" type="int" value="50"/>
+    <property name="score" type="int" value="500"/>
    </properties>
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -253,16 +260,19 @@
    <object id="52" name="key-blue" gid="269" x="80" y="96" width="16" height="16">
     <properties>
      <property name="key_name" value="blue"/>
+     <property name="score" type="int" value="100"/>
     </properties>
    </object>
    <object id="59" name="key-gold" gid="272" x="176" y="272" width="16" height="16">
     <properties>
      <property name="key_name" value="gold"/>
+     <property name="score" type="int" value="100"/>
     </properties>
    </object>
    <object id="60" name="key-green" gid="271" x="64" y="112" width="16" height="16">
     <properties>
      <property name="key_name" value="green"/>
+     <property name="score" type="int" value="100"/>
     </properties>
    </object>
   </objectgroup>

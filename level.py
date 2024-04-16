@@ -173,10 +173,12 @@ class Level:
 
                 elif layer_name == 'moving-obstacle':
                     groups = (self.middle_sprites_layer, self.moving_obstacle_sprites)
-                    collision_sprites = [self.enemy_sprites, self.obstacle_sprites, self.moving_obstacle_sprites,
+                    collision_sprites = [self.enemy_sprites,
+                                         self.obstacle_sprites,
+                                         self.moving_obstacle_sprites,
                                          self.collectable_sprites]
                     # Note: stone can be moved, so the list instead of tuple for position is used
-                    Stone(image, [x, y], groups, self.obstacle_map.items, collision_sprites, self.game_state)
+                    Stone(image, [x, y], groups, self.game_state, self.obstacle_map.items, collision_sprites)
 
     def create_sprites_from_object_layer(self, layer_name):
         layer = self.tmx_data.get_layer_by_name(layer_name)
@@ -217,20 +219,22 @@ class Level:
                         frames = tmx_helper.get_frames(self.tmx_data, item)
                         groups = (self.top_sprites_layer, self.enemy_sprites)
                         tile_details = MonsterTileDetails(item, layer)
-                        MonsterEnemy(frames, (x, y), groups, item.name, tile_details,
-                                     self.obstacle_map.items, self.game_state, self.moving_obstacle_sprites)
+                        MonsterEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
+                                     self.obstacle_map.items, self.moving_obstacle_sprites)
 
                     elif layer_name == 'spider-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
                         groups = (self.top_sprites_layer, self.enemy_sprites)
                         tile_details = SpiderTileDetails(item, layer)
-                        SpiderEnemy(frames, (x, y), groups, item.name, tile_details, self.moving_obstacle_sprites)
+                        SpiderEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
+                                    self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
                         groups = (self.top_sprites_layer, self.enemy_sprites)
                         tile_details = GhostTileDetails(item, layer)
-                        GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items, self.moving_obstacle_sprites)
+                        GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items,
+                                   self.moving_obstacle_sprites)
 
     def run(self):
         self.remove_unnecessary_effects()

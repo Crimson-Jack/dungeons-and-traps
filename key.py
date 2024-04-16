@@ -9,6 +9,7 @@ class Key(ItemToCollect):
         self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-35),
                                          game_helper.multiply_by_tile_size_ratio(-35))
         self.key_name = details.key_name
+        self.score = details.score
 
     def collect(self):
         self.game_state.collect_key(self)

@@ -8,7 +8,7 @@ from color_set import ColorSet
 
 
 class MovingObstacle(CustomDrawSprite):
-    def __init__(self, image, position, groups, obstacle_map_items, collision_sprites, game_state):
+    def __init__(self, image, position, groups, game_state, obstacle_map_items, collision_sprites):
         super().__init__(groups)
         self.position = position
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))

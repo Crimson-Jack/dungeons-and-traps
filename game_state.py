@@ -3,6 +3,7 @@ import settings
 import direction
 import weapon_type
 from diamond import Diamond
+from key import Key
 
 
 class GameState:
@@ -67,6 +68,10 @@ class GameState:
     def set_game_over(self):
         self.game_over = True
 
+    def increase_score(self, value):
+        self.score += value
+        pygame.event.post(pygame.event.Event(settings.CHANGE_SCORE_EVENT))
+
     def collect_sword_powerup(self):
         self.collected_weapons.append(weapon_type.WeaponType.SWORD)
         self.remove_none_weapon()
@@ -103,7 +108,7 @@ class GameState:
         if self.number_of_arrows == 0:
             self.set_next_weapon()
 
-    def add_diamond(self, diamond):
+    def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
 
     def collect_diamond(self, diamond: Diamond):
@@ -113,11 +118,12 @@ class GameState:
         if len(self.collected_diamonds) == len(self.diamonds):
             pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
 
-    def add_key(self, key):
+    def add_key(self, key: Key):
         self.keys.append(key)
 
-    def collect_key(self, key):
+    def collect_key(self, key: Key):
         self.collected_keys.append(key)
+        self.score += key.score
         pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
 
     def check_is_key_collected(self, key_name):

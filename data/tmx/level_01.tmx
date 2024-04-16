@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="8">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="9">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="17" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="33" source="../tsx/player.tsx"/>
@@ -7,6 +7,7 @@
  <tileset firstgid="89" source="../tsx/spider-enemy-small.tsx"/>
  <tileset firstgid="109" source="../tsx/collectable.tsx"/>
  <tileset firstgid="125" source="../tsx/monster-enemy-red.tsx"/>
+ <tileset firstgid="133" source="../tsx/powerup.tsx"/>
  <layer id="1" name="ground" width="16" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -76,22 +77,28 @@
   <objectgroup id="5" name="spider-enemy">
    <object id="4" name="spider-enemy-small" gid="89" x="224" y="32" width="16" height="16">
     <properties>
+     <property name="damage_power" type="int" value="1"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="3"/>
+     <property name="score" type="int" value="80"/>
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
    <object id="5" name="spider-enemy-small" gid="89" x="32" y="208" width="16" height="16">
     <properties>
+     <property name="damage_power" type="int" value="1"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="2"/>
+     <property name="score" type="int" value="80"/>
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
    <object id="6" name="spider-enemy-small" gid="89" x="16" y="96" width="16" height="16">
     <properties>
+     <property name="damage_power" type="int" value="1"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="8"/>
+     <property name="score" type="int" value="80"/>
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
@@ -108,6 +115,9 @@
  </group>
  <group id="9" name="collectable">
   <layer id="6" name="diamond" width="16" height="16">
+   <properties>
+    <property name="score" type="int" value="500"/>
+   </properties>
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -128,7 +138,14 @@
 </data>
   </layer>
   <objectgroup id="12" name="key"/>
-  <objectgroup id="11" name="powerup"/>
+  <objectgroup id="11" name="powerup">
+   <object id="8" name="powerup-bow" gid="134" x="176" y="48" width="16" height="16">
+    <properties>
+     <property name="powerup_name" value="bow"/>
+     <property name="powerup_volume" type="int" value="10"/>
+    </properties>
+   </object>
+  </objectgroup>
  </group>
  <objectgroup id="10" name="door"/>
 </map>

@@ -12,6 +12,7 @@ class SpiderTileDetails(TileDetails):
         self._motion_schedule = game_helper.convert_string_to_tuple(tmx_helper.get_property('motion_schedule', '', self.tile, self.layer))
         self._energy = int(tmx_helper.get_property('energy', 100, self.tile, self.layer))
         self._damage_power = int(tmx_helper.get_property('damage_power', 1, self.tile, self.layer))
+        self._score = int(tmx_helper.get_property('score', 0, self.tile, self.layer))
 
     @property
     def speed(self):
@@ -32,3 +33,7 @@ class SpiderTileDetails(TileDetails):
     @property
     def damage_power(self):
         return self._damage_power
+
+    @property
+    def score(self):
+        return self._score

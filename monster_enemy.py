@@ -12,13 +12,15 @@ from monster_tile_details import MonsterTileDetails
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, name, details: MonsterTileDetails, obstacle_map, game_state,
+    def __init__(self, frames, position, groups, game_state, details: MonsterTileDetails, name, obstacle_map,
                  moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
+        self.game_state = game_state
         self.name = name
         self.damage_power = details.damage_power
+        self.score = details.score
 
         # Energy
         self.max_energy = details.energy
@@ -46,9 +48,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Obstacle map
         self.obstacle_map = obstacle_map
-
-        # Game state
-        self.game_state = game_state
 
         # Movement variables
         self.speed = details.speed
@@ -283,7 +282,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 self.energy = 0
 
         if self.energy == 0:
-            super().kill()
+            self.kill()
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite
@@ -331,6 +330,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def kill(self):
         super().kill()
+        self.game_state.increase_score(self.score)
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):

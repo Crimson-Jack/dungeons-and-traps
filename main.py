@@ -111,11 +111,15 @@ class Game:
                         self.game_state.set_player_movement(1, 0)
 
                 # Custom events
+                if event.type == settings.CHANGE_SCORE_EVENT:
+                    self.refresh_header_surface()
+
                 if event.type == settings.COLLECT_DIAMOND_EVENT:
                     self.refresh_header_surface()
                     self.refresh_dashboard_surface()
 
                 if event.type == settings.COLLECT_KEY_EVENT:
+                    self.refresh_header_surface()
                     self.refresh_dashboard_surface()
 
                 if event.type == settings.COLLECT_LIFE_EVENT:

@@ -49,6 +49,7 @@ PARTICLE_EVENT = pygame.event.custom_type()
 PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
 RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
 COLLECT_LIFE_EVENT = pygame.event.custom_type()
+CHANGE_SCORE_EVENT = pygame.event.custom_type()
 
 # Create debugger
 debugger = Debug()
