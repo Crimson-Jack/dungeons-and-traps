@@ -10,10 +10,11 @@ def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height
             columns.append(0)
         rows.append(columns)
 
-    for item in object_group:
-        tile_x = int(item.x // tile_width)
-        tile_y = int(item.y // tile_height)
-        rows[tile_y][tile_x] = 1
+    if object_group is not None:
+        for item in object_group:
+            tile_x = int(item.x // tile_width)
+            tile_y = int(item.y // tile_height)
+            rows[tile_y][tile_x] = 1
 
     return rows
 

@@ -84,13 +84,8 @@ class Level:
         self.enemy_sprites = pygame.sprite.Group()
         self.hostile_force_sprites = pygame.sprite.Group()
 
-        # Create obstacle map and combine all layers with obstacles
-        self.obstacle_map = ObstacleMap([
-            self.tmx_data.get_layer_by_name('obstacle').data,
-            self.tmx_data.get_layer_by_name('moving-obstacle').data,
-            tmx_helper.get_object_group_data_map(self.tmx_data.get_layer_by_name('door'), size_of_map,
-                                                 self.tmx_data.tilewidth, self.tmx_data.tileheight)
-        ])
+        # Create obstacle map
+        self.obstacle_map = self.create_obstacle_map(size_of_map)
 
         # Create sprites
         self.create_sprites()
@@ -106,10 +101,36 @@ class Level:
         # Particle effects
         self.particle_effects = list()
 
-    def create_player(self):
-        player_object = self.tmx_data.get_object_by_name('player')
+    def create_obstacle_map(self, size_of_map):
+        # Create obstacle map and combine all layers with obstacles
+        obstacle_data = None
+        moving_obstacle_data = None
+        door_layer_data = None
 
-        if player_object.visible:
+        for layer in self.tmx_data.visible_layers:
+            if layer.name == 'obstacle':
+                obstacle_data = self.tmx_data.get_layer_by_name('obstacle').data
+            if layer.name == 'moving-obstacle':
+                moving_obstacle_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
+            if layer.name == 'door':
+                door_layer_data = tmx_helper.get_object_group_data_map(self.tmx_data.get_layer_by_name('door'),
+                                                                       size_of_map,
+                                                                       self.tmx_data.tilewidth,
+                                                                       self.tmx_data.tileheight)
+
+        return ObstacleMap([
+            obstacle_data,
+            moving_obstacle_data,
+            door_layer_data
+        ])
+
+    def create_player(self):
+        try:
+            player_object = self.tmx_data.get_object_by_name('player')
+        except:
+            player_object = None
+
+        if player_object is not None and player_object.visible:
             x, y = tmx_helper.convert_position(player_object.x, player_object.y, self.tmx_data.tilewidth,
                                                self.tmx_data.tileheight)
             speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
@@ -127,9 +148,12 @@ class Level:
                           self.game_state)
 
     def create_exit_point(self):
-        exit_object = self.tmx_data.get_object_by_name('exit-point')
+        try:
+            exit_object = self.tmx_data.get_object_by_name('exit-point')
+        except:
+            exit_object = None
 
-        if exit_object.visible:
+        if exit_object is not None and exit_object.visible:
             tile_x = int(exit_object.x // self.tmx_data.tilewidth)
             tile_y = int(exit_object.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
@@ -152,8 +176,12 @@ class Level:
         self.create_sprites_from_object_layer('ghost-enemy')
 
     def create_sprites_from_layer(self, layer_name):
-        layer = self.tmx_data.get_layer_by_name(layer_name)
-        if layer.visible:
+        try:
+            layer = self.tmx_data.get_layer_by_name(layer_name)
+        except:
+            layer = None
+
+        if layer is not None and layer.visible:
             for tile_x, tile_y, image in layer.tiles():
                 x = tile_x * settings.TILE_SIZE
                 y = tile_y * settings.TILE_SIZE
@@ -181,8 +209,12 @@ class Level:
                     Stone(image, [x, y], groups, self.game_state, self.obstacle_map.items, collision_sprites)
 
     def create_sprites_from_object_layer(self, layer_name):
-        layer = self.tmx_data.get_layer_by_name(layer_name)
-        if layer.visible:
+        try:
+            layer = self.tmx_data.get_layer_by_name(layer_name)
+        except:
+            layer = None
+
+        if layer is not None and layer.visible:
             for item in layer:
                 if item.visible:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)

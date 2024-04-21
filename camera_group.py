@@ -14,6 +14,9 @@ class CameraGroup(pygame.sprite.Group):
         self.size_of_map = size_of_map
 
     def set_map_offset(self, player):
+        if player is None:
+            return
+
         # The maximum width (x) for the whole map
         max_width = settings.TILE_SIZE * self.size_of_map[0]
         # The maximum height (y) for the whole map

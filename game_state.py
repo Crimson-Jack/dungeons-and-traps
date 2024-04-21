@@ -9,6 +9,7 @@ from key import Key
 class GameState:
     def __init__(self):
         self.LEVELS = [
+            # 's01_level_01.tmx',
             'basic.tmx',
             'level_01.tmx',
             'level_02.tmx'

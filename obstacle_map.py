@@ -1,20 +1,26 @@
 class ObstacleMap:
     def __init__(self, layers=[]):
-        self.layers = layers
-        self.items = []
+        self.items = list()
+        self.layers = list()
 
-        # Get size: layers, rows and columns
-        self.number_of_layers = len(layers)
-        self.number_of_rows = 0
-        self.number_of_columns = 0
+        if layers is not None:
+            for layer in layers:
+                if layer is not None:
+                    self.layers.append(layer)
 
-        if self.number_of_layers > 0:
-            self.number_of_rows = len(layers[0])
-            if self.number_of_rows > 0:
-                self.number_of_columns = len(layers[0][0])
+        if len(self.layers) > 0:
+            # Get size: layers, rows and columns
+            self.number_of_layers = len(self.layers)
+            self.number_of_rows = 0
+            self.number_of_columns = 0
 
-        # Combine layers into one layer
-        self.combine_all_layers()
+            if self.number_of_layers > 0:
+                self.number_of_rows = len(self.layers[0])
+                if self.number_of_rows > 0:
+                    self.number_of_columns = len(self.layers[0][0])
+
+            # Combine layers into one layer
+            self.combine_all_layers()
 
     def combine_all_layers(self):
         for row in range(0, self.number_of_rows):
