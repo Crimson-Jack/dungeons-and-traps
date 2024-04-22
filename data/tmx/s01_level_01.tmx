@@ -72,7 +72,7 @@
      <property name="energy" type="int" value="100"/>
      <property name="score" type="int" value="50"/>
      <property name="speed" type="float" value="2"/>
-     <property name="start_delay" type="int" value="15"/>
+     <property name="start_delay" type="int" value="0"/>
     </properties>
    </object>
   </objectgroup>
@@ -107,7 +107,7 @@
      <property name="speed" type="float" value="3.5"/>
     </properties>
    </object>
-   <object id="19" name="spider-enemy-small" gid="125" x="224" y="240" width="16" height="16">
+   <object id="19" name="spider-enemy-small" gid="125" x="208" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="100"/>
