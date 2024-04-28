@@ -10,6 +10,7 @@ class GameState:
     def __init__(self):
         self.LEVELS = [
             's01_level_01.tmx',
+            's01_level_02.tmx',
             'basic.tmx',
             'level_01.tmx',
             'level_02.tmx'

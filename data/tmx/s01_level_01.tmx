@@ -38,11 +38,11 @@
     <property name="speed" type="float" value="5"/>
    </properties>
   </object>
-  <object id="14" name="exit-point" gid="101" x="288" y="64" width="16" height="16"/>
+  <object id="14" name="exit-point" gid="101" x="272" y="48" width="16" height="16"/>
  </objectgroup>
  <layer id="2" name="obstacle" width="20" height="20">
   <data encoding="csv">
-19,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,19,
+17,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,18,
 20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,
 20,0,0,23,0,0,0,0,0,0,0,0,0,0,0,0,23,0,0,20,
 28,21,21,27,21,21,21,21,21,21,21,21,21,21,21,21,22,24,0,20,
@@ -52,7 +52,7 @@
 20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
 20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
 20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
-29,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
+20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
 20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
 20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
 20,0,0,28,21,21,21,21,18,0,0,17,21,21,21,21,29,0,0,20,
@@ -79,7 +79,7 @@
   <objectgroup id="11" name="spider-enemy">
    <object id="16" name="spider-enemy-small" gid="125" x="288" y="32" width="16" height="16">
     <properties>
-     <property name="damage_power" type="int" value="1"/>
+     <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="3"/>
@@ -89,7 +89,7 @@
    </object>
    <object id="17" name="spider-enemy-small" gid="125" x="272" y="288" width="16" height="16">
     <properties>
-     <property name="damage_power" type="int" value="1"/>
+     <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="0, 30, 30"/>
      <property name="net_length" type="int" value="1"/>
@@ -99,7 +99,7 @@
    </object>
    <object id="18" name="spider-enemy-small" gid="125" x="224" y="80" width="16" height="16">
     <properties>
-     <property name="damage_power" type="int" value="1"/>
+     <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="0, 20, 20, 20, 50"/>
      <property name="net_length" type="int" value="1"/>
@@ -109,7 +109,7 @@
    </object>
    <object id="19" name="spider-enemy-small" gid="125" x="208" y="240" width="16" height="16">
     <properties>
-     <property name="damage_power" type="int" value="1"/>
+     <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="30"/>
      <property name="net_length" type="int" value="1"/>
@@ -119,7 +119,7 @@
    </object>
    <object id="20" name="spider-enemy-small" gid="125" x="112" y="240" width="16" height="16">
     <properties>
-     <property name="damage_power" type="int" value="1"/>
+     <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="motion_schedule" value="60"/>
      <property name="net_length" type="int" value="1"/>
