@@ -14,7 +14,7 @@ HEADER_HEIGHT = 80
 DASHBOARD_HEIGHT = 144
 
 # Tile size
-TILE_SIZE = 64
+TILE_SIZE = 48
 # Source (originate) tile size
 SOURCE_TILE_SIZE = 16
 
