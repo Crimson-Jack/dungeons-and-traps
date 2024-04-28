@@ -8,33 +8,34 @@ class CameraGroup(pygame.sprite.Group):
     def __init__(self, game_surface, size_of_map):
         super().__init__()
         self.game_surface = game_surface
-        self.half_width = self.game_surface.get_size()[0] // 2
-        self.half_height = self.game_surface.get_size()[1] // 2
+        self.game_surface_width = self.game_surface.get_size()[0]
+        self.game_surface_height = self.game_surface.get_size()[1]
+        self.game_surface_half_width = self.game_surface_width // 2
+        self.game_surface_half_height = self.game_surface_height // 2
         self.offset = pygame.math.Vector2()
         self.size_of_map = size_of_map
+        self.map_width = settings.TILE_SIZE * self.size_of_map[0]
+        self.map_height = settings.TILE_SIZE * self.size_of_map[1]
 
     def set_map_offset(self, player):
         if player is None:
             return
 
-        # The maximum width (x) for the whole map
-        max_width = settings.TILE_SIZE * self.size_of_map[0]
-        # The maximum height (y) for the whole map
-        max_height = settings.TILE_SIZE * self.size_of_map[1]
+        if self.map_width > self.game_surface_width:
+            if player.rect.centerx < self.game_surface_half_width:
+                self.offset.x = 0
+            elif self.map_width - player.rect.centerx < self.game_surface_half_width:
+                self.offset.x = self.game_surface.get_size()[0] - self.map_width
+            else:
+                self.offset.x = self.game_surface_half_width - player.rect.centerx
 
-        if player.rect.centerx < self.half_width:
-            self.offset.x = 0
-        elif max_width - player.rect.centerx < self.half_width:
-            self.offset.y = self.game_surface.get_size()[0] - max_width
-        else:
-            self.offset.x = self.half_width - player.rect.centerx
-
-        if player.rect.centery < self.half_height:
-            self.offset.y = 0
-        elif max_height - player.rect.centery < self.half_height:
-            self.offset.y = self.game_surface.get_size()[1] - max_height
-        else:
-            self.offset.y = self.half_height - player.rect.centery
+        if self.map_height > self.game_surface_height:
+            if player.rect.centery < self.game_surface_half_height:
+                self.offset.y = 0
+            elif self.map_height - player.rect.centery < self.game_surface_half_height:
+                self.offset.y = self.game_surface.get_size()[1] - self.map_height
+            else:
+                self.offset.y = self.game_surface_half_height - player.rect.centery
 
     def get_map_offset(self):
         return self.offset
