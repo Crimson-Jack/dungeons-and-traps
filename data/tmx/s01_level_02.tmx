@@ -132,7 +132,7 @@
    </object>
   </objectgroup>
   <objectgroup id="13" name="monster-enemy">
-   <object id="25" name="monster-enemy-blue" gid="185" x="144" y="240" width="16" height="16">
+   <object id="25" name="monster-enemy-blue" gid="185" x="96" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>

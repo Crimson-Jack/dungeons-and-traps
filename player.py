@@ -1,8 +1,7 @@
 import pygame
-import diamond
 import direction
+import item_to_collect
 import powerup
-import key
 import settings
 import game_helper
 import weapon_type
@@ -182,15 +181,12 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 self.game_state.level_completed()
 
-        # Check collision with collectable sprites
+        # Check collision with collectable sprites and powerups
         for sprite in self.collectable_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if isinstance(sprite, diamond.Diamond):
+                if isinstance(sprite, item_to_collect.ItemToCollect):
                     sprite.collect()
-                elif isinstance(sprite, key.Key):
-                    sprite.collect()
-                elif isinstance(sprite, powerup.Powerup):
-                    sprite.collect()
+                if isinstance(sprite, powerup.Powerup):
                     sprite.activate()
 
         # Check collision with enemy sprites
@@ -320,8 +316,10 @@ class Player(CustomDrawSprite):
         self.bow_weapon.disarm_weapon()
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
-    def respawn(self):
-        self.change_position(self.position)
+    def respawn(self, position=None):
+        if position is None:
+            position = self.position
+        self.change_position(position)
         self.visible = True
 
     def change_position(self, new_position):

@@ -24,6 +24,7 @@ from fire_flame_tile_details import FireFlameTileDetails
 from monster_enemy import MonsterEnemy
 from monster_tile_details import MonsterTileDetails
 from player import Player
+from check_point import CheckPoint
 from exit_point import ExitPoint
 from blast_effect import BlastEffect
 from camera_group import CameraGroup
@@ -91,6 +92,8 @@ class Level:
         self.create_sprites()
         # Create player
         self.player = self.create_player()
+        # Create check point
+        self.check_point = self.create_check_point()
         # Create exit point
         self.exit_point = self.create_exit_point()
 
@@ -147,6 +150,21 @@ class Level:
                           self.hostile_force_sprites,
                           self.game_state)
 
+    def create_check_point(self):
+        try:
+            check_point = self.tmx_data.get_object_by_name('check-point')
+        except:
+            check_point = None
+
+        if check_point is not None and check_point.visible:
+            tile_x = int(check_point.x // self.tmx_data.tilewidth)
+            tile_y = int(check_point.y // self.tmx_data.tileheight)
+            x = tile_x * settings.TILE_SIZE
+            y = tile_y * settings.TILE_SIZE
+            groups = (self.bottom_background_layer, self.collectable_sprites)
+
+            return CheckPoint(check_point.image, (x, y), groups, self.game_state)
+
     def create_exit_point(self):
         try:
             exit_object = self.tmx_data.get_object_by_name('exit-point')
@@ -158,9 +176,9 @@ class Level:
             tile_y = int(exit_object.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
+            groups = (self.bottom_background_layer, self.exit_points)
 
-            # Add exit point to visible group
-            return ExitPoint(exit_object.image, (x, y), (self.bottom_background_layer, self.exit_points), False)
+            return ExitPoint(exit_object.image, (x, y), groups, False)
 
     def create_sprites(self):
         self.create_sprites_from_layer('ground')
@@ -340,7 +358,7 @@ class Level:
         self.player.show_tombstone()
 
     def respawn_player(self):
-        self.player.respawn()
+        self.player.respawn(self.game_state.get_check_point_position())
 
     def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:

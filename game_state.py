@@ -11,6 +11,7 @@ class GameState:
         self.LEVELS = [
             's01_level_01.tmx',
             's01_level_02.tmx',
+            's01_level_03.tmx',
             'basic.tmx',
             'level_01.tmx',
             'level_02.tmx'
@@ -36,6 +37,8 @@ class GameState:
         self.player_movement_direction = direction.Direction.RIGHT
         self.player_is_using_weapon = False
 
+        self.check_point_position = None
+
     def get_level(self):
         return self.LEVELS[self.level]
 
@@ -49,6 +52,7 @@ class GameState:
         self.keys.clear()
         self.collected_keys.clear()
         self.reset_player_direction()
+        self.check_point_position = None
 
     def level_completed(self):
         if len(self.collected_diamonds) == len(self.diamonds):
@@ -187,3 +191,9 @@ class GameState:
 
     def set_player_tile_position(self, position):
         self.player_tile_position = position
+
+    def collect_check_point(self, position):
+        self.check_point_position = position
+
+    def get_check_point_position(self):
+        return self.check_point_position
