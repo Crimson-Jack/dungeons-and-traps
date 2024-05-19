@@ -94,26 +94,27 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def update(self):
         if self.number_of_sprites > 1:
             self.change_costume()
-
         if self.is_moving:
             self.move()
         else:
-            if self.is_resting:
+            if not self.is_resting:
+                self.set_next_move()
+            else:
                 self.start_delay_counter -= 1
                 if self.start_delay_counter < 0:
+                    self.is_resting = False
                     self.start_delay_counter = self.start_delay
-                    self.set_next_move_after_break()
-            else:
-                self.set_next_move_after_break()
+                    self.set_next_move()
 
-    def set_next_move_after_break(self):
-        if self.try_to_set_movement_vector_from_path():
-            self.is_moving = True
-            self.is_resting = False
-        else:
+    def set_next_move(self):
+        if self.is_player_in_range():
+            self.calculate_path_to_player()
+            if self.try_to_set_movement_vector_from_path():
+                self.is_moving = True
+
+        if not self.is_moving:
             if self.try_to_set_random_movement_vector():
                 self.is_moving = True
-                self.is_resting = False
                 self.path.clear()
 
     def move(self):
@@ -171,15 +172,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 if self.current_position_on_map[1] != self.new_position_on_map[1]:
                     self.current_position_on_map[1] = self.new_position_on_map[1]
 
-                # Stop moving and find out if the next move is possible
-                self.is_moving = False
-                if self.try_to_set_movement_vector_from_path():
-                    self.is_moving = True
-                else:
-                    if self.is_player_in_range():
-                        self.calculate_path_to_player()
-                        if self.try_to_set_movement_vector_from_path():
-                            self.is_moving = True
+                # Find out if the next move is possible
+                if not self.try_to_set_movement_vector_from_path():
+                    self.is_moving = False
 
         # Increase costume step counter
         self.costume_step_counter += 1
