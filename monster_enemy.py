@@ -51,6 +51,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Movement variables
         self.speed = details.speed
+        self.full_speed = self.speed
+        self.not_full_speed = self.speed * 0.1
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
         self.start_delay = details.start_delay
@@ -92,28 +94,27 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def update(self):
         if self.number_of_sprites > 1:
             self.change_costume()
+
         if self.is_moving:
             self.move()
         else:
-            self.start_delay_counter -= 1
-            if self.start_delay_counter < 0:
-                # Reset counter
-                self.start_delay_counter = self.start_delay
-                # Try to find a vector from path
-                self.set_movement_vector()
-                if self.movement_vector:
-                    # If a vector is found, the movement is on
-                    self.is_moving = True
-                    self.is_resting = False
-                else:
-                    # Otherwise, try moving randomly (if is allowed)
-                    self.set_random_movement_vector()
-                    if self.movement_vector:
-                        # If a random vector is found, the movement is on
-                        self.is_moving = True
-                        self.is_resting = False
-                        # The path is not relevant in the random movement
-                        self.path.clear()
+            if self.is_resting:
+                self.start_delay_counter -= 1
+                if self.start_delay_counter < 0:
+                    self.start_delay_counter = self.start_delay
+                    self.set_next_move_after_break()
+            else:
+                self.set_next_move_after_break()
+
+    def set_next_move_after_break(self):
+        if self.try_to_set_movement_vector_from_path():
+            self.is_moving = True
+            self.is_resting = False
+        else:
+            if self.try_to_set_random_movement_vector():
+                self.is_moving = True
+                self.is_resting = False
+                self.path.clear()
 
     def move(self):
         # Calculate real y position
@@ -170,17 +171,15 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 if self.current_position_on_map[1] != self.new_position_on_map[1]:
                     self.current_position_on_map[1] = self.new_position_on_map[1]
 
-                self.set_movement_vector()
-
-                # If the vector is not found, recalculate the path and set a new vector
-                if not self.movement_vector:
+                # Stop moving and find out if the next move is possible
+                self.is_moving = False
+                if self.try_to_set_movement_vector_from_path():
+                    self.is_moving = True
+                else:
                     if self.is_player_in_range():
                         self.calculate_path_to_player()
-                        self.set_movement_vector()
-
-                    # If the vector is still not found, the movement is off
-                    if not self.movement_vector:
-                        self.is_moving = False
+                        if self.try_to_set_movement_vector_from_path():
+                            self.is_moving = True
 
         # Increase costume step counter
         self.costume_step_counter += 1
@@ -197,7 +196,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         return is_collision_detected
 
-    def set_movement_vector(self):
+    def try_to_set_movement_vector_from_path(self):
         movement_vector = None
 
         if self.is_player_in_range():
@@ -210,8 +209,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     break
 
         self.movement_vector = movement_vector
+        return self.movement_vector is not None
 
-    def set_random_movement_vector(self):
+    def try_to_set_random_movement_vector(self):
         movement_vector = None
 
         # Find the first empty tile nearby the monster
@@ -241,6 +241,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 break
 
         self.movement_vector = movement_vector
+        return self.movement_vector is not None
 
     def refresh_obstacle_map(self):
         # The obstacle map has changed - regenerate lists and calculate a new path
