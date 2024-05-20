@@ -52,7 +52,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Movement variables
         self.speed = details.speed
         self.full_speed = self.speed
-        self.not_full_speed = self.speed * 0.1
+        self.not_full_speed = self.speed * 0.6
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
         self.start_delay = details.start_delay
@@ -92,8 +92,16 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     self.obstacles.append((y, x))
 
     def update(self):
+        if len(self.path) > 0:
+            # If path is defined, full speed chase
+            self.speed = self.full_speed
+        else:
+            # If path is not defined, the monster walks slowly
+            self.speed = self.not_full_speed
+
         if self.number_of_sprites > 1:
             self.change_costume()
+
         if self.is_moving:
             self.move()
         else:
@@ -247,6 +255,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
+        # pass
         # Player has changed position - calculate a new path
         if self.is_player_in_range():
             self.calculate_path_to_player()
