@@ -157,7 +157,7 @@
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="speed" type="float" value="5"/>
-     <property name="start_delay" type="int" value="0"/>
+     <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="29" name="monster-enemy-blue" gid="209" x="352" y="240" width="16" height="16">
@@ -166,7 +166,7 @@
      <property name="energy" type="int" value="100"/>
      <property name="score" type="int" value="50"/>
      <property name="speed" type="float" value="2"/>
-     <property name="start_delay" type="int" value="0"/>
+     <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
    <object id="33" name="monster-enemy-green" gid="201" x="304" y="96" width="16" height="16">
@@ -175,7 +175,7 @@
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="speed" type="float" value="4"/>
-     <property name="start_delay" type="int" value="30"/>
+     <property name="start_delay" type="int" value="10"/>
     </properties>
    </object>
   </objectgroup>
