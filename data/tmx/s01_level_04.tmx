@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="35">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="37">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="17" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="33" source="../tsx/building.tsx"/>
@@ -176,6 +176,24 @@
      <property name="score" type="int" value="170"/>
      <property name="speed" type="float" value="4"/>
      <property name="start_delay" type="int" value="10"/>
+    </properties>
+   </object>
+   <object id="35" name="monster-enemy-green" gid="201" x="560" y="224" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="4"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="4"/>
+     <property name="start_delay" type="int" value="10"/>
+    </properties>
+   </object>
+   <object id="36" name="monster-enemy-blue" gid="209" x="480" y="224" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="2"/>
+     <property name="energy" type="int" value="100"/>
+     <property name="score" type="int" value="50"/>
+     <property name="speed" type="float" value="2"/>
+     <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
   </objectgroup>
