@@ -13,7 +13,7 @@ from monster_tile_details import MonsterTileDetails
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, frames, position, groups, game_state, details: MonsterTileDetails, name, obstacle_map,
-                 moving_obstacle_sprites):
+                 moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
         # Base
@@ -80,6 +80,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+        # Hostile forces
+        self.hostile_force_sprites = hostile_force_sprites
+
         # State variables
         self.collided_with_weapon = False
         self.is_resting = False
@@ -114,6 +117,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     self.start_delay_counter = self.start_delay
                     self.set_next_move()
 
+        self.check_collision_with_hostile_forces()
+
     def set_next_move(self):
         if self.is_player_in_range():
             self.calculate_path_to_player()
@@ -147,7 +152,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
 
-        if self.check_collision():
+        if self.check_collision_with_moving_obstacles():
             # Collision with moving obstacle sprites was detected
             # Monster must be moved to the last valid position (using current map position)
             self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
@@ -187,17 +192,22 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Increase costume step counter
         self.costume_step_counter += 1
 
-    def check_collision(self):
+    def check_collision_with_moving_obstacles(self):
         is_collision_detected = False
 
-        # Moving obstacle
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                # Collision was detected
                 is_collision_detected = True
                 break
 
         return is_collision_detected
+
+    def check_collision_with_hostile_forces(self):
+        for sprite in self.hostile_force_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
+                    self.decrease_energy(sprite.get_damage_power())
 
     def try_to_set_movement_vector_from_path(self):
         movement_vector = None

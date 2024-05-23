@@ -270,7 +270,7 @@ class Level:
                         groups = (self.top_sprites_layer, self.enemy_sprites)
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
-                                     self.obstacle_map.items, self.moving_obstacle_sprites)
+                                     self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
