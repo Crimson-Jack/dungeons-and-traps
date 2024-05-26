@@ -23,6 +23,8 @@ from fire_flame_enemy_right import FireFlameEnemyRight
 from fire_flame_tile_details import FireFlameTileDetails
 from monster_enemy import MonsterEnemy
 from monster_tile_details import MonsterTileDetails
+from bat_enemy import BatEnemy
+from bat_tile_details import BatTileDetails
 from player import Player
 from check_point import CheckPoint
 from exit_point import ExitPoint
@@ -192,6 +194,7 @@ class Level:
         self.create_sprites_from_object_layer('monster-enemy')
         self.create_sprites_from_object_layer('spider-enemy')
         self.create_sprites_from_object_layer('ghost-enemy')
+        self.create_sprites_from_object_layer('bat-enemy')
 
     def create_sprites_from_layer(self, layer_name):
         try:
@@ -285,6 +288,13 @@ class Level:
                         tile_details = GhostTileDetails(item, layer)
                         GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items,
                                    self.moving_obstacle_sprites)
+
+                    elif layer_name == 'bat-enemy':
+                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        tile_details = BatTileDetails(item, layer)
+                        BatEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
+                                 self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
     def run(self):
         self.remove_unnecessary_effects()

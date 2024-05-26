@@ -57,6 +57,17 @@ def convert_string_to_tuple(value, separator=','):
     return tuple(map(int, value.split(separator)))
 
 
+def convert_string_to_list_of_tuples(value, separator='|'):
+    """
+    Return a list of tuples from the string.
+
+    :param value: input
+    :param separator: separator
+    :return: list of tuples
+    """
+    return list(map(convert_string_to_tuple, value.split(separator)))
+
+
 def get_tile_by_point(position: tuple):
     """
     Return a tuple with the tile position.
