@@ -1,4 +1,6 @@
 import pygame
+
+import bat_enemy
 import custom_draw_sprite
 import settings
 import monster_enemy
@@ -66,3 +68,12 @@ class CameraGroup(pygame.sprite.Group):
                                                         settings.TILE_SIZE, settings.TILE_SIZE)
                             new_rect.topleft += self.offset
                             pygame.draw.rect(self.game_surface, (0, 255, 255), new_rect, 2)
+
+                # Draw a path of the bat enemy
+                if isinstance(sprite, bat_enemy.BatEnemy):
+                    if sprite.path:
+                        for path_item in sprite.path:
+                            new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
+                                                        settings.TILE_SIZE, settings.TILE_SIZE)
+                            new_rect.topleft += self.offset
+                            pygame.draw.rect(self.game_surface, (0, 0, 255), new_rect, 2)
