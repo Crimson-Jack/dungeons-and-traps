@@ -292,13 +292,9 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
             # Add player position to the end of the path
             self.path.append(self.track_position)
 
-        print(f"calculate_path {self.path}")
-
     def get_next_track_position(self):
         self.track.append(self.track[0])
         self.track.remove(self.track[0])
-
-        print(f"get_next_track_position: {self.track}")
 
         return self.track[0]
 
@@ -324,7 +320,6 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
                     all_blocked = False
                     break
 
-        print(f"check_if_all_track_positions_are_blocked {self.current_position_on_map} {all_blocked}")
         return all_blocked
 
     def decrease_energy(self, energy_decrease_step):
