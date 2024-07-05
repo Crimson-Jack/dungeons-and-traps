@@ -124,20 +124,32 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
                     self.set_next_move()
 
     def set_next_move(self):
-        if self.check_if_all_track_positions_are_blocked():
-            if self.try_to_set_random_movement_vector():
-                self.is_moving = True
-                self.path.clear()
-        else:
-            self.calculate_path()
-            if self.try_to_set_movement_vector_from_path():
-                self.is_moving = True
-
-            if not self.is_moving:
-                self.track_position = self.get_next_track_position()
+        if self.check_can_move():
+            if self.check_if_all_track_positions_are_blocked():
+                if self.try_to_set_random_movement_vector():
+                    self.is_moving = True
+                    self.path.clear()
+            else:
                 self.calculate_path()
                 if self.try_to_set_movement_vector_from_path():
                     self.is_moving = True
+
+                if not self.is_moving:
+                    self.track_position = self.get_next_track_position()
+                    self.calculate_path()
+                    if self.try_to_set_movement_vector_from_path():
+                        self.is_moving = True
+
+    def check_can_move(self):
+        # If all neighbours are obstacles - stop the movement
+        tile_top = self.obstacle_map[self.current_position_on_map[1] - 1][self.current_position_on_map[0]]
+        tile_bottom = self.obstacle_map[self.current_position_on_map[1] + 1][self.current_position_on_map[0]]
+        tile_left = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] - 1]
+        tile_right = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] + 1]
+        if tile_top and tile_bottom and tile_left and tile_right:
+            return False
+        else:
+            return True
 
     def move(self):
         # Calculate real y position
@@ -291,12 +303,26 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         return self.track[0]
 
     def check_if_all_track_positions_are_blocked(self):
+        # Assumption - all route points are blocked
         all_blocked = True
-        track_without_current_position = list(filter(lambda point: point != tuple(self.current_position_on_map), self.track))
+
+        # Remove current position on the map form the track and convert list to set (to remove duplicates)
+        track_without_current_position = set(filter(lambda point: point != tuple(self.current_position_on_map),
+                                                    self.track))
+
         for item in track_without_current_position:
+            # Check whether the track point is located at the location of the obstacle
             if item not in self.obstacles:
-                all_blocked = False
-                break
+                start_position = tuple(self.current_position_on_map)
+                end_position = item
+                # Check whether the track point is reachable
+                is_end_reached, path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
+                                                                                                    self.obstacles,
+                                                                                                    start_position,
+                                                                                                    end_position)
+                if is_end_reached:
+                    all_blocked = False
+                    break
 
         print(f"check_if_all_track_positions_are_blocked {self.current_position_on_map} {all_blocked}")
         return all_blocked
@@ -356,4 +382,3 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
 
     def get_damage_power(self):
         return self.damage_power
-
