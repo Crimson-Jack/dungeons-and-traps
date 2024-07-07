@@ -14,8 +14,6 @@ class GameState:
             # 's01_level_03.tmx',
             # 's01_level_04.tmx',
             'basic.tmx',
-            'level_01.tmx',
-            'level_02.tmx'
         ]
 
         self.game_over = False

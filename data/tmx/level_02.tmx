@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="7">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
- <tileset firstgid="17" source="../tsx/single-wall.tsx"/>
- <tileset firstgid="33" source="../tsx/player.tsx"/>
- <tileset firstgid="73" source="../tsx/misc.tsx"/>
- <tileset firstgid="89" source="../tsx/spider-enemy-small.tsx"/>
- <tileset firstgid="109" source="../tsx/collectable.tsx"/>
+ <tileset firstgid="81" source="../tsx/single-wall.tsx"/>
+ <tileset firstgid="97" source="../tsx/player.tsx"/>
+ <tileset firstgid="137" source="../tsx/misc.tsx"/>
+ <tileset firstgid="153" source="../tsx/spider-enemy-small.tsx"/>
+ <tileset firstgid="173" source="../tsx/collectable.tsx"/>
  <layer id="1" name="ground" width="20" height="16">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -27,27 +27,27 @@
 </data>
  </layer>
  <objectgroup id="4" name="major-game-item">
-  <object id="3" name="exit-point" gid="73" x="160" y="32" width="16" height="16"/>
-  <object id="1" name="player" gid="33" x="16" y="224" width="16" height="16"/>
+  <object id="3" name="exit-point" gid="137" x="160" y="32" width="16" height="16"/>
+  <object id="1" name="player" gid="97" x="16" y="224" width="16" height="16"/>
  </objectgroup>
  <layer id="3" name="obstacle" width="20" height="16">
   <data encoding="csv">
-17,21,21,21,21,21,21,19,21,19,21,19,21,21,21,22,21,19,21,18,
-20,0,0,0,0,0,0,20,0,20,0,31,0,0,0,31,0,31,0,20,
-28,21,18,0,23,0,0,20,0,20,0,0,0,23,0,0,0,0,0,20,
-20,0,20,0,25,21,21,26,0,25,21,21,21,27,21,21,18,0,32,29,
-20,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,20,
-20,0,25,21,21,24,0,23,0,17,21,21,21,21,18,0,28,24,0,20,
-20,0,0,0,0,0,0,20,0,20,0,0,0,0,20,0,20,0,0,20,
-20,0,32,21,18,0,0,31,0,28,21,21,24,0,20,0,25,24,0,20,
-28,24,0,0,25,18,0,0,0,20,0,0,0,0,20,0,0,0,0,20,
-20,0,0,23,0,25,21,24,0,28,21,21,24,0,20,0,17,24,0,20,
-20,0,32,26,0,0,0,0,0,20,0,0,0,0,20,0,20,0,0,20,
-20,0,0,0,0,32,21,21,19,27,21,21,24,0,20,0,28,24,0,20,
-28,21,21,18,0,0,0,0,20,0,0,0,0,0,20,0,20,0,0,20,
-20,0,0,25,21,21,24,0,28,21,21,21,24,0,31,0,25,24,0,20,
-20,0,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,20,
-25,21,21,21,21,21,21,21,27,21,21,21,21,21,21,21,21,21,21,26
+81,85,85,85,85,85,85,83,85,83,85,83,85,85,85,86,85,83,85,82,
+84,0,0,0,0,0,0,84,0,84,0,95,0,0,0,95,0,95,0,84,
+92,85,82,0,87,0,0,84,0,84,0,0,0,87,0,0,0,0,0,84,
+84,0,84,0,89,85,85,90,0,89,85,85,85,91,85,85,82,0,96,93,
+84,0,84,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,0,84,
+84,0,89,85,85,88,0,87,0,81,85,85,85,85,82,0,92,88,0,84,
+84,0,0,0,0,0,0,84,0,84,0,0,0,0,84,0,84,0,0,84,
+84,0,96,85,82,0,0,95,0,92,85,85,88,0,84,0,89,88,0,84,
+92,88,0,0,89,82,0,0,0,84,0,0,0,0,84,0,0,0,0,84,
+84,0,0,87,0,89,85,88,0,92,85,85,88,0,84,0,81,88,0,84,
+84,0,96,90,0,0,0,0,0,84,0,0,0,0,84,0,84,0,0,84,
+84,0,0,0,0,96,85,85,83,91,85,85,88,0,84,0,92,88,0,84,
+92,85,85,82,0,0,0,0,84,0,0,0,0,0,84,0,84,0,0,84,
+84,0,0,89,85,85,88,0,92,85,85,85,88,0,95,0,89,88,0,84,
+84,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,0,84,
+89,85,85,85,85,85,85,85,91,85,85,85,85,85,85,85,85,85,85,90
 </data>
  </layer>
  <layer id="7" name="moving-obstacle" width="20" height="16">
@@ -73,21 +73,21 @@
  <group id="8" name="enemy">
   <objectgroup id="15" name="ghost-enemy"/>
   <objectgroup id="5" name="spider-enemy">
-   <object id="4" name="spider-enemy-small" gid="89" x="288" y="80" width="16" height="16">
+   <object id="4" name="spider-enemy-small" gid="153" x="288" y="80" width="16" height="16">
     <properties>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="4"/>
      <property name="speed" type="float" value="4"/>
     </properties>
    </object>
-   <object id="5" name="spider-enemy-small" gid="89" x="208" y="112" width="16" height="16">
+   <object id="5" name="spider-enemy-small" gid="153" x="208" y="112" width="16" height="16">
     <properties>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="8"/>
      <property name="speed" type="float" value="5"/>
     </properties>
    </object>
-   <object id="6" name="spider-enemy-small" gid="89" x="16" y="64" width="16" height="16">
+   <object id="6" name="spider-enemy-small" gid="153" x="16" y="64" width="16" height="16">
     <properties>
      <property name="motion_schedule" value="0, 60, 30"/>
      <property name="net_length" type="int" value="4"/>
@@ -102,14 +102,14 @@
   <layer id="6" name="diamond" width="20" height="16">
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,0,
-0,0,0,0,0,110,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,176,0,
+0,0,0,0,0,174,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,111,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,175,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,109,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,173,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
