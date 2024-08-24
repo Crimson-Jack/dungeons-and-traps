@@ -14,6 +14,8 @@ from diamond_tile_details import DiamondTileDetails
 from door import Door
 from key import Key
 from key_and_door_tile_details import KeyAndDoorTileDetails
+from teleport import Teleport
+from teleport_tile_details import TeleportTileDetails
 from spider_enemy import SpiderEnemy
 from spider_tile_details import SpiderTileDetails
 from ghost_enemy import GhostEnemy
@@ -83,6 +85,7 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
         self.moving_obstacle_sprites = pygame.sprite.Group()
         self.passage_sprites = pygame.sprite.Group()
+        self.teleport_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
         self.hostile_force_sprites = pygame.sprite.Group()
@@ -147,6 +150,7 @@ class Level:
                           self.obstacle_sprites,
                           self.moving_obstacle_sprites,
                           self.passage_sprites,
+                          self.teleport_sprites,
                           self.collectable_sprites,
                           self.enemy_sprites,
                           self.hostile_force_sprites,
@@ -191,6 +195,7 @@ class Level:
         self.create_sprites_from_object_layer('key')
         self.create_sprites_from_object_layer('fire-flame-enemy')
         self.create_sprites_from_object_layer('door')
+        self.create_sprites_from_object_layer('teleport')
         self.create_sprites_from_object_layer('monster-enemy')
         self.create_sprites_from_object_layer('spider-enemy')
         self.create_sprites_from_object_layer('ghost-enemy')
@@ -267,6 +272,11 @@ class Level:
                         groups = (self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites)
                         tile_details = KeyAndDoorTileDetails(item, layer)
                         Door(item.image, (x, y), groups, tile_details, self.obstacle_map.items)
+
+                    elif layer_name == 'teleport':
+                        groups = (self.bottom_sprites_layer, self.teleport_sprites)
+                        tile_details = TeleportTileDetails(item, layer)
+                        Teleport(item.image, (x, y), groups, tile_details)
 
                     elif layer_name == 'monster-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)

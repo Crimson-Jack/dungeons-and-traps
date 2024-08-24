@@ -13,7 +13,8 @@ from custom_draw_sprite import CustomDrawSprite
 
 class Player(CustomDrawSprite):
     def __init__(self, position, groups, weapon_groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
-                 passage_sprites, collectable_sprites, enemy_sprites, hostile_force_sprites, game_state):
+                 passage_sprites, teleport_sprites, collectable_sprites, enemy_sprites, hostile_force_sprites,
+                 game_state):
         super().__init__(groups)
 
         # Create sprite animation variables
@@ -45,6 +46,7 @@ class Player(CustomDrawSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
         self.obstacle_sprites = obstacle_sprites
         self.passage_sprites = passage_sprites
+        self.teleport_sprites = teleport_sprites
         self.collectable_sprites = collectable_sprites
         self.enemy_sprites = enemy_sprites
         self.hostile_force_sprites = hostile_force_sprites
@@ -180,6 +182,20 @@ class Player(CustomDrawSprite):
         for sprite in self.exit_points:
             if sprite.hit_box.colliderect(self.hit_box):
                 self.game_state.level_completed()
+
+        # Check collision with teleport sprites
+        for sprite in self.teleport_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if not sprite.check_is_selected():
+                    destinations = list(
+                        filter(lambda item: item.port_name == sprite.destination, self.teleport_sprites))
+                    if len(destinations) == 1:
+                        destination = destinations[0]
+                        destination.select()
+                        self.visible = False
+                        self.respawn(destination.rect.topleft)
+            else:
+                sprite.unselect()
 
         # Check collision with collectable sprites and powerups
         for sprite in self.collectable_sprites:
