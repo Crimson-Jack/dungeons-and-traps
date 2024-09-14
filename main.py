@@ -163,12 +163,19 @@ class Game:
 
                 if event.type == settings.PLAYER_LOST_LIFE_EVENT:
                     self.level.show_player_tombstone()
-                    pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 1500)
+                    self.game_state.set_player_max_energy()
+                    pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 2000)
+
+                if event.type == settings.TELEPORT_PLAYER_EVENT:
+                    self.level.add_vanishing_point()
+                    pygame.time.set_timer(
+                        pygame.event.Event(settings.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
+                        2000)
 
                 if event.type == settings.RESPAWN_PLAYER_EVENT:
+                    player_new_position = event.dict.get("position")
                     pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 0)
-                    self.game_state.set_player_max_energy()
-                    self.level.respawn_player()
+                    self.level.respawn_player(player_new_position)
                     self.refresh_dashboard_surface()
 
                 if event.type == settings.GAME_OVER_EVENT:

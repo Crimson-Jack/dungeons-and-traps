@@ -34,6 +34,7 @@ from blast_effect import BlastEffect
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 from tombstone import Tombstone
+from vanishing_point import VanishingPoint
 from particle_effect import ParticleEffect
 from powerup_factory import PowerupFactory
 from powerup_tile_details import PowerupTileDetails
@@ -106,6 +107,8 @@ class Level:
         self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
         # Tombstones
         self.tombstones = list()
+        # Vanishing points
+        self.vanishing_points = list()
         # Particle effects
         self.particle_effects = list()
 
@@ -355,6 +358,9 @@ class Level:
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))
 
+    def add_vanishing_point(self):
+        self.tombstones.append(VanishingPoint(self.player.get_top_left_position(), self.bottom_sprites_layer))
+
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
             ParticleEffect(self.game_surface, position, colors, number_of_sparks,
@@ -378,8 +384,10 @@ class Level:
         self.player.disable()
         self.player.trigger_tombstone_creation()
 
-    def respawn_player(self):
-        self.player.respawn(self.game_state.get_check_point_position())
+    def respawn_player(self, position=None):
+        if position is None:
+            position = self.game_state.get_check_point_position()
+        self.player.respawn(position)
         self.player.enable()
 
     def remove_unnecessary_effects(self):
@@ -387,6 +395,10 @@ class Level:
             if tombstone.is_expired():
                 self.tombstones.remove(tombstone)
                 tombstone.kill()
+        for vanishing_point in self.vanishing_points:
+            if vanishing_point.is_expired():
+                self.vanishing_points.remove(vanishing_point)
+                vanishing_point.kill()
         for particle_effect in self.particle_effects:
             if particle_effect.is_expired():
                 self.particle_effects.remove(particle_effect)

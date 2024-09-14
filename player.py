@@ -139,9 +139,10 @@ class Player(CustomDrawSprite):
 
         # Cast real position to integer and check the collision
         self.hit_box.x = int(self.real_x_position)
-        self.check_collision('horizontal')
+        self.check_horizontal_collision()
         self.hit_box.y = int(self.real_y_position)
-        self.check_collision('vertical')
+        self.check_vertical_collision()
+        self.check_collision()
 
         # If direction was changed
         if self.movement_direction != self.previous_movement_direction:
@@ -175,7 +176,7 @@ class Player(CustomDrawSprite):
         # Increase step counter
         self.step_counter += 1
 
-    def check_collision(self, direction_name):
+    def check_collision(self):
         self.collided_with_enemy = False
 
         # Check collision with exit points
@@ -191,12 +192,16 @@ class Player(CustomDrawSprite):
                         filter(lambda item: item.port_name == sprite.destination, self.teleport_sprites))
                     if len(destinations) == 1:
                         destination = destinations[0]
+                        # Destination is selected = blocked for teleportation
                         destination.select()
+                        # Make the player invisible and trigger teleport event
                         self.disable()
-                        self.respawn(destination.rect.topleft)
-                        self.enable()
+                        pygame.event.post(
+                            pygame.event.Event(settings.TELEPORT_PLAYER_EVENT, {"position": destination.rect.topleft}))
             else:
-                sprite.unselect()
+                if self.visible:
+                    # Unselect = unblock
+                    sprite.unselect()
 
         # Check collision with collectable sprites and powerups
         for sprite in self.collectable_sprites:
@@ -222,14 +227,26 @@ class Player(CustomDrawSprite):
                     self.collided_with_enemy = True
                     self.game_state.decrease_player_energy(sprite.get_damage_power())
 
-        # Check collision with obstacle and moving obstacle sprites
-        if direction_name == 'horizontal':
-            # Obstacle
-            for sprite in self.obstacle_sprites:
-                if sprite.hit_box.colliderect(self.hit_box):
-                    if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
-                        # Remove if key_name matches
-                        sprite.kill()
+    def check_horizontal_collision(self):
+        # Obstacle
+        for sprite in self.obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                    # Remove if key_name matches
+                    sprite.kill()
+                if self.movement_vector.x > 0:
+                    self.hit_box.right = sprite.hit_box.left
+                if self.movement_vector.x < 0:
+                    self.hit_box.left = sprite.hit_box.right
+                # Adjust position after collision
+                self.real_x_position = float(self.hit_box.x)
+                self.real_y_position = float(self.hit_box.y)
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if not sprite.move_obstacle_if_allowed(self.movement_direction):
+                    # Obstacle has not been moved
                     if self.movement_vector.x > 0:
                         self.hit_box.right = sprite.hit_box.left
                     if self.movement_vector.x < 0:
@@ -237,26 +254,27 @@ class Player(CustomDrawSprite):
                     # Adjust position after collision
                     self.real_x_position = float(self.hit_box.x)
                     self.real_y_position = float(self.hit_box.y)
-            # Moving obstacle
-            for sprite in self.moving_obstacle_sprites:
-                if sprite.hit_box.colliderect(self.hit_box):
-                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
-                        # Obstacle has not been moved
-                        if self.movement_vector.x > 0:
-                            self.hit_box.right = sprite.hit_box.left
-                        if self.movement_vector.x < 0:
-                            self.hit_box.left = sprite.hit_box.right
-                        # Adjust position after collision
-                        self.real_x_position = float(self.hit_box.x)
-                        self.real_y_position = float(self.hit_box.y)
 
-        if direction_name == 'vertical':
-            # Obstacle
-            for sprite in self.obstacle_sprites:
-                if sprite.hit_box.colliderect(self.hit_box):
-                    if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
-                        # Remove if key_name matches
-                        sprite.kill()
+    def check_vertical_collision(self):
+        # Obstacle
+        for sprite in self.obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                    # Remove if key_name matches
+                    sprite.kill()
+                if self.movement_vector.y > 0:
+                    self.hit_box.bottom = sprite.hit_box.top
+                if self.movement_vector.y < 0:
+                    self.hit_box.top = sprite.hit_box.bottom
+                # Adjust position after collision
+                self.real_x_position = float(self.hit_box.x)
+                self.real_y_position = float(self.hit_box.y)
+
+        # Moving obstacle
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if not sprite.move_obstacle_if_allowed(self.movement_direction):
+                    # Obstacle has not been moved
                     if self.movement_vector.y > 0:
                         self.hit_box.bottom = sprite.hit_box.top
                     if self.movement_vector.y < 0:
@@ -264,18 +282,6 @@ class Player(CustomDrawSprite):
                     # Adjust position after collision
                     self.real_x_position = float(self.hit_box.x)
                     self.real_y_position = float(self.hit_box.y)
-            # Moving obstacle
-            for sprite in self.moving_obstacle_sprites:
-                if sprite.hit_box.colliderect(self.hit_box):
-                    if not sprite.move_obstacle_if_allowed(self.movement_direction):
-                        # Obstacle has not been moved
-                        if self.movement_vector.y > 0:
-                            self.hit_box.bottom = sprite.hit_box.top
-                        if self.movement_vector.y < 0:
-                            self.hit_box.top = sprite.hit_box.bottom
-                        # Adjust position after collision
-                        self.real_x_position = float(self.hit_box.x)
-                        self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
         if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
@@ -326,6 +332,9 @@ class Player(CustomDrawSprite):
 
     def get_center_point(self):
         return self.hit_box.center
+
+    def get_top_left_position(self):
+        return self.rect.topleft
 
     def disable(self):
         self.visible = False
