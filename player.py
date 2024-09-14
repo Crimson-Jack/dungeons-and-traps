@@ -194,8 +194,9 @@ class Player(CustomDrawSprite):
                         destination = destinations[0]
                         # Destination is selected = blocked for teleportation
                         destination.select()
-                        # Make the player invisible and trigger teleport event
-                        self.disable()
+                        # Player is invisible
+                        self.visible = False
+                        # Trigger teleport event
                         pygame.event.post(
                             pygame.event.Event(settings.TELEPORT_PLAYER_EVENT, {"position": destination.rect.topleft}))
             else:
@@ -333,9 +334,6 @@ class Player(CustomDrawSprite):
     def get_center_point(self):
         return self.hit_box.center
 
-    def get_top_left_position(self):
-        return self.rect.topleft
-
     def disable(self):
         self.visible = False
         self.sword_weapon.disarm_weapon()
@@ -346,6 +344,9 @@ class Player(CustomDrawSprite):
 
     def trigger_tombstone_creation(self):
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+
+    def trigger_vanishing_point_creation(self):
+        pygame.event.post(pygame.event.Event(settings.ADD_VANISHING_POINT_EVENT, {"position": self.rect.topleft}))
 
     def respawn(self, position=None):
         if position is None:

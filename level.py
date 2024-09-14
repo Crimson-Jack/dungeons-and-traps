@@ -358,8 +358,8 @@ class Level:
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))
 
-    def add_vanishing_point(self):
-        self.tombstones.append(VanishingPoint(self.player.get_top_left_position(), self.bottom_sprites_layer))
+    def add_vanishing_point(self, position):
+        self.vanishing_points.append(VanishingPoint(position, self.bottom_sprites_layer))
 
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
@@ -383,6 +383,10 @@ class Level:
     def show_player_tombstone(self):
         self.player.disable()
         self.player.trigger_tombstone_creation()
+
+    def show_player_vanishing_point(self):
+        self.player.disable()
+        self.player.trigger_vanishing_point_creation()
 
     def respawn_player(self, position=None):
         if position is None:
