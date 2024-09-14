@@ -68,7 +68,7 @@ class Player(CustomDrawSprite):
         self.tile_position = game_helper.get_tile_by_point(self.get_center_point())
         self.game_state.set_player_tile_position(self.tile_position)
 
-    def input(self):
+    def get_input(self):
         self.movement_vector = self.game_state.player_movement_vector
         self.movement_direction = self.game_state.player_movement_direction
         self.weapon_is_in_use = self.game_state.player_is_using_weapon
@@ -139,9 +139,9 @@ class Player(CustomDrawSprite):
 
         # Cast real position to integer and check the collision
         self.hit_box.x = int(self.real_x_position)
-        self.collision('horizontal')
+        self.check_collision('horizontal')
         self.hit_box.y = int(self.real_y_position)
-        self.collision('vertical')
+        self.check_collision('vertical')
 
         # If direction was changed
         if self.movement_direction != self.previous_movement_direction:
@@ -175,7 +175,7 @@ class Player(CustomDrawSprite):
         # Increase step counter
         self.step_counter += 1
 
-    def collision(self, direction_name):
+    def check_collision(self, direction_name):
         self.collided_with_enemy = False
 
         # Check collision with exit points
@@ -192,8 +192,9 @@ class Player(CustomDrawSprite):
                     if len(destinations) == 1:
                         destination = destinations[0]
                         destination.select()
-                        self.visible = False
+                        self.disable()
                         self.respawn(destination.rect.topleft)
+                        self.enable()
             else:
                 sprite.unselect()
 
@@ -303,7 +304,7 @@ class Player(CustomDrawSprite):
 
     def update(self):
         if self.visible:
-            self.input()
+            self.get_input()
             self.change_costume()
             self.move()
             self.use_weapon()
@@ -326,17 +327,21 @@ class Player(CustomDrawSprite):
     def get_center_point(self):
         return self.hit_box.center
 
-    def show_tombstone(self):
+    def disable(self):
         self.visible = False
         self.sword_weapon.disarm_weapon()
         self.bow_weapon.disarm_weapon()
+
+    def enable(self):
+        self.visible = True
+
+    def trigger_tombstone_creation(self):
         pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def respawn(self, position=None):
         if position is None:
             position = self.position
         self.change_position(position)
-        self.visible = True
 
     def change_position(self, new_position):
         self.rect = self.image.get_rect(topleft=new_position)

@@ -375,10 +375,12 @@ class Level:
             particle_effect.add_spark()
 
     def show_player_tombstone(self):
-        self.player.show_tombstone()
+        self.player.disable()
+        self.player.trigger_tombstone_creation()
 
     def respawn_player(self):
         self.player.respawn(self.game_state.get_check_point_position())
+        self.player.enable()
 
     def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:
