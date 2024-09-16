@@ -19,7 +19,7 @@ class VanishingPoint(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        self.can_be_removed_counter = 5
+        self.can_be_removed_counter = 0
 
     def update(self):
         # Increase costume step counter
