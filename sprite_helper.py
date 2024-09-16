@@ -79,7 +79,7 @@ def get_all_arrow_sprites():
 
 
 def get_all_sword_sprites():
-    sprite_sheet = get_sprite_sheet('img/sword_v2.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = get_sprite_sheet('img/sword.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = {
         'left': [],
@@ -131,9 +131,9 @@ def get_all_tombstone_sprites():
 
     sprites = list()
     sprites.append(sprite_sheet.get_image(0, 0))
-    sprites.append(sprite_sheet.get_image(1, 0))
-    sprites.append(sprite_sheet.get_image(2, 0))
-    sprites.append(sprite_sheet.get_image(3, 0))
+    sprites.append(sprite_sheet.get_image(0, 1))
+    sprites.append(sprite_sheet.get_image(0, 2))
+    sprites.append(sprite_sheet.get_image(0, 3))
 
     return sprites
 
@@ -143,13 +143,13 @@ def get_all_vanishing_point_sprites():
 
     sprites = list()
     sprites.append(sprite_sheet.get_image(0, 0))
-    sprites.append(sprite_sheet.get_image(1, 0))
-    sprites.append(sprite_sheet.get_image(2, 0))
-    sprites.append(sprite_sheet.get_image(3, 0))
-    sprites.append(sprite_sheet.get_image(4, 0))
-    sprites.append(sprite_sheet.get_image(5, 0))
-    sprites.append(sprite_sheet.get_image(6, 0))
-    sprites.append(sprite_sheet.get_image(7, 0))
+    sprites.append(sprite_sheet.get_image(0, 1))
+    sprites.append(sprite_sheet.get_image(0, 2))
+    sprites.append(sprite_sheet.get_image(0, 3))
+    sprites.append(sprite_sheet.get_image(0, 4))
+    sprites.append(sprite_sheet.get_image(0, 5))
+    sprites.append(sprite_sheet.get_image(0, 6))
+    sprites.append(sprite_sheet.get_image(0, 7))
 
     return sprites
 
