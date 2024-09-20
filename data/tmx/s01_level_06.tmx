@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="66">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="70">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/building.tsx"/>
@@ -378,28 +378,16 @@
   </object>
  </objectgroup>
  <objectgroup id="18" name="teleport">
-  <object id="62" name="port_1" gid="368" x="112" y="144" width="16" height="16">
+  <object id="68" name="port_1" gid="374" x="112" y="144" width="16" height="16">
    <properties>
-    <property name="destination" value="port_3"/>
+    <property name="destination" value="port_2"/>
     <property name="port_name" value="port_1"/>
    </properties>
   </object>
-  <object id="63" name="port_3" gid="368" x="112" y="224" width="16" height="16">
+  <object id="69" name="port_2" gid="374" x="112" y="224" width="16" height="16">
    <properties>
     <property name="destination" value="port_1"/>
-    <property name="port_name" value="port_3"/>
-   </properties>
-  </object>
-  <object id="64" name="port_2" gid="370" x="144" y="128" width="16" height="16" visible="0">
-   <properties>
-    <property name="destination" value="port_4"/>
     <property name="port_name" value="port_2"/>
-   </properties>
-  </object>
-  <object id="65" name="port_4" gid="370" x="80" y="240" width="16" height="16" visible="0">
-   <properties>
-    <property name="destination" value="port_2"/>
-    <property name="port_name" value="port_4"/>
    </properties>
   </object>
  </objectgroup>
