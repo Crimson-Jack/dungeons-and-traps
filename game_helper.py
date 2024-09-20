@@ -14,9 +14,7 @@ def get_tile_size_ratio() -> float:
     return settings.TILE_SIZE / BASE_TILE_SIZE
 
 
-# def multiply_by_tile_size_ratio(value: float | int, minimum: float | int | None = None) -> float:
-def multiply_by_tile_size_ratio(value, minimum = None) -> float:
-
+def multiply_by_tile_size_ratio(value: float, minimum: float = None) -> float:
     """
     Multiply value by the ratio of the current tile size to the base tile size.
     If result is lower than 'minimum' argument, return the 'minimum' value.
@@ -25,7 +23,7 @@ def multiply_by_tile_size_ratio(value, minimum = None) -> float:
     :param minimum: minimum value
     :return: calculated value
     """
-    result = value * settings.TILE_SIZE / BASE_TILE_SIZE
+    result: float = value * settings.TILE_SIZE / BASE_TILE_SIZE
 
     if minimum is not None and result < minimum:
         result = minimum
@@ -33,20 +31,19 @@ def multiply_by_tile_size_ratio(value, minimum = None) -> float:
     return result
 
 
-# def calculate_frames(time: float | int) -> int:
-def calculate_frames(time) -> int:
+def calculate_frames(time: int) -> int:
     """
     Calculate a number of frames in the period of time (provided in milliseconds), taking into account current FPS.
 
     :param time: period of time (in milliseconds)
     :return: number of frames
     """
-    result = (time / 1000) / (1 / settings.FPS)
+    result = (time / 1000) * settings.FPS
 
     return int(result)
 
 
-def convert_string_to_tuple(value, separator=','):
+def convert_string_to_tuple(value: str, separator: str = ',') -> tuple[int, ...]:
     """
     Return a tuple of integers from the string.
 
@@ -57,7 +54,7 @@ def convert_string_to_tuple(value, separator=','):
     return tuple(map(int, value.split(separator)))
 
 
-def convert_string_to_list_of_tuples(value, separator='|'):
+def convert_string_to_list_of_tuples(value: str, separator: str = '|') -> list[tuple[int, ...]]:
     """
     Return a list of tuples from the string.
 
@@ -68,7 +65,7 @@ def convert_string_to_list_of_tuples(value, separator='|'):
     return list(map(convert_string_to_tuple, value.split(separator)))
 
 
-def get_tile_by_point(position: tuple):
+def get_tile_by_point(position: tuple) -> tuple[int, int]:
     """
     Return a tuple with the tile position.
 
