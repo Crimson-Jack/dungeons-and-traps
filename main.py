@@ -33,16 +33,18 @@ class Game:
 
         # Game states
         self.game_state = GameState()
-        self.paused = False
-        self.level_completed = False
 
         # Game components
         self.level = Level(self.screen, self.game_surface, self.game_state)
         self.header = Header(self.screen, self.header_surface, self.game_state)
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_state)
-        self.message_dialog = None
         self.refresh_header_surface()
         self.refresh_dashboard_surface()
+
+        # Message dialog
+        self.message_dialog = None
+        self.game_state.start_level_presentation()
+        self.show_level_presentation_message_dialog()
 
         self.clock = pygame.time.Clock()
 
@@ -83,21 +85,25 @@ class Game:
                     if event.key == pygame.K_z:
                         self.game_state.set_previous_weapon()
                     if event.key == pygame.K_SPACE:
-                        if not self.level_completed and not self.game_state.game_over:
-                            self.paused = not self.paused
-                            if self.paused:
-                                self.show_paused_message_dialog()
+                        if self.game_state.is_pause_available():
+                            self.game_state.switch_pause_state()
+                            if self.game_state.game_paused:
+                                self.show_game_paused_message_dialog()
                             else:
                                 self.dispose_message_dialog()
-                        elif self.level_completed:
-                            self.level_completed = False
+                        elif self.game_state.is_level_presented():
                             self.dispose_message_dialog()
-                            self.game_state.set_next_level()
+                            self.game_state.end_level_presentation()
                             self.clean_screen()
-                            self.level = Level(self.screen, self.game_surface, self.game_state)
                             self.refresh_header_surface()
                             self.refresh_dashboard_surface()
-                        elif self.game_state.game_over:
+                        elif self.game_state.is_level_completed():
+                            self.dispose_message_dialog()
+                            self.game_state.clear_next_level_settings()
+                            self.level = Level(self.screen, self.game_surface, self.game_state)
+                            self.game_state.start_level_presentation()
+                            self.show_level_presentation_message_dialog()
+                        elif self.game_state.is_game_over():
                             is_running = False
 
                 if event.type == pygame.KEYUP:
@@ -138,7 +144,7 @@ class Game:
                     self.level.show_exit_point()
 
                 if event.type == settings.NEXT_LEVEL_EVENT:
-                    self.level_completed = True
+                    self.game_state.set_level_completed()
                     self.show_level_completed_message_dialog()
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
@@ -190,10 +196,9 @@ class Game:
                     self.game_state.set_game_over()
                     self.show_game_over_message_dialog()
 
-            if not self.paused and not self.level_completed and not self.game_state.game_over:
+            if self.game_state.is_game_still_running():
                 self.level.run()
-
-            if self.message_dialog is not None:
+            elif self.message_dialog is not None:
                 self.message_dialog.draw()
 
             pygame.display.update()
@@ -202,7 +207,7 @@ class Game:
     def dispose_message_dialog(self):
         self.message_dialog = None
 
-    def show_paused_message_dialog(self):
+    def show_game_paused_message_dialog(self):
         messages = list()
         messages.append(Message('PAUSED', settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Press the SPACE button to return to the game', settings.TEXT_COLOR, 20))
@@ -216,6 +221,13 @@ class Game:
         messages.append(Message('Press the SPACE button to go to the next level', settings.TEXT_COLOR, 16))
         self.message_dialog = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
                                          settings.MESSAGE_BORDER_COLOR, messages)
+
+    def show_level_presentation_message_dialog(self):
+        messages = list()
+        messages.append(Message(f'LEVEL {self.game_state.level + 1}', settings.HIGHLIGHTED_TEXT_COLOR, 80))
+        messages.append(Message('Press the SPACE button to start', settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, settings.WIDTH, settings.HEIGHT, settings.HEIGHT // 2 - 80,
+                                         settings.MESSAGE_BACKGROUND_COLOR, settings.MESSAGE_BORDER_COLOR, messages)
 
     def show_game_over_message_dialog(self):
         messages = list()

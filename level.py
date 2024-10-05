@@ -53,7 +53,7 @@ class Level:
         self.game_state = game_state
 
         # Load tmx data - world map
-        self.tmx_data = load_pygame(f'data/tmx/{self.game_state.get_level()}')
+        self.tmx_data = load_pygame(f'data/tmx/{self.game_state.get_level_filename()}')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
         # Calculate game surface position

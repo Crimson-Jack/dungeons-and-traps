@@ -182,7 +182,7 @@ class Player(CustomDrawSprite):
         # Check collision with exit points
         for sprite in self.exit_points:
             if sprite.hit_box.colliderect(self.hit_box):
-                self.game_state.level_completed()
+                self.game_state.load_next_level()
 
         # Check collision with teleport sprites
         for sprite in self.teleport_sprites:

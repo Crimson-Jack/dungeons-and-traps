@@ -9,16 +9,19 @@ from key import Key
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            # 's01_level_01.tmx',
+            'basic.tmx',
+            's01_level_01.tmx',
             # 's01_level_02.tmx',
             # 's01_level_03.tmx',
             # 's01_level_04.tmx',
             # 's01_level_05.tmx',
-            's01_level_06.tmx',
-            'basic.tmx',
+            # 's01_level_06.tmx',
         ]
 
+        self.level_presented = False
+        self.level_completed = False
         self.game_over = False
+        self.game_paused = False
         self.level = 0
         self.lives = 2
         self.score = 0
@@ -40,13 +43,29 @@ class GameState:
 
         self.check_point_position = None
 
-    def get_level(self):
+    def get_level_filename(self):
         return self.LEVELS[self.level]
 
     def check_is_last_level(self):
         return self.level == len(self.LEVELS) - 1
 
-    def set_next_level(self):
+    def load_next_level(self):
+        if len(self.collected_diamonds) == len(self.diamonds):
+            if self.check_is_last_level():
+                # Note: Only for temporary solution
+                self.game_over = True
+                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+            else:
+                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+
+    def is_level_completed(self):
+        return self.level_completed
+
+    def set_level_completed(self):
+        self.level_completed = True
+
+    def clear_next_level_settings(self):
+        self.level_completed = False
         self.level += 1
         self.diamonds.clear()
         self.collected_diamonds.clear()
@@ -55,14 +74,23 @@ class GameState:
         self.reset_player_direction()
         self.check_point_position = None
 
-    def level_completed(self):
-        if len(self.collected_diamonds) == len(self.diamonds):
-            if self.check_is_last_level():
-                # Note: Only for temporary solution
-                self.game_over = True
-                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
-            else:
-                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+    def is_level_presented(self):
+        return self.level_presented
+
+    def start_level_presentation(self):
+        self.level_presented = True
+
+    def end_level_presentation(self):
+        self.level_presented = False
+
+    def switch_pause_state(self):
+        self.game_paused = not self.game_paused
+
+    def is_pause_available(self):
+        return not (self.level_presented or self.level_completed or self.game_over)
+
+    def is_game_still_running(self):
+        return not (self.level_presented or self.level_completed or self.game_over or self.game_paused)
 
     def life_lost(self):
         self.lives -= 1
@@ -74,6 +102,9 @@ class GameState:
 
     def set_game_over(self):
         self.game_over = True
+
+    def is_game_over(self):
+        return self.game_over
 
     def increase_score(self, value):
         self.score += value
