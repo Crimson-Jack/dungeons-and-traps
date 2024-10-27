@@ -308,12 +308,6 @@
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
-   <object id="34" name="powerup-bow" gid="282" x="528" y="112" width="16" height="16" visible="0">
-    <properties>
-     <property name="powerup_name" value="bow"/>
-     <property name="powerup_volume" type="int" value="10"/>
-    </properties>
-   </object>
   </objectgroup>
  </group>
  <objectgroup id="4" name="door">

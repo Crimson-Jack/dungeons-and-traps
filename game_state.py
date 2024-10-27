@@ -9,13 +9,13 @@ from key import Key
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            'basic.tmx',
+            # 'basic.tmx',
             's01_level_01.tmx',
-            # 's01_level_02.tmx',
-            # 's01_level_03.tmx',
-            # 's01_level_04.tmx',
-            # 's01_level_05.tmx',
-            # 's01_level_06.tmx',
+            's01_level_02.tmx',
+            's01_level_03.tmx',
+            's01_level_04.tmx',
+            's01_level_05.tmx',
+            's01_level_06.tmx',
         ]
 
         self.level_presented = False
