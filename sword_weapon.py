@@ -9,8 +9,11 @@ from custom_draw_sprite import CustomDrawSprite
 
 
 class SwordWeapon(CustomDrawSprite):
-    def __init__(self, position, groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
+    def __init__(self, position, groups, game_state, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Base
+        self.game_state = game_state
 
         # Sprite animation variables
         self.sprites = sprite_helper.get_all_sword_sprites()
@@ -102,6 +105,7 @@ class SwordWeapon(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
+                        self.game_state.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
                         collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
                         pygame.event.post(

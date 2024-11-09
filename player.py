@@ -60,7 +60,7 @@ class Player(CustomDrawSprite):
 
         # Player weapon
         self.weapon_is_in_use = False
-        self.sword_weapon = SwordWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites,
+        self.sword_weapon = SwordWeapon(position, weapon_groups, game_state, enemy_sprites, obstacle_sprites,
                                         moving_obstacle_sprites)
         self.bow_weapon = BowWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
 

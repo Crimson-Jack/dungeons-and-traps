@@ -186,11 +186,19 @@ def get_monster_sprite_in_damaged_state(name):
     return sprite_sheet.get_image(1, 0)
 
 
-def get_sword_to_header_view():
+def get_sword_images_to_header_view():
     sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
-    return sprite_sheet.get_image(1, 0)
+
+    images = list()
+    images.append(sprite_sheet.get_image(2, 0))
+    images.append(sprite_sheet.get_image(2, 1))
+    images.append(sprite_sheet.get_image(2, 2))
+    images.append(sprite_sheet.get_image(2, 3))
+    images.append(sprite_sheet.get_image(2, 4))
+
+    return images
 
 
-def get_bow_to_header_view():
+def get_bow_image_to_header_view():
     sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
     return sprite_sheet.get_image(1, 1)

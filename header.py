@@ -11,8 +11,9 @@ class Header:
         self.game_state = game_state
 
         # Sword and bow images
-        self.sword_image = sprite_helper.get_sword_to_header_view()
-        self.bow_image = sprite_helper.get_bow_to_header_view()
+        self.sword_images = sprite_helper.get_sword_images_to_header_view()
+        self.sword_image = self.sword_images[0]
+        self.bow_image = sprite_helper.get_bow_image_to_header_view()
 
         # Fonts
         self.text_color = settings.TEXT_COLOR
@@ -104,6 +105,7 @@ class Header:
             weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
         if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+            self.set_sword_image()
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
             surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
@@ -120,3 +122,10 @@ class Header:
         surface.blit(score_text, (self.margin * 2, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
         score_number = self.basic_font.render(f'{self.game_state.score}', True, self.highlighted_text_color)
         surface.blit(score_number, (self.margin * 2 + score_text.get_rect().width, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
+
+    def set_sword_image(self):
+        sword_capacity = self.game_state.get_sword_capacity()
+        if 0 <= sword_capacity < len(self.sword_images):
+            self.sword_image = self.sword_images[sword_capacity]
+        else:
+            self.sword_image = self.sword_images[-1]

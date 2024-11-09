@@ -6,8 +6,8 @@ FPS = 60
 
 # Screen size
 FULL_SCREEN_MODE = False
-WIDTH = 1080
-HEIGHT = 600
+WIDTH = 960
+HEIGHT = 576
 # Header size
 HEADER_HEIGHT = 80
 # Dashboard size
@@ -35,7 +35,7 @@ GAME_OVER_EVENT = pygame.event.custom_type()
 GAME_OVER_SUMMARY_EVENT = pygame.event.custom_type()
 COLLECT_DIAMOND_EVENT = pygame.event.custom_type()
 COLLECT_KEY_EVENT = pygame.event.custom_type()
-DECREASE_NUMBER_OF_ARROWS_EVENT = pygame.event.custom_type()
+CHANGE_WEAPON_CAPACITY_EVENT = pygame.event.custom_type()
 CHANGE_ENERGY_EVENT = pygame.event.custom_type()
 CHANGE_WEAPON_EVENT = pygame.event.custom_type()
 EXIT_POINT_IS_OPEN_EVENT = pygame.event.custom_type()

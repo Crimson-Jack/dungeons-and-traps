@@ -29,6 +29,10 @@ class GameState:
         self.weapon_type = weapon_type.WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
+        self.sword_max_energy = 100
+        self.number_of_sword_thresholds = 5
+        self.sword_energy = self.sword_max_energy
+
         self.diamonds = list()
         self.collected_diamonds = list()
         self.keys = list()
@@ -111,22 +115,26 @@ class GameState:
         pygame.event.post(pygame.event.Event(settings.CHANGE_SCORE_EVENT))
 
     def collect_sword_powerup(self):
-        self.collected_weapons.append(weapon_type.WeaponType.SWORD)
-        self.remove_none_weapon()
-        if not (self.weapon_type == weapon_type.WeaponType.BOW and self.number_of_arrows > 0):
-            self.weapon_type = weapon_type.WeaponType.SWORD
-            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+        self.add_weapon(weapon_type.WeaponType.SWORD)
+        self.sword_energy = self.sword_max_energy
+        self.remove_weapon(weapon_type.WeaponType.NONE)
+        self.weapon_type = weapon_type.WeaponType.SWORD
+        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
+        self.add_weapon(weapon_type.WeaponType.BOW)
         self.number_of_arrows += number_of_arrows
-        self.collected_weapons.append(weapon_type.WeaponType.BOW)
-        self.remove_none_weapon()
+        self.remove_weapon(weapon_type.WeaponType.NONE)
         self.weapon_type = weapon_type.WeaponType.BOW
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
-    def remove_none_weapon(self):
-        if weapon_type.WeaponType.NONE in self.collected_weapons:
-            self.collected_weapons.remove(weapon_type.WeaponType.NONE)
+    def add_weapon(self, weapon):
+        if weapon not in self.collected_weapons:
+            self.collected_weapons.append(weapon)
+
+    def remove_weapon(self, weapon):
+        if weapon in self.collected_weapons:
+            self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
         self.weapon_type = self.weapon_type.next()
@@ -140,11 +148,36 @@ class GameState:
             self.weapon_type = self.weapon_type.previous()
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
-    def decrease_number_of_arrows(self):
-        self.number_of_arrows -= 1
-        pygame.event.post(pygame.event.Event(settings.DECREASE_NUMBER_OF_ARROWS_EVENT))
-        if self.number_of_arrows == 0:
+    def decrease_sword_energy(self):
+        if self.sword_energy > 0:
+            self.sword_energy -= 1
+
+        if self.sword_energy <= 0:
+            self.remove_weapon(weapon_type.WeaponType.SWORD)
+            if len(self.collected_weapons) == 0:
+                self.add_weapon(weapon_type.WeaponType.NONE)
             self.set_next_weapon()
+        else:
+            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
+
+    def get_sword_capacity(self):
+        threshold = self.sword_max_energy // self.number_of_sword_thresholds
+        capacity = self.number_of_sword_thresholds - (self.sword_energy // threshold) - 1
+        if capacity < 0:
+            capacity = 0
+        return capacity
+
+    def decrease_number_of_arrows(self):
+        if self.number_of_arrows > 0:
+            self.number_of_arrows -= 1
+
+        if self.number_of_arrows <= 0:
+            self.remove_weapon(weapon_type.WeaponType.BOW)
+            if len(self.collected_weapons) == 0:
+                self.add_weapon(weapon_type.WeaponType.NONE)
+            self.set_next_weapon()
+        else:
+            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
