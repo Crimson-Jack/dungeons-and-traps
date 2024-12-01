@@ -18,10 +18,12 @@ class GameState:
             's01_level_06.tmx',
         ]
 
+        self.first_page_presented = False
         self.level_presented = False
         self.level_completed = False
         self.game_over = False
         self.game_paused = False
+
         self.level = 0
         self.lives = 2
         self.score = 0
@@ -47,6 +49,51 @@ class GameState:
 
         self.check_point_position = None
 
+    def clear_settings_for_first_level(self):
+        self.game_over = False
+
+        self.level = 0
+        self.lives = 2
+        self.score = 0
+
+        self.weapon_type = weapon_type.WeaponType.NONE
+        self.collected_weapons = [self.weapon_type]
+        self.number_of_arrows = 0
+        self.sword_energy = self.sword_max_energy
+
+        self.diamonds.clear()
+        self.collected_diamonds.clear()
+        self.keys.clear()
+        self.collected_keys.clear()
+
+        self.set_player_max_energy()
+        self.reset_player_direction()
+
+        self.check_point_position = None
+
+    def clear_settings_for_next_level(self):
+        self.level_completed = False
+
+        self.level += 1
+
+        self.diamonds.clear()
+        self.collected_diamonds.clear()
+        self.keys.clear()
+        self.collected_keys.clear()
+
+        self.reset_player_direction()
+
+        self.check_point_position = None
+
+    def is_first_page_presented(self):
+        return self.first_page_presented
+
+    def start_first_page_presentation(self):
+        self.first_page_presented = True
+
+    def end_first_page_presentation(self):
+        self.first_page_presented = False
+
     def get_level_filename(self):
         return self.LEVELS[self.level]
 
@@ -68,16 +115,6 @@ class GameState:
     def set_level_completed(self):
         self.level_completed = True
 
-    def clear_next_level_settings(self):
-        self.level_completed = False
-        self.level += 1
-        self.diamonds.clear()
-        self.collected_diamonds.clear()
-        self.keys.clear()
-        self.collected_keys.clear()
-        self.reset_player_direction()
-        self.check_point_position = None
-
     def is_level_presented(self):
         return self.level_presented
 
@@ -91,10 +128,21 @@ class GameState:
         self.game_paused = not self.game_paused
 
     def is_pause_available(self):
-        return not (self.level_presented or self.level_completed or self.game_over)
+        return not (
+                self.first_page_presented or
+                self.level_presented or
+                self.level_completed or
+                self.game_over
+        )
 
     def is_game_still_running(self):
-        return not (self.level_presented or self.level_completed or self.game_over or self.game_paused)
+        return not (
+                self.first_page_presented or
+                self.level_presented or
+                self.level_completed or
+                self.game_over or
+                self.game_paused
+        )
 
     def life_lost(self):
         self.lives -= 1

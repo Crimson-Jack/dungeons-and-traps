@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="55">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="56">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/building.tsx"/>
@@ -9,15 +9,15 @@
  <tileset firstgid="213" source="../tsx/ghost-enemy.tsx"/>
  <tileset firstgid="225" source="../tsx/single-wood-wall.tsx"/>
  <tileset firstgid="241" source="../tsx/misc.tsx"/>
- <tileset firstgid="257" source="../tsx/fire-flame-enemy.tsx"/>
- <tileset firstgid="265" source="../tsx/monster-enemy-green.tsx"/>
- <tileset firstgid="273" source="../tsx/monster-enemy-blue.tsx"/>
- <tileset firstgid="281" source="../tsx/powerup.tsx"/>
- <tileset firstgid="295" source="../tsx/single-wall-l2.tsx"/>
- <tileset firstgid="311" source="../tsx/bat-enemy.tsx"/>
- <tileset firstgid="319" source="../tsx/spider-enemy-medium.tsx"/>
- <tileset firstgid="339" source="../tsx/spider-enemy-big.tsx"/>
- <tileset firstgid="359" source="../tsx/monster-enemy-red.tsx"/>
+ <tileset firstgid="273" source="../tsx/fire-flame-enemy.tsx"/>
+ <tileset firstgid="281" source="../tsx/monster-enemy-green.tsx"/>
+ <tileset firstgid="289" source="../tsx/monster-enemy-blue.tsx"/>
+ <tileset firstgid="297" source="../tsx/powerup.tsx"/>
+ <tileset firstgid="311" source="../tsx/single-wall-l2.tsx"/>
+ <tileset firstgid="327" source="../tsx/bat-enemy.tsx"/>
+ <tileset firstgid="335" source="../tsx/spider-enemy-medium.tsx"/>
+ <tileset firstgid="355" source="../tsx/spider-enemy-big.tsx"/>
+ <tileset firstgid="375" source="../tsx/monster-enemy-red.tsx"/>
  <layer id="1" name="ground" width="40" height="22">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -54,28 +54,28 @@
  </objectgroup>
  <layer id="3" name="obstacle" width="40" height="22">
   <data encoding="csv">
-295,299,299,299,299,299,299,299,299,299,299,299,299,299,299,297,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,296,
-298,0,0,0,0,0,0,0,0,225,229,232,0,0,0,298,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-298,0,225,229,229,229,229,226,0,228,0,0,0,231,0,298,0,115,116,116,116,116,116,116,116,116,0,0,0,0,0,0,0,115,116,0,0,0,0,298,
-298,0,228,0,0,0,0,239,0,228,0,231,0,228,0,298,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,0,0,0,0,0,298,
-298,0,228,0,231,0,0,0,0,239,0,228,0,228,0,298,0,0,0,0,115,128,128,0,0,128,128,129,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,228,0,228,0,0,0,0,0,0,228,0,228,0,298,0,121,0,0,0,0,0,0,0,255,0,0,0,0,0,0,0,0,0,128,128,129,0,298,
-298,0,233,229,235,229,229,226,0,231,0,228,0,228,0,298,0,121,0,0,0,0,0,246,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-298,0,0,0,0,0,0,228,0,228,0,228,0,228,295,307,0,121,0,0,0,0,0,0,248,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-298,0,240,232,0,0,0,228,0,236,229,234,0,228,306,307,0,0,0,0,123,0,0,247,0,0,0,0,115,116,117,0,0,0,0,0,0,0,0,298,
-298,0,0,0,0,0,0,228,0,228,0,0,0,228,303,304,0,127,128,128,129,0,0,0,0,0,0,0,127,0,129,0,0,0,0,0,0,0,0,298,
-298,0,225,229,229,229,229,234,0,228,0,225,229,235,229,232,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-298,0,228,0,0,0,248,0,0,228,0,228,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-298,0,228,0,247,0,0,0,0,228,0,228,0,0,0,0,0,0,0,115,116,116,116,116,117,0,0,115,116,116,116,116,116,116,116,116,116,117,0,298,
-298,0,228,0,0,255,0,0,0,228,0,228,0,0,0,0,0,0,0,121,0,0,0,0,123,0,0,121,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,233,229,229,229,229,226,0,228,0,236,226,0,295,296,0,0,0,121,0,0,0,0,127,128,128,129,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,0,0,0,0,0,228,0,228,0,236,237,0,306,307,0,0,0,121,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,240,229,229,226,0,228,0,228,0,236,234,0,303,300,296,0,0,121,0,0,0,0,115,128,128,117,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,0,0,0,239,0,228,0,228,0,228,0,0,0,306,307,0,0,121,0,0,0,0,123,0,0,121,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,0,0,0,0,0,228,0,228,0,228,0,0,0,306,307,0,0,127,128,128,0,128,129,0,0,121,0,0,0,0,0,0,0,0,0,123,0,298,
-298,0,240,229,229,229,229,234,0,239,0,239,0,0,0,306,307,0,0,0,0,0,0,0,0,0,0,127,128,128,128,128,0,128,128,128,128,129,0,298,
-298,0,0,0,0,0,0,0,0,0,0,0,0,0,0,306,307,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,298,
-303,299,299,299,299,299,299,299,299,299,299,299,299,299,299,305,305,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,299,304
+311,315,315,315,315,315,315,315,315,315,315,315,315,315,315,313,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,312,
+314,0,0,0,0,0,0,0,0,225,229,232,0,0,0,314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+314,0,225,229,229,229,229,226,0,228,0,0,0,231,0,314,0,115,116,116,116,116,116,116,116,116,0,0,0,0,0,0,0,115,116,0,0,0,0,314,
+314,0,228,0,0,0,0,239,0,228,0,231,0,228,0,314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,0,0,0,0,0,314,
+314,0,228,0,231,0,0,0,0,239,0,228,0,228,0,314,0,0,0,0,115,128,128,0,0,128,128,129,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,228,0,228,0,0,0,0,0,0,228,0,228,0,314,0,121,0,0,0,0,0,0,0,255,0,0,0,0,0,0,0,0,0,128,128,129,0,314,
+314,0,233,229,235,229,229,226,0,231,0,228,0,228,0,314,0,121,0,0,0,0,0,246,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+314,0,0,0,0,0,0,228,0,228,0,228,0,228,311,323,0,121,0,0,0,0,0,0,248,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+314,0,240,232,0,0,0,228,0,236,229,234,0,228,322,323,0,0,0,0,123,0,0,247,0,0,0,0,115,116,117,0,0,0,0,0,0,0,0,314,
+314,0,0,0,0,0,0,228,0,228,0,0,0,228,319,320,0,127,128,128,129,0,0,0,0,0,0,0,127,0,129,0,0,0,0,0,0,0,0,314,
+314,0,225,229,229,229,229,234,0,228,0,225,229,235,229,232,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+314,0,228,0,0,0,248,0,0,228,0,228,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+314,0,228,0,247,0,0,0,0,228,0,228,0,0,0,0,0,0,0,115,116,116,116,116,117,0,0,115,116,116,116,116,116,116,116,116,116,117,0,314,
+314,0,228,0,0,255,0,0,0,228,0,228,0,0,0,0,0,0,0,121,0,0,0,0,123,0,0,121,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,233,229,229,229,229,226,0,228,0,236,226,0,311,312,0,0,0,121,0,0,0,0,127,128,128,129,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,0,0,0,0,0,228,0,228,0,236,237,0,322,323,0,0,0,121,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,240,229,229,226,0,228,0,228,0,236,234,0,319,316,312,0,0,121,0,0,0,0,115,128,128,117,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,0,0,0,239,0,228,0,228,0,228,0,0,0,322,323,0,0,121,0,0,0,0,123,0,0,121,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,0,0,0,0,0,228,0,228,0,228,0,0,0,322,323,0,0,127,128,128,0,128,129,0,0,121,0,0,0,0,0,0,0,0,0,123,0,314,
+314,0,240,229,229,229,229,234,0,239,0,239,0,0,0,322,323,0,0,0,0,0,0,0,0,0,0,127,128,128,128,128,0,128,128,128,128,129,0,314,
+314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,322,323,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,314,
+319,315,315,315,315,315,315,315,315,315,315,315,315,315,315,321,321,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,315,320
 </data>
  </layer>
  <layer id="12" name="moving-obstacle" width="40" height="22">
@@ -106,7 +106,7 @@
  </layer>
  <group id="7" name="enemy">
   <objectgroup id="17" name="spider-enemy">
-   <object id="44" name="spider-enemy-medium" gid="319" x="368" y="224" width="16" height="16">
+   <object id="44" name="spider-enemy-medium" gid="335" x="368" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -116,7 +116,7 @@
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
-   <object id="45" name="spider-enemy-medium" gid="319" x="352" y="224" width="16" height="16">
+   <object id="45" name="spider-enemy-medium" gid="335" x="352" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -126,7 +126,7 @@
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
-   <object id="46" name="spider-enemy-big" gid="339" x="576" y="224" width="16" height="16">
+   <object id="46" name="spider-enemy-big" gid="355" x="576" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="20"/>
      <property name="energy" type="int" value="200"/>
@@ -138,7 +138,7 @@
    </object>
   </objectgroup>
   <objectgroup id="15" name="bat-enemy">
-   <object id="39" name="bat-enemy" gid="311" x="512" y="224" width="16" height="16">
+   <object id="39" name="bat-enemy" gid="327" x="512" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="150"/>
@@ -148,7 +148,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="40" name="bat-enemy" gid="311" x="576" y="256" width="16" height="16">
+   <object id="40" name="bat-enemy" gid="327" x="576" y="256" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="150"/>
@@ -158,7 +158,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="41" name="bat-enemy" gid="311" x="576" y="224" width="16" height="16">
+   <object id="41" name="bat-enemy" gid="327" x="576" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="150"/>
@@ -168,7 +168,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="42" name="bat-enemy" gid="311" x="368" y="256" width="16" height="16">
+   <object id="42" name="bat-enemy" gid="327" x="368" y="256" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="4"/>
      <property name="energy" type="int" value="150"/>
@@ -200,7 +200,7 @@
    </object>
   </objectgroup>
   <objectgroup id="13" name="monster-enemy">
-   <object id="28" name="monster-enemy-green" gid="265" x="96" y="96" width="16" height="16">
+   <object id="28" name="monster-enemy-green" gid="281" x="96" y="96" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="200"/>
@@ -209,7 +209,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="29" name="monster-enemy-blue" gid="273" x="144" y="336" width="16" height="16">
+   <object id="29" name="monster-enemy-blue" gid="289" x="144" y="336" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -218,7 +218,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="33" name="monster-enemy-green" gid="265" x="32" y="288" width="16" height="16">
+   <object id="33" name="monster-enemy-green" gid="281" x="32" y="288" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="4"/>
      <property name="energy" type="int" value="200"/>
@@ -227,7 +227,7 @@
      <property name="start_delay" type="int" value="10"/>
     </properties>
    </object>
-   <object id="35" name="monster-enemy-green" gid="265" x="96" y="256" width="16" height="16">
+   <object id="35" name="monster-enemy-green" gid="281" x="96" y="256" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="4"/>
      <property name="energy" type="int" value="200"/>
@@ -236,7 +236,7 @@
      <property name="start_delay" type="int" value="10"/>
     </properties>
    </object>
-   <object id="36" name="monster-enemy-blue" gid="273" x="160" y="64" width="16" height="16">
+   <object id="36" name="monster-enemy-blue" gid="289" x="160" y="64" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -245,7 +245,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="51" name="monster-enemy-red" gid="359" x="80" y="192" width="16" height="16">
+   <object id="51" name="monster-enemy-red" gid="375" x="80" y="192" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="500"/>
@@ -256,7 +256,7 @@
    </object>
   </objectgroup>
   <objectgroup id="11" name="fire-flame-enemy">
-   <object id="52" name="fire-flame-enemy-left" gid="261" x="96" y="128" width="16" height="16">
+   <object id="52" name="fire-flame-enemy-left" gid="277" x="96" y="128" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
      <property name="direction" value="left"/>
@@ -265,7 +265,7 @@
      <property name="speed" type="float" value="6"/>
     </properties>
    </object>
-   <object id="53" name="fire-flame-enemy-left" gid="261" x="96" y="160" width="16" height="16">
+   <object id="53" name="fire-flame-enemy-left" gid="277" x="96" y="160" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
      <property name="direction" value="left"/>
@@ -318,19 +318,19 @@
    </object>
   </objectgroup>
   <objectgroup id="14" name="powerup">
-   <object id="31" name="powerup-energy" gid="285" x="208" y="32" width="16" height="16">
+   <object id="31" name="powerup-energy" gid="301" x="208" y="32" width="16" height="16">
     <properties>
      <property name="powerup_name" value="energy"/>
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
-   <object id="32" name="powerup-energy" gid="285" x="80" y="144" width="16" height="16">
+   <object id="32" name="powerup-energy" gid="301" x="80" y="144" width="16" height="16">
     <properties>
      <property name="powerup_name" value="energy"/>
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
-   <object id="43" name="powerup-sword" gid="249" x="368" y="288" width="16" height="16">
+   <object id="55" name="powerup-sword" gid="297" x="368" y="288" width="16" height="16">
     <properties>
      <property name="powerup_name" value="sword"/>
     </properties>
