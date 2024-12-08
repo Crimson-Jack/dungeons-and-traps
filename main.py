@@ -47,7 +47,7 @@ class Game:
         self.message_dialog = None
 
         # Select startup mode and load first page
-        self.game_state.start_first_page_presentation()
+        self.game_state.set_first_page()
         self.clean_screen()
         self.load_first_page()
 
@@ -90,37 +90,61 @@ class Game:
                     if event.key == pygame.K_z:
                         self.game_state.set_previous_weapon()
                     if event.key == pygame.K_ESCAPE:
-                        if self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED:
+                        if self.game_state.game_status == GameStatus.FIRST_PAGE:
+                            # Exit and stop the game
                             is_running = False
+                        elif self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
+                            # Open options dialog and pause the game
+                            self.game_state.switch_escape_state()
+                            self.load_game_options_message_dialog()
+                        elif self.game_state.game_status == GameStatus.OPTIONS:
+                            # Close options dialog and continue the game
+                            self.game_state.switch_escape_state()
+                            self.dispose_message_dialog()
                     if event.key == pygame.K_F5:
-                        if self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED:
+                        if self.game_state.game_status == GameStatus.FIRST_PAGE:
+                            # Close first page and start next level
                             self.dispose_first_page()
-                            self.game_state.start_next_level_dialog_presentation()
-                            self.load_level_presentation_message_dialog()
+                            self.game_state.set_next_level()
+                            self.load_next_level_message_dialog()
+                    if event.key == pygame.K_F7:
+                        if self.game_state.game_status == GameStatus.OPTIONS:
+                            # Close options dialog and quit the game
+                            self.dispose_message_dialog()
+                            self.game_state.clear_settings_for_first_level()
+                            self.level = Level(self.screen, self.game_surface, self.game_state)
+                            self.game_state.set_first_page()
+                            self.clean_screen()
+                            self.load_first_page()
                     if event.key == pygame.K_SPACE:
                         if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
+                            # Open pause dialog and pause the game
                             self.game_state.switch_pause_state()
                             self.load_game_paused_message_dialog()
                         elif self.game_state.game_status == GameStatus.GAME_IS_PAUSED:
+                            # Close pause dialog and continue the game
                             self.game_state.switch_pause_state()
                             self.dispose_message_dialog()
-                        elif self.game_state.game_status == GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED:
+                        elif self.game_state.game_status == GameStatus.NEXT_LEVEL:
+                            # Close next level dialog and continue the game
                             self.dispose_message_dialog()
                             self.game_state.set_game_is_running()
                             self.clean_screen()
                             self.refresh_header_surface()
                             self.refresh_dashboard_surface()
-                        elif self.game_state.game_status == GameStatus.LEVEL_COMPLETED_DIALOG_IS_PRESENTED:
+                        elif self.game_state.game_status == GameStatus.LEVEL_COMPLETED:
+                            # Close level completed dialog, load next level and open next level dialog
                             self.dispose_message_dialog()
                             self.game_state.clear_settings_for_next_level()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.start_next_level_dialog_presentation()
-                            self.load_level_presentation_message_dialog()
-                        elif self.game_state.game_status == GameStatus.GAME_OVER_DIALOG_IS_PRESENTED:
+                            self.game_state.set_next_level()
+                            self.load_next_level_message_dialog()
+                        elif self.game_state.game_status == GameStatus.GAME_OVER:
+                            # Close game over dialog, load first level and open first page
                             self.dispose_message_dialog()
                             self.game_state.clear_settings_for_first_level()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.start_first_page_presentation()
+                            self.game_state.set_first_page()
                             self.clean_screen()
                             self.load_first_page()
 
@@ -162,7 +186,7 @@ class Game:
                     self.level.show_exit_point()
 
                 if event.type == settings.NEXT_LEVEL_EVENT:
-                    self.game_state.start_level_completed_dialog_presentation()
+                    self.game_state.set_level_completed()
                     self.load_level_completed_message_dialog()
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
@@ -211,13 +235,13 @@ class Game:
 
                 if event.type == settings.GAME_OVER_SUMMARY_EVENT:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
-                    self.game_state.start_game_over_dialog_presentation()
+                    self.game_state.set_game_over()
                     self.load_game_over_message_dialog()
                     self.refresh_dashboard_surface()
 
             if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
                 self.level.run()
-            elif self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED and self.first_page is not None:
+            elif self.game_state.game_status == GameStatus.FIRST_PAGE and self.first_page is not None:
                 self.first_page.draw()
             elif self.message_dialog is not None:
                 self.message_dialog.draw()
@@ -238,6 +262,16 @@ class Game:
         self.message_dialog = MessageBox(self.screen, 740, 130, 20, settings.MESSAGE_BACKGROUND_COLOR,
                                          settings.MESSAGE_BORDER_COLOR, messages)
 
+    def load_game_options_message_dialog(self):
+        messages = list()
+        messages.append(Message('SELECT OPTION', settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        messages.append(Message('F5 - Restart level', settings.TEXT_COLOR, 20))
+        messages.append(Message('F7 - Quit game', settings.TEXT_COLOR, 20))
+        messages.append(Message('', settings.TEXT_COLOR, 20))
+        messages.append(Message('Press the ESC button to return to the game', settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, 740, 210, 20, settings.MESSAGE_BACKGROUND_COLOR,
+                                         settings.MESSAGE_BORDER_COLOR, messages)
+
     def load_level_completed_message_dialog(self):
         messages = list()
         messages.append(Message('CONGRATULATIONS', settings.HIGHLIGHTED_TEXT_COLOR, 40))
@@ -246,7 +280,7 @@ class Game:
         self.message_dialog = MessageBox(self.screen, 740, 150, 20, settings.MESSAGE_BACKGROUND_COLOR,
                                          settings.MESSAGE_BORDER_COLOR, messages)
 
-    def load_level_presentation_message_dialog(self):
+    def load_next_level_message_dialog(self):
         messages = list()
         messages.append(Message(f'LEVEL {self.game_state.level + 1}', settings.HIGHLIGHTED_TEXT_COLOR, 80))
         messages.append(Message('Press the SPACE button to start', settings.TEXT_COLOR, 20))

@@ -20,7 +20,7 @@ class GameState:
             's01_level_06.tmx',
         ]
 
-        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
+        self.game_status = GameStatus.FIRST_PAGE
 
         self.level = 0
         self.lives = 2
@@ -48,7 +48,7 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_first_level(self):
-        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
+        self.game_status = GameStatus.FIRST_PAGE
 
         self.level = 0
         self.lives = 2
@@ -70,7 +70,7 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_next_level(self):
-        self.game_status = GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED
+        self.game_status = GameStatus.NEXT_LEVEL
 
         self.level += 1
 
@@ -83,26 +83,32 @@ class GameState:
 
         self.check_point_position = None
 
-    def start_first_page_presentation(self):
-        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
+    def set_first_page(self):
+        self.game_status = GameStatus.FIRST_PAGE
 
-    def start_next_level_dialog_presentation(self):
-        self.game_status = GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED
+    def set_next_level(self):
+        self.game_status = GameStatus.NEXT_LEVEL
 
     def set_game_is_running(self):
         self.game_status = GameStatus.GAME_IS_RUNNING
 
-    def start_level_completed_dialog_presentation(self):
-        self.game_status = GameStatus.LEVEL_COMPLETED_DIALOG_IS_PRESENTED
+    def set_level_completed(self):
+        self.game_status = GameStatus.LEVEL_COMPLETED
 
-    def start_game_over_dialog_presentation(self):
-        self.game_status = GameStatus.GAME_OVER_DIALOG_IS_PRESENTED
+    def set_game_over(self):
+        self.game_status = GameStatus.GAME_OVER
 
     def switch_pause_state(self):
         if self.game_status == GameStatus.GAME_IS_PAUSED:
             self.game_status = GameStatus.GAME_IS_RUNNING
         else:
             self.game_status = GameStatus.GAME_IS_PAUSED
+
+    def switch_escape_state(self):
+        if self.game_status == GameStatus.OPTIONS:
+            self.game_status = GameStatus.GAME_IS_RUNNING
+        else:
+            self.game_status = GameStatus.OPTIONS
 
     def get_level_filename(self):
         return self.LEVELS[self.level]
@@ -113,7 +119,7 @@ class GameState:
     def load_next_level(self):
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.check_is_last_level():
-                self.game_status = GameStatus.GAME_OVER_DIALOG_IS_PRESENTED
+                self.game_status = GameStatus.GAME_OVER
                 pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
             else:
                 pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
