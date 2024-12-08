@@ -1,4 +1,5 @@
-import pygame, sys
+import pygame
+import sys
 import settings
 from game_state import GameState
 from level import Level
@@ -7,6 +8,7 @@ from dashboard import Dashboard
 from message_box import MessageBox
 from message import Message
 from first_page import FirstPage
+from game_status import GameStatus
 
 
 class Game:
@@ -88,35 +90,33 @@ class Game:
                     if event.key == pygame.K_z:
                         self.game_state.set_previous_weapon()
                     if event.key == pygame.K_ESCAPE:
-                        # TODO: Add other paths
-                        if self.game_state.is_first_page_presented():
+                        if self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED:
                             is_running = False
                     if event.key == pygame.K_F5:
-                        if self.game_state.is_first_page_presented():
-                            self.game_state.end_first_page_presentation()
+                        if self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED:
                             self.dispose_first_page()
-                            self.game_state.start_level_presentation()
+                            self.game_state.start_next_level_dialog_presentation()
                             self.load_level_presentation_message_dialog()
                     if event.key == pygame.K_SPACE:
-                        if self.game_state.is_pause_available():
+                        if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
                             self.game_state.switch_pause_state()
-                            if self.game_state.game_paused:
-                                self.load_game_paused_message_dialog()
-                            else:
-                                self.dispose_message_dialog()
-                        elif self.game_state.is_level_presented():
+                            self.load_game_paused_message_dialog()
+                        elif self.game_state.game_status == GameStatus.GAME_IS_PAUSED:
+                            self.game_state.switch_pause_state()
                             self.dispose_message_dialog()
-                            self.game_state.end_level_presentation()
+                        elif self.game_state.game_status == GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED:
+                            self.dispose_message_dialog()
+                            self.game_state.set_game_is_running()
                             self.clean_screen()
                             self.refresh_header_surface()
                             self.refresh_dashboard_surface()
-                        elif self.game_state.is_level_completed():
+                        elif self.game_state.game_status == GameStatus.LEVEL_COMPLETED_DIALOG_IS_PRESENTED:
                             self.dispose_message_dialog()
                             self.game_state.clear_settings_for_next_level()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.start_level_presentation()
+                            self.game_state.start_next_level_dialog_presentation()
                             self.load_level_presentation_message_dialog()
-                        elif self.game_state.is_game_over():
+                        elif self.game_state.game_status == GameStatus.GAME_OVER_DIALOG_IS_PRESENTED:
                             self.dispose_message_dialog()
                             self.game_state.clear_settings_for_first_level()
                             self.level = Level(self.screen, self.game_surface, self.game_state)
@@ -162,7 +162,7 @@ class Game:
                     self.level.show_exit_point()
 
                 if event.type == settings.NEXT_LEVEL_EVENT:
-                    self.game_state.set_level_completed()
+                    self.game_state.start_level_completed_dialog_presentation()
                     self.load_level_completed_message_dialog()
 
                 if event.type == settings.REFRESH_OBSTACLE_MAP_EVENT:
@@ -211,13 +211,13 @@ class Game:
 
                 if event.type == settings.GAME_OVER_SUMMARY_EVENT:
                     pygame.time.set_timer(settings.GAME_OVER_SUMMARY_EVENT, 0)
-                    self.game_state.set_game_over()
+                    self.game_state.start_game_over_dialog_presentation()
                     self.load_game_over_message_dialog()
                     self.refresh_dashboard_surface()
 
-            if self.game_state.is_game_still_running():
+            if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
                 self.level.run()
-            elif self.first_page is not None:
+            elif self.game_state.game_status == GameStatus.FIRST_PAGE_IS_PRESENTED and self.first_page is not None:
                 self.first_page.draw()
             elif self.message_dialog is not None:
                 self.message_dialog.draw()

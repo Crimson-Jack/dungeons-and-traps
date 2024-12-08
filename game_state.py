@@ -1,9 +1,11 @@
 import pygame
+import game_status
 import settings
 import direction
 import weapon_type
 from diamond import Diamond
 from key import Key
+from game_status import GameStatus
 
 
 class GameState:
@@ -18,11 +20,7 @@ class GameState:
             's01_level_06.tmx',
         ]
 
-        self.first_page_presented = False
-        self.level_presented = False
-        self.level_completed = False
-        self.game_over = False
-        self.game_paused = False
+        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
 
         self.level = 0
         self.lives = 2
@@ -50,7 +48,7 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_first_level(self):
-        self.game_over = False
+        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
 
         self.level = 0
         self.lives = 2
@@ -72,7 +70,7 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_next_level(self):
-        self.level_completed = False
+        self.game_status = GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED
 
         self.level += 1
 
@@ -85,14 +83,26 @@ class GameState:
 
         self.check_point_position = None
 
-    def is_first_page_presented(self):
-        return self.first_page_presented
-
     def start_first_page_presentation(self):
-        self.first_page_presented = True
+        self.game_status = GameStatus.FIRST_PAGE_IS_PRESENTED
 
-    def end_first_page_presentation(self):
-        self.first_page_presented = False
+    def start_next_level_dialog_presentation(self):
+        self.game_status = GameStatus.NEXT_LEVEL_DIALOG_IS_PRESENTED
+
+    def set_game_is_running(self):
+        self.game_status = GameStatus.GAME_IS_RUNNING
+
+    def start_level_completed_dialog_presentation(self):
+        self.game_status = GameStatus.LEVEL_COMPLETED_DIALOG_IS_PRESENTED
+
+    def start_game_over_dialog_presentation(self):
+        self.game_status = GameStatus.GAME_OVER_DIALOG_IS_PRESENTED
+
+    def switch_pause_state(self):
+        if self.game_status == GameStatus.GAME_IS_PAUSED:
+            self.game_status = GameStatus.GAME_IS_RUNNING
+        else:
+            self.game_status = GameStatus.GAME_IS_PAUSED
 
     def get_level_filename(self):
         return self.LEVELS[self.level]
@@ -103,46 +113,10 @@ class GameState:
     def load_next_level(self):
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.check_is_last_level():
-                # Note: Only for temporary solution
-                self.game_over = True
+                self.game_status = GameStatus.GAME_OVER_DIALOG_IS_PRESENTED
                 pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
             else:
                 pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
-
-    def is_level_completed(self):
-        return self.level_completed
-
-    def set_level_completed(self):
-        self.level_completed = True
-
-    def is_level_presented(self):
-        return self.level_presented
-
-    def start_level_presentation(self):
-        self.level_presented = True
-
-    def end_level_presentation(self):
-        self.level_presented = False
-
-    def switch_pause_state(self):
-        self.game_paused = not self.game_paused
-
-    def is_pause_available(self):
-        return not (
-                self.first_page_presented or
-                self.level_presented or
-                self.level_completed or
-                self.game_over
-        )
-
-    def is_game_still_running(self):
-        return not (
-                self.first_page_presented or
-                self.level_presented or
-                self.level_completed or
-                self.game_over or
-                self.game_paused
-        )
 
     def life_lost(self):
         self.lives -= 1
@@ -151,12 +125,6 @@ class GameState:
             pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
         else:
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
-
-    def set_game_over(self):
-        self.game_over = True
-
-    def is_game_over(self):
-        return self.game_over
 
     def increase_score(self, value):
         self.score += value
