@@ -99,14 +99,26 @@ class Game:
                             self.load_game_options_message_dialog()
                         elif self.game_state.game_status == GameStatus.OPTIONS:
                             # Close options dialog and continue the game
-                            self.game_state.switch_escape_state()
                             self.dispose_message_dialog()
+                            self.game_state.switch_escape_state()
                     if event.key == pygame.K_F5:
                         if self.game_state.game_status == GameStatus.FIRST_PAGE:
                             # Close first page and start next level
                             self.dispose_first_page()
                             self.game_state.set_next_level()
                             self.load_next_level_message_dialog()
+                        elif self.game_state.game_status == GameStatus.OPTIONS:
+                            # Close options dialog and restart level or call game over summary dialog
+                            self.dispose_message_dialog()
+                            self.game_state.decrease_number_of_lives()
+                            if self.game_state.lives > 0:
+                                self.game_state.clear_settings_for_current_level()
+                                self.level = Level(self.screen, self.game_surface, self.game_state)
+                                self.game_state.set_next_level()
+                                self.load_next_level_message_dialog()
+                            else:
+                                self.game_state.set_game_is_running()
+                                pygame.event.post(pygame.event.Event(settings.GAME_OVER_SUMMARY_EVENT))
                     if event.key == pygame.K_F7:
                         if self.game_state.game_status == GameStatus.OPTIONS:
                             # Close options dialog and quit the game
@@ -123,8 +135,8 @@ class Game:
                             self.load_game_paused_message_dialog()
                         elif self.game_state.game_status == GameStatus.GAME_IS_PAUSED:
                             # Close pause dialog and continue the game
-                            self.game_state.switch_pause_state()
                             self.dispose_message_dialog()
+                            self.game_state.switch_pause_state()
                         elif self.game_state.game_status == GameStatus.NEXT_LEVEL:
                             # Close next level dialog and continue the game
                             self.dispose_message_dialog()
@@ -214,7 +226,6 @@ class Game:
 
                 if event.type == settings.PLAYER_LOST_LIFE_EVENT:
                     self.level.show_player_tombstone()
-                    self.game_state.set_player_max_energy()
                     pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 2000)
 
                 if event.type == settings.TELEPORT_PLAYER_EVENT:

@@ -11,7 +11,7 @@ from game_status import GameStatus
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            # 'basic.tmx',
+            'basic.tmx',
             's01_level_01.tmx',
             's01_level_02.tmx',
             's01_level_03.tmx',
@@ -48,8 +48,6 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_first_level(self):
-        self.game_status = GameStatus.FIRST_PAGE
-
         self.level = 0
         self.lives = 2
         self.score = 0
@@ -70,8 +68,6 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_next_level(self):
-        self.game_status = GameStatus.NEXT_LEVEL
-
         self.level += 1
 
         self.diamonds.clear()
@@ -79,6 +75,17 @@ class GameState:
         self.keys.clear()
         self.collected_keys.clear()
 
+        self.reset_player_direction()
+
+        self.check_point_position = None
+
+    def clear_settings_for_current_level(self):
+        self.diamonds.clear()
+        self.collected_diamonds.clear()
+        self.keys.clear()
+        self.collected_keys.clear()
+
+        self.set_player_max_energy()
         self.reset_player_direction()
 
         self.check_point_position = None
@@ -127,10 +134,14 @@ class GameState:
     def life_lost(self):
         self.lives -= 1
         if self.lives > 0:
+            self.set_player_max_energy()
             self.reset_player_direction()
             pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
         else:
             pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+
+    def decrease_number_of_lives(self):
+        self.lives -= 1
 
     def increase_score(self, value):
         self.score += value
