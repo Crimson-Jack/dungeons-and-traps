@@ -197,6 +197,15 @@ class Game:
                 if event.type == settings.EXIT_POINT_IS_OPEN_EVENT:
                     self.level.show_exit_point()
 
+                if event.type == settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+                    self.level.show_player_vanishing_point()
+                    pygame.time.set_timer(
+                        pygame.event.Event(settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
+
+                if event.type == settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+                    pygame.time.set_timer(settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
+                    self.game_state.load_next_level()
+
                 if event.type == settings.NEXT_LEVEL_EVENT:
                     self.game_state.set_level_completed()
                     self.load_level_completed_message_dialog()

@@ -182,7 +182,10 @@ class Player(CustomDrawSprite):
         # Check collision with exit points
         for sprite in self.exit_points:
             if sprite.hit_box.colliderect(self.hit_box):
-                self.game_state.load_next_level()
+                # Player is invisible
+                self.visible = False
+                # Trigger teleport player to next level event
+                pygame.event.post(pygame.event.Event(settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT))
 
         # Check collision with teleport sprites
         for sprite in self.teleport_sprites:
