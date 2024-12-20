@@ -353,7 +353,7 @@ class Level:
 
     def show_exit_point(self):
         self.blast_effect.run()
-        self.exit_point.visible = True
+        self.exit_point.show()
 
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))

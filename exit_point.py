@@ -17,3 +17,6 @@ class ExitPoint(custom_draw_sprite.CustomDrawSprite):
         if self.visible:
             offset_position = self.rect.topleft + offset
             game_surface.blit(self.image, offset_position)
+
+    def show(self):
+        self.visible = True

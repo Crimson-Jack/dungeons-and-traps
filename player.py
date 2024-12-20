@@ -181,7 +181,7 @@ class Player(CustomDrawSprite):
 
         # Check collision with exit points
         for sprite in self.exit_points:
-            if sprite.hit_box.colliderect(self.hit_box):
+            if sprite.visible and sprite.hit_box.colliderect(self.hit_box):
                 # Player is invisible
                 self.visible = False
                 # Trigger teleport player to next level event
