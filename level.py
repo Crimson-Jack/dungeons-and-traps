@@ -38,6 +38,7 @@ from vanishing_point import VanishingPoint
 from particle_effect import ParticleEffect
 from powerup_factory import PowerupFactory
 from powerup_tile_details import PowerupTileDetails
+from lighting_status import LightingStatus
 
 
 class Level:
@@ -317,6 +318,7 @@ class Level:
         self.bottom_sprites_layer.update()
         self.middle_sprites_layer.update()
         self.top_sprites_layer.update()
+
         # Run an update method for effects
         self.update_particle_effects()
         self.blast_effect.update()
@@ -326,50 +328,40 @@ class Level:
         self.bottom_sprites_layer.custom_draw(self.player)
         self.middle_sprites_layer.custom_draw(self.player)
         self.top_sprites_layer.custom_draw(self.player)
+
         # Draw effects
         self.draw_particle_effects()
         self.blast_effect.draw()
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
-
-        # ##################################
-        # TODO: Refactor
-        rect_color = (0, 0, 0)
-        rect = pygame.Rect(self.game_surface_rect)
-        circle_radius = 240, 270, 300, 330, 360
-
-        surface = pygame.Surface(rect.size, pygame.SRCALPHA)
-        surface.fill(rect_color)
-
-        offset = self.middle_sprites_layer.get_map_offset()
-
-        # Extended
-        pygame.draw.circle(surface, (0, 0, 0, 200),
-                           (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), circle_radius[4])
-
-        pygame.draw.circle(surface, (0, 0, 0, 150),
-                           (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), circle_radius[3])
-
-        pygame.draw.circle(surface, (0, 0, 0, 100),
-                           (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), circle_radius[2])
-
-        pygame.draw.circle(surface, (0, 0, 0, 50),
-                           (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), circle_radius[1])
-
-        pygame.draw.circle(surface, (0, 0, 0, 0),
-                           (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), circle_radius[0])
-
-        # Simple
-        # pygame.draw.circle(surface, (0, 0, 0, 150),
-        #                    (self.player.rect.centerx + offset.x, self.player.rect.centery + offset.y), 80)
-
-        self.screen.blit(surface, self.game_surface_position)
-        # ##################################
+        # Blit dark_surface on the main screen
+        self.blit_dark_surface()
 
         # Read inputs and display variables if debugger is enabled
         settings.debugger.input()
         settings.debugger.show()
+
+    def blit_dark_surface(self):
+        if self.game_state.lighting_status != LightingStatus.LIGHT_ON:
+            # Create surface with transparent color (alpha) with the same size as game surface
+            dark_surface = pygame.Surface(pygame.Rect(self.game_surface_rect).size, pygame.SRCALPHA)
+            dark_surface.fill((0, 0, 0))
+            # Calculate circle position
+            offset = self.middle_sprites_layer.get_map_offset()
+            circle_x = self.player.rect.centerx + offset.x
+            circle_y = self.player.rect.centery + offset.y
+
+            if self.game_state.lighting_status == LightingStatus.TWILIGHT:
+                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 80)
+            elif self.game_state.lighting_status == LightingStatus.TORCHLIGHT:
+                circle_radius = 240, 270, 300, 330, 360
+                circle_alpha = 0, 50, 100, 150, 200
+                for index in range(4, -1, -1):
+                    pygame.draw.circle(dark_surface, (0, 0, 0, circle_alpha[index]), (circle_x, circle_y),
+                                       circle_radius[index])
+
+            self.screen.blit(dark_surface, self.game_surface_position)
 
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required

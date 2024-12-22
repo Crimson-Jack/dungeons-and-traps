@@ -1,11 +1,11 @@
 import pygame
-import game_status
 import settings
 import direction
 import weapon_type
 from diamond import Diamond
 from key import Key
 from game_status import GameStatus
+from lighting_status import LightingStatus
 
 
 class GameState:
@@ -21,6 +21,7 @@ class GameState:
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
+        self.lighting_status = LightingStatus.TORCHLIGHT
 
         self.level = 0
         self.lives = 2
