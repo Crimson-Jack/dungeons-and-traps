@@ -21,7 +21,7 @@ class GameState:
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
-        self.lighting_status = LightingStatus.TORCHLIGHT
+        self.lighting_status = LightingStatus.LIGHT_ON
 
         self.level = 0
         self.lives = 2
