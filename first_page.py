@@ -15,7 +15,7 @@ class FirstPage:
 
         # Get image in the right size
         self.background_image = SpriteSheet(
-            pygame.image.load('img/start-page_v3.png').convert_alpha(),
+            pygame.image.load('img/start-page.png').convert_alpha(),
             width,
             height,
             final_image_size,
