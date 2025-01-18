@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import StrEnum
 
 
-class LightingStatus(IntEnum):
-    LIGHT_ON = 0
-    TORCHLIGHT = 1
-    TWILIGHT = 2
+class LightingStatus(StrEnum):
+    LIGHT_ON = 'light_on'
+    TORCHLIGHT = 'torchlight'
+    TWILIGHT = 'twilight'

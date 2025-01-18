@@ -11,13 +11,13 @@ from lighting_status import LightingStatus
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            # 'basic.tmx',
+            'basic.tmx',
             # 's01_level_01.tmx',
             # 's01_level_02.tmx',
             # 's01_level_03.tmx',
             # 's01_level_04.tmx',
             # 's01_level_05.tmx',
-            's01_level_06.tmx',
+            # 's01_level_06.tmx',
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -296,3 +296,6 @@ class GameState:
 
     def get_check_point_position(self):
         return self.check_point_position
+
+    def set_lighting_spell(self, lighting_status: LightingStatus):
+        self.lighting_status = lighting_status

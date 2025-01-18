@@ -39,6 +39,8 @@ from particle_effect import ParticleEffect
 from powerup_factory import PowerupFactory
 from powerup_tile_details import PowerupTileDetails
 from lighting_status import LightingStatus
+from spell_tile_details import SpellTileDetails
+from lighting_spell import LightingSpell
 
 
 class Level:
@@ -195,6 +197,7 @@ class Level:
         self.create_sprites_from_layer('diamond')
         self.create_sprites_from_layer('obstacle')
         self.create_sprites_from_layer('moving-obstacle')
+        self.create_sprites_from_object_layer('spell')
         self.create_sprites_from_object_layer('powerup')
         self.create_sprites_from_object_layer('key')
         self.create_sprites_from_object_layer('fire-flame-enemy')
@@ -248,6 +251,11 @@ class Level:
             for item in layer:
                 if item.visible:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
+
+                    if layer_name == 'spell':
+                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                        tile_details = SpellTileDetails(item, layer)
+                        LightingSpell(item.image, (x, y), groups, self.game_state, tile_details)
 
                     if layer_name == 'powerup':
                         groups = (self.bottom_sprites_layer, self.collectable_sprites)
@@ -355,7 +363,7 @@ class Level:
             if self.game_state.lighting_status == LightingStatus.TWILIGHT:
                 pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 80)
             elif self.game_state.lighting_status == LightingStatus.TORCHLIGHT:
-                circle_radius = 240, 270, 300, 330, 360
+                circle_radius = 200, 220, 240, 260, 280
                 circle_alpha = 0, 50, 100, 150, 200
                 for index in range(4, -1, -1):
                     pygame.draw.circle(dark_surface, (0, 0, 0, circle_alpha[index]), (circle_x, circle_y),
