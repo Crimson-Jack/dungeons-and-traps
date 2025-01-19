@@ -331,6 +331,9 @@ class Level:
         self.update_particle_effects()
         self.blast_effect.update()
 
+        # Clean game surface - fill with background color
+        self.game_surface.fill(settings.GAME_BACKGROUND_COLOR)
+
         # Draw all visible sprites
         self.bottom_background_layer.custom_draw(self.player)
         self.bottom_sprites_layer.custom_draw(self.player)
