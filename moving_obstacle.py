@@ -36,7 +36,7 @@ class MovingObstacle(CustomDrawSprite):
                              True, (64, 78, 107), True, (254, 240, 202), False, None, None)
 
     def calculate_new_position(self, movement_direction):
-        new_position_x, new_position_y = 0, 0
+        new_position_x, new_position_y = self.position[0], self.position[1]
 
         # Calculate a new position
         if movement_direction == direction.Direction.RIGHT:
@@ -51,14 +51,6 @@ class MovingObstacle(CustomDrawSprite):
         elif movement_direction == direction.Direction.DOWN:
             new_position_x = self.position[0]
             new_position_y = self.position[1] + settings.TILE_SIZE
-        elif movement_direction == direction.Direction.RIGHT_UP:
-            is_blocked = True
-        elif movement_direction == direction.Direction.RIGHT_DOWN:
-            is_blocked = True
-        elif movement_direction == direction.Direction.LEFT_UP:
-            is_blocked = True
-        elif movement_direction == direction.Direction.LEFT_DOWN:
-            is_blocked = True
 
         # Calculate new position on the map
         new_map_x = new_position_x // settings.TILE_SIZE
