@@ -11,13 +11,14 @@ from lighting_status import LightingStatus
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            'basic.tmx',
+            # 'basic.tmx',
             # 's01_level_01.tmx',
             # 's01_level_02.tmx',
             # 's01_level_03.tmx',
             # 's01_level_04.tmx',
             # 's01_level_05.tmx',
             # 's01_level_06.tmx',
+            's01_level_07.tmx',
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -49,6 +50,8 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_first_level(self):
+        self.lighting_status = LightingStatus.LIGHT_ON
+
         self.level = 0
         self.lives = 2
         self.score = 0
@@ -81,6 +84,8 @@ class GameState:
         self.check_point_position = None
 
     def clear_settings_for_current_level(self):
+        self.lighting_status = LightingStatus.LIGHT_ON
+
         self.diamonds.clear()
         self.collected_diamonds.clear()
         self.keys.clear()
