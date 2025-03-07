@@ -4,7 +4,7 @@ import sprite_helper
 
 class Tombstone(pygame.sprite.Sprite):
     def __init__(self, position, groups):
-        super().__init__(groups)
+        super().__init__(*groups)
 
         # Sprite animation variables
         self.sprites = sprite_helper.get_all_tombstone_sprites()

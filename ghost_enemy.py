@@ -7,7 +7,7 @@ from ghost_tile_details import GhostTileDetails
 
 class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
     def __init__(self, frames, position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
-        super().__init__(groups)
+        super().__init__(*groups)
 
         # Base
         self.damage_power = details.damage_power

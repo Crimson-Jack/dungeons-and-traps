@@ -173,7 +173,7 @@ class Level:
             tile_y = int(check_point.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
-            groups = (self.bottom_background_layer, self.collectable_sprites)
+            groups = self.bottom_background_layer, self.collectable_sprites
 
             return CheckPoint(check_point.image, (x, y), groups, self.game_state)
 
@@ -188,7 +188,7 @@ class Level:
             tile_y = int(exit_object.y // self.tmx_data.tileheight)
             x = tile_x * settings.TILE_SIZE
             y = tile_y * settings.TILE_SIZE
-            groups = (self.bottom_background_layer, self.exit_points)
+            groups = self.bottom_background_layer, self.exit_points
 
             return ExitPoint(exit_object.image, (x, y), groups, False)
 
@@ -224,16 +224,16 @@ class Level:
                     Ground(image, (x, y), groups)
 
                 elif layer_name == 'diamond':
-                    groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                    groups = self.bottom_sprites_layer, self.collectable_sprites
                     tile_details = DiamondTileDetails(None, layer)
                     self.game_state.add_diamond(Diamond(image, (x, y), groups, self.game_state, tile_details))
 
                 elif layer_name == 'obstacle':
-                    groups = (self.middle_sprites_layer, self.obstacle_sprites)
+                    groups = self.middle_sprites_layer, self.obstacle_sprites
                     Wall(image, (x, y), groups)
 
                 elif layer_name == 'moving-obstacle':
-                    groups = (self.middle_sprites_layer, self.moving_obstacle_sprites)
+                    groups = self.middle_sprites_layer, self.moving_obstacle_sprites
                     collision_sprites = [self.enemy_sprites,
                                          self.obstacle_sprites,
                                          self.moving_obstacle_sprites,
@@ -253,12 +253,12 @@ class Level:
                     x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
 
                     if layer_name == 'spell':
-                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                        groups = self.bottom_sprites_layer, self.collectable_sprites
                         tile_details = SpellTileDetails(item, layer)
                         LightingSpell(item.image, (x, y), groups, self.game_state, tile_details)
 
                     if layer_name == 'powerup':
-                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                        groups = self.bottom_sprites_layer, self.collectable_sprites
                         tile_details = PowerupTileDetails(item, layer)
                         self.powerup_factory.create(tile_details,
                                                     image=item.image,
@@ -267,13 +267,13 @@ class Level:
                                                     game_state=self.game_state)
 
                     if layer_name == 'key':
-                        groups = (self.bottom_sprites_layer, self.collectable_sprites)
+                        groups = self.bottom_sprites_layer, self.collectable_sprites
                         tile_details = KeyAndDoorTileDetails(item, layer)
                         self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        groups = (self.bottom_sprites_layer, self.hostile_force_sprites)
+                        groups = self.bottom_sprites_layer, self.hostile_force_sprites
                         tile_details = FireFlameTileDetails(item, layer)
                         if tile_details.direction == 'left':
                             FireFlameEnemyLeft(frames, (x, y), groups, tile_details, self.moving_obstacle_sprites)
@@ -281,39 +281,39 @@ class Level:
                             FireFlameEnemyRight(frames, (x, y), groups, tile_details, self.moving_obstacle_sprites)
 
                     elif layer_name == 'door':
-                        groups = (self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites)
+                        groups = self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites
                         tile_details = KeyAndDoorTileDetails(item, layer)
                         Door(item.image, (x, y), groups, tile_details, self.obstacle_map.items)
 
                     elif layer_name == 'teleport':
-                        groups = (self.bottom_sprites_layer, self.teleport_sprites)
+                        groups = self.bottom_sprites_layer, self.teleport_sprites
                         tile_details = TeleportTileDetails(item, layer)
                         Teleport(item.image, (x, y), groups, tile_details)
 
                     elif layer_name == 'monster-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
                         SpiderEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = GhostTileDetails(item, layer)
                         GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items,
                                    self.moving_obstacle_sprites)
 
                     elif layer_name == 'bat-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
-                        groups = (self.top_sprites_layer, self.enemy_sprites)
+                        groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
                         BatEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                  self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
@@ -393,10 +393,10 @@ class Level:
         self.exit_point.show()
 
     def add_tombstone(self, position):
-        self.tombstones.append(Tombstone(position, self.bottom_sprites_layer))
+        self.tombstones.append(Tombstone(position, (self.bottom_sprites_layer,)))
 
     def add_vanishing_point(self, position):
-        self.vanishing_points.append(VanishingPoint(position, self.bottom_sprites_layer))
+        self.vanishing_points.append(VanishingPoint(position, (self.bottom_sprites_layer,)))
 
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
