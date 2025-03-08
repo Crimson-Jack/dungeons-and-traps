@@ -6,7 +6,8 @@ from life_powerup import LifePowerup
 
 
 class PowerupFactory:
-    def create(self, tile_details: PowerupTileDetails, **kwargs):
+    @staticmethod
+    def create(tile_details: PowerupTileDetails, **kwargs):
         image = kwargs["image"]
         position = kwargs["position"]
         groups = kwargs["groups"]

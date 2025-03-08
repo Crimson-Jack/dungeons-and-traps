@@ -53,7 +53,8 @@ class BreadthFirstSearchHelper:
 
         return result
 
-    def get_path(self, current_item, items):
+    @staticmethod
+    def get_path(current_item, items):
         return_path = list()
         while items[current_item] is not None:
             return_path.append(items[current_item])
