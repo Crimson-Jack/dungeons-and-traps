@@ -3,7 +3,10 @@ class ColorSet:
         ((0, 100), (0, 0, 0))
     ]
 
-    def __init__(self, colors=COLORS):
+    def __init__(self, colors=None):
+        if colors is None:
+            colors = self.COLORS
+
         self.colors = colors
 
     def get_color(self, percent):

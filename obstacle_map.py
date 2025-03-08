@@ -1,5 +1,5 @@
 class ObstacleMap:
-    def __init__(self, layers=[]):
+    def __init__(self, layers=None):
         self.items = list()
         self.layers = list()
 
