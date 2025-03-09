@@ -22,7 +22,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.left)
 
-    def get_merged_image(self):
+    def get_merged_image(self) -> pygame.surface.Surface:
         merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
         merged_image = merged_image.convert_alpha()
         merged_image.fill((0, 0, 0, 0))

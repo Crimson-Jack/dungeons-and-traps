@@ -1,3 +1,5 @@
+import pygame.surface
+
 import settings
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
@@ -42,7 +44,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
         self.reset_is_required_for_image = False
         self.tail_length_after_collision = self.tail_length
 
-    def get_merged_image(self):
+    def get_merged_image(self) -> pygame.surface.Surface:
         pass
 
     def set_new_image(self):
