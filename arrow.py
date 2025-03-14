@@ -81,13 +81,13 @@ class Arrow(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
                         sprite.decrease_energy(self.damage_power)
-                        collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
-                        pygame.event.post(
-                            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
-                                               {"position": collided_position,
-                                                "number_of_sparks": 12,
-                                                "colors": settings.ENEMY_PARTICLE_COLORS}))
-                        self.kill()
+                    # Add particle effect
+                    collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
+                    pygame.event.post(pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                                                         {"position": collided_position,
+                                                          "number_of_sparks": 12,
+                                                          "colors": settings.ENEMY_PARTICLE_COLORS}))
+                    self.kill()
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):

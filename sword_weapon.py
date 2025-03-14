@@ -107,12 +107,13 @@ class SwordWeapon(CustomDrawSprite):
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
                         self.game_state.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
-                        collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
-                        pygame.event.post(
-                            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
-                                               {"position": collided_position,
-                                                "number_of_sparks": 1,
-                                                "colors": [settings.ENEMY_PARTICLE_COLORS[random.randint(0, len(settings.ENEMY_PARTICLE_COLORS)-1)]]}))
+                    # Add particle effect
+                    collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
+                    pygame.event.post(
+                        pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                                           {"position": collided_position,
+                                            "number_of_sparks": 1,
+                                            "colors": [settings.ENEMY_PARTICLE_COLORS[random.randint(0, len(settings.ENEMY_PARTICLE_COLORS)-1)]]}))
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
