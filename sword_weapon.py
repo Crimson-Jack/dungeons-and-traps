@@ -104,16 +104,11 @@ class SwordWeapon(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    sprite_hit_box = sprite.hit_box
                     if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
                         self.game_state.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
-                    # Add particle effect
-                    collided_position = game_helper.get_collided_rectangle(sprite.hit_box, self.hit_box).center
-                    pygame.event.post(
-                        pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
-                                           {"position": collided_position,
-                                            "number_of_sparks": 1,
-                                            "colors": [settings.ENEMY_PARTICLE_COLORS[random.randint(0, len(settings.ENEMY_PARTICLE_COLORS)-1)]]}))
+                        self.create_particle_effect(sprite_hit_box, 1, settings.ENEMY_PARTICLE_COLORS)
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
@@ -128,6 +123,14 @@ class SwordWeapon(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     self.is_moving = False
                     self.is_blocked = True
+
+    def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
+        collided_position = game_helper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
+        pygame.event.post(
+            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                               {"position": collided_position,
+                                "number_of_sparks": number_of_sparks,
+                                "colors": colors}))
 
     def change_costume(self):
         # Change costume only if threshold exceeded

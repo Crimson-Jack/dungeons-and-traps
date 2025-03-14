@@ -179,7 +179,7 @@
     <property name="motion_schedule" value="0"/>
     <property name="speed" type="float" value="1"/>
    </properties>
-   <object id="77" name="fire-flame-enemy-right" gid="199" x="320" y="160" width="16" height="16">
+   <object id="77" name="fire-flame-enemy-right" gid="199" x="128" y="80" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
      <property name="direction" value="right"/>
