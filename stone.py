@@ -3,7 +3,7 @@ import game_helper
 
 
 class Stone(MovingObstacle):
-    def __init__(self, image, position, groups, game_state, obstacle_map_items, collision_sprites):
+    def __init__(self, image, position: list, groups, game_state, obstacle_map_items, collision_sprites):
         super().__init__(image, position, groups, game_state, obstacle_map_items, collision_sprites)
         # Note: inflate rectangle in y should have the same value as obstacles (wall)
         self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-10),

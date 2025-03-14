@@ -8,7 +8,7 @@ from color_set import ColorSet
 
 
 class MovingObstacle(CustomDrawSprite):
-    def __init__(self, image, position, groups, game_state, obstacle_map_items, collision_sprites):
+    def __init__(self, image, position: list, groups, game_state, obstacle_map_items, collision_sprites):
         super().__init__(groups)
         self.position = position
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
@@ -36,7 +36,8 @@ class MovingObstacle(CustomDrawSprite):
                              True, (64, 78, 107), True, (254, 240, 202), False, None, None)
 
     def calculate_new_position(self, movement_direction):
-        new_position_x, new_position_y = self.position[0], self.position[1]
+        new_position_x = self.position[0]
+        new_position_y = self.position[1]
 
         # Calculate a new position
         if movement_direction == direction.Direction.RIGHT:
@@ -56,7 +57,7 @@ class MovingObstacle(CustomDrawSprite):
         new_map_x = new_position_x // settings.TILE_SIZE
         new_map_y = new_position_y // settings.TILE_SIZE
 
-        return [(new_position_x, new_position_y), (new_map_x, new_map_y)]
+        return new_position_x, new_position_y, new_map_x, new_map_y
 
     def check_if_destination_tile_is_empty(self, new_position_x, new_position_y):
         source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE,
@@ -76,11 +77,8 @@ class MovingObstacle(CustomDrawSprite):
         # Calculate old position on the map
         old_map_x = old_position_x // settings.TILE_SIZE
         old_map_y = old_position_y // settings.TILE_SIZE
-        # Get new position
-        [
-            (new_position_x, new_position_y),
-            (new_map_x, new_map_y)
-        ] = self.calculate_new_position(movement_direction)
+        # Get a new position and a new position on map
+        new_position_x, new_position_y, new_map_x, new_map_y = self.calculate_new_position(movement_direction)
 
         # Execute the movement if it's allowed
         if self.power > self.power_needed_to_move_obstacle:
@@ -90,7 +88,7 @@ class MovingObstacle(CustomDrawSprite):
                 # Set a new bar position
                 bar_left, bar_top = self.get_bar_position()
                 self.power_bar.change_position((bar_left, bar_top))
-                # Change position
+                # Change rectangle position
                 self.rect.x = int(self.position[0])
                 self.rect.y = int(self.position[1])
                 # Change obstacle map
