@@ -81,6 +81,9 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
+        # Hostile forces
+        self.hostile_force_sprites = hostile_force_sprites
+
         # State variables
         self.collided_with_weapon = False
         self.is_resting = False
@@ -122,6 +125,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
                     self.is_resting = False
                     self.start_delay_counter = self.start_delay
                     self.set_next_move()
+
+        self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
         if self.check_can_move():
@@ -222,6 +227,13 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
                 break
 
         return is_collision_detected
+
+    def check_collision_with_hostile_forces(self):
+        for sprite in self.hostile_force_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
+                    self.decrease_energy(sprite.get_damage_power())
 
     def try_to_set_movement_vector_from_path(self):
         movement_vector = None
