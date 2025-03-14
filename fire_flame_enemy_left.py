@@ -18,6 +18,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
 
         # Movement variables
         self.movement_vector = pygame.math.Vector2((-1, 0))
+        self.speed = details.speed
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.left)

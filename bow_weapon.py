@@ -73,7 +73,7 @@ class BowWeapon(CustomDrawSprite):
             self.image = self.sprites['down'][0]
 
     def fire(self):
-        self.arrows.append(Arrow(self.rect.topleft, self.groups(), self.enemy_sprites, self.obstacle_sprites,
+        self.arrows.append(Arrow(self.rect.topleft, tuple(self.groups()), self.enemy_sprites, self.obstacle_sprites,
                                  self.moving_obstacle_sprites, self.direction))
 
     def arm_weapon(self):
