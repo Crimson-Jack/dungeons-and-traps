@@ -141,7 +141,7 @@ class Level:
     def create_player(self):
         try:
             player_object = self.tmx_data.get_object_by_name('player')
-        except KeyError:
+        except (KeyError, ValueError):
             player_object = None
 
         if player_object is not None and player_object.visible:
@@ -165,7 +165,7 @@ class Level:
     def create_check_point(self):
         try:
             check_point = self.tmx_data.get_object_by_name('check-point')
-        except KeyError:
+        except (KeyError, ValueError):
             check_point = None
 
         if check_point is not None and check_point.visible:
@@ -180,7 +180,7 @@ class Level:
     def create_exit_point(self):
         try:
             exit_object = self.tmx_data.get_object_by_name('exit-point')
-        except KeyError:
+        except (KeyError, ValueError):
             exit_object = None
 
         if exit_object is not None and exit_object.visible:
@@ -211,7 +211,7 @@ class Level:
     def create_sprites_from_layer(self, layer_name):
         try:
             layer = self.tmx_data.get_layer_by_name(layer_name)
-        except KeyError:
+        except (KeyError, ValueError):
             layer = None
 
         if layer is not None and layer.visible:
@@ -244,7 +244,7 @@ class Level:
     def create_sprites_from_object_layer(self, layer_name):
         try:
             layer = self.tmx_data.get_layer_by_name(layer_name)
-        except KeyError:
+        except (KeyError, ValueError):
             layer = None
 
         if layer is not None and layer.visible:
