@@ -150,6 +150,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
         while not is_end_of_movement:
             next_position = [int(position[0] + movement_vector.x), int(position[1] + movement_vector.y)]
+            current_position_top = None
+            previous_position_top = None
 
             # If Right
             if movement_vector == pygame.math.Vector2(1, 0):

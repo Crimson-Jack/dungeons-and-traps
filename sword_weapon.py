@@ -1,5 +1,4 @@
 import pygame
-import random
 import enemy_with_energy
 import game_helper
 import settings
