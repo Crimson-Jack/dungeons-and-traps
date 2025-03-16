@@ -18,11 +18,22 @@ def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height
     return rows
 
 
-def convert_position(position_x, position_y, tile_width, tile_height):
+def convert_position(position_x, position_y, tile_width, tile_height, rotation=0):
     tile_x = int(position_x // tile_width)
     tile_y = int(position_y // tile_height)
     x = tile_x * settings.TILE_SIZE
     y = tile_y * settings.TILE_SIZE
+
+    # According to the tmx format, rotation causes the object to move clockwise around the point 0, 0, which is the
+    # bottom left corner of the tile.
+    # Original baseline values do not correspond to visible on the map therefore they need to be corrected.
+    if rotation == 90 or rotation == -270:
+        y = y + settings.TILE_SIZE
+    elif rotation == 180 or rotation == -180:
+        x = x - settings.TILE_SIZE
+        y = y + settings.TILE_SIZE
+    elif rotation == 270 or rotation == -90:
+        x = x - settings.TILE_SIZE
 
     return x, y
 

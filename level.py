@@ -27,6 +27,7 @@ from monster_enemy import MonsterEnemy
 from monster_tile_details import MonsterTileDetails
 from bat_enemy import BatEnemy
 from bat_tile_details import BatTileDetails
+from octopus_enemy import OctopusEnemy
 from player import Player
 from check_point import CheckPoint
 from exit_point import ExitPoint
@@ -145,8 +146,8 @@ class Level:
             player_object = None
 
         if player_object is not None and player_object.visible:
-            x, y = tmx_helper.convert_position(player_object.x, player_object.y, self.tmx_data.tilewidth,
-                                               self.tmx_data.tileheight)
+            x, y = tmx_helper.convert_position(player_object.x, player_object.y,
+                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
             speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
             return Player((x, y),
                           (self.middle_sprites_layer,),
@@ -207,6 +208,7 @@ class Level:
         self.create_sprites_from_object_layer('spider-enemy')
         self.create_sprites_from_object_layer('ghost-enemy')
         self.create_sprites_from_object_layer('bat-enemy')
+        self.create_sprites_from_object_layer('octopus-enemy')
 
     def create_sprites_from_layer(self, layer_name):
         try:
@@ -250,7 +252,9 @@ class Level:
         if layer is not None and layer.visible:
             for item in layer:
                 if item.visible:
-                    x, y = tmx_helper.convert_position(item.x, item.y, self.tmx_data.tilewidth, self.tmx_data.tileheight)
+                    x, y = tmx_helper.convert_position(item.x, item.y,
+                                                       self.tmx_data.tilewidth, self.tmx_data.tileheight,
+                                                       item.rotation)
 
                     if layer_name == 'spell':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
@@ -317,6 +321,11 @@ class Level:
                         tile_details = BatTileDetails(item, layer)
                         BatEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                  self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
+
+                    elif layer_name == 'octopus-enemy':
+                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        groups = self.top_sprites_layer, self.enemy_sprites
+                        OctopusEnemy(frames, (x, y), item.rotation, groups)
 
     def run(self):
         self.remove_unnecessary_effects()
