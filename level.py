@@ -328,7 +328,8 @@ class Level:
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
-                                     self.obstacle_map.items, self.moving_obstacle_sprites)
+                                     self.obstacle_map.items, self.obstacle_sprites,
+                                     self.moving_obstacle_sprites)
 
     def run(self):
         self.remove_unnecessary_effects()

@@ -1,3 +1,4 @@
+import game_helper
 import settings
 import pygame
 
@@ -76,6 +77,19 @@ def get_tile_by_point(position: tuple) -> tuple[int, int]:
     y_tile = position[1] // settings.TILE_SIZE
 
     return x_tile, y_tile
+
+
+def get_point_by_tile(tile: tuple) -> tuple:
+    """
+    Return a tuple with the position.
+
+    :param tile: tuple with tile position
+    :return: tuple with the x, y coordinates
+    """
+    x_position = tile[0] * settings.TILE_SIZE
+    y_position = tile[1] * settings.TILE_SIZE
+
+    return  x_position, y_position
 
 
 def get_collided_rectangle(rectangle_one, rectangle_two):

@@ -1,0 +1,119 @@
+import math
+import pygame
+import sprite_helper
+import game_helper
+import settings
+from custom_draw_sprite import CustomDrawSprite
+
+class FireBallEnemy(CustomDrawSprite):
+    def __init__(self, position, groups, player_tile_position, obstacle_sprites, moving_obstacle_sprites):
+        super().__init__(groups)
+
+        # Sprite animation variables
+        self.sprites = sprite_helper.get_all_fire_ball_enemy_sprites()
+        self.number_of_sprites = len(self.sprites)
+        self.costume_switching_threshold = 10
+        self.costume_step_counter = 0
+        self.costume_index = 0
+
+        # Image
+        self.image = self.sprites[0]
+        self.rect = self.image.get_rect(topleft=position)
+        self.hit_box = self.rect
+
+        # Player position
+        self.player_top_left_position = game_helper.get_point_by_tile(player_tile_position)
+
+        # Obstacles
+        self.obstacle_sprites = obstacle_sprites
+        self.moving_obstacle_sprites = moving_obstacle_sprites
+
+        # Movement variables
+        self.speed = game_helper.multiply_by_tile_size_ratio(10)
+        self.movement_vector = pygame.math.Vector2((0, 0))
+        self.set_movement_vector()
+
+        # Properties
+        self.damage_power = 40
+
+        # Real position is required to store the real distance, which is then cast to integer
+        self.real_x_position = float(self.hit_box.x)
+        self.real_y_position = float(self.hit_box.y)
+
+    def custom_draw(self, game_surface, offset):
+        offset_position = self.rect.topleft + offset
+        game_surface.blit(self.image, offset_position)
+
+    def update(self):
+        if self.number_of_sprites > 1:
+            self.change_costume()
+
+        self.move()
+
+    def move(self):
+        # Calculate real y position
+        self.real_x_position += float(self.movement_vector.x * self.speed)
+        self.real_y_position += float(self.movement_vector.y * self.speed)
+
+        # Cast real position to integer
+        self.hit_box.x = int(self.real_x_position)
+        self.hit_box.y = int(self.real_y_position)
+
+        # Check collision
+        self.check_collision()
+
+        # Increase costume step counter
+        self.costume_step_counter += 1
+
+    def check_collision(self):
+        # Check collision with obstacle sprites
+        for sprite in self.obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
+                    self.kill()
+                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+        # Check collision with moving obstacle sprites
+        for sprite in self.moving_obstacle_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
+                    self.kill()
+                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+
+    def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
+        collided_position = game_helper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
+        pygame.event.post(
+            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+                               {"position": collided_position,
+                                "number_of_sparks": number_of_sparks,
+                                "colors": colors}))
+
+    def set_movement_vector(self):
+        distance = math.sqrt(
+            (self.rect.topleft[0] - self.player_top_left_position[0]) ** 2 +
+            (self.rect.topleft[1] - self.player_top_left_position[1]) ** 2
+        )
+
+        x = (self.player_top_left_position[0] - self.rect.topleft[0])
+        y = (self.player_top_left_position[1] - self.rect.topleft[1])
+
+        self.movement_vector = pygame.math.Vector2(x / distance, y / distance)
+
+    def change_costume(self):
+        # Change costume only if threshold exceeded
+        if self.costume_step_counter > self.costume_switching_threshold:
+
+            # Reset counter and increase costume index
+            self.costume_step_counter = 0
+            self.costume_index += 1
+
+            # If it's the last costume - start from the second costume (index = 1)
+            if self.costume_index >= self.number_of_sprites:
+                self.costume_index = 0
+
+            # Set new image
+            self.image = self.sprites[self.costume_index]
+
+    def get_damage_power(self):
+        return self.damage_power

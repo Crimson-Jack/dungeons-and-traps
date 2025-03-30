@@ -9,11 +9,12 @@ from enemy_with_brain import EnemyWithBrain
 from breadth_first_search_helper import BreadthFirstSearchHelper
 from enemy_with_energy import EnemyWithEnergy
 from octopus_tile_details import OctopusTileDetails
+from fire_ball_enemy import FireBallEnemy
 
 
 class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, frames, position, groups, game_state, details: OctopusTileDetails, name, obstacle_map,
-                 moving_obstacle_sprites):
+                 obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
@@ -77,12 +78,18 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
-        # Moving obstacles
+        # Obstacles and Moving obstacles
+        self.obstacle_sprites = obstacle_sprites
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # State variables
         self.collided_with_weapon = False
         self.is_resting = False
+
+        # Fireball
+        self.fire_ball_counter = 0
+        self.fire_ball_switching_threshold = game_helper.calculate_frames(3000)
+        self.fire_balls = list()
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
@@ -101,6 +108,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         if self.number_of_sprites > 1:
             self.change_costume()
+
+        self.check_fireball()
 
         if self.is_moving:
             self.move()
@@ -186,6 +195,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Increase costume step counter
         self.costume_step_counter += 1
+
+        # Increase fireball counter
+        self.fire_ball_counter += 1
 
     def check_collision_with_moving_obstacles(self):
         is_collision_detected = False
@@ -334,8 +346,18 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        tombstone_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
-        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": tombstone_rectangle.topleft}))
+        center_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
+        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": center_rectangle.topleft}))
 
     def get_damage_power(self):
         return self.damage_power
+
+    def check_fireball(self):
+        if self.fire_ball_counter > self.fire_ball_switching_threshold:
+            self.fire_ball_counter = 0
+
+            if len(self.path) > 0:
+                center_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
+                self.fire_balls.append(
+                    FireBallEnemy(center_rectangle.topleft, tuple(self.groups()), self.game_state.player_tile_position,
+                                  self.obstacle_sprites, self.moving_obstacle_sprites))

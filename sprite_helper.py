@@ -209,3 +209,16 @@ def get_octopus_sprite_in_damaged_state(name):
     octopus_scale = int(settings.TILE_SIZE * 3), int(settings.TILE_SIZE * 3)
     sprite_sheet = get_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale, KEY_COLOR)
     return sprite_sheet.get_image(1, 0)
+
+
+def get_all_fire_ball_enemy_sprites():
+    sprite_sheet = get_sprite_sheet('img/fireball.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+
+    sprites = list()
+
+    sprites.append(sprite_sheet.get_image(0, 0))
+    sprites.append(sprite_sheet.get_image(0, 1))
+    sprites.append(sprite_sheet.get_image(0, 2))
+    sprites.append(sprite_sheet.get_image(0, 3))
+
+    return sprites
