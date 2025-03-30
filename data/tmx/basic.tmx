@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="31" nextobjectid="119">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="31" nextobjectid="121">
  <tileset firstgid="1" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="17" source="../tsx/player.tsx"/>
  <tileset firstgid="57" source="../tsx/ghost-enemy.tsx"/>
@@ -18,9 +18,7 @@
  <tileset firstgid="315" source="../tsx/building.tsx"/>
  <tileset firstgid="363" source="../tsx/bat-enemy.tsx"/>
  <tileset firstgid="371" source="../tsx/teleport.tsx"/>
- <tileset firstgid="395" source="../tsx/octopus-animation-top-icons.tsx"/>
- <tileset firstgid="403" source="../tsx/octopus-animation-top-left-icons.tsx"/>
- <tileset firstgid="411" source="../tsx/octopus-animation-center-icons.tsx"/>
+ <tileset firstgid="395" source="../tsx/octopus-animation-icons.tsx"/>
  <layer id="1" name="ground" width="30" height="20">
   <data encoding="csv">
 203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,203,
@@ -46,7 +44,7 @@
 </data>
  </layer>
  <objectgroup id="16" name="major-game-item">
-  <object id="31" name="player" gid="17" x="352" y="288" width="16" height="16">
+  <object id="31" name="player" gid="17" x="16" y="48" width="16" height="16">
    <properties>
     <property name="speed" type="float" value="5"/>
    </properties>
@@ -104,15 +102,15 @@
  </layer>
  <group id="9" name="enemy">
   <objectgroup id="30" name="octopus-enemy">
-   <object id="104" name="octopus-enemy-top-left" gid="403" x="384" y="240" width="16" height="16"/>
-   <object id="115" name="octopus-enemy-left" gid="401" x="400" y="256" width="16" height="16" rotation="-90"/>
-   <object id="118" name="octopus-enemy-bottom-left" gid="409" x="400" y="272" width="16" height="16" rotation="-90"/>
-   <object id="114" name="octopus-enemy-bottom" gid="399" x="416" y="256" width="16" height="16" rotation="180"/>
-   <object id="117" name="octopus-enemy-bottom-right" gid="407" x="432" y="256" width="16" height="16" rotation="180"/>
-   <object id="113" name="octopus-enemy-right" gid="397" x="416" y="240" width="16" height="16" rotation="90"/>
-   <object id="116" name="octopus-enemy-top-right" gid="405" x="416" y="224" width="16" height="16" rotation="90"/>
-   <object id="103" name="octopus-enemy-top" gid="395" x="400" y="240" width="16" height="16"/>
-   <object id="112" name="octopus-enemy-center" gid="411" x="400" y="256" width="16" height="16"/>
+   <object id="120" name="octopus-animation-icons" gid="395" x="80" y="80" width="48" height="48">
+    <properties>
+     <property name="damage_power" type="int" value="8"/>
+     <property name="energy" type="int" value="400"/>
+     <property name="score" type="int" value="250"/>
+     <property name="speed" type="float" value="4"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
   </objectgroup>
   <objectgroup id="27" name="bat-enemy">
    <object id="82" name="bat-enemy" gid="363" x="352" y="160" width="16" height="16">
@@ -289,7 +287,7 @@
 </data>
   </layer>
   <objectgroup id="29" name="spell">
-   <object id="98" name="lighting-twilight" gid="307" x="352" y="192" width="16" height="16">
+   <object id="98" name="lighting-twilight" gid="307" x="304" y="176" width="16" height="16">
     <properties>
      <property name="spell_name" value="twilight"/>
     </properties>
@@ -326,7 +324,7 @@
    </object>
   </objectgroup>
   <objectgroup id="26" name="powerup">
-   <object id="68" name="powerup-sword" gid="181" x="288" y="192" width="16" height="16">
+   <object id="68" name="powerup-sword" gid="181" x="320" y="272" width="16" height="16">
     <properties>
      <property name="powerup_name" value="sword"/>
     </properties>
@@ -372,7 +370,7 @@
      <property name="powerup_name" value="life"/>
     </properties>
    </object>
-   <object id="93" name="powerup-sword" gid="181" x="240" y="176" width="16" height="16">
+   <object id="93" name="powerup-sword" gid="181" x="240" y="160" width="16" height="16">
     <properties>
      <property name="powerup_name" value="sword"/>
     </properties>
@@ -383,7 +381,7 @@
      <property name="powerup_volume" type="int" value="20"/>
     </properties>
    </object>
-   <object id="97" name="powerup-bow" gid="183" x="320" y="208" width="16" height="16">
+   <object id="97" name="powerup-bow" gid="183" x="304" y="272" width="16" height="16">
     <properties>
      <property name="powerup_name" value="bow"/>
      <property name="powerup_volume" type="int" value="20"/>
@@ -421,7 +419,7 @@
     <property name="port_name" value="port_2"/>
    </properties>
   </object>
-  <object id="86" name="teleport_3" gid="373" x="384" y="224" width="16" height="16">
+  <object id="86" name="teleport_3" gid="373" x="272" y="304" width="16" height="16">
    <properties>
     <property name="destination" value="port_1"/>
     <property name="port_name" value="port_3"/>

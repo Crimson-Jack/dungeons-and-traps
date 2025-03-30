@@ -28,6 +28,7 @@ from monster_tile_details import MonsterTileDetails
 from bat_enemy import BatEnemy
 from bat_tile_details import BatTileDetails
 from octopus_enemy import OctopusEnemy
+from octopus_tile_details import OctopusTileDetails
 from player import Player
 from check_point import CheckPoint
 from exit_point import ExitPoint
@@ -325,7 +326,9 @@ class Level:
                     elif layer_name == 'octopus-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
                         groups = self.top_sprites_layer, self.enemy_sprites
-                        OctopusEnemy(frames, (x, y), item.rotation, groups)
+                        tile_details = OctopusTileDetails(item, layer)
+                        OctopusEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
+                                     self.obstacle_map.items, self.moving_obstacle_sprites)
 
     def run(self):
         self.remove_unnecessary_effects()

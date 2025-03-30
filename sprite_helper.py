@@ -202,3 +202,10 @@ def get_sword_images_to_header_view():
 def get_bow_image_to_header_view():
     sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
     return sprite_sheet.get_image(1, 1)
+
+
+def get_octopus_sprite_in_damaged_state(name):
+    octopus_source_tile_size = settings.SOURCE_TILE_SIZE * 3
+    octopus_scale = int(settings.TILE_SIZE * 3), int(settings.TILE_SIZE * 3)
+    sprite_sheet = get_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale, KEY_COLOR)
+    return sprite_sheet.get_image(0, 0)

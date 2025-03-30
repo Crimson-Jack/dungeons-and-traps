@@ -2,6 +2,7 @@ import pygame
 
 import bat_enemy
 import custom_draw_sprite
+import octopus_enemy
 import settings
 import monster_enemy
 
@@ -61,7 +62,7 @@ class CameraGroup(pygame.sprite.Group):
                 pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
 
                 # Draw a path from the player to monster enemy
-                if isinstance(sprite, monster_enemy.MonsterEnemy):
+                if isinstance(sprite, monster_enemy.MonsterEnemy) or isinstance(sprite, octopus_enemy.OctopusEnemy):
                     if sprite.path:
                         for path_item in sprite.path:
                             new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
