@@ -334,7 +334,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        tombstone_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
+        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": tombstone_rectangle.topleft}))
 
     def get_damage_power(self):
         return self.damage_power
