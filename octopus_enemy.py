@@ -32,7 +32,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.costume_switching_thresholds = []
         # Split frames into sprites and durations
         for frame in frames:
-            self.sprites.append(pygame.transform.scale(frame[0], (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3)))
+            self.sprites.append(frame[0])
             self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
         # Number of sprites == number of columns
         self.number_of_sprites = len(self.sprites)
@@ -58,7 +58,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.is_moving = False
         self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
-        self.range = 10
+        self.range = 15
 
         # Set positions on map
         self.current_position_on_map = [
@@ -88,7 +88,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Fireball
         self.fire_ball_counter = 0
-        self.fire_ball_switching_threshold = game_helper.calculate_frames(3000)
+        self.fire_ball_switching_threshold = 120
         self.fire_balls = list()
 
     def create_all_tiles_and_obstacles_lists(self):
@@ -359,5 +359,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             if len(self.path) > 0:
                 center_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
                 self.fire_balls.append(
-                    FireBallEnemy(center_rectangle.topleft, tuple(self.groups()), self.game_state.player_tile_position,
-                                  self.obstacle_sprites, self.moving_obstacle_sprites))
+                    FireBallEnemy(center_rectangle.topleft,
+                                  tuple(self.groups()),
+                                  self.game_state,
+                                  self.obstacle_sprites,
+                                  self.moving_obstacle_sprites)
+                )

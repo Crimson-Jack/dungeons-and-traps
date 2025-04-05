@@ -3,11 +3,15 @@ import pygame
 import sprite_helper
 import game_helper
 import settings
-from custom_draw_sprite import CustomDrawSprite
+from egg import Egg
 
-class FireBallEnemy(CustomDrawSprite):
-    def __init__(self, position, groups, player_tile_position, obstacle_sprites, moving_obstacle_sprites):
-        super().__init__(groups)
+class FireBallEnemy(pygame.sprite.Sprite):
+    def __init__(self, position, groups, game_state, obstacle_sprites, moving_obstacle_sprites):
+        super().__init__(*groups)
+
+        # Base
+        self.game_state = game_state
+        self.damage_power = 40
 
         # Sprite animation variables
         self.sprites = sprite_helper.get_all_fire_ball_enemy_sprites()
@@ -22,7 +26,7 @@ class FireBallEnemy(CustomDrawSprite):
         self.hit_box = self.rect
 
         # Player position
-        self.player_top_left_position = game_helper.get_point_by_tile(player_tile_position)
+        self.player_top_left_position = game_helper.get_point_by_tile(self.game_state.player_tile_position)
 
         # Obstacles
         self.obstacle_sprites = obstacle_sprites
@@ -33,22 +37,28 @@ class FireBallEnemy(CustomDrawSprite):
         self.movement_vector = pygame.math.Vector2((0, 0))
         self.set_movement_vector()
 
-        # Properties
-        self.damage_power = 40
+        # Distance properties
+        self.path_distance = 0
+        self.path_distance_threshold = settings.TILE_SIZE * 10
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
-
-    def custom_draw(self, game_surface, offset):
-        offset_position = self.rect.topleft + offset
-        game_surface.blit(self.image, offset_position)
 
     def update(self):
         if self.number_of_sprites > 1:
             self.change_costume()
 
         self.move()
+
+        if self.path_distance > self.path_distance_threshold:
+            tile = game_helper.get_tile_by_point(self.hit_box)
+            position = game_helper.get_point_by_tile(tile)
+
+            if abs(self.hit_box.x - position[0]) <= 2 and abs(self.hit_box.y - position[1]) <= 2:
+                pygame.event.post(
+                    pygame.event.Event(settings.CREATE_EGG_EVENT, {"position": position}))
+                self.kill()
 
     def move(self):
         # Calculate real y position
@@ -58,6 +68,9 @@ class FireBallEnemy(CustomDrawSprite):
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
         self.hit_box.y = int(self.real_y_position)
+
+        # Increase distance
+        self.path_distance += self.speed
 
         # Check collision
         self.check_collision()

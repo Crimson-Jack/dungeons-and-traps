@@ -102,7 +102,7 @@
  </layer>
  <group id="9" name="enemy">
   <objectgroup id="30" name="octopus-enemy">
-   <object id="121" name="octopus-enemy" gid="395" x="416" y="256" width="48" height="48">
+   <object id="121" name="octopus-enemy" gid="395" x="368" y="64" width="48" height="48">
     <properties>
      <property name="damage_power" type="int" value="8"/>
      <property name="energy" type="int" value="400"/>
@@ -112,7 +112,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="27" name="bat-enemy" visible="0">
+  <objectgroup id="27" name="bat-enemy">
    <object id="82" name="bat-enemy" gid="363" x="352" y="160" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
@@ -124,7 +124,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="11" name="ghost-enemy" visible="0">
+  <objectgroup id="11" name="ghost-enemy">
    <properties>
     <property name="speed" type="float" value="1"/>
    </properties>
@@ -147,7 +147,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="12" name="spider-enemy" visible="0">
+  <objectgroup id="12" name="spider-enemy">
    <properties>
     <property name="motion_schedule" value="0"/>
     <property name="net_length" type="int" value="1"/>
@@ -184,7 +184,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="18" name="fire-flame-enemy" visible="0">
+  <objectgroup id="18" name="fire-flame-enemy">
    <properties>
     <property name="direction" value="left"/>
     <property name="fire_length" type="int" value="3"/>
@@ -219,7 +219,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="19" name="monster-enemy" visible="0">
+  <objectgroup id="19" name="monster-enemy">
    <object id="45" name="monster-enemy-red" gid="69" x="64" y="160" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="8"/>
@@ -323,7 +323,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="powerup" visible="0">
+  <objectgroup id="26" name="powerup">
    <object id="68" name="powerup-sword" gid="181" x="320" y="272" width="16" height="16">
     <properties>
      <property name="powerup_name" value="sword"/>

@@ -67,7 +67,7 @@ def get_frames(tmx_data, item):
 
     if tmx_frames is not None:
         for tmx_frame in tmx_frames:
-            frames.append((tmx_data.get_tile_image_by_gid(tmx_frame.gid), tmx_frame.duration))
+            frames.append([tmx_data.get_tile_image_by_gid(tmx_frame.gid), tmx_frame.duration])
     else:
         # Default duration for one frame is not important
         frames.append((item.image, 0))

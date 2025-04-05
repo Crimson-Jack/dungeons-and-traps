@@ -3,6 +3,7 @@ import enemy_with_brain
 import obstacle_map_refresh_sprite
 import settings
 import game_helper
+import sprite_helper
 import tmx_helper
 from pytmx.util_pygame import load_pygame
 from obstacle_map import ObstacleMap
@@ -43,6 +44,7 @@ from powerup_tile_details import PowerupTileDetails
 from lighting_status import LightingStatus
 from spell_tile_details import SpellTileDetails
 from lighting_spell import LightingSpell
+from egg import Egg
 
 
 class Level:
@@ -297,6 +299,7 @@ class Level:
 
                     elif layer_name == 'monster-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
+                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
@@ -304,6 +307,7 @@ class Level:
 
                     elif layer_name == 'spider-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
+                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
                         SpiderEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
@@ -311,6 +315,7 @@ class Level:
 
                     elif layer_name == 'ghost-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
+                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = GhostTileDetails(item, layer)
                         GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items,
@@ -318,6 +323,7 @@ class Level:
 
                     elif layer_name == 'bat-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
+                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
                         BatEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
@@ -325,6 +331,7 @@ class Level:
 
                     elif layer_name == 'octopus-enemy':
                         frames = tmx_helper.get_frames(self.tmx_data, item)
+                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
@@ -410,6 +417,20 @@ class Level:
 
     def add_vanishing_point(self, position):
         self.vanishing_points.append(VanishingPoint(position, (self.bottom_sprites_layer,)))
+
+    def create_egg(self, position):
+        Egg(position, (self.bottom_sprites_layer, self.collectable_sprites), self.game_state)
+
+    def create_monster(self, position):
+        name = "monster-enemy-red"
+        sprites = sprite_helper.get_all_monster_sprites(name)
+        frames = []
+        for sprite in sprites:
+            frames.append((sprite, 150))
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = MonsterTileDetails(None, None)
+        MonsterEnemy(frames, position, groups, self.game_state, tile_details, name,
+                     self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(

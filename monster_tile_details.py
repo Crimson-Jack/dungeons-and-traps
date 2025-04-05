@@ -7,11 +7,11 @@ class MonsterTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 1, self.tile, self.layer))
-        self._start_delay = tmx_helper.get_property('start_delay', 10, self.tile, self.layer)
-        self._energy = int(tmx_helper.get_property('energy', 100, self.tile, self.layer))
-        self._damage_power = int(tmx_helper.get_property('damage_power', 1, self.tile, self.layer))
-        self._score = int(tmx_helper.get_property('score', 0, self.tile, self.layer))
+        self._speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 5, self.tile, self.layer))
+        self._start_delay = tmx_helper.get_property('start_delay', 5, self.tile, self.layer)
+        self._energy = int(tmx_helper.get_property('energy', 500, self.tile, self.layer))
+        self._damage_power = int(tmx_helper.get_property('damage_power', 6, self.tile, self.layer))
+        self._score = int(tmx_helper.get_property('score', 300, self.tile, self.layer))
 
     @property
     def speed(self):

@@ -27,7 +27,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.costume_switching_thresholds = []
         # Split frames into sprites (with the state healthy) and durations
         for frame in frames:
-            self.sprites.append([pygame.transform.scale(frame[0], (settings.TILE_SIZE, settings.TILE_SIZE))])
+            self.sprites.append([frame[0]])
             self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
         # Number of sprites == number of columns
         self.number_of_sprites = len(self.sprites)

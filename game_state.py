@@ -11,7 +11,8 @@ from lighting_status import LightingStatus
 class GameState:
     def __init__(self):
         self.LEVELS = [
-            'basic.tmx',
+            # 'basic.tmx',
+            'basic_arena.tmx',
             's01_level_01.tmx',
             's01_level_02.tmx',
             's01_level_03.tmx',

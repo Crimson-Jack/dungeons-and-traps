@@ -562,7 +562,7 @@
      <property name="powerup_name" value="sword"/>
     </properties>
    </object>
-   <object id="34" name="powerup-bow" gid="187" x="754" y="338" width="16" height="16">
+   <object id="34" name="powerup-bow" gid="187" x="752" y="336" width="16" height="16">
     <properties>
      <property name="powerup_name" value="bow"/>
      <property name="powerup_volume" type="int" value="20"/>

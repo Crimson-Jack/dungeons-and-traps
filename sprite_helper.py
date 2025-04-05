@@ -5,6 +5,7 @@ from spritesheet import SpriteSheet
 
 SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
 KEY_COLOR = 0, 0, 0
+# KEY_COLOR = None
 
 
 def get_sprite_sheet(path, source_size, scale, key_color):
@@ -185,6 +186,17 @@ def get_monster_sprite_in_damaged_state(name):
     sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
     return sprite_sheet.get_image(1, 0)
 
+def get_all_monster_sprites(name):
+    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+
+    sprites = list()
+
+    sprites.append(sprite_sheet.get_image(0, 0))
+    sprites.append(sprite_sheet.get_image(0, 1))
+    sprites.append(sprite_sheet.get_image(0, 2))
+    sprites.append(sprite_sheet.get_image(0, 3))
+
+    return sprites
 
 def get_sword_images_to_header_view():
     sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
@@ -222,3 +234,19 @@ def get_all_fire_ball_enemy_sprites():
     sprites.append(sprite_sheet.get_image(0, 3))
 
     return sprites
+
+def get_all_egg_sprites():
+    sprite_sheet = get_sprite_sheet('img/egg.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+
+    sprites = list()
+
+    sprites.append(sprite_sheet.get_image(0, 0))
+    sprites.append(sprite_sheet.get_image(0, 1))
+    sprites.append(sprite_sheet.get_image(0, 2))
+    sprites.append(sprite_sheet.get_image(0, 3))
+
+    return sprites
+
+def resize_sprites_in_frames(frames, size):
+    for frame in frames:
+        frame[0] = pygame.transform.scale(frame[0], size)

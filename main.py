@@ -233,6 +233,12 @@ class Game:
                 if event.type == settings.ADD_VANISHING_POINT_EVENT:
                     self.level.add_vanishing_point(event.dict.get("position"))
 
+                if event.type == settings.CREATE_EGG_EVENT:
+                    self.level.create_egg(event.dict.get("position"))
+
+                if event.type == settings.CREATE_MONSTER_EVENT:
+                    self.level.create_monster(event.dict.get("position"))
+
                 if event.type == settings.PLAYER_LOST_LIFE_EVENT:
                     self.level.show_player_tombstone()
                     pygame.time.set_timer(settings.RESPAWN_PLAYER_EVENT, 2000)
