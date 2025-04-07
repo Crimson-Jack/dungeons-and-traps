@@ -9,10 +9,11 @@ from enemy_with_brain import EnemyWithBrain
 from breadth_first_search_helper import BreadthFirstSearchHelper
 from enemy_with_energy import EnemyWithEnergy
 from monster_tile_details import MonsterTileDetails
+from sprite_costume import SpriteCostume
 
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, game_state, details: MonsterTileDetails, name, obstacle_map,
+    def __init__(self, sprites: list[SpriteCostume], position, groups, game_state, details: MonsterTileDetails, name, obstacle_map,
                  moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
@@ -27,13 +28,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.energy = self.max_energy
 
         # Sprite animation variables
-        self.sprites = []
-        self.costume_switching_thresholds = []
-        # Split frames into sprites and durations
-        for frame in frames:
-            self.sprites.append(frame.image)
-            self.costume_switching_thresholds.append(frame.number_of_frames)
-        # Number of sprites == number of columns
+        self.sprites = sprites
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0
         self.costume_index = 0
@@ -42,7 +37,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.sprite_in_damage_state = sprite_helper.get_monster_sprite_in_damaged_state(self.name)
 
         # Image
-        self.image = self.sprites[0]
+        self.image = self.sprites[0].image
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -321,7 +316,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.image = self.sprite_in_damage_state
 
         # Change costume only if threshold exceeded
-        if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
+        if self.costume_step_counter > self.sprites[self.costume_index].number_of_frames:
 
             # Reset counter and increase costume index
             self.costume_step_counter = 0
@@ -332,7 +327,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 self.costume_index = 0
 
             # Set new image
-            self.image = self.sprites[self.costume_index]
+            self.image = self.sprites[self.costume_index].image
 
     def is_player_in_range(self):
         monster_tile_position = tuple(self.current_position_on_map)
