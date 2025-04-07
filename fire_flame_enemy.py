@@ -3,10 +3,11 @@ import settings
 from custom_draw_sprite import CustomDrawSprite
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from fire_flame_tile_details import  FireFlameTileDetails
+from sprite_costume import SpriteCostume
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
+    def __init__(self, frames: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base

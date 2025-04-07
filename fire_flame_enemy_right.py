@@ -34,7 +34,7 @@ class FireFlameEnemyRight(FireFlameEnemy):
             #  [2] - each tile in a merged sprite has a different costume
             # frame_costume_index = self.costume_index - 1
             frame_costume_index = (self.tail_length - index + self.costume_index) % self.number_of_sprites
-            base_image = pygame.transform.scale(self.sprites[frame_costume_index][0],
+            base_image = pygame.transform.scale(self.sprites[frame_costume_index].image,
                                                 (settings.TILE_SIZE, settings.TILE_SIZE))
             merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 

@@ -6,7 +6,7 @@ class DiamondTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._score = int(tmx_helper.get_property('score', 0, self.tile, self.layer))
+        self._score = int(tmx_helper.get_tiled_object_value('score', 0, self.tile, self.layer))
 
     @property
     def score(self):

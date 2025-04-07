@@ -6,8 +6,8 @@ class TeleportTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._destination = tmx_helper.get_property('destination', '', self.tile, self.layer)
-        self._port_name = tmx_helper.get_property('port_name', '', self.tile, self.layer)
+        self._destination = tmx_helper.get_tiled_object_value('destination', '', self.tile, self.layer)
+        self._port_name = tmx_helper.get_tiled_object_value('port_name', '', self.tile, self.layer)
 
     @property
     def destination(self):

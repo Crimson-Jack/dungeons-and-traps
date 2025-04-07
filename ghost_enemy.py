@@ -17,8 +17,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.costume_switching_thresholds = []
         # Split frames into sprites and durations
         for frame in frames:
-            self.sprites.append(frame[0])
-            self.costume_switching_thresholds.append(game_helper.calculate_frames(frame[1]))
+            self.sprites.append(frame.image)
+            self.costume_switching_thresholds.append(frame.number_of_frames)
         # Number of sprites == number of columns
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0

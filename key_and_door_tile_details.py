@@ -6,8 +6,8 @@ class KeyAndDoorTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._key_name = tmx_helper.get_property('key_name', '', self.tile, self.layer)
-        self._score = int(tmx_helper.get_property('score', 0, self.tile, self.layer))
+        self._key_name = tmx_helper.get_tiled_object_value('key_name', '', self.tile, self.layer)
+        self._score = int(tmx_helper.get_tiled_object_value('score', 0, self.tile, self.layer))
 
     def __int__(self, key_name):
         self._key_name = key_name

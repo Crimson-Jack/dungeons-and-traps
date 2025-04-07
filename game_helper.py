@@ -1,4 +1,3 @@
-import game_helper
 import settings
 import pygame
 

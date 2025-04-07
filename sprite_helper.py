@@ -1,6 +1,7 @@
 import settings
 import pygame
 from spritesheet import SpriteSheet
+from sprite_costume import SpriteCostume
 
 
 SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
@@ -247,6 +248,6 @@ def get_all_egg_sprites():
 
     return sprites
 
-def resize_sprites_in_frames(frames, size):
+def resize_sprites_in_frames(frames: list[SpriteCostume], size: tuple[float, float]):
     for frame in frames:
-        frame[0] = pygame.transform.scale(frame[0], size)
+        frame.image = pygame.transform.scale(frame.image, size)

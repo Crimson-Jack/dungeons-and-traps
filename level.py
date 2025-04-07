@@ -45,6 +45,7 @@ from lighting_status import LightingStatus
 from spell_tile_details import SpellTileDetails
 from lighting_spell import LightingSpell
 from egg import Egg
+from sprite_costume import SpriteCostume
 
 
 class Level:
@@ -149,9 +150,9 @@ class Level:
             player_object = None
 
         if player_object is not None and player_object.visible:
-            x, y = tmx_helper.convert_position(player_object.x, player_object.y,
-                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
-            speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_property('speed', 7, player_object, None))
+            x, y = tmx_helper.get_tile_position(player_object.x, player_object.y,
+                                                self.tmx_data.tilewidth, self.tmx_data.tileheight)
+            speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_tiled_object_value('speed', 7, player_object, None))
             return Player((x, y),
                           (self.middle_sprites_layer,),
                           [self.middle_sprites_layer],
@@ -255,9 +256,9 @@ class Level:
         if layer is not None and layer.visible:
             for item in layer:
                 if item.visible:
-                    x, y = tmx_helper.convert_position(item.x, item.y,
-                                                       self.tmx_data.tilewidth, self.tmx_data.tileheight,
-                                                       item.rotation)
+                    x, y = tmx_helper.get_tile_position(item.x, item.y,
+                                                        self.tmx_data.tilewidth, self.tmx_data.tileheight,
+                                                        item.rotation)
 
                     if layer_name == 'spell':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
@@ -279,7 +280,7 @@ class Level:
                         self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         groups = self.bottom_sprites_layer, self.hostile_force_sprites
                         tile_details = FireFlameTileDetails(item, layer)
                         if tile_details.direction == 'left':
@@ -298,7 +299,7 @@ class Level:
                         Teleport(item.image, (x, y), groups, tile_details)
 
                     elif layer_name == 'monster-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
@@ -306,7 +307,7 @@ class Level:
                                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
@@ -314,7 +315,7 @@ class Level:
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = GhostTileDetails(item, layer)
@@ -322,7 +323,7 @@ class Level:
                                    self.moving_obstacle_sprites)
 
                     elif layer_name == 'bat-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
@@ -330,7 +331,7 @@ class Level:
                                  self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'octopus-enemy':
-                        frames = tmx_helper.get_frames(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
                         sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
@@ -423,13 +424,13 @@ class Level:
 
     def create_monster(self, position):
         name = "monster-enemy-red"
-        sprites = sprite_helper.get_all_monster_sprites(name)
-        frames = []
-        for sprite in sprites:
-            frames.append((sprite, 150))
+        images = sprite_helper.get_all_monster_sprites(name)
+        sprite_costumes = list()
+        for image in images:
+            sprite_costumes.append(SpriteCostume(image, 150))
         groups = self.top_sprites_layer, self.enemy_sprites
         tile_details = MonsterTileDetails(None, None)
-        MonsterEnemy(frames, position, groups, self.game_state, tile_details, name,
+        MonsterEnemy(sprite_costumes, position, groups, self.game_state, tile_details, name,
                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
     def add_particle_effect(self, position, number_of_sparks, colors):
