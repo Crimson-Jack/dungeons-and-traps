@@ -7,15 +7,15 @@ from sprite_costume import SpriteCostume
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
-    def __init__(self, frames: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
+    def __init__(self, sprites: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
         self.damage_power = details.damage_power
 
         # Sprite animation variables
-        self.sprites = frames
-        self.number_of_sprites = len(frames)
+        self.sprites = sprites
+        self.number_of_sprites = len(self.sprites)
         self.costume_switching_threshold = 14
         self.costume_step_counter = 0
         self.costume_index = 0

@@ -6,8 +6,8 @@ from sprite_costume import SpriteCostume
 
 
 class FireFlameEnemyRight(FireFlameEnemy):
-    def __init__(self, frames: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
-        super().__init__(frames, position, groups, details, moving_obstacle_sprites)
+    def __init__(self, sprites: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
+        super().__init__(sprites, position, groups, details, moving_obstacle_sprites)
 
         # Rectangle from image
         self.rect = self.image.get_rect(topright=(position[0] + settings.TILE_SIZE, position[1]))
