@@ -2,29 +2,24 @@ import pygame
 import settings
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from ghost_tile_details import GhostTileDetails
+from sprite_costume import SpriteCostume
 
 
 class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
-    def __init__(self, frames, position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
+    def __init__(self, sprites: list[SpriteCostume], position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
         super().__init__(*groups)
 
         # Base
         self.damage_power = details.damage_power
 
         # Sprite animation variables
-        self.sprites = []
-        self.costume_switching_thresholds = []
-        # Split frames into sprites and durations
-        for frame in frames:
-            self.sprites.append(frame.image)
-            self.costume_switching_thresholds.append(frame.number_of_frames)
-        # Number of sprites == number of columns
+        self.sprites = sprites
         self.number_of_sprites = len(self.sprites)
         self.costume_step_counter = 0
         self.costume_index = 0
 
         # Image
-        self.image = self.sprites[0]
+        self.image = self.sprites[0].image
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -220,7 +215,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
     def change_costume(self):
         # Change costume only if threshold exceeded
-        if self.costume_step_counter > self.costume_switching_thresholds[self.costume_index]:
+        if self.costume_step_counter > self.sprites[self.costume_index].number_of_frames:
 
             # Reset counter and increase costume index
             self.costume_step_counter = 0
@@ -231,7 +226,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
                 self.costume_index = 0
 
             # Set new image
-            self.image = self.sprites[self.costume_index]
+            self.image = self.sprites[self.costume_index].image
 
     def get_damage_power(self):
         return self.damage_power
