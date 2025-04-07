@@ -1,5 +1,4 @@
 import pygame
-import game_helper
 import settings
 from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from ghost_tile_details import GhostTileDetails

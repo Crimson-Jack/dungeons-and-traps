@@ -132,10 +132,10 @@ class Level:
             if layer.name == 'moving-obstacle':
                 moving_obstacle_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
             if layer.name == 'door':
-                door_layer_data = tmx_helper.get_object_group_data_map(self.tmx_data.get_layer_by_name('door'),
-                                                                       size_of_map,
-                                                                       self.tmx_data.tilewidth,
-                                                                       self.tmx_data.tileheight)
+                door_layer_data = tmx_helper.get_data_map_by_layer(self.tmx_data.get_layer_by_name('door'),
+                                                                   size_of_map,
+                                                                   self.tmx_data.tilewidth,
+                                                                   self.tmx_data.tileheight)
 
         return ObstacleMap([
             obstacle_data,

@@ -4,7 +4,16 @@ import game_helper
 from sprite_costume import SpriteCostume
 
 
-def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height):
+def get_data_map_by_layer(layer: pytmx.TiledObjectGroup, size_of_map: tuple[int, int], tile_width: int, tile_height: int) -> list[list[int]]:
+    """
+    Create and return data map based on layer.
+
+    :param layer: group of tiled objects
+    :param size_of_map: map size
+    :param tile_width: tile width
+    :param tile_height: tile height
+    :return: data map
+    """
     rows = list()
     for row_counter in range(0, size_of_map[1]):
         columns = list()
@@ -12,8 +21,8 @@ def get_object_group_data_map(object_group, size_of_map, tile_width, tile_height
             columns.append(0)
         rows.append(columns)
 
-    if object_group is not None:
-        for item in object_group:
+    if layer is not None:
+        for item in layer:
             tile_x = int(item.x // tile_width)
             tile_y = int(item.y // tile_height)
             rows[tile_y][tile_x] = 1
@@ -51,44 +60,45 @@ def get_tile_position(x: float, y: float, width: int, height: int, rotation: int
     return x, y
 
 
-def get_tiled_object_value(name: str, default, item: pytmx.TiledObject, layer: pytmx.TiledObjectGroup):
+def get_tiled_object_value(name: str, default, tiled_object: pytmx.TiledObject, layer: pytmx.TiledObjectGroup):
     """
-    Get the value from the item (tile object) if it exists.
-    If not, get the value from the layer (tile object group) if it exists.
+    Get the value from the tiled object.
+    If not exists, get the value from the layer (group of tiled objects).
     Otherwise, return the default value.
 
     :param name: property name
     :param default: default value
-    :param item: tile object
-    :param layer: group of tile objects
+    :param tiled_object: tiled object
+    :param layer: group of tiled objects
     :return: property value
     """
     value = default
 
-    if item is not None and item.properties.get(name) is not None:
-        value = item.properties.get(name)
+    if tiled_object is not None and tiled_object.properties.get(name) is not None:
+        value = tiled_object.properties.get(name)
     elif layer is not None and layer.properties.get(name) is not None:
         value = layer.properties.get(name)
 
     return value
 
 
-def get_sprite_costumes(tmx_data: pytmx.TiledMap, tiled_object: pytmx.TiledObjectGroup) -> list[SpriteCostume]:
+def get_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject) -> list[SpriteCostume]:
     """
-    Get each id and duration from the tiled object and create a sprite costume object with an image and number of frames.
+    Convert each id and duration from the tiled object to a sprite costume object with an image and number of frames.
+    Return a list of sprite costume.
 
-    :param tmx_data: tile map
+    :param tiled_map: tiled map
     :param tiled_object: tiled object
-    :return: list of sprite costumes
+    :return: sprite costumes
     """
-    frames = list()
+    sprite_costumes = list()
     tmx_frames = tiled_object.properties.get('frames')
 
     if tmx_frames is not None:
         for tmx_frame in tmx_frames:
-            frames.append(
-                SpriteCostume(tmx_data.get_tile_image_by_gid(tmx_frame.gid),
+            sprite_costumes.append(
+                SpriteCostume(tiled_map.get_tile_image_by_gid(tmx_frame.gid),
                               game_helper.calculate_frames(tmx_frame.duration))
             )
 
-    return frames
+    return sprite_costumes

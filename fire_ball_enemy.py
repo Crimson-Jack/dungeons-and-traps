@@ -3,7 +3,6 @@ import pygame
 import sprite_helper
 import game_helper
 import settings
-from egg import Egg
 
 class FireBallEnemy(pygame.sprite.Sprite):
     def __init__(self, position, groups, game_state, obstacle_sprites, moving_obstacle_sprites):
