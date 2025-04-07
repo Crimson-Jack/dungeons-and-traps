@@ -2,10 +2,11 @@ import pygame
 import settings
 from fire_flame_enemy import FireFlameEnemy
 from fire_flame_tile_details import FireFlameTileDetails
+from sprite_costume import SpriteCostume
 
 
 class FireFlameEnemyRight(FireFlameEnemy):
-    def __init__(self, frames, position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
+    def __init__(self, frames: list[SpriteCostume], position, groups, details: FireFlameTileDetails, moving_obstacle_sprites):
         super().__init__(frames, position, groups, details, moving_obstacle_sprites)
 
         # Rectangle from image
@@ -32,10 +33,8 @@ class FireFlameEnemyRight(FireFlameEnemy):
             # TODO: Add a property to the selected mode:
             #  [1] - all tiles in a merged sprite have the same costume
             #  [2] - each tile in a merged sprite has a different costume
-            # frame_costume_index = self.costume_index - 1
             frame_costume_index = (self.tail_length - index + self.costume_index) % self.number_of_sprites
-            base_image = pygame.transform.scale(self.sprites[frame_costume_index].image,
-                                                (settings.TILE_SIZE, settings.TILE_SIZE))
+            base_image = self.sprites[frame_costume_index].image
             merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 
         return merged_image

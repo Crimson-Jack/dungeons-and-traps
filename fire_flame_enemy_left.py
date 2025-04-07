@@ -33,10 +33,8 @@ class FireFlameEnemyLeft(FireFlameEnemy):
             # TODO: Add a property to the selected mode:
             #  [1] - all tiles in a merged sprite have the same costume
             #  [2] - each tile in a merged sprite has a different costume
-            # frame_costume_index = self.costume_index - 1
             frame_costume_index = (index + self.costume_index) % self.number_of_sprites
-            base_image = pygame.transform.scale(self.sprites[frame_costume_index].image,
-                                                (settings.TILE_SIZE, settings.TILE_SIZE))
+            base_image = self.sprites[frame_costume_index].image
             merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
 
         return merged_image

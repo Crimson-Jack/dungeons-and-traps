@@ -257,8 +257,7 @@ class Level:
             for item in layer:
                 if item.visible:
                     x, y = tmx_helper.get_tile_position(item.x, item.y,
-                                                        self.tmx_data.tilewidth, self.tmx_data.tileheight,
-                                                        item.rotation)
+                                                        self.tmx_data.tilewidth, self.tmx_data.tileheight, item.rotation)
 
                     if layer_name == 'spell':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
@@ -280,7 +279,7 @@ class Level:
                         self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.bottom_sprites_layer, self.hostile_force_sprites
                         tile_details = FireFlameTileDetails(item, layer)
                         if tile_details.direction == 'left':
@@ -299,40 +298,35 @@ class Level:
                         Teleport(item.image, (x, y), groups, tile_details)
 
                     elif layer_name == 'monster-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
-                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
-                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
                         SpiderEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
-                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = GhostTileDetails(item, layer)
                         GhostEnemy(frames, (x, y), groups, tile_details, self.obstacle_map.items,
                                    self.moving_obstacle_sprites)
 
                     elif layer_name == 'bat-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
-                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
                         BatEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,
                                  self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'octopus-enemy':
-                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item)
-                        sprite_helper.resize_sprites_in_frames(frames, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
+                        frames = tmx_helper.get_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(frames, (x, y), groups, self.game_state, tile_details, item.name,

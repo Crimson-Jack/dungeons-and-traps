@@ -247,7 +247,3 @@ def get_all_egg_sprites():
     sprites.append(sprite_sheet.get_image(0, 3))
 
     return sprites
-
-def resize_sprites_in_frames(frames: list[SpriteCostume], size: tuple[float, float]):
-    for frame in frames:
-        frame.image = pygame.transform.scale(frame.image, size)
