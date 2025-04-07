@@ -1,12 +1,10 @@
 import settings
 import pygame
 from spritesheet import SpriteSheet
-from sprite_costume import SpriteCostume
 
 
 SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
 KEY_COLOR = 0, 0, 0
-# KEY_COLOR = None
 
 
 def get_sprite_sheet(path, source_size, scale, key_color):

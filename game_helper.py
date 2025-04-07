@@ -92,6 +92,13 @@ def get_point_by_tile(tile: tuple) -> tuple:
 
 
 def get_collided_rectangle(rectangle_one: pygame.Rect, rectangle_two: pygame.Rect) -> pygame.Rect:
+    """
+    Return an intersection of two rectangles in collision.
+
+    :param rectangle_one: first rectangle
+    :param rectangle_two: second rectangle
+    :return: intersection
+    """
     left = max(rectangle_one.left, rectangle_two.left)
     width = min(rectangle_one.right, rectangle_two.right) - left
     top = max(rectangle_one.top, rectangle_two.top)
