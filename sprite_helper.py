@@ -1,13 +1,14 @@
 import settings
 import pygame
 from spritesheet import SpriteSheet
+from sprite_costume import SpriteCostume
 
 
 SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
 KEY_COLOR = 0, 0, 0
 
 
-def get_sprite_sheet(path, source_size, scale, key_color):
+def get_sprite_sheet(path: str, source_size: int, scale: tuple[float, float], key_color) -> SpriteSheet:
     sprite_sheet = SpriteSheet(
         pygame.image.load(path).convert_alpha(),
         source_size,
@@ -17,6 +18,21 @@ def get_sprite_sheet(path, source_size, scale, key_color):
     )
 
     return sprite_sheet
+
+
+def get_sprite_costumes_matrix(name: str, sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
+    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    result = list()
+
+    for cell in range(0, len(sprite_costumes)):
+        rows = list()
+        for row in range(0, sprite_sheet.number_of_rows):
+            rows.append(
+                SpriteCostume(sprite_sheet.get_image(row, cell), sprite_costumes[cell].number_of_frames)
+            )
+        result.append(rows)
+
+    return result
 
 
 def get_all_player_sprites(number_of_sprites):
@@ -171,19 +187,10 @@ def get_all_bow_sprites():
     return sprites
 
 
-def add_spider_sprites_in_damaged_state(name, number_of_sprites, number_of_rows, sprites):
-    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
-
-    for cell in range(0, number_of_sprites):
-        for row in range(0, number_of_rows):
-            sprites[cell].append(sprite_sheet.get_image(row + 1, cell))
-
-    return sprites
-
-
 def get_monster_sprite_in_damaged_state(name):
     sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
     return sprite_sheet.get_image(1, 0)
+
 
 def get_all_monster_sprites(name):
     sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
@@ -196,6 +203,7 @@ def get_all_monster_sprites(name):
     sprites.append(sprite_sheet.get_image(0, 3))
 
     return sprites
+
 
 def get_sword_images_to_header_view():
     sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)

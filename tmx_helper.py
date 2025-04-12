@@ -83,7 +83,7 @@ def get_tiled_object_value(name: str, default, tiled_object: pytmx.TiledObject, 
     return value
 
 
-def get_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject, size: tuple[float, float] = None) -> list[SpriteCostume]:
+def convert_to_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject, size: tuple[float, float] = None) -> list[SpriteCostume]:
     """
     Convert each id and duration from the tiled object to a sprite costume object with an image and number of frames.
     Image can be scaled by size argument.
