@@ -1,6 +1,6 @@
 import pygame
-from src.enemy_with_brain import EnemyWithBrain
-from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.enemy_with_brain import EnemyWithBrain
+from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 import settings
 import game_helper
 import sprite_helper

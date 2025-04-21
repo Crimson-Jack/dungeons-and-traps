@@ -1,7 +1,7 @@
 import pygame
 import settings
 import game_helper
-from src.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 import sprite_helper
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite

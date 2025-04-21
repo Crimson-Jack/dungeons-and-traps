@@ -3,9 +3,9 @@ import random
 import game_helper
 import settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
-from src.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.tile_details.bat_tile_details import BatTileDetails
 from src.sprite_costume import SpriteCostume
 

@@ -1,6 +1,6 @@
 import pygame
 import settings
-from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.tile_details.ghost_tile_details import GhostTileDetails
 from src.sprite_costume import SpriteCostume
 

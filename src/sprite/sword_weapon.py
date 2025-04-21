@@ -1,5 +1,5 @@
 import pygame
-from src.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 import game_helper
 import settings
 import sprite_helper
