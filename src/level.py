@@ -4,7 +4,7 @@ from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshS
 import settings
 import game_helper
 import sprite_helper
-import tmx_helper
+from src.tmx_helper import TmxHelper
 from pytmx.util_pygame import load_pygame
 from src.obstacle_map import ObstacleMap
 from src.sprite.wall import Wall
@@ -132,7 +132,7 @@ class Level:
             if layer.name == 'moving-obstacle':
                 moving_obstacle_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
             if layer.name == 'door':
-                door_layer_data = tmx_helper.get_data_map_by_layer(self.tmx_data.get_layer_by_name('door'),
+                door_layer_data = TmxHelper.get_data_map_by_layer(self.tmx_data.get_layer_by_name('door'),
                                                                    size_of_map,
                                                                    self.tmx_data.tilewidth,
                                                                    self.tmx_data.tileheight)
@@ -150,9 +150,9 @@ class Level:
             player_object = None
 
         if player_object is not None and player_object.visible:
-            x, y = tmx_helper.get_tile_position(player_object.x, player_object.y,
+            x, y = TmxHelper.get_tile_position(player_object.x, player_object.y,
                                                 self.tmx_data.tilewidth, self.tmx_data.tileheight)
-            speed = game_helper.multiply_by_tile_size_ratio(tmx_helper.get_tiled_object_value('speed', 7, player_object, None))
+            speed = game_helper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
             return Player((x, y),
                           (self.middle_sprites_layer,),
                           [self.middle_sprites_layer],
@@ -256,7 +256,7 @@ class Level:
         if layer is not None and layer.visible:
             for item in layer:
                 if item.visible:
-                    x, y = tmx_helper.get_tile_position(item.x, item.y,
+                    x, y = TmxHelper.get_tile_position(item.x, item.y,
                                                         self.tmx_data.tilewidth, self.tmx_data.tileheight, item.rotation)
 
                     if layer_name == 'spell':
@@ -279,7 +279,7 @@ class Level:
                         self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.bottom_sprites_layer, self.hostile_force_sprites
                         tile_details = FireFlameTileDetails(item, layer)
                         if tile_details.direction == 'left':
@@ -298,7 +298,7 @@ class Level:
                         Teleport(item.image, (x, y), groups, tile_details)
 
                     elif layer_name == 'monster-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         sprite_image_in_damage_state = sprite_helper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
@@ -307,7 +307,7 @@ class Level:
                                      self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         sprite_costumes_matrix = sprite_helper.get_sprite_costumes_matrix(item.name, sprites)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
@@ -316,14 +316,14 @@ class Level:
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = GhostTileDetails(item, layer)
                         GhostEnemy(sprites, (x, y), groups, tile_details, self.obstacle_map.items,
                                    self.moving_obstacle_sprites)
 
                     elif layer_name == 'bat-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
                         sprite_image_in_damage_state = sprite_helper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
@@ -332,7 +332,7 @@ class Level:
                                  self.hostile_force_sprites)
 
                     elif layer_name == 'octopus-enemy':
-                        sprites = tmx_helper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
+                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
                         sprite_image_in_damage_state = sprite_helper.get_large_sprite_image(item.name, 1, 0, 3)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
