@@ -1,4 +1,4 @@
-from particle_spark import ParticleSpark
+from src.effects.particle_spark import ParticleSpark
 
 
 class ParticleEffect:

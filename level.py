@@ -33,12 +33,12 @@ from src.tile_details.octopus_tile_details import OctopusTileDetails
 from src.sprite.player import Player
 from src.sprite.check_point import CheckPoint
 from src.sprite.exit_point import ExitPoint
-from blast_effect import BlastEffect
+from src.effects.blast_effect import BlastEffect
 from camera_group import CameraGroup
 from camera_group_with_y_sort import CameraGroupWithYSort
 from src.sprite.tombstone import Tombstone
 from src.sprite.vanishing_point import VanishingPoint
-from particle_effect import ParticleEffect
+from src.effects.particle_effect import ParticleEffect
 from powerup_factory import PowerupFactory
 from src.tile_details.powerup_tile_details import PowerupTileDetails
 from lighting_status import LightingStatus

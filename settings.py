@@ -1,5 +1,5 @@
 import pygame
-from debug import Debug
+from src.utilities.debug import Debug
 
 # Clock
 FPS = 60

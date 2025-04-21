@@ -3,10 +3,10 @@ import sys
 import settings
 from game_state import GameState
 from level import Level
-from header import Header
-from dashboard import Dashboard
-from message_box import MessageBox
-from message import Message
+from src.panels.header import Header
+from src.panels.dashboard import Dashboard
+from src.panels.message_box import MessageBox
+from src.panels.message import Message
 from first_page import FirstPage
 from game_status import GameStatus
 
