@@ -2,8 +2,8 @@ import pygame
 import settings
 import direction
 import weapon_type
-from diamond import Diamond
-from key import Key
+from src.sprite.diamond import Diamond
+from src.sprite.key import Key
 from game_status import GameStatus
 from lighting_status import LightingStatus
 

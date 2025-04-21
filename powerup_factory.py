@@ -1,8 +1,8 @@
-from powerup_tile_details import PowerupTileDetails
-from sword_powerup import SwordPowerup
-from bow_powerup import BowPowerup
-from energy_powerup import EnergyPowerup
-from life_powerup import LifePowerup
+from src.tile_details.powerup_tile_details import PowerupTileDetails
+from src.sprite.sword_powerup import SwordPowerup
+from src.sprite.bow_powerup import BowPowerup
+from src.sprite.energy_powerup import EnergyPowerup
+from src.sprite.life_powerup import LifePowerup
 
 
 class PowerupFactory:

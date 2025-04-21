@@ -4,10 +4,10 @@ import settings
 import sprite_helper
 from bar import Bar
 from color_set import ColorSet
-from diamond import Diamond
-from key import Key
-from key_and_door_tile_details import KeyAndDoorTileDetails
-from diamond_tile_details import DiamondTileDetails
+from src.sprite.diamond import Diamond
+from src.sprite.key import Key
+from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
+from src.tile_details.diamond_tile_details import DiamondTileDetails
 
 
 class Dashboard:

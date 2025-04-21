@@ -1,10 +1,9 @@
 import pygame
-
-import bat_enemy
-import custom_draw_sprite
-import octopus_enemy
+from src.sprite.custom_draw_sprite import CustomDrawSprite
 import settings
-import monster_enemy
+import src.sprite.bat_enemy
+import src.sprite.monster_enemy
+import src.sprite.octopus_enemy
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -49,7 +48,7 @@ class CameraGroup(pygame.sprite.Group):
 
         # Draw each tile with an offset on game_surface
         for sprite in self.sprites():
-            if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
+            if isinstance(sprite, CustomDrawSprite):
                 sprite.custom_draw(self.game_surface, self.offset)
             else:
                 offset_position = sprite.rect.topleft + self.offset
@@ -62,7 +61,7 @@ class CameraGroup(pygame.sprite.Group):
                 pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
 
                 # Draw a path from the player to monster enemy
-                if isinstance(sprite, monster_enemy.MonsterEnemy) or isinstance(sprite, octopus_enemy.OctopusEnemy):
+                if isinstance(sprite, src.sprite.monster_enemy.MonsterEnemy) or isinstance(sprite, src.sprite.octopus_enemy.OctopusEnemy):
                     if sprite.path:
                         for path_item in sprite.path:
                             new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
@@ -71,7 +70,7 @@ class CameraGroup(pygame.sprite.Group):
                             pygame.draw.rect(self.game_surface, (0, 255, 255), new_rect, 2)
 
                 # Draw a path of the bat enemy
-                if isinstance(sprite, bat_enemy.BatEnemy):
+                if isinstance(sprite, src.sprite.bat_enemy.BatEnemy):
                     if sprite.path:
                         for path_item in sprite.path:
                             new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,

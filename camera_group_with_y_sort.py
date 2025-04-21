@@ -1,8 +1,8 @@
 import pygame
-import custom_draw_sprite
+from src.sprite.custom_draw_sprite import CustomDrawSprite
 import game_helper
 import settings
-from player import Player
+from src.sprite.player import Player
 from camera_group import CameraGroup
 
 
@@ -16,7 +16,7 @@ class CameraGroupWithYSort(CameraGroup):
 
         # Draw each tile with an offset on game_surface keeping Y order
         for sprite in sorted(self.sprites(), key=lambda item: item.rect.centery):
-            if isinstance(sprite, custom_draw_sprite.CustomDrawSprite):
+            if isinstance(sprite, CustomDrawSprite):
                 sprite.custom_draw(self.game_surface, self.offset)
             else:
                 offset_position = sprite.rect.topleft + self.offset
