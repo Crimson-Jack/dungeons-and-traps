@@ -14,13 +14,12 @@ from sprite_costume import SpriteCostume
 
 
 class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, sprites: list[SpriteCostume], position, groups, game_state, details: OctopusTileDetails, name, obstacle_map,
-                 obstacle_sprites, moving_obstacle_sprites):
+    def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
+                 game_state, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
         self.game_state = game_state
-        self.name = name
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -35,7 +34,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.costume_index = 0
 
         # Sprite in a damage state
-        self.sprite_in_damage_state = sprite_helper.get_octopus_sprite_in_damaged_state(self.name)
+        self.sprite_in_damage_state = sprite_image_in_damage_state
 
         # Image
         self.image = self.sprites[0].image

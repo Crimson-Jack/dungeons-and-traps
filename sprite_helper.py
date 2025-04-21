@@ -8,20 +8,32 @@ SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
 KEY_COLOR = 0, 0, 0
 
 
-def get_sprite_sheet(path: str, source_size: int, scale: tuple[float, float], key_color) -> SpriteSheet:
+def _create_sprite_sheet(path: str, source_size: int, size: tuple[float, float], key_color) -> SpriteSheet:
     sprite_sheet = SpriteSheet(
         pygame.image.load(path).convert_alpha(),
         source_size,
         source_size,
-        scale,
+        size,
         key_color
     )
 
     return sprite_sheet
 
 
-def get_sprite_costumes_matrix(name: str, sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
-    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+def get_sprite_image(sprite_sheet_name: str, row: int, cell: int):
+    sprite_sheet = _create_sprite_sheet(f'img/{sprite_sheet_name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    return sprite_sheet.get_image(row, cell)
+
+
+def get_large_sprite_image(name, row: int, cell: int, number_of_tiles: int):
+    octopus_source_tile_size = settings.SOURCE_TILE_SIZE * number_of_tiles
+    octopus_scale = int(settings.TILE_SIZE * number_of_tiles), int(settings.TILE_SIZE * number_of_tiles)
+    sprite_sheet = _create_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale, KEY_COLOR)
+    return sprite_sheet.get_image(row, cell)
+
+
+def get_sprite_costumes_matrix(sprite_sheet_name: str, sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
+    sprite_sheet = _create_sprite_sheet(f'img/{sprite_sheet_name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
     result = list()
 
     for cell in range(0, len(sprite_costumes)):
@@ -36,7 +48,7 @@ def get_sprite_costumes_matrix(name: str, sprite_costumes: list[SpriteCostume]) 
 
 
 def get_all_player_sprites(number_of_sprites):
-    sprite_sheet = get_sprite_sheet('img/player.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/player.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = {
         'left': [],
@@ -73,12 +85,12 @@ def get_all_player_sprites(number_of_sprites):
 
 
 def get_life_sprite():
-    sprite_sheet = get_sprite_sheet('img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
     return sprite_sheet.get_image(1, 2)
 
 
 def get_all_arrow_sprites():
-    sprite_sheet = get_sprite_sheet('img/arrow.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/arrow.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = {
         'left': [],
@@ -95,7 +107,7 @@ def get_all_arrow_sprites():
 
 
 def get_all_sword_sprites():
-    sprite_sheet = get_sprite_sheet('img/sword.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/sword.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = {
         'left': [],
@@ -143,7 +155,7 @@ def get_all_sword_sprites():
 
 
 def get_all_tombstone_sprites():
-    sprite_sheet = get_sprite_sheet('img/skull.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/skull.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = list()
     sprites.append(sprite_sheet.get_image(0, 0))
@@ -155,7 +167,7 @@ def get_all_tombstone_sprites():
 
 
 def get_all_vanishing_point_sprites():
-    sprite_sheet = get_sprite_sheet('img/vanishing-point.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/vanishing-point.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = list()
     sprites.append(sprite_sheet.get_image(0, 0))
@@ -171,7 +183,7 @@ def get_all_vanishing_point_sprites():
 
 
 def get_all_bow_sprites():
-    sprite_sheet = get_sprite_sheet('img/bow.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/bow.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = {
         'left': [],
@@ -187,13 +199,8 @@ def get_all_bow_sprites():
     return sprites
 
 
-def get_monster_sprite_in_damaged_state(name):
-    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
-    return sprite_sheet.get_image(1, 0)
-
-
 def get_all_monster_sprites(name):
-    sprite_sheet = get_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet(f'img/{name}.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = list()
 
@@ -206,7 +213,7 @@ def get_all_monster_sprites(name):
 
 
 def get_sword_images_to_header_view():
-    sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
 
     images = list()
     images.append(sprite_sheet.get_image(2, 0))
@@ -219,19 +226,12 @@ def get_sword_images_to_header_view():
 
 
 def get_bow_image_to_header_view():
-    sprite_sheet = get_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet(f'img/misc.png', settings.SOURCE_TILE_SIZE, (64, 64), KEY_COLOR)
     return sprite_sheet.get_image(1, 1)
 
 
-def get_octopus_sprite_in_damaged_state(name):
-    octopus_source_tile_size = settings.SOURCE_TILE_SIZE * 3
-    octopus_scale = int(settings.TILE_SIZE * 3), int(settings.TILE_SIZE * 3)
-    sprite_sheet = get_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale, KEY_COLOR)
-    return sprite_sheet.get_image(1, 0)
-
-
 def get_all_fire_ball_enemy_sprites():
-    sprite_sheet = get_sprite_sheet('img/fireball.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/fireball.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = list()
 
@@ -242,8 +242,9 @@ def get_all_fire_ball_enemy_sprites():
 
     return sprites
 
+
 def get_all_egg_sprites():
-    sprite_sheet = get_sprite_sheet('img/egg.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
+    sprite_sheet = _create_sprite_sheet('img/egg.png', settings.SOURCE_TILE_SIZE, SCALE, KEY_COLOR)
 
     sprites = list()
 

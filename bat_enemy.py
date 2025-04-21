@@ -12,13 +12,12 @@ from sprite_costume import SpriteCostume
 
 
 class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
-    def __init__(self, sprites: list[SpriteCostume], position, groups, game_state, details: BatTileDetails, name, obstacle_map,
-                 moving_obstacle_sprites, hostile_force_sprites):
+    def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
+                 game_state, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
         # Base
         self.game_state = game_state
-        self.name = name
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -32,8 +31,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         self.costume_step_counter = 0
         self.costume_index = 0
 
-        # Sprite in a damage state
-        self.sprite_in_damage_state = sprite_helper.get_monster_sprite_in_damaged_state(self.name)
+        # Sprite image in a damage state
+        self.sprite_image_in_damage_state = sprite_image_in_damage_state
 
         # Image
         self.image = self.sprites[0].image
@@ -361,7 +360,7 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
 
     def change_costume(self):
         if self.is_resting:
-            self.image = self.sprite_in_damage_state
+            self.image = self.sprite_image_in_damage_state
 
         # Change costume only if threshold exceeded
         if self.costume_step_counter > self.sprites[self.costume_index].number_of_frames:
