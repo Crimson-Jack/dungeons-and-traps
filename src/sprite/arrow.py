@@ -2,7 +2,7 @@ import pygame
 import settings
 import game_helper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
@@ -31,7 +31,7 @@ class Arrow(CustomDrawSprite):
         self.damage_power = 60
 
     def get_image(self):
-        sprites = sprite_helper.get_all_arrow_sprites()
+        sprites = SpriteHelper.get_all_arrow_sprites()
 
         image = None
         if self.direction == Direction.RIGHT:

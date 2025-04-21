@@ -1,7 +1,7 @@
 import pygame
 import settings
 from src.weapon_type import WeaponType
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 
 
 class Header:
@@ -11,9 +11,9 @@ class Header:
         self.game_state = game_state
 
         # Sword and bow images
-        self.sword_images = sprite_helper.get_sword_images_to_header_view()
+        self.sword_images = SpriteHelper.get_sword_images_to_header_view()
         self.sword_image = self.sword_images[0]
-        self.bow_image = sprite_helper.get_bow_image_to_header_view()
+        self.bow_image = SpriteHelper.get_bow_image_to_header_view()
 
         # Fonts
         self.text_color = settings.TEXT_COLOR

@@ -3,7 +3,7 @@ from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 import settings
 import game_helper
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.tmx_helper import TmxHelper
 from pytmx.util_pygame import load_pygame
 from src.obstacle_map import ObstacleMap
@@ -299,7 +299,7 @@ class Level:
 
                     elif layer_name == 'monster-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
-                        sprite_image_in_damage_state = sprite_helper.get_sprite_image(item.name, 1, 0)
+                        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
@@ -308,7 +308,7 @@ class Level:
 
                     elif layer_name == 'spider-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
-                        sprite_costumes_matrix = sprite_helper.get_sprite_costumes_matrix(item.name, sprites)
+                        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
 
@@ -324,7 +324,7 @@ class Level:
 
                     elif layer_name == 'bat-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE, settings.TILE_SIZE))
-                        sprite_image_in_damage_state = sprite_helper.get_sprite_image(item.name, 1, 0)
+                        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
                         BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
@@ -333,7 +333,7 @@ class Level:
 
                     elif layer_name == 'octopus-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (settings.TILE_SIZE * 3, settings.TILE_SIZE * 3))
-                        sprite_image_in_damage_state = sprite_helper.get_large_sprite_image(item.name, 1, 0, 3)
+                        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
@@ -426,9 +426,9 @@ class Level:
     def create_monster(self, position):
         name = "monster-enemy-red"
         sprite_costumes = list()
-        for image in sprite_helper.get_all_monster_sprites(name):
+        for image in SpriteHelper.get_all_monster_sprites(name):
             sprite_costumes.append(SpriteCostume(image, 150))
-        sprite_image_in_damage_state = sprite_helper.get_sprite_image(name, 1, 0)
+        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
         groups = self.top_sprites_layer, self.enemy_sprites
         tile_details = MonsterTileDetails(None, None)
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_state, tile_details,

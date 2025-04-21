@@ -1,5 +1,5 @@
 import game_helper
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.direction import Direction
 from src.sprite.arrow import Arrow
 from src.sprite.custom_draw_sprite import CustomDrawSprite
@@ -10,7 +10,7 @@ class BowWeapon(CustomDrawSprite):
         super().__init__(groups)
 
         # Sprite animation variables
-        self.sprites = sprite_helper.get_all_bow_sprites()
+        self.sprites = SpriteHelper.get_all_bow_sprites()
 
         # Image
         self.image = self.sprites['right'][0]

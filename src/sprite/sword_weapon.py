@@ -2,7 +2,7 @@ import pygame
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 import game_helper
 import settings
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
@@ -15,7 +15,7 @@ class SwordWeapon(CustomDrawSprite):
         self.game_state = game_state
 
         # Sprite animation variables
-        self.sprites = sprite_helper.get_all_sword_sprites()
+        self.sprites = SpriteHelper.get_all_sword_sprites()
         self.costume_switching_threshold = 1
         self.number_of_sprites = 8
         self.costume_step_counter = 0

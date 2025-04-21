@@ -5,7 +5,7 @@ from src.sprite.powerup import Powerup
 import settings
 import game_helper
 from src.weapon_type import WeaponType
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.sprite.sword_weapon import SwordWeapon
 from src.sprite.bow_weapon import BowWeapon
 from src.sprite.custom_draw_sprite import CustomDrawSprite
@@ -22,7 +22,7 @@ class Player(CustomDrawSprite):
         self.number_of_sprites = 4
         self.step_counter = 0
         self.costume_index = 0
-        self.sprites = sprite_helper.get_all_player_sprites(self.number_of_sprites)
+        self.sprites = SpriteHelper.get_all_player_sprites(self.number_of_sprites)
 
         # Image
         self.position = position

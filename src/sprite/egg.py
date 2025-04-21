@@ -1,6 +1,6 @@
 import pygame
 import settings
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.sprite.item_to_collect import ItemToCollect
 
 class Egg(ItemToCollect):
@@ -8,7 +8,7 @@ class Egg(ItemToCollect):
         super().__init__(groups, game_state)
 
         # Sprite animation variables
-        self.sprites = sprite_helper.get_all_egg_sprites()
+        self.sprites = SpriteHelper.get_all_egg_sprites()
         self.number_of_sprites = len(self.sprites)
         self.costume_switching_threshold = 100
         self.costume_step_counter = 0

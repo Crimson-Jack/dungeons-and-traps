@@ -1,7 +1,7 @@
 import pygame
 import game_helper
 import settings
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 from src.bar import Bar
 from src.color_set import ColorSet
 from src.sprite.diamond import Diamond
@@ -17,7 +17,7 @@ class Dashboard:
         self.game_state = game_state
 
         # Life image
-        self.life_image = sprite_helper.get_life_sprite()
+        self.life_image = SpriteHelper.get_life_sprite()
 
         # Fonts
         self.text_color = settings.TEXT_COLOR

@@ -1,5 +1,5 @@
 import pygame
-import sprite_helper
+from src.sprite_helper import SpriteHelper
 
 
 class Tombstone(pygame.sprite.Sprite):
@@ -7,7 +7,7 @@ class Tombstone(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         # Sprite animation variables
-        self.sprites = sprite_helper.get_all_tombstone_sprites()
+        self.sprites = SpriteHelper.get_all_tombstone_sprites()
         self.number_of_sprites = 3
         self.costume_switching_threshold = 4
         self.costume_step_counter = 0
