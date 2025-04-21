@@ -1,7 +1,7 @@
 import math
 import pygame
 from src.sprite_helper import SpriteHelper
-import game_helper
+from src.game_helper import GameHelper
 import settings
 
 class FireBallEnemy(pygame.sprite.Sprite):
@@ -25,14 +25,14 @@ class FireBallEnemy(pygame.sprite.Sprite):
         self.hit_box = self.rect
 
         # Player position
-        self.player_top_left_position = game_helper.get_point_by_tile(self.game_state.player_tile_position)
+        self.player_top_left_position = GameHelper.get_point_by_tile(self.game_state.player_tile_position)
 
         # Obstacles
         self.obstacle_sprites = obstacle_sprites
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Movement variables
-        self.speed = game_helper.multiply_by_tile_size_ratio(10)
+        self.speed = GameHelper.multiply_by_tile_size_ratio(10)
         self.movement_vector = pygame.math.Vector2((0, 0))
         self.set_movement_vector()
 
@@ -51,8 +51,8 @@ class FireBallEnemy(pygame.sprite.Sprite):
         self.move()
 
         if self.path_distance > self.path_distance_threshold:
-            tile = game_helper.get_tile_by_point(self.hit_box)
-            position = game_helper.get_point_by_tile(tile)
+            tile = GameHelper.get_tile_by_point(self.hit_box)
+            position = GameHelper.get_point_by_tile(tile)
 
             if abs(self.hit_box.x - position[0]) <= 2 and abs(self.hit_box.y - position[1]) <= 2:
                 pygame.event.post(
@@ -94,7 +94,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
                     self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
-        collided_position = game_helper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
+        collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
             pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,

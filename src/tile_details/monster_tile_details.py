@@ -1,13 +1,13 @@
 from src.tile_details.tile_details import TileDetails
 from src.tmx_helper import TmxHelper
-import game_helper
+from src.game_helper import GameHelper
 
 
 class MonsterTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._speed = game_helper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 5, self.tile, self.layer))
+        self._speed = GameHelper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 5, self.tile, self.layer))
         self._start_delay = TmxHelper.get_tiled_object_value('start_delay', 5, self.tile, self.layer)
         self._energy = int(TmxHelper.get_tiled_object_value('energy', 500, self.tile, self.layer))
         self._damage_power = int(TmxHelper.get_tiled_object_value('damage_power', 6, self.tile, self.layer))

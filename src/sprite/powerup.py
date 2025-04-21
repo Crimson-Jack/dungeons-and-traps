@@ -1,6 +1,6 @@
 import pygame
 import settings
-import game_helper
+from src.game_helper import GameHelper
 from src.sprite.item_to_collect import ItemToCollect
 
 
@@ -11,8 +11,8 @@ class Powerup(ItemToCollect):
         # Sprite
         self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
-        self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-25),
-                                         game_helper.multiply_by_tile_size_ratio(-25))
+        self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-25),
+                                         GameHelper.multiply_by_tile_size_ratio(-25))
 
     def activate(self):
         pass

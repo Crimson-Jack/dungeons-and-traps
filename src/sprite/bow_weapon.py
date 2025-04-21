@@ -1,4 +1,4 @@
-import game_helper
+from src.game_helper import GameHelper
 from src.sprite_helper import SpriteHelper
 from src.direction import Direction
 from src.sprite.arrow import Arrow
@@ -38,7 +38,7 @@ class BowWeapon(CustomDrawSprite):
     def set_position(self, position):
         # Calculate additional offset
         new_position = [position[0], position[1]]
-        position_offset = game_helper.multiply_by_tile_size_ratio(24)
+        position_offset = GameHelper.multiply_by_tile_size_ratio(24)
         # Add additional offset to the base position
         if self.direction == Direction.RIGHT:
             new_position[0] += position_offset

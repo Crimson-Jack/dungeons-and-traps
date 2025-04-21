@@ -1,6 +1,6 @@
 import pygame
 import settings
-import game_helper
+from src.game_helper import GameHelper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.sprite_helper import SpriteHelper
 from src.direction import Direction
@@ -27,7 +27,7 @@ class Arrow(CustomDrawSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Properties
-        self.speed = game_helper.multiply_by_tile_size_ratio(13)
+        self.speed = GameHelper.multiply_by_tile_size_ratio(13)
         self.damage_power = 60
 
     def get_image(self):
@@ -100,7 +100,7 @@ class Arrow(CustomDrawSprite):
                     self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
-        collided_position = game_helper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
+        collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
             pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,

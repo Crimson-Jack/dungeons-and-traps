@@ -2,7 +2,7 @@ import pygame
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 import settings
-import game_helper
+from src.game_helper import GameHelper
 from src.sprite_helper import SpriteHelper
 from src.tmx_helper import TmxHelper
 from pytmx.util_pygame import load_pygame
@@ -152,7 +152,7 @@ class Level:
         if player_object is not None and player_object.visible:
             x, y = TmxHelper.get_tile_position(player_object.x, player_object.y,
                                                 self.tmx_data.tilewidth, self.tmx_data.tileheight)
-            speed = game_helper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
+            speed = GameHelper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
             return Player((x, y),
                           (self.middle_sprites_layer,),
                           [self.middle_sprites_layer],
@@ -437,7 +437,7 @@ class Level:
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
             ParticleEffect(self.game_surface, position, colors, number_of_sparks,
-                           game_helper.get_tile_size_ratio()))
+                           GameHelper.get_tile_size_ratio()))
 
     def update_particle_effects(self):
         map_offset = self.top_sprites_layer.get_map_offset()

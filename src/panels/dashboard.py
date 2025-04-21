@@ -1,5 +1,5 @@
 import pygame
-import game_helper
+from src.game_helper import GameHelper
 import settings
 from src.sprite_helper import SpriteHelper
 from src.bar import Bar
@@ -87,7 +87,7 @@ class Dashboard:
 
         count = 0
         for item in range(self.game_state.lives):
-            surface.blit(self.life_image, (self.margin * 3 + lives_counter_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+            surface.blit(self.life_image, (self.margin * 3 + lives_counter_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             count += 1
 
     def draw_energy_bar(self, surface):
@@ -103,10 +103,10 @@ class Dashboard:
                 # Copy sprite for dashboard - semi transparent
                 transparent_image = Key(item.base_size_image, item.rect.topleft, tuple(), item.game_state, KeyAndDoorTileDetails.from_properties(item.key_name, item.score))
                 transparent_image.base_size_image.set_alpha(100)
-                surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                surface.blit(item.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(item.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             count += 1
 
     def draw_diamonds(self, surface):
@@ -119,8 +119,8 @@ class Dashboard:
                 # Copy sprite for dashboard - semi transparent
                 transparent_image = Diamond(item.base_size_image, item.rect.topleft, tuple(), item.game_state, DiamondTileDetails.from_properties(item.score))
                 transparent_image.base_size_image.set_alpha(100)
-                surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite
-                surface.blit(item.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * game_helper.BASE_TILE_SIZE), 0))
+                surface.blit(item.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             count += 1

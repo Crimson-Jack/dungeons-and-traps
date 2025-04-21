@@ -1,5 +1,5 @@
 import pygame
-import game_helper
+from src.game_helper import GameHelper
 import settings
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
@@ -23,8 +23,8 @@ class MovingObstacle(CustomDrawSprite):
         self.power_needed_to_move_obstacle = 100
 
         # Create power bar
-        bar_width = settings.TILE_SIZE - game_helper.multiply_by_tile_size_ratio(10)
-        bar_height = game_helper.multiply_by_tile_size_ratio(12, 9)
+        bar_width = settings.TILE_SIZE - GameHelper.multiply_by_tile_size_ratio(10)
+        bar_height = GameHelper.multiply_by_tile_size_ratio(12, 9)
         bar_left, bar_top = self.get_bar_position()
         bar_colors = ColorSet([
             ((0, 25), (255, 0, 0)),
@@ -133,8 +133,8 @@ class MovingObstacle(CustomDrawSprite):
             self.power_bar.draw(game_surface, power_value, offset)
 
     def get_bar_position(self):
-        left_offset = game_helper.multiply_by_tile_size_ratio(10) // 2
+        left_offset = GameHelper.multiply_by_tile_size_ratio(10) // 2
         bar_left = self.position[0] + left_offset
-        bar_top = self.position[1] - game_helper.multiply_by_tile_size_ratio(16)
+        bar_top = self.position[1] - GameHelper.multiply_by_tile_size_ratio(16)
         return bar_left, bar_top
 

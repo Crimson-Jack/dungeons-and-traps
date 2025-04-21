@@ -3,6 +3,7 @@ import pygame
 from src.spritesheet import SpriteSheet
 from src.sprite_costume import SpriteCostume
 
+
 class SpriteHelper:
     SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)
     KEY_COLOR = 0, 0, 0

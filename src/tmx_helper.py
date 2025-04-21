@@ -1,7 +1,7 @@
 import pygame
 import pytmx
 import settings
-import game_helper
+from src.game_helper import GameHelper
 from src.sprite_costume import SpriteCostume
 
 
@@ -105,7 +105,7 @@ class TmxHelper:
                 if size is not None:
                     image = pygame.transform.scale(image, size)
                 sprite_costumes.append(
-                    SpriteCostume(image, game_helper.calculate_frames(tmx_frame.duration))
+                    SpriteCostume(image, GameHelper.calculate_frames(tmx_frame.duration))
                 )
 
         return sprite_costumes

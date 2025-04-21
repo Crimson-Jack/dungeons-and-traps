@@ -1,6 +1,6 @@
 import pygame
 import random
-import game_helper
+from src.game_helper import GameHelper
 import settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
@@ -303,7 +303,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             mask = pygame.mask.from_surface(self.image)
             mask_outline = mask.outline()
             pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
-                                int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+                                int(GameHelper.multiply_by_tile_size_ratio(1, 1)))
             game_surface.blit(outline_image, offset_position)
 
             # Reset status of collided with weapon

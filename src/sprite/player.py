@@ -3,7 +3,7 @@ from src.direction import Direction
 from src.sprite.item_to_collect import ItemToCollect
 from src.sprite.powerup import Powerup
 import settings
-import game_helper
+from src.game_helper import GameHelper
 from src.weapon_type import WeaponType
 from src.sprite_helper import SpriteHelper
 from src.sprite.sword_weapon import SwordWeapon
@@ -28,7 +28,7 @@ class Player(CustomDrawSprite):
         self.position = position
         self.image = self.sprites['right'][0]
         self.rect = self.image.get_rect(topleft=self.position)
-        self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
+        self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-5), 0)
 
         # Movement variables
         self.is_moving = False
@@ -65,7 +65,7 @@ class Player(CustomDrawSprite):
         self.bow_weapon = BowWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
 
         # Tile position
-        self.tile_position = game_helper.get_tile_by_point(self.get_center_point())
+        self.tile_position = GameHelper.get_tile_by_point(self.get_center_point())
         self.game_state.set_player_tile_position(self.tile_position)
 
     def get_input(self):
@@ -167,7 +167,7 @@ class Player(CustomDrawSprite):
             self.previous_movement_direction = self.movement_direction
 
             # Set player's new tile position
-            new_tile_position = game_helper.get_tile_by_point(self.get_center_point())
+            new_tile_position = GameHelper.get_tile_by_point(self.get_center_point())
             if new_tile_position != self.tile_position:
                 self.tile_position = new_tile_position
                 self.game_state.set_player_tile_position(self.tile_position)
@@ -331,7 +331,7 @@ class Player(CustomDrawSprite):
                 mask = pygame.mask.from_surface(self.image)
                 mask_outline = mask.outline()
                 pygame.draw.polygon(outline_image, (255, 255, 255), mask_outline,
-                                    int(game_helper.multiply_by_tile_size_ratio(1, 1)))
+                                    int(GameHelper.multiply_by_tile_size_ratio(1, 1)))
                 game_surface.blit(outline_image, offset_position)
 
     def get_center_point(self):
@@ -358,6 +358,6 @@ class Player(CustomDrawSprite):
 
     def change_position(self, new_position):
         self.rect = self.image.get_rect(topleft=new_position)
-        self.hit_box = self.rect.inflate(game_helper.multiply_by_tile_size_ratio(-5), 0)
+        self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-5), 0)
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
