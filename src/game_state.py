@@ -1,11 +1,11 @@
 import pygame
 import settings
-import direction
-import weapon_type
+from src.direction import Direction
+from src.weapon_type import WeaponType
 from src.sprite.diamond import Diamond
 from src.sprite.key import Key
-from game_status import GameStatus
-from lighting_status import LightingStatus
+from src.game_status import GameStatus
+from src.lighting_status import LightingStatus
 
 
 class GameState:
@@ -29,7 +29,7 @@ class GameState:
         self.lives = 2
         self.score = 0
 
-        self.weapon_type = weapon_type.WeaponType.NONE
+        self.weapon_type = WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
         self.sword_max_energy = 100
@@ -45,7 +45,7 @@ class GameState:
         self.player_energy = self.player_max_energy
         self.player_tile_position = (0, 0)
         self.player_movement_vector = pygame.Vector2()
-        self.player_movement_direction = direction.Direction.RIGHT
+        self.player_movement_direction = Direction.RIGHT
         self.player_is_using_weapon = False
 
         self.check_point_position = None
@@ -57,7 +57,7 @@ class GameState:
         self.lives = 2
         self.score = 0
 
-        self.weapon_type = weapon_type.WeaponType.NONE
+        self.weapon_type = WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
         self.sword_energy = self.sword_max_energy
@@ -155,17 +155,17 @@ class GameState:
         pygame.event.post(pygame.event.Event(settings.CHANGE_SCORE_EVENT))
 
     def collect_sword_powerup(self):
-        self.add_weapon(weapon_type.WeaponType.SWORD)
+        self.add_weapon(WeaponType.SWORD)
         self.sword_energy = self.sword_max_energy
-        self.remove_weapon(weapon_type.WeaponType.NONE)
-        self.weapon_type = weapon_type.WeaponType.SWORD
+        self.remove_weapon(WeaponType.NONE)
+        self.weapon_type = WeaponType.SWORD
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
-        self.add_weapon(weapon_type.WeaponType.BOW)
+        self.add_weapon(WeaponType.BOW)
         self.number_of_arrows += number_of_arrows
-        self.remove_weapon(weapon_type.WeaponType.NONE)
-        self.weapon_type = weapon_type.WeaponType.BOW
+        self.remove_weapon(WeaponType.NONE)
+        self.weapon_type = WeaponType.BOW
         pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
 
     def add_weapon(self, weapon):
@@ -193,9 +193,9 @@ class GameState:
             self.sword_energy -= 1
 
         if self.sword_energy <= 0:
-            self.remove_weapon(weapon_type.WeaponType.SWORD)
+            self.remove_weapon(WeaponType.SWORD)
             if len(self.collected_weapons) == 0:
-                self.add_weapon(weapon_type.WeaponType.NONE)
+                self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
             pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
@@ -212,9 +212,9 @@ class GameState:
             self.number_of_arrows -= 1
 
         if self.number_of_arrows <= 0:
-            self.remove_weapon(weapon_type.WeaponType.BOW)
+            self.remove_weapon(WeaponType.BOW)
             if len(self.collected_weapons) == 0:
-                self.add_weapon(weapon_type.WeaponType.NONE)
+                self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
             pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
@@ -272,24 +272,24 @@ class GameState:
 
         # Set direction
         if self.player_movement_vector.y == 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = direction.Direction.RIGHT
+            self.player_movement_direction = Direction.RIGHT
         elif self.player_movement_vector.y > 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = direction.Direction.RIGHT_DOWN
+            self.player_movement_direction = Direction.RIGHT_DOWN
         elif self.player_movement_vector.y > 0 and self.player_movement_vector.x == 0:
-            self.player_movement_direction = direction.Direction.DOWN
+            self.player_movement_direction = Direction.DOWN
         elif self.player_movement_vector.y > 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = direction.Direction.LEFT_DOWN
+            self.player_movement_direction = Direction.LEFT_DOWN
         elif self.player_movement_vector.y == 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = direction.Direction.LEFT
+            self.player_movement_direction = Direction.LEFT
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = direction.Direction.LEFT_UP
+            self.player_movement_direction = Direction.LEFT_UP
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x == 0:
-            self.player_movement_direction = direction.Direction.UP
+            self.player_movement_direction = Direction.UP
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = direction.Direction.RIGHT_UP
+            self.player_movement_direction = Direction.RIGHT_UP
 
     def reset_player_direction(self):
-        self.player_movement_direction = direction.Direction.RIGHT
+        self.player_movement_direction = Direction.RIGHT
 
     def set_player_is_using_weapon(self, status):
         self.player_is_using_weapon = status

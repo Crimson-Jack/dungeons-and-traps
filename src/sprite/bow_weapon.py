@@ -1,6 +1,6 @@
 import game_helper
 import sprite_helper
-import direction
+from src.direction import Direction
 from src.sprite.arrow import Arrow
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
@@ -23,7 +23,7 @@ class BowWeapon(CustomDrawSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Direction and states
-        self.direction = direction.Direction.RIGHT
+        self.direction = Direction.RIGHT
         self.is_armed = False
 
         # Arrows
@@ -40,17 +40,17 @@ class BowWeapon(CustomDrawSprite):
         new_position = [position[0], position[1]]
         position_offset = game_helper.multiply_by_tile_size_ratio(24)
         # Add additional offset to the base position
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             new_position[0] += position_offset
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             new_position[0] -= position_offset
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             new_position[1] += position_offset
-        elif (self.direction == direction.Direction.UP or
-              self.direction == direction.Direction.LEFT_UP or
-              self.direction == direction.Direction.RIGHT_UP):
+        elif (self.direction == Direction.UP or
+              self.direction == Direction.LEFT_UP or
+              self.direction == Direction.RIGHT_UP):
             new_position[1] -= position_offset
 
         self.rect = self.image.get_rect(topleft=new_position)
@@ -59,17 +59,17 @@ class BowWeapon(CustomDrawSprite):
     def set_costume(self, new_direction):
         self.direction = new_direction
         # Set image based on direction
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             self.image = self.sprites['right'][0]
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             self.image = self.sprites['left'][0]
-        elif (self.direction == direction.Direction.UP or
-              self.direction == direction.Direction.LEFT_UP or
-              self.direction == direction.Direction.RIGHT_UP):
+        elif (self.direction == Direction.UP or
+              self.direction == Direction.LEFT_UP or
+              self.direction == Direction.RIGHT_UP):
             self.image = self.sprites['up'][0]
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             self.image = self.sprites['down'][0]
 
     def fire(self):

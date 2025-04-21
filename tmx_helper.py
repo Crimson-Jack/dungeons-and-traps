@@ -2,7 +2,7 @@ import pygame
 import pytmx
 import settings
 import game_helper
-from sprite_costume import SpriteCostume
+from src.sprite_costume import SpriteCostume
 
 
 def get_data_map_by_layer(layer: pytmx.TiledObjectGroup, size_of_map: tuple[int, int], tile_width: int, tile_height: int) -> list[list[int]]:

@@ -1,10 +1,10 @@
 import pygame
 import game_helper
 import settings
-import direction
+from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-from bar import Bar
-from color_set import ColorSet
+from src.bar import Bar
+from src.color_set import ColorSet
 
 
 class MovingObstacle(CustomDrawSprite):
@@ -40,16 +40,16 @@ class MovingObstacle(CustomDrawSprite):
         new_position_y = self.position[1]
 
         # Calculate a new position
-        if movement_direction == direction.Direction.RIGHT:
+        if movement_direction == Direction.RIGHT:
             new_position_x = self.position[0] + settings.TILE_SIZE
             new_position_y = self.position[1]
-        elif movement_direction == direction.Direction.LEFT:
+        elif movement_direction == Direction.LEFT:
             new_position_x = self.position[0] - settings.TILE_SIZE
             new_position_y = self.position[1]
-        elif movement_direction == direction.Direction.UP:
+        elif movement_direction == Direction.UP:
             new_position_x = self.position[0]
             new_position_y = self.position[1] - settings.TILE_SIZE
-        elif movement_direction == direction.Direction.DOWN:
+        elif movement_direction == Direction.DOWN:
             new_position_x = self.position[0]
             new_position_y = self.position[1] + settings.TILE_SIZE
 

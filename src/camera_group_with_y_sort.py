@@ -3,7 +3,7 @@ from src.sprite.custom_draw_sprite import CustomDrawSprite
 import game_helper
 import settings
 from src.sprite.player import Player
-from camera_group import CameraGroup
+from src.camera_group import CameraGroup
 
 
 class CameraGroupWithYSort(CameraGroup):

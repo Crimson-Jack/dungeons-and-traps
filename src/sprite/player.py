@@ -1,10 +1,10 @@
 import pygame
-import direction
+from src.direction import Direction
 from src.sprite.item_to_collect import ItemToCollect
 from src.sprite.powerup import Powerup
 import settings
 import game_helper
-import weapon_type
+from src.weapon_type import WeaponType
 import sprite_helper
 from src.sprite.sword_weapon import SwordWeapon
 from src.sprite.bow_weapon import BowWeapon
@@ -33,8 +33,8 @@ class Player(CustomDrawSprite):
         # Movement variables
         self.is_moving = False
         self.movement_vector = pygame.math.Vector2()
-        self.movement_direction = direction.Direction.RIGHT
-        self.previous_movement_direction = direction.Direction.RIGHT
+        self.movement_direction = Direction.RIGHT
+        self.previous_movement_direction = Direction.RIGHT
         self.speed = speed
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -75,21 +75,21 @@ class Player(CustomDrawSprite):
 
     def set_costume(self, current_direction, index):
         # Select appropriate costume for sprite
-        if current_direction == direction.Direction.RIGHT:
+        if current_direction == Direction.RIGHT:
             self.image = self.sprites['right'][index]
-        elif current_direction == direction.Direction.LEFT:
+        elif current_direction == Direction.LEFT:
             self.image = self.sprites['left'][index]
-        elif current_direction == direction.Direction.UP:
+        elif current_direction == Direction.UP:
             self.image = self.sprites['up'][index]
-        elif current_direction == direction.Direction.DOWN:
+        elif current_direction == Direction.DOWN:
             self.image = self.sprites['down'][index]
-        elif current_direction == direction.Direction.RIGHT_UP:
+        elif current_direction == Direction.RIGHT_UP:
             self.image = self.sprites['right_up'][index]
-        elif current_direction == direction.Direction.RIGHT_DOWN:
+        elif current_direction == Direction.RIGHT_DOWN:
             self.image = self.sprites['right_down'][index]
-        elif current_direction == direction.Direction.LEFT_UP:
+        elif current_direction == Direction.LEFT_UP:
             self.image = self.sprites['left_up'][index]
-        elif current_direction == direction.Direction.LEFT_DOWN:
+        elif current_direction == Direction.LEFT_DOWN:
             self.image = self.sprites['left_down'][index]
 
     def reset_costume(self):
@@ -288,12 +288,12 @@ class Player(CustomDrawSprite):
                     self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
-        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
+        if self.game_state.weapon_type == WeaponType.NONE:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.disarm_weapon()
             pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
-        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+        if self.game_state.weapon_type == WeaponType.SWORD:
             self.bow_weapon.disarm_weapon()
             self.sword_weapon.set_position(self.rect.topleft)
             self.sword_weapon.arm_weapon()
@@ -302,7 +302,7 @@ class Player(CustomDrawSprite):
             else:
                 self.sword_weapon.stop_cutting()
 
-        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+        elif self.game_state.weapon_type == WeaponType.BOW:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.set_position(self.rect.topleft)
             self.bow_weapon.arm_weapon()

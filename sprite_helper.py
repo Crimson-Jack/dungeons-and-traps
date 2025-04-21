@@ -1,7 +1,7 @@
 import settings
 import pygame
-from spritesheet import SpriteSheet
-from sprite_costume import SpriteCostume
+from src.spritesheet import SpriteSheet
+from src.sprite_costume import SpriteCostume
 
 
 SCALE = int(settings.TILE_SIZE), int(settings.TILE_SIZE)

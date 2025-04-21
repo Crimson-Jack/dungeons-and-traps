@@ -3,13 +3,13 @@ import random
 import game_helper
 import settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
-from enemy_with_brain import EnemyWithBrain
-from breadth_first_search_helper import BreadthFirstSearchHelper
-from enemy_with_energy import EnemyWithEnergy
+from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.enemy_with_brain import EnemyWithBrain
+from src.breadth_first_search_helper import BreadthFirstSearchHelper
+from src.enemy_with_energy import EnemyWithEnergy
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 from src.sprite.fire_ball_enemy import FireBallEnemy
-from sprite_costume import SpriteCostume
+from src.sprite_costume import SpriteCostume
 
 
 class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):

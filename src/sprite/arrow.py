@@ -1,9 +1,9 @@
 import pygame
 import settings
 import game_helper
-import enemy_with_energy
+from src.enemy_with_energy import EnemyWithEnergy
 import sprite_helper
-import direction
+from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
 
@@ -34,17 +34,17 @@ class Arrow(CustomDrawSprite):
         sprites = sprite_helper.get_all_arrow_sprites()
 
         image = None
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             image = sprites['right'][0]
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             image = sprites['left'][0]
-        elif (self.direction == direction.Direction.UP or
-              self.direction == direction.Direction.LEFT_UP or
-              self.direction == direction.Direction.RIGHT_UP):
+        elif (self.direction == Direction.UP or
+              self.direction == Direction.LEFT_UP or
+              self.direction == Direction.RIGHT_UP):
             image = sprites['up'][0]
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             image = sprites['down'][0]
 
         return image
@@ -57,17 +57,17 @@ class Arrow(CustomDrawSprite):
         self.move()
 
     def move(self):
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             self.hit_box.x += self.speed
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             self.hit_box.x -= self.speed
-        if (self.direction == direction.Direction.UP or
-                self.direction == direction.Direction.LEFT_UP or
-                self.direction == direction.Direction.RIGHT_UP):
+        if (self.direction == Direction.UP or
+                self.direction == Direction.LEFT_UP or
+                self.direction == Direction.RIGHT_UP):
             self.hit_box.y -= self.speed
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             self.hit_box.y += self.speed
 
         # Check collision
@@ -80,7 +80,7 @@ class Arrow(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
-                    if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
+                    if isinstance(sprite, EnemyWithEnergy):
                         sprite.decrease_energy(self.damage_power)
                         self.kill()
                         self.create_particle_effect(sprite_hit_box, 12, settings.ENEMY_PARTICLE_COLORS)

@@ -1,14 +1,14 @@
 import pygame
 import sys
 import settings
-from game_state import GameState
-from level import Level
+from src.game_state import GameState
+from src.level import Level
 from src.panels.header import Header
 from src.panels.dashboard import Dashboard
 from src.panels.message_box import MessageBox
 from src.panels.message import Message
-from first_page import FirstPage
-from game_status import GameStatus
+from src.panels.first_page import FirstPage
+from src.game_status import GameStatus
 
 
 class Game:

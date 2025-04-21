@@ -1,12 +1,12 @@
 import pygame
-import enemy_with_brain
-import obstacle_map_refresh_sprite
+from src.enemy_with_brain import EnemyWithBrain
+from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 import settings
 import game_helper
 import sprite_helper
 import tmx_helper
 from pytmx.util_pygame import load_pygame
-from obstacle_map import ObstacleMap
+from src.obstacle_map import ObstacleMap
 from src.sprite.wall import Wall
 from src.sprite.stone import Stone
 from src.sprite.ground import Ground
@@ -34,18 +34,18 @@ from src.sprite.player import Player
 from src.sprite.check_point import CheckPoint
 from src.sprite.exit_point import ExitPoint
 from src.effects.blast_effect import BlastEffect
-from camera_group import CameraGroup
-from camera_group_with_y_sort import CameraGroupWithYSort
+from src.camera_group import CameraGroup
+from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.sprite.tombstone import Tombstone
 from src.sprite.vanishing_point import VanishingPoint
 from src.effects.particle_effect import ParticleEffect
-from powerup_factory import PowerupFactory
+from src.powerup_factory import PowerupFactory
 from src.tile_details.powerup_tile_details import PowerupTileDetails
-from lighting_status import LightingStatus
+from src.lighting_status import LightingStatus
 from src.tile_details.spell_tile_details import SpellTileDetails
 from src.sprite.lighting_spell import LightingSpell
 from src.sprite.egg import Egg
-from sprite_costume import SpriteCostume
+from src.sprite_costume import SpriteCostume
 
 
 class Level:
@@ -399,15 +399,15 @@ class Level:
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapRefreshSprite):
                 sprite.refresh_obstacle_map()
         for sprite in self.hostile_force_sprites.sprites():
-            if isinstance(sprite, obstacle_map_refresh_sprite.ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapRefreshSprite):
                 sprite.refresh_obstacle_map()
 
     def inform_about_player_tile_position(self):
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, enemy_with_brain.EnemyWithBrain):
+            if isinstance(sprite, EnemyWithBrain):
                 sprite.set_player_tile_position()
 
     def show_exit_point(self):

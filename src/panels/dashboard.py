@@ -2,8 +2,8 @@ import pygame
 import game_helper
 import settings
 import sprite_helper
-from bar import Bar
-from color_set import ColorSet
+from src.bar import Bar
+from src.color_set import ColorSet
 from src.sprite.diamond import Diamond
 from src.sprite.key import Key
 from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails

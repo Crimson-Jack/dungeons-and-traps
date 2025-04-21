@@ -1,5 +1,5 @@
 import pygame
-from spritesheet import SpriteSheet
+from src.spritesheet import SpriteSheet
 
 
 class FirstPage:

@@ -1,9 +1,9 @@
 import pygame
-import enemy_with_energy
+from src.enemy_with_energy import EnemyWithEnergy
 import game_helper
 import settings
 import sprite_helper
-import direction
+from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
 
@@ -28,7 +28,7 @@ class SwordWeapon(CustomDrawSprite):
         self.hit_box = self.rect
 
         # Direction and states
-        self.direction = direction.Direction.RIGHT
+        self.direction = Direction.RIGHT
         self.is_armed = True
         self.is_moving = False
         self.is_blocked = False
@@ -46,17 +46,17 @@ class SwordWeapon(CustomDrawSprite):
     def set_costume(self, new_direction, index):
         self.direction = new_direction
         # Set image based on direction
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             self.image = self.sprites['right'][index]
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             self.image = self.sprites['left'][index]
-        elif (self.direction == direction.Direction.UP or
-              self.direction == direction.Direction.LEFT_UP or
-              self.direction == direction.Direction.RIGHT_UP):
+        elif (self.direction == Direction.UP or
+              self.direction == Direction.LEFT_UP or
+              self.direction == Direction.RIGHT_UP):
             self.image = self.sprites['up'][index]
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             self.image = self.sprites['down'][index]
 
     def set_position(self, position):
@@ -64,17 +64,17 @@ class SwordWeapon(CustomDrawSprite):
         new_position = [position[0], position[1]]
         position_offset = game_helper.multiply_by_tile_size_ratio(24)
         # Add additional offset to the base position
-        if self.direction == direction.Direction.RIGHT:
+        if self.direction == Direction.RIGHT:
             new_position[0] += position_offset
-        elif self.direction == direction.Direction.LEFT:
+        elif self.direction == Direction.LEFT:
             new_position[0] -= position_offset
-        elif (self.direction == direction.Direction.DOWN or
-              self.direction == direction.Direction.LEFT_DOWN or
-              self.direction == direction.Direction.RIGHT_DOWN):
+        elif (self.direction == Direction.DOWN or
+              self.direction == Direction.LEFT_DOWN or
+              self.direction == Direction.RIGHT_DOWN):
             new_position[1] += position_offset
-        elif (self.direction == direction.Direction.UP or
-              self.direction == direction.Direction.LEFT_UP or
-              self.direction == direction.Direction.RIGHT_UP):
+        elif (self.direction == Direction.UP or
+              self.direction == Direction.LEFT_UP or
+              self.direction == Direction.RIGHT_UP):
             new_position[1] -= position_offset
 
         self.rect = self.image.get_rect(topleft=new_position)
@@ -104,7 +104,7 @@ class SwordWeapon(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
-                    if isinstance(sprite, enemy_with_energy.EnemyWithEnergy):
+                    if isinstance(sprite, EnemyWithEnergy):
                         self.game_state.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
                         self.create_particle_effect(sprite_hit_box, 1, settings.ENEMY_PARTICLE_COLORS)

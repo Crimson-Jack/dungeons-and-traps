@@ -1,6 +1,6 @@
 import pygame
 import settings
-import weapon_type
+from src.weapon_type import WeaponType
 import sprite_helper
 
 
@@ -101,15 +101,15 @@ class Header:
         surface.blit(level_number, (self.margin * 2 + level_text.get_rect().width, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
 
     def draw_weapon(self, surface):
-        if self.game_state.weapon_type == weapon_type.WeaponType.NONE:
+        if self.game_state.weapon_type == WeaponType.NONE:
             weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
-        if self.game_state.weapon_type == weapon_type.WeaponType.SWORD:
+        if self.game_state.weapon_type == WeaponType.SWORD:
             self.set_sword_image()
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
             surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
-        elif self.game_state.weapon_type == weapon_type.WeaponType.BOW:
+        elif self.game_state.weapon_type == WeaponType.BOW:
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
             surface.blit(self.bow_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.bow_image.get_rect().height // 2))

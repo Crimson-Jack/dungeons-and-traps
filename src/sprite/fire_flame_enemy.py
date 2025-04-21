@@ -1,9 +1,9 @@
 import pygame.surface
 import settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-from obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.tile_details.fire_flame_tile_details import  FireFlameTileDetails
-from sprite_costume import SpriteCostume
+from src.sprite_costume import SpriteCostume
 
 
 class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
