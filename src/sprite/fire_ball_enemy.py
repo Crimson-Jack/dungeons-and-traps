@@ -1,8 +1,9 @@
 import math
 import pygame
-from src.sprite_helper import SpriteHelper
-from src.game_helper import GameHelper
 from settings import Settings
+from src.game_helper import GameHelper
+from src.sprite_helper import SpriteHelper
+
 
 class FireBallEnemy(pygame.sprite.Sprite):
     def __init__(self, position, groups, game_state, obstacle_sprites, moving_obstacle_sprites):

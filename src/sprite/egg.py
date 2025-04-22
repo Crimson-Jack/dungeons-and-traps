@@ -3,6 +3,7 @@ from settings import Settings
 from src.sprite_helper import SpriteHelper
 from src.sprite.item_to_collect import ItemToCollect
 
+
 class Egg(ItemToCollect):
     def __init__(self, position, groups, game_state):
         super().__init__(groups, game_state)

@@ -1,8 +1,8 @@
 import pygame
 from settings import Settings
 from src.game_helper import GameHelper
-from src.tile_details.diamond_tile_details import DiamondTileDetails
 from src.sprite.item_to_collect import ItemToCollect
+from src.tile_details.diamond_tile_details import DiamondTileDetails
 
 
 class Diamond(ItemToCollect):

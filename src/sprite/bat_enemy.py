@@ -1,13 +1,13 @@
 import pygame
 import random
-from src.game_helper import GameHelper
 from settings import Settings
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
-from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
-from src.tile_details.bat_tile_details import BatTileDetails
+from src.game_helper import GameHelper
+from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
+from src.tile_details.bat_tile_details import BatTileDetails
 
 
 class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):

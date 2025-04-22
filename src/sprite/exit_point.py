@@ -1,7 +1,7 @@
 import pygame
-from src.sprite.custom_draw_sprite import CustomDrawSprite
 from settings import Settings
 from src.game_helper import GameHelper
+from src.sprite.custom_draw_sprite import CustomDrawSprite
 
 
 class ExitPoint(CustomDrawSprite):
