@@ -1,7 +1,7 @@
 import pygame
 import random
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
@@ -50,8 +50,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
 
         # Set positions on map
         self.current_position_on_map = [
-            (self.rect.right // settings.TILE_SIZE) - 1,
-            (self.rect.bottom // settings.TILE_SIZE) - 1
+            (self.rect.right // Settings.TILE_SIZE) - 1,
+            (self.rect.bottom // Settings.TILE_SIZE) - 1
         ]
         self.new_position_on_map = list(self.current_position_on_map)
 
@@ -160,8 +160,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
-        x_remainder = self.rect.right % settings.TILE_SIZE
-        y_remainder = self.rect.bottom % settings.TILE_SIZE
+        x_remainder = self.rect.right % Settings.TILE_SIZE
+        y_remainder = self.rect.bottom % Settings.TILE_SIZE
 
         if x_remainder < self.speed:
             # TODO: Calculate value based on the direction
@@ -174,8 +174,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         if self.check_collision_with_moving_obstacles():
             # Collision with moving obstacle sprites was detected
             # Monster must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
 
             # Adjust real position after collision
             self.real_x_position = float(self.hit_box.x)
@@ -186,11 +186,11 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         else:
             # Recognize the moment when monster moves to a new area
             # In this case TILE_SIZE is a divisor of "right" or "bottom"
-            if self.rect.right % settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
+            if self.rect.right % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 1
 
-            if self.rect.bottom % settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 1
+            if self.rect.bottom % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 1
 
             # If position was changed, change position and determine new direction
             if self.current_position_on_map != self.new_position_on_map:
@@ -378,7 +378,7 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
         return self.damage_power

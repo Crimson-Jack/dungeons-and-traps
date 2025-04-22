@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.direction import Direction
 from src.weapon_type import WeaponType
 from src.sprite.diamond import Diamond
@@ -134,39 +134,39 @@ class GameState:
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.check_is_last_level():
                 self.game_status = GameStatus.GAME_OVER
-                pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.GAME_OVER_EVENT))
             else:
-                pygame.event.post(pygame.event.Event(settings.NEXT_LEVEL_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.NEXT_LEVEL_EVENT))
 
     def life_lost(self):
         self.lives -= 1
         if self.lives > 0:
             self.set_player_max_energy()
             self.reset_player_direction()
-            pygame.event.post(pygame.event.Event(settings.PLAYER_LOST_LIFE_EVENT))
+            pygame.event.post(pygame.event.Event(Settings.PLAYER_LOST_LIFE_EVENT))
         else:
-            pygame.event.post(pygame.event.Event(settings.GAME_OVER_EVENT))
+            pygame.event.post(pygame.event.Event(Settings.GAME_OVER_EVENT))
 
     def decrease_number_of_lives(self):
         self.lives -= 1
 
     def increase_score(self, value):
         self.score += value
-        pygame.event.post(pygame.event.Event(settings.CHANGE_SCORE_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_SCORE_EVENT))
 
     def collect_sword_powerup(self):
         self.add_weapon(WeaponType.SWORD)
         self.sword_energy = self.sword_max_energy
         self.remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.SWORD
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
         self.add_weapon(WeaponType.BOW)
         self.number_of_arrows += number_of_arrows
         self.remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.BOW
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def add_weapon(self, weapon):
         if weapon not in self.collected_weapons:
@@ -180,13 +180,13 @@ class GameState:
         self.weapon_type = self.weapon_type.next()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.next()
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
         self.weapon_type = self.weapon_type.previous()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.previous()
-        pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
@@ -198,7 +198,7 @@ class GameState:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
-            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def get_sword_capacity(self):
         threshold = self.sword_max_energy // self.number_of_sword_thresholds
@@ -217,7 +217,7 @@ class GameState:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
-            pygame.event.post(pygame.event.Event(settings.CHANGE_WEAPON_CAPACITY_EVENT))
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
@@ -225,9 +225,9 @@ class GameState:
     def collect_diamond(self, diamond: Diamond):
         self.collected_diamonds.append(diamond)
         self.score += diamond.score
-        pygame.event.post(pygame.event.Event(settings.COLLECT_DIAMOND_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
-            pygame.event.post(pygame.event.Event(settings.EXIT_POINT_IS_OPEN_EVENT))
+            pygame.event.post(pygame.event.Event(Settings.EXIT_POINT_IS_OPEN_EVENT))
 
     def add_key(self, key: Key):
         self.keys.append(key)
@@ -235,7 +235,7 @@ class GameState:
     def collect_key(self, key: Key):
         self.collected_keys.append(key)
         self.score += key.score
-        pygame.event.post(pygame.event.Event(settings.COLLECT_KEY_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.COLLECT_KEY_EVENT))
 
     def check_is_key_collected(self, key_name):
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
@@ -243,7 +243,7 @@ class GameState:
 
     def collect_life_powerup(self):
         self.lives += 1
-        pygame.event.post(pygame.event.Event(settings.COLLECT_LIFE_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.COLLECT_LIFE_EVENT))
 
     def decrease_player_energy(self, damage_power=1):
         if self.player_energy > 0:
@@ -251,7 +251,7 @@ class GameState:
             if self.player_energy <= 0:
                 self.life_lost()
             else:
-                pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
 
     def increase_player_energy(self, volume, is_percentage=True):
         if is_percentage:
@@ -260,7 +260,7 @@ class GameState:
             self.player_energy += volume
         if self.player_energy > self.player_max_energy:
             self.player_energy = self.player_max_energy
-        pygame.event.post(pygame.event.Event(settings.CHANGE_ENERGY_EVENT))
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
 
     def set_player_max_energy(self):
         self.player_energy = self.player_max_energy

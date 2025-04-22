@@ -2,7 +2,7 @@ import math
 import pygame
 from src.sprite_helper import SpriteHelper
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 
 class FireBallEnemy(pygame.sprite.Sprite):
     def __init__(self, position, groups, game_state, obstacle_sprites, moving_obstacle_sprites):
@@ -38,7 +38,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
 
         # Distance properties
         self.path_distance = 0
-        self.path_distance_threshold = settings.TILE_SIZE * 10
+        self.path_distance_threshold = Settings.TILE_SIZE * 10
 
         # Real position is required to store the real distance, which is then cast to integer
         self.real_x_position = float(self.hit_box.x)
@@ -56,7 +56,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
 
             if abs(self.hit_box.x - position[0]) <= 2 and abs(self.hit_box.y - position[1]) <= 2:
                 pygame.event.post(
-                    pygame.event.Event(settings.CREATE_EGG_EVENT, {"position": position}))
+                    pygame.event.Event(Settings.CREATE_EGG_EVENT, {"position": position}))
                 self.kill()
 
     def move(self):
@@ -84,19 +84,19 @@ class FireBallEnemy(pygame.sprite.Sprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
-                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+                    self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
         # Check collision with moving obstacle sprites
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
-                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+                    self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
         collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
-            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+            pygame.event.Event(Settings.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,
                                 "number_of_sparks": number_of_sparks,
                                 "colors": colors}))

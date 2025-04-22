@@ -1,6 +1,6 @@
 import pygame
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.sprite_helper import SpriteHelper
 from src.bar import Bar
 from src.color_set import ColorSet
@@ -20,7 +20,7 @@ class Dashboard:
         self.life_image = SpriteHelper.get_life_sprite()
 
         # Fonts
-        self.text_color = settings.TEXT_COLOR
+        self.text_color = Settings.TEXT_COLOR
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.text_adjustment = 2
         self.margin = 16
@@ -28,20 +28,20 @@ class Dashboard:
         # Background and border
         self.border = self.dashboard_surface.get_rect()
         self.border = self.border.inflate(-8, -8)
-        self.dashboard_surface.fill(settings.SURFACE_COLOR)
-        pygame.draw.rect(self.dashboard_surface, settings.BACKGROUND_COLOR, self.border)
-        pygame.draw.rect(self.dashboard_surface, settings.BORDER_COLOR, self.border, 4)
-        self.inner_background_color = settings.BACKGROUND_COLOR
+        self.dashboard_surface.fill(Settings.SURFACE_COLOR)
+        pygame.draw.rect(self.dashboard_surface, Settings.BACKGROUND_COLOR, self.border)
+        pygame.draw.rect(self.dashboard_surface, Settings.BORDER_COLOR, self.border, 4)
+        self.inner_background_color = Settings.BACKGROUND_COLOR
 
         # Surfaces
         self.left_top_surface = pygame.Surface(
-            (settings.WIDTH // 2 - self.margin, settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.right_top_surface = pygame.Surface(
-            (settings.WIDTH // 2 - self.margin, settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.left_bottom_surface = pygame.Surface(
-            (settings.WIDTH // 2 - self.margin, settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.right_bottom_surface = pygame.Surface(
-            (settings.WIDTH // 2 - self.margin, settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
 
         # Energy bar
         self.energy_bar_margin = 20
@@ -57,8 +57,8 @@ class Dashboard:
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
         self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.player_max_energy,
-                              bar_colors, True, settings.BORDER_COLOR, True,
-                              settings.SURFACE_COLOR, True, 'Energy', settings.BAR_TEXT_COLOR)
+                              bar_colors, True, Settings.BORDER_COLOR, True,
+                              Settings.SURFACE_COLOR, True, 'Energy', Settings.BAR_TEXT_COLOR)
 
     def clean(self):
         self.left_top_surface.fill(self.inner_background_color)
@@ -74,12 +74,12 @@ class Dashboard:
 
         # Blit each surface to the dashboard
         self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
-        self.dashboard_surface.blit(self.right_top_surface, (settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
-        self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
-        self.dashboard_surface.blit(self.right_bottom_surface, (settings.WIDTH // 2 + self.margin // 2, settings.DASHBOARD_HEIGHT // 2))
+        self.dashboard_surface.blit(self.right_top_surface, (Settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
+        self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, Settings.DASHBOARD_HEIGHT // 2))
+        self.dashboard_surface.blit(self.right_bottom_surface, (Settings.WIDTH // 2 + self.margin // 2, Settings.DASHBOARD_HEIGHT // 2))
 
         # Blit dashboard to the main screen
-        self.screen.blit(self.dashboard_surface, (0, settings.HEIGHT - settings.DASHBOARD_HEIGHT))
+        self.screen.blit(self.dashboard_surface, (0, Settings.HEIGHT - Settings.DASHBOARD_HEIGHT))
 
     def draw_lives(self, surface):
         lives_counter_text = self.basic_font.render(f'Lives', True, self.text_color)

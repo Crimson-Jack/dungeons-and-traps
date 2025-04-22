@@ -1,6 +1,6 @@
 import pygame
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.bar import Bar
@@ -11,7 +11,7 @@ class MovingObstacle(CustomDrawSprite):
     def __init__(self, image, position: list, groups, game_state, obstacle_map_items, collision_sprites):
         super().__init__(groups)
         self.position = position
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
+        self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.obstacle_map_items = obstacle_map_items
         self.collision_sprites = collision_sprites
@@ -23,7 +23,7 @@ class MovingObstacle(CustomDrawSprite):
         self.power_needed_to_move_obstacle = 100
 
         # Create power bar
-        bar_width = settings.TILE_SIZE - GameHelper.multiply_by_tile_size_ratio(10)
+        bar_width = Settings.TILE_SIZE - GameHelper.multiply_by_tile_size_ratio(10)
         bar_height = GameHelper.multiply_by_tile_size_ratio(12, 9)
         bar_left, bar_top = self.get_bar_position()
         bar_colors = ColorSet([
@@ -41,27 +41,27 @@ class MovingObstacle(CustomDrawSprite):
 
         # Calculate a new position
         if movement_direction == Direction.RIGHT:
-            new_position_x = self.position[0] + settings.TILE_SIZE
+            new_position_x = self.position[0] + Settings.TILE_SIZE
             new_position_y = self.position[1]
         elif movement_direction == Direction.LEFT:
-            new_position_x = self.position[0] - settings.TILE_SIZE
+            new_position_x = self.position[0] - Settings.TILE_SIZE
             new_position_y = self.position[1]
         elif movement_direction == Direction.UP:
             new_position_x = self.position[0]
-            new_position_y = self.position[1] - settings.TILE_SIZE
+            new_position_y = self.position[1] - Settings.TILE_SIZE
         elif movement_direction == Direction.DOWN:
             new_position_x = self.position[0]
-            new_position_y = self.position[1] + settings.TILE_SIZE
+            new_position_y = self.position[1] + Settings.TILE_SIZE
 
         # Calculate new position on the map
-        new_map_x = new_position_x // settings.TILE_SIZE
-        new_map_y = new_position_y // settings.TILE_SIZE
+        new_map_x = new_position_x // Settings.TILE_SIZE
+        new_map_y = new_position_y // Settings.TILE_SIZE
 
         return new_position_x, new_position_y, new_map_x, new_map_y
 
     def check_if_destination_tile_is_empty(self, new_position_x, new_position_y):
-        source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, settings.TILE_SIZE,
-                                          settings.TILE_SIZE)
+        source_hit_box = pygame.rect.Rect(new_position_x, new_position_y, Settings.TILE_SIZE,
+                                          Settings.TILE_SIZE)
         for collision_sprite_group in self.collision_sprites:
             for sprite in collision_sprite_group:
                 if sprite.hit_box.colliderect(source_hit_box):
@@ -75,8 +75,8 @@ class MovingObstacle(CustomDrawSprite):
         # Get old position
         old_position_x, old_position_y = self.position[0], self.position[1]
         # Calculate old position on the map
-        old_map_x = old_position_x // settings.TILE_SIZE
-        old_map_y = old_position_y // settings.TILE_SIZE
+        old_map_x = old_position_x // Settings.TILE_SIZE
+        old_map_y = old_position_y // Settings.TILE_SIZE
         # Get a new position and a new position on map
         new_position_x, new_position_y, new_map_x, new_map_y = self.calculate_new_position(movement_direction)
 
@@ -95,7 +95,7 @@ class MovingObstacle(CustomDrawSprite):
                 self.obstacle_map_items[old_map_y][old_map_x] = 0
                 self.obstacle_map_items[new_map_y][new_map_x] = 1
                 # Raise event to refresh obstacle map
-                pygame.event.post(pygame.event.Event(settings.REFRESH_OBSTACLE_MAP_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
                 # Reset power
                 self.reset_power()
                 # Obstacle has been moved

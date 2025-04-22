@@ -1,7 +1,7 @@
 import pygame
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.sprite_helper import SpriteHelper
 from src.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
@@ -107,7 +107,7 @@ class SwordWeapon(CustomDrawSprite):
                     if isinstance(sprite, EnemyWithEnergy):
                         self.game_state.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
-                        self.create_particle_effect(sprite_hit_box, 1, settings.ENEMY_PARTICLE_COLORS)
+                        self.create_particle_effect(sprite_hit_box, 1, Settings.ENEMY_PARTICLE_COLORS)
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
@@ -124,9 +124,9 @@ class SwordWeapon(CustomDrawSprite):
                     self.is_blocked = True
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
-        collided_position = game_helper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
+        collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
-            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+            pygame.event.Event(Settings.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,
                                 "number_of_sparks": number_of_sparks,
                                 "colors": colors}))
@@ -141,7 +141,7 @@ class SwordWeapon(CustomDrawSprite):
             # If it's the last costume - start from the first costume (index = 0)
             if self.costume_index >= self.number_of_sprites:
                 self.costume_index = 0
-                pygame.event.post(pygame.event.Event(settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
             # Set new image
             self.set_costume(self.direction, self.costume_index)

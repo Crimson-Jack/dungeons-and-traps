@@ -1,6 +1,6 @@
 import pygame
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-import settings
+from settings import Settings
 import src.sprite.bat_enemy
 import src.sprite.monster_enemy
 import src.sprite.octopus_enemy
@@ -16,8 +16,8 @@ class CameraGroup(pygame.sprite.Group):
         self.game_surface_half_height = self.game_surface_height // 2
         self.offset = pygame.math.Vector2()
         self.size_of_map = size_of_map
-        self.map_width = settings.TILE_SIZE * self.size_of_map[0]
-        self.map_height = settings.TILE_SIZE * self.size_of_map[1]
+        self.map_width = Settings.TILE_SIZE * self.size_of_map[0]
+        self.map_height = Settings.TILE_SIZE * self.size_of_map[1]
 
     def set_map_offset(self, player):
         if player is None:
@@ -55,17 +55,17 @@ class CameraGroup(pygame.sprite.Group):
                 self.game_surface.blit(sprite.image, offset_position)
 
             # Draw rectangles when debug is enabled
-            if settings.debugger.enabled:
+            if Settings.debugger.enabled:
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, settings.debugger.text_color, new_rect, 1)
+                pygame.draw.rect(self.game_surface, Settings.debugger.text_color, new_rect, 1)
 
                 # Draw a path from the player to monster enemy
                 if isinstance(sprite, src.sprite.monster_enemy.MonsterEnemy) or isinstance(sprite, src.sprite.octopus_enemy.OctopusEnemy):
                     if sprite.path:
                         for path_item in sprite.path:
-                            new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
-                                                        settings.TILE_SIZE, settings.TILE_SIZE)
+                            new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE, path_item[1] * Settings.TILE_SIZE,
+                                                        Settings.TILE_SIZE, Settings.TILE_SIZE)
                             new_rect.topleft += self.offset
                             pygame.draw.rect(self.game_surface, (0, 255, 255), new_rect, 2)
 
@@ -73,7 +73,7 @@ class CameraGroup(pygame.sprite.Group):
                 if isinstance(sprite, src.sprite.bat_enemy.BatEnemy):
                     if sprite.path:
                         for path_item in sprite.path:
-                            new_rect = pygame.rect.Rect(path_item[0] * settings.TILE_SIZE, path_item[1] * settings.TILE_SIZE,
-                                                        settings.TILE_SIZE, settings.TILE_SIZE)
+                            new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE, path_item[1] * Settings.TILE_SIZE,
+                                                        Settings.TILE_SIZE, Settings.TILE_SIZE)
                             new_rect.topleft += self.offset
                             pygame.draw.rect(self.game_surface, (0, 0, 255), new_rect, 2)

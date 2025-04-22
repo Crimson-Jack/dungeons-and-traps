@@ -1,6 +1,6 @@
 import pygame
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.tile_details.spider_tile_details import SpiderTileDetails
@@ -40,7 +40,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
         self.movement_vector = pygame.math.Vector2((0, 1))
         self.speed = details.speed
         self.min_y_position = self.rect.top
-        self.max_net_length = settings.TILE_SIZE * details.net_length
+        self.max_net_length = Settings.TILE_SIZE * details.net_length
 
         # Motion variables
         self.motion_schedule = details.motion_schedule
@@ -210,7 +210,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
         return self.damage_power

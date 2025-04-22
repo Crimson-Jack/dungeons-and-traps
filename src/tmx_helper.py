@@ -1,6 +1,6 @@
 import pygame
 import pytmx
-import settings
+from settings import Settings
 from src.game_helper import GameHelper
 from src.sprite_costume import SpriteCostume
 
@@ -46,19 +46,19 @@ class TmxHelper:
         """
         tile_x = int(x // width)
         tile_y = int(y // height)
-        x = tile_x * settings.TILE_SIZE
-        y = tile_y * settings.TILE_SIZE
+        x = tile_x * Settings.TILE_SIZE
+        y = tile_y * Settings.TILE_SIZE
 
         # According to the tmx format, rotation causes the object to move clockwise around the point 0, 0, which is the
         # bottom left corner of the tile.
         # Original baseline values do not correspond to visible on the map therefore they need to be corrected.
         if rotation == 90 or rotation == -270:
-            y = y + settings.TILE_SIZE
+            y = y + Settings.TILE_SIZE
         elif rotation == 180 or rotation == -180:
-            x = x - settings.TILE_SIZE
-            y = y + settings.TILE_SIZE
+            x = x - Settings.TILE_SIZE
+            y = y + Settings.TILE_SIZE
         elif rotation == 270 or rotation == -90:
-            x = x - settings.TILE_SIZE
+            x = x - Settings.TILE_SIZE
 
         return x, y
 

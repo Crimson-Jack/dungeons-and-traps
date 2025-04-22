@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.tile_details.ghost_tile_details import GhostTileDetails
 from src.sprite_costume import SpriteCostume
@@ -31,8 +31,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
         # Set positions on map
         self.current_position_on_map = [
-            (self.rect.right // settings.TILE_SIZE) - 1,
-            (self.rect.bottom // settings.TILE_SIZE) - 1
+            (self.rect.right // Settings.TILE_SIZE) - 1,
+            (self.rect.bottom // Settings.TILE_SIZE) - 1
         ]
         self.new_position_on_map = list(self.current_position_on_map)
 
@@ -60,8 +60,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
-        x_remainder = self.rect.right % settings.TILE_SIZE
-        y_remainder = self.rect.bottom % settings.TILE_SIZE
+        x_remainder = self.rect.right % Settings.TILE_SIZE
+        y_remainder = self.rect.bottom % Settings.TILE_SIZE
 
         if x_remainder < self.speed:
             # TODO: Calculate value based on the direction
@@ -74,8 +74,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         if self.check_collision():
             # Collision with moving obstacle sprites was detected
             # Ghost must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
 
             # Adjust real position after collision
             self.real_x_position = float(self.hit_box.x)
@@ -86,11 +86,11 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         else:
             # Recognize the moment when ghost moves to a new area
             # In this case TILE_SIZE is a divisor of "right" or "bottom"
-            if self.rect.right % settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 1
+            if self.rect.right % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 1
 
-            if self.rect.bottom % settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 1
+            if self.rect.bottom % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 1
 
             # If position was changed, change position and determine new direction
             if self.current_position_on_map != self.new_position_on_map:
@@ -203,8 +203,8 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         if previous_moving_state and not self.is_moving:
             # Stop moving
             # Ghost must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
             # Adjust position
             self.real_x_position = float(self.hit_box.x)
             self.real_y_position = float(self.hit_box.y)

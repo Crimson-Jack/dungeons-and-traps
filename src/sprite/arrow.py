@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.game_helper import GameHelper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.sprite_helper import SpriteHelper
@@ -83,26 +83,26 @@ class Arrow(CustomDrawSprite):
                     if isinstance(sprite, EnemyWithEnergy):
                         sprite.decrease_energy(self.damage_power)
                         self.kill()
-                        self.create_particle_effect(sprite_hit_box, 12, settings.ENEMY_PARTICLE_COLORS)
+                        self.create_particle_effect(sprite_hit_box, 12, Settings.ENEMY_PARTICLE_COLORS)
         # Check collision with obstacle sprites
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
-                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+                    self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
         # Check collision with moving obstacle sprites
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.kill()
-                    self.create_particle_effect(sprite.hit_box, 12, settings.OBSTACLE_PARTICLE_COLORS)
+                    self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
         collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
-            pygame.event.Event(settings.ADD_PARTICLE_EFFECT_EVENT,
+            pygame.event.Event(Settings.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,
                                 "number_of_sparks": number_of_sparks,
                                 "colors": colors}))

@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.sprite_helper import SpriteHelper
 from src.sprite.item_to_collect import ItemToCollect
 
@@ -40,7 +40,7 @@ class Egg(ItemToCollect):
             # If it's the last costume - create a monster
             if self.costume_index >= self.number_of_sprites:
                 pygame.event.post(
-                    pygame.event.Event(settings.CREATE_MONSTER_EVENT, {"position": self.rect.topleft}))
+                    pygame.event.Event(Settings.CREATE_MONSTER_EVENT, {"position": self.rect.topleft}))
                 self.kill()
             else:
                 # Set new image

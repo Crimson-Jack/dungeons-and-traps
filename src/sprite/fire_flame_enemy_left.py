@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.sprite.fire_flame_enemy import FireFlameEnemy
 from src.tile_details.fire_flame_tile_details import FireFlameTileDetails
 from src.sprite_costume import SpriteCostume
@@ -25,7 +25,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         self.real_x_position = float(self.hit_box.left)
 
     def get_merged_image(self) -> pygame.surface.Surface:
-        merged_image = pygame.surface.Surface((settings.TILE_SIZE*self.tail_length, settings.TILE_SIZE))
+        merged_image = pygame.surface.Surface((Settings.TILE_SIZE*self.tail_length, Settings.TILE_SIZE))
         merged_image = merged_image.convert_alpha()
         merged_image.fill((0, 0, 0, 0))
 
@@ -35,7 +35,7 @@ class FireFlameEnemyLeft(FireFlameEnemy):
             #  [2] - each tile in a merged sprite has a different costume
             frame_costume_index = (index + self.costume_index) % self.number_of_sprites
             base_image = self.sprites[frame_costume_index].image
-            merged_image.blit(base_image, (settings.TILE_SIZE * index, 0))
+            merged_image.blit(base_image, (Settings.TILE_SIZE * index, 0))
 
         return merged_image
 
@@ -62,11 +62,11 @@ class FireFlameEnemyLeft(FireFlameEnemy):
             self.real_x_position = float(self.hit_box.left)
         else:
             # Check start position
-            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length + settings.TILE_SIZE:
+            if self.real_x_position < self.max_rect_left_flame_position - self.max_fire_length + Settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
             # Check fire flame length
-            elif self.real_x_position > self.max_rect_left_flame_position + settings.TILE_SIZE:
+            elif self.real_x_position > self.max_rect_left_flame_position + Settings.TILE_SIZE:
                 # Reverse
                 self.movement_vector.x *= -1
                 # Stop the moving
@@ -80,17 +80,17 @@ class FireFlameEnemyLeft(FireFlameEnemy):
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
-        x_remainder = self.rect.right % settings.TILE_SIZE
+        x_remainder = self.rect.right % Settings.TILE_SIZE
 
         if x_remainder < self.speed:
             self.hit_box.left = self.hit_box.left - x_remainder
             self.rect.center = self.hit_box.center
 
         # Recognize the moment when fire flame moves to a new area
-        if self.hit_box.left % settings.TILE_SIZE == 0:
+        if self.hit_box.left % Settings.TILE_SIZE == 0:
 
             # Calculate the length
-            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.left) // settings.TILE_SIZE
+            self.tail_length = (self.max_rect_right_flame_position - self.hit_box.left) // Settings.TILE_SIZE
             if self.tail_length < 1:
                 self.tail_length = 1
 
@@ -124,6 +124,6 @@ class FireFlameEnemyLeft(FireFlameEnemy):
         if collision_detected:
             # Calculate tail length
             self.tail_length_after_collision = ((self.max_rect_right_flame_position - collision_hit_box_right)
-                                                // settings.TILE_SIZE)
+                                                // Settings.TILE_SIZE)
             # Set flag - reset is required for the image
             self.reset_is_required_for_image = True

@@ -1,4 +1,4 @@
-import settings
+from settings import Settings
 import pygame
 
 
@@ -13,7 +13,7 @@ class GameHelper:
 
         :return: tile size ratio
         """
-        return settings.TILE_SIZE / GameHelper.BASE_TILE_SIZE
+        return Settings.TILE_SIZE / GameHelper.BASE_TILE_SIZE
 
     @staticmethod
     def multiply_by_tile_size_ratio(value: float, minimum: float = None) -> float:
@@ -25,7 +25,7 @@ class GameHelper:
         :param minimum: minimum value
         :return: calculated value
         """
-        result: float = value * settings.TILE_SIZE / GameHelper.BASE_TILE_SIZE
+        result: float = value * Settings.TILE_SIZE / GameHelper.BASE_TILE_SIZE
 
         if minimum is not None and result < minimum:
             result = minimum
@@ -40,7 +40,7 @@ class GameHelper:
         :param time: period of time (in milliseconds)
         :return: number of frames
         """
-        result = (time / 1000) * settings.FPS
+        result = (time / 1000) * Settings.FPS
 
         return int(result)
 
@@ -74,8 +74,8 @@ class GameHelper:
         :param position: tuple with x, y coordinates
         :return: tuple with the tile position
         """
-        x_tile = position[0] // settings.TILE_SIZE
-        y_tile = position[1] // settings.TILE_SIZE
+        x_tile = position[0] // Settings.TILE_SIZE
+        y_tile = position[1] // Settings.TILE_SIZE
 
         return x_tile, y_tile
 
@@ -87,8 +87,8 @@ class GameHelper:
         :param tile: tuple with tile position
         :return: tuple with the x, y coordinates
         """
-        x_position = tile[0] * settings.TILE_SIZE
-        y_position = tile[1] * settings.TILE_SIZE
+        x_position = tile[0] * Settings.TILE_SIZE
+        y_position = tile[1] * Settings.TILE_SIZE
 
         return  x_position, y_position
 

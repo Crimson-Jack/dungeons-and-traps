@@ -1,5 +1,5 @@
 import pygame.surface
-import settings
+from settings import Settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.tile_details.fire_flame_tile_details import  FireFlameTileDetails
@@ -28,7 +28,7 @@ class FireFlameEnemy(CustomDrawSprite, ObstacleMapRefreshSprite):
 
         # Movement variables
         self.is_moving = False
-        self.max_fire_length = details.fire_length * settings.TILE_SIZE
+        self.max_fire_length = details.fire_length * Settings.TILE_SIZE
 
         # Motion variables
         self.motion_schedule = details.motion_schedule

@@ -1,5 +1,5 @@
 import pygame
-import settings
+from settings import Settings
 from src.weapon_type import WeaponType
 from src.sprite_helper import SpriteHelper
 
@@ -16,8 +16,8 @@ class Header:
         self.bow_image = SpriteHelper.get_bow_image_to_header_view()
 
         # Fonts
-        self.text_color = settings.TEXT_COLOR
-        self.highlighted_text_color = settings.HIGHLIGHTED_TEXT_COLOR
+        self.text_color = Settings.TEXT_COLOR
+        self.highlighted_text_color = Settings.HIGHLIGHTED_TEXT_COLOR
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.additional_info_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.text_adjustment = 2
@@ -26,18 +26,18 @@ class Header:
         # Background and border
         self.border = self.header_surface.get_rect()
         self.border = self.border.inflate(-8, -8)
-        self.header_surface.fill(settings.SURFACE_COLOR)
-        pygame.draw.rect(self.header_surface, settings.BACKGROUND_COLOR, self.border)
-        pygame.draw.rect(self.header_surface, settings.BORDER_COLOR, self.border, 4)
-        self.inner_background_color = settings.BACKGROUND_COLOR
+        self.header_surface.fill(Settings.SURFACE_COLOR)
+        pygame.draw.rect(self.header_surface, Settings.BACKGROUND_COLOR, self.border)
+        pygame.draw.rect(self.header_surface, Settings.BORDER_COLOR, self.border, 4)
+        self.inner_background_color = Settings.BACKGROUND_COLOR
 
         # Surfaces
         self.left_surface = pygame.Surface(
-            (settings.WIDTH // 3 - self.margin, settings.HEADER_HEIGHT - self.margin))
+            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
         self.center_surface = pygame.Surface(
-            (settings.WIDTH // 3 - self.margin, settings.HEADER_HEIGHT - self.margin))
+            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
         self.right_surface = pygame.Surface(
-            (settings.WIDTH // 3 - self.margin, settings.HEADER_HEIGHT - self.margin))
+            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
 
     def clean(self):
         self.left_surface.fill(self.inner_background_color)
@@ -54,8 +54,8 @@ class Header:
 
         # Blit each surface to the dashboard
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
-        self.header_surface.blit(self.center_surface, (settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
-        self.header_surface.blit(self.right_surface, (settings.WIDTH * 2 // 3 + self.margin // 2, self.margin // 2))
+        self.header_surface.blit(self.center_surface, (Settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
+        self.header_surface.blit(self.right_surface, (Settings.WIDTH * 2 // 3 + self.margin // 2, self.margin // 2))
 
         # Blit dashboard to the main screen
         self.screen.blit(self.header_surface, (0, 0))
@@ -64,35 +64,35 @@ class Header:
         left_rect = self.left_surface.get_rect()
 
         decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.top + 12, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
 
         decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(left_rect.left + 12, left_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(left_rect.left + 4, left_rect.bottom - 16, 4, 4)
-        pygame.draw.rect(self.left_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.left_surface, Settings.BORDER_COLOR, decoration)
 
     def draw_right_decorations(self):
         right_rect = self.right_surface.get_rect()
 
         decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.top + 4, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.top + 12, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
 
         decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(right_rect.right - 16, right_rect.bottom - 8, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
         decoration = pygame.rect.Rect(right_rect.right - 8, right_rect.bottom - 16, 4, 4)
-        pygame.draw.rect(self.right_surface, settings.BORDER_COLOR, decoration)
+        pygame.draw.rect(self.right_surface, Settings.BORDER_COLOR, decoration)
 
     def draw_level(self, surface):
         level_text = self.basic_font.render('Level ', True, self.text_color)

@@ -1,7 +1,7 @@
 import pygame
 import random
 from src.game_helper import GameHelper
-import settings
+from settings import Settings
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
@@ -55,8 +55,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Set positions on map
         self.current_position_on_map = [
-            (self.rect.right // settings.TILE_SIZE) - 2,
-            (self.rect.bottom // settings.TILE_SIZE) - 2
+            (self.rect.right // Settings.TILE_SIZE) - 2,
+            (self.rect.bottom // Settings.TILE_SIZE) - 2
         ]
         self.new_position_on_map = list(self.current_position_on_map)
 
@@ -138,8 +138,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Adjust offset
         # This is necessary for offsets that are not TILE_SIZE dividers
-        x_remainder = self.rect.right % settings.TILE_SIZE
-        y_remainder = self.rect.bottom % settings.TILE_SIZE
+        x_remainder = self.rect.right % Settings.TILE_SIZE
+        y_remainder = self.rect.bottom % Settings.TILE_SIZE
 
         if x_remainder < self.speed:
             # TODO: Calculate value based on the direction
@@ -152,8 +152,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         if self.check_collision_with_moving_obstacles():
             # Collision with moving obstacle sprites was detected
             # Monster must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * settings.TILE_SIZE
+            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
+            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
 
             # Adjust real position after collision
             self.real_x_position = float(self.hit_box.x)
@@ -164,11 +164,11 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         else:
             # Recognize the moment when monster moves to a new area
             # In this case TILE_SIZE is a divisor of "right" or "bottom"
-            if self.rect.right % settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // settings.TILE_SIZE) - 2
+            if self.rect.right % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 2
 
-            if self.rect.bottom % settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // settings.TILE_SIZE) - 2
+            if self.rect.bottom % Settings.TILE_SIZE == 0:
+                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 2
 
             # If position was changed, change position and determine new direction
             if self.current_position_on_map != self.new_position_on_map:
@@ -196,7 +196,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         is_collision_detected = False
 
         for sprite in self.moving_obstacle_sprites:
-            if sprite.hit_box.colliderect(self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)):
+            if sprite.hit_box.colliderect(self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)):
                 is_collision_detected = True
                 break
 
@@ -339,8 +339,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        center_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
-        pygame.event.post(pygame.event.Event(settings.ADD_TOMBSTONE_EVENT, {"position": center_rectangle.topleft}))
+        center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
+        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": center_rectangle.topleft}))
 
     def get_damage_power(self):
         return self.damage_power
@@ -350,7 +350,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.fire_ball_counter = 0
 
             if len(self.path) > 0:
-                center_rectangle = self.rect.inflate(-settings.TILE_SIZE * 2, -settings.TILE_SIZE * 2)
+                center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
                 self.fire_balls.append(
                     FireBallEnemy(center_rectangle.topleft,
                                   tuple(self.groups()),

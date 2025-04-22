@@ -1,13 +1,13 @@
 import pygame
 from src.sprite.custom_draw_sprite import CustomDrawSprite
-import settings
+from settings import Settings
 from src.game_helper import GameHelper
 
 
 class ExitPoint(CustomDrawSprite):
     def __init__(self, image, position, groups, visible):
         super().__init__(groups)
-        self.image = pygame.transform.scale(image, (settings.TILE_SIZE, settings.TILE_SIZE))
+        self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-30), GameHelper.multiply_by_tile_size_ratio(-30))
         self.visible = visible
