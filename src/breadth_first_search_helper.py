@@ -1,5 +1,5 @@
-from queue import Queue
 import random
+from queue import Queue
 
 
 class BreadthFirstSearchHelper:

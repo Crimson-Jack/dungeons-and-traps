@@ -1,11 +1,11 @@
 import pygame
 from settings import Settings
-from src.direction import Direction
-from src.weapon_type import WeaponType
+from src.enums.direction import Direction
+from src.enums.game_status import GameStatus
+from src.enums.lighting_status import LightingStatus
+from src.enums.weapon_type import WeaponType
 from src.sprite.diamond import Diamond
 from src.sprite.key import Key
-from src.game_status import GameStatus
-from src.lighting_status import LightingStatus
 
 
 class GameState:

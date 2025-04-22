@@ -32,7 +32,6 @@ class Debug:
         self.info_list.append(info)
 
     def show(self):
-
         if self.enabled:
             display_surface = pygame.display.get_surface()
             y_position = 0

@@ -1,7 +1,7 @@
 import pygame
 from src.game_helper import GameHelper
 from settings import Settings
-from src.direction import Direction
+from src.enums.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.bar import Bar
 from src.color_set import ColorSet

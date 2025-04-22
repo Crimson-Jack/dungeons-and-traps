@@ -3,7 +3,7 @@ from settings import Settings
 from src.game_helper import GameHelper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.sprite_helper import SpriteHelper
-from src.direction import Direction
+from src.enums.direction import Direction
 from src.sprite.custom_draw_sprite import CustomDrawSprite
 
 

@@ -1,5 +1,5 @@
-from settings import Settings
 import pygame
+from settings import Settings
 
 
 class GameHelper:

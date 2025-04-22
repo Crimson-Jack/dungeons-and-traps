@@ -1,10 +1,10 @@
 import pygame
-from src.direction import Direction
+from src.enums.direction import Direction
 from src.sprite.item_to_collect import ItemToCollect
 from src.sprite.powerup import Powerup
 from settings import Settings
 from src.game_helper import GameHelper
-from src.weapon_type import WeaponType
+from src.enums.weapon_type import WeaponType
 from src.sprite_helper import SpriteHelper
 from src.sprite.sword_weapon import SwordWeapon
 from src.sprite.bow_weapon import BowWeapon
