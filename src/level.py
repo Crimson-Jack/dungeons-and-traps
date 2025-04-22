@@ -46,6 +46,7 @@ from src.tile_details.spell_tile_details import SpellTileDetails
 from src.sprite.lighting_spell import LightingSpell
 from src.sprite.egg import Egg
 from src.sprite_costume import SpriteCostume
+from src.utilities.debug import Debug
 
 
 class Level:
@@ -119,6 +120,9 @@ class Level:
         self.vanishing_points = list()
         # Particle effects
         self.particle_effects = list()
+
+        # Create debugger
+        self.debugger = Debug()
 
     def create_obstacle_map(self, size_of_map):
         # Create obstacle map and combine all layers with obstacles
@@ -372,8 +376,8 @@ class Level:
         self.blit_dark_surface()
 
         # Read inputs and display variables if debugger is enabled
-        Settings.debugger.input()
-        Settings.debugger.show()
+        self.debugger.input()
+        self.debugger.show()
 
     def blit_dark_surface(self):
         if self.game_state.lighting_status != LightingStatus.LIGHT_ON:

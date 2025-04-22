@@ -4,6 +4,7 @@ from settings import Settings
 import src.sprite.bat_enemy
 import src.sprite.monster_enemy
 import src.sprite.octopus_enemy
+from src.utilities.debug import Debug
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -18,6 +19,9 @@ class CameraGroup(pygame.sprite.Group):
         self.size_of_map = size_of_map
         self.map_width = Settings.TILE_SIZE * self.size_of_map[0]
         self.map_height = Settings.TILE_SIZE * self.size_of_map[1]
+
+        # Create debugger
+        self.debugger = Debug()
 
     def set_map_offset(self, player):
         if player is None:
@@ -55,10 +59,10 @@ class CameraGroup(pygame.sprite.Group):
                 self.game_surface.blit(sprite.image, offset_position)
 
             # Draw rectangles when debug is enabled
-            if Settings.debugger.enabled:
+            if self.debugger.enabled:
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, Settings.debugger.text_color, new_rect, 1)
+                pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 1)
 
                 # Draw a path from the player to monster enemy
                 if isinstance(sprite, src.sprite.monster_enemy.MonsterEnemy) or isinstance(sprite, src.sprite.octopus_enemy.OctopusEnemy):

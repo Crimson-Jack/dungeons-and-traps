@@ -1,5 +1,5 @@
 import pygame
-from src.utilities.debug import Debug
+
 
 class Settings:
     # Clock
@@ -59,6 +59,3 @@ class Settings:
     RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
     COLLECT_LIFE_EVENT = pygame.event.custom_type()
     CHANGE_SCORE_EVENT = pygame.event.custom_type()
-
-    # Create debugger
-    debugger = Debug()

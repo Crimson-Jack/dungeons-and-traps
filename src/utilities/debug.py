@@ -1,7 +1,22 @@
 import pygame
+import threading
 
 
 class Debug:
+    _instance = None
+    _lock = threading.Lock()
+    _my_test = 1
+
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                # Another thread could have created the instance
+                # before we acquired the lock. So check that the
+                # instance is still nonexistent.
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self, x=10, y=10):
         self.enabled = False
         self.text_color = 'Black'
@@ -37,8 +52,6 @@ class Debug:
             self.text_color = 'Black'
         elif keys[pygame.K_F2]:
             self.enabled = True
-            self.text_color = "White"
+            self.text_color = 'White'
         elif keys[pygame.K_F3]:
             self.enabled = False
-
-

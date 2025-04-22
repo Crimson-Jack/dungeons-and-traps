@@ -23,14 +23,14 @@ class CameraGroupWithYSort(CameraGroup):
                 self.game_surface.blit(sprite.image, offset_position)
 
             # Draw rectangles when debug is enabled
-            if Settings.debugger.enabled:
+            if self.debugger.enabled:
                 new_rect = pygame.rect.Rect(sprite.rect)
                 new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, Settings.debugger.text_color, new_rect, 1)
+                pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 1)
 
                 # Draw a tile where the player exists
                 if isinstance(sprite, Player):
                     x_tile, y_tile = GameHelper.get_tile_by_point(sprite.get_center_point())
                     new_rect = pygame.rect.Rect(x_tile*Settings.TILE_SIZE, y_tile*Settings.TILE_SIZE, Settings.TILE_SIZE, Settings.TILE_SIZE)
                     new_rect.topleft += self.offset
-                    pygame.draw.rect(self.game_surface, Settings.debugger.text_color, new_rect, 3)
+                    pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 3)
