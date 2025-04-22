@@ -1,9 +1,9 @@
 import pygame
-from src.sprite.custom_draw_sprite import CustomDrawSprite
 from settings import Settings
-import src.sprite.bat_enemy
-import src.sprite.monster_enemy
-import src.sprite.octopus_enemy
+from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprite.bat_enemy import BatEnemy
+from src.sprite.monster_enemy import MonsterEnemy
+from src.sprite.octopus_enemy import OctopusEnemy
 from src.utilities.debug import Debug
 
 
@@ -58,26 +58,22 @@ class CameraGroup(pygame.sprite.Group):
                 offset_position = sprite.rect.topleft + self.offset
                 self.game_surface.blit(sprite.image, offset_position)
 
-            # Draw rectangles when debug is enabled
+            # Draw grid
             if self.debugger.enabled:
-                new_rect = pygame.rect.Rect(sprite.rect)
-                new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 1)
+                self.draw_grid(sprite)
 
-                # Draw a path from the player to monster enemy
-                if isinstance(sprite, src.sprite.monster_enemy.MonsterEnemy) or isinstance(sprite, src.sprite.octopus_enemy.OctopusEnemy):
-                    if sprite.path:
-                        for path_item in sprite.path:
-                            new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE, path_item[1] * Settings.TILE_SIZE,
-                                                        Settings.TILE_SIZE, Settings.TILE_SIZE)
-                            new_rect.topleft += self.offset
-                            pygame.draw.rect(self.game_surface, (0, 255, 255), new_rect, 2)
+    def draw_grid(self, sprite):
+        # Draw grid for each tile that uses CameraGroup class for rendering
+        new_rect = pygame.rect.Rect(sprite.rect)
+        new_rect.topleft += self.offset
+        pygame.draw.rect(self.game_surface, self.debugger.main_grid_color, new_rect, 1)
 
-                # Draw a path of the bat enemy
-                if isinstance(sprite, src.sprite.bat_enemy.BatEnemy):
-                    if sprite.path:
-                        for path_item in sprite.path:
-                            new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE, path_item[1] * Settings.TILE_SIZE,
-                                                        Settings.TILE_SIZE, Settings.TILE_SIZE)
-                            new_rect.topleft += self.offset
-                            pygame.draw.rect(self.game_surface, (0, 0, 255), new_rect, 2)
+        # Draw a path from the player to monster, bat or octopus enemy
+        if isinstance(sprite, MonsterEnemy) or isinstance(sprite, OctopusEnemy) or isinstance(sprite, BatEnemy):
+            if sprite.path:
+                for path_item in sprite.path:
+                    new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE,
+                                                path_item[1] * Settings.TILE_SIZE,
+                                                Settings.TILE_SIZE, Settings.TILE_SIZE)
+                    new_rect.topleft += self.offset
+                    pygame.draw.rect(self.game_surface, self.debugger.path_color, new_rect, 2)

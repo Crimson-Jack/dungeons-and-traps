@@ -5,7 +5,6 @@ import threading
 class Debug:
     _instance = None
     _lock = threading.Lock()
-    _my_test = 1
 
     def __new__(cls):
         if cls._instance is None:
@@ -19,7 +18,10 @@ class Debug:
 
     def __init__(self, x=10, y=10):
         self.enabled = False
-        self.text_color = 'Black'
+        self.text_color = 0, 0, 0
+        self.main_grid_color = 0, 0, 0
+        self.alternative_grid_color = 0, 255, 0
+        self.path_color = 0, 255, 255
         self.info_list = []
         self.x = x
         self.y = y
@@ -49,9 +51,15 @@ class Debug:
 
         if keys[pygame.K_F1]:
             self.enabled = True
-            self.text_color = 'Black'
+            self.text_color = 255, 255, 255
+            self.main_grid_color = 0, 0, 0
+            self.alternative_grid_color = 0, 255, 0
+            self.path_color = 0, 255, 255
         elif keys[pygame.K_F2]:
             self.enabled = True
-            self.text_color = 'White'
+            self.text_color = 0, 0, 0
+            self.main_grid_color = 255, 255, 255
+            self.alternative_grid_color = 255, 0, 0
+            self.path_color = 255, 0, 255
         elif keys[pygame.K_F3]:
             self.enabled = False

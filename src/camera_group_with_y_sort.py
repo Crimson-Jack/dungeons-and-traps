@@ -1,9 +1,9 @@
 import pygame
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.game_helper import GameHelper
 from settings import Settings
-from src.sprite.player import Player
+from src.game_helper import GameHelper
 from src.camera_group import CameraGroup
+from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprite.player import Player
 
 
 class CameraGroupWithYSort(CameraGroup):
@@ -22,15 +22,20 @@ class CameraGroupWithYSort(CameraGroup):
                 offset_position = sprite.rect.topleft + self.offset
                 self.game_surface.blit(sprite.image, offset_position)
 
-            # Draw rectangles when debug is enabled
+            # Draw grid
             if self.debugger.enabled:
-                new_rect = pygame.rect.Rect(sprite.rect)
-                new_rect.topleft += self.offset
-                pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 1)
+                self.draw_grid(sprite)
 
-                # Draw a tile where the player exists
-                if isinstance(sprite, Player):
-                    x_tile, y_tile = GameHelper.get_tile_by_point(sprite.get_center_point())
-                    new_rect = pygame.rect.Rect(x_tile*Settings.TILE_SIZE, y_tile*Settings.TILE_SIZE, Settings.TILE_SIZE, Settings.TILE_SIZE)
-                    new_rect.topleft += self.offset
-                    pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 3)
+    def draw_grid(self, sprite):
+        # Draw grid for each tile that uses CameraGroupWithYSort class for rendering
+        new_rect = pygame.rect.Rect(sprite.rect)
+        new_rect.topleft += self.offset
+        pygame.draw.rect(self.game_surface, self.debugger.alternative_grid_color, new_rect, 1)
+
+        # Draw a tile where the player exists
+        if isinstance(sprite, Player):
+            x_tile, y_tile = GameHelper.get_tile_by_point(sprite.get_center_point())
+            new_rect = pygame.rect.Rect(x_tile * Settings.TILE_SIZE, y_tile * Settings.TILE_SIZE, Settings.TILE_SIZE,
+                                        Settings.TILE_SIZE)
+            new_rect.topleft += self.offset
+            pygame.draw.rect(self.game_surface, self.debugger.text_color, new_rect, 3)
