@@ -1,7 +1,8 @@
 import pygame
+
 from settings import Settings
-from src.sprite_helper import SpriteHelper
 from src.sprite.item_to_collect import ItemToCollect
+from src.sprite_helper import SpriteHelper
 
 
 class Egg(ItemToCollect):

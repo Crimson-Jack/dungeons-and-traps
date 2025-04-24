@@ -1,15 +1,17 @@
-import pygame
 import random
-from src.game_helper import GameHelper
+
+import pygame
+
 from settings import Settings
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
-from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
-from src.tile_details.octopus_tile_details import OctopusTileDetails
+from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.breadth_first_search_helper import BreadthFirstSearchHelper
+from src.game_helper import GameHelper
+from src.sprite.custom_draw_sprite import CustomDrawSprite
 from src.sprite.fire_ball_enemy import FireBallEnemy
 from src.sprite_costume import SpriteCostume
+from src.tile_details.octopus_tile_details import OctopusTileDetails
 
 
 class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):

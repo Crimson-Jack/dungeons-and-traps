@@ -1,4 +1,5 @@
 import pygame
+
 from settings import Settings
 from src.enums.weapon_type import WeaponType
 from src.sprite_helper import SpriteHelper

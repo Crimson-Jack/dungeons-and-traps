@@ -1,6 +1,6 @@
+from src.game_helper import GameHelper
 from src.tile_details.tile_details import TileDetails
 from src.tmx_helper import TmxHelper
-from src.game_helper import GameHelper
 
 
 class MonsterTileDetails(TileDetails):

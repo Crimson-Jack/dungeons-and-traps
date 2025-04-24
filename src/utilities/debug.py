@@ -1,5 +1,6 @@
-import pygame
 import threading
+
+import pygame
 
 
 class Debug:

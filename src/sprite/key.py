@@ -1,8 +1,9 @@
 import pygame
+
 from settings import Settings
 from src.game_helper import GameHelper
-from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 from src.sprite.item_to_collect import ItemToCollect
+from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Key(ItemToCollect):

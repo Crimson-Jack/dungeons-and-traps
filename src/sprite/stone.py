@@ -1,5 +1,5 @@
-from src.sprite.moving_obstacle import MovingObstacle
 from src.game_helper import GameHelper
+from src.sprite.moving_obstacle import MovingObstacle
 
 
 class Stone(MovingObstacle):

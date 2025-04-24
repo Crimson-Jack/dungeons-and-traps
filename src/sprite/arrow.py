@@ -1,4 +1,5 @@
 import pygame
+
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.enums.direction import Direction

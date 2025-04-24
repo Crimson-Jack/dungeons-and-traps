@@ -1,5 +1,7 @@
 import math
+
 import pygame
+
 from settings import Settings
 from src.game_helper import GameHelper
 from src.sprite_helper import SpriteHelper

@@ -1,7 +1,8 @@
-from settings import Settings
 import pygame
-from src.spritesheet import SpriteSheet
+
+from settings import Settings
 from src.sprite_costume import SpriteCostume
+from src.spritesheet import SpriteSheet
 
 
 class SpriteHelper:

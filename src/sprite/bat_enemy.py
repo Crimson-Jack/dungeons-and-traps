@@ -1,5 +1,7 @@
-import pygame
 import random
+
+import pygame
+
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite

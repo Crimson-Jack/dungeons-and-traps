@@ -1,5 +1,6 @@
 import pygame
 from pytmx.util_pygame import load_pygame
+
 from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite

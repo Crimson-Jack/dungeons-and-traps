@@ -1,4 +1,5 @@
 import pygame
+
 from settings import Settings
 from src.game_helper import GameHelper
 from src.sprite.item_to_collect import ItemToCollect

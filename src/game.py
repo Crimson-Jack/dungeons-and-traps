@@ -1,13 +1,14 @@
 import pygame
+
 from settings import Settings
+from src.enums.game_status import GameStatus
 from src.game_state import GameState
 from src.level import Level
-from src.enums.game_status import GameStatus
-from src.panels.header import Header
 from src.panels.dashboard import Dashboard
-from src.panels.message_box import MessageBox
-from src.panels.message import Message
 from src.panels.first_page import FirstPage
+from src.panels.header import Header
+from src.panels.message import Message
+from src.panels.message_box import MessageBox
 
 
 class Game:
@@ -69,200 +70,16 @@ class Game:
         is_running = True
         while is_running:
             for event in pygame.event.get():
-                # Input events: keyboard, mouse
+                # Input events: QUIT
                 if event.type == pygame.QUIT:
                     is_running = False
-
+                # Input events: keyboard (down or up)
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        self.game_state.set_player_movement(0, 1)
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        self.game_state.set_player_movement(0, -1)
-                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        self.game_state.set_player_movement(1, 0)
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        self.game_state.set_player_movement(-1, 0)
-                    if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
-                        self.game_state.set_player_is_using_weapon(True)
-                    if event.key == pygame.K_x:
-                        self.game_state.set_next_weapon()
-                    if event.key == pygame.K_z:
-                        self.game_state.set_previous_weapon()
-                    if event.key == pygame.K_ESCAPE:
-                        if self.game_state.game_status == GameStatus.FIRST_PAGE:
-                            # Exit and stop the game
-                            is_running = False
-                        elif self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
-                            # Open options dialog and pause the game
-                            self.game_state.switch_escape_state()
-                            self.load_game_options_message_dialog()
-                        elif self.game_state.game_status == GameStatus.OPTIONS:
-                            # Close options dialog and continue the game
-                            self.dispose_message_dialog()
-                            self.game_state.switch_escape_state()
-                    if event.key == pygame.K_F5:
-                        if self.game_state.game_status == GameStatus.FIRST_PAGE:
-                            # Close first page and start next level
-                            self.dispose_first_page()
-                            self.game_state.set_next_level()
-                            self.load_next_level_message_dialog()
-                        elif self.game_state.game_status == GameStatus.OPTIONS:
-                            # Close options dialog and restart level or call game over summary dialog
-                            self.dispose_message_dialog()
-                            self.game_state.decrease_number_of_lives()
-                            if self.game_state.lives > 0:
-                                self.game_state.clear_settings_for_current_level()
-                                self.level = Level(self.screen, self.game_surface, self.game_state)
-                                self.game_state.set_next_level()
-                                self.load_next_level_message_dialog()
-                            else:
-                                self.game_state.set_game_is_running()
-                                pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
-                    if event.key == pygame.K_F7:
-                        if self.game_state.game_status == GameStatus.OPTIONS:
-                            # Close options dialog and quit the game
-                            self.dispose_message_dialog()
-                            self.game_state.clear_settings_for_first_level()
-                            self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.set_first_page()
-                            self.clean_screen()
-                            self.load_first_page()
-                    if event.key == pygame.K_SPACE:
-                        if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
-                            # Open pause dialog and pause the game
-                            self.game_state.switch_pause_state()
-                            self.load_game_paused_message_dialog()
-                        elif self.game_state.game_status == GameStatus.GAME_IS_PAUSED:
-                            # Close pause dialog and continue the game
-                            self.dispose_message_dialog()
-                            self.game_state.switch_pause_state()
-                        elif self.game_state.game_status == GameStatus.NEXT_LEVEL:
-                            # Close next level dialog and continue the game
-                            self.dispose_message_dialog()
-                            self.game_state.set_game_is_running()
-                            self.clean_screen()
-                            self.refresh_header_surface()
-                            self.refresh_dashboard_surface()
-                        elif self.game_state.game_status == GameStatus.LEVEL_COMPLETED:
-                            # Close level completed dialog, load next level and open next level dialog
-                            self.dispose_message_dialog()
-                            self.game_state.clear_settings_for_next_level()
-                            self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.set_next_level()
-                            self.load_next_level_message_dialog()
-                        elif self.game_state.game_status == GameStatus.GAME_OVER:
-                            # Close game over dialog, load first level and open first page
-                            self.dispose_message_dialog()
-                            self.game_state.clear_settings_for_first_level()
-                            self.level = Level(self.screen, self.game_surface, self.game_state)
-                            self.game_state.set_first_page()
-                            self.clean_screen()
-                            self.load_first_page()
-
+                    is_running = self.handle_keyboard_buttons_down(event)
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        self.game_state.set_player_movement(0, -1)
-                    if event.key == pygame.K_UP or event.key == pygame.K_w:
-                        self.game_state.set_player_movement(0, 1)
-                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        self.game_state.set_player_movement(-1, 0)
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        self.game_state.set_player_movement(1, 0)
-
+                    self.handle_keyboard_buttons_up(event)
                 # Custom events
-                if event.type == Settings.CHANGE_SCORE_EVENT:
-                    self.refresh_header_surface()
-
-                if event.type == Settings.COLLECT_DIAMOND_EVENT:
-                    self.refresh_header_surface()
-                    self.refresh_dashboard_surface()
-
-                if event.type == Settings.COLLECT_KEY_EVENT:
-                    self.refresh_header_surface()
-                    self.refresh_dashboard_surface()
-
-                if event.type == Settings.COLLECT_LIFE_EVENT:
-                    self.refresh_dashboard_surface()
-
-                if event.type == Settings.CHANGE_WEAPON_CAPACITY_EVENT:
-                    self.refresh_header_surface()
-
-                if event.type == Settings.CHANGE_ENERGY_EVENT:
-                    self.refresh_dashboard_surface()
-
-                if event.type == Settings.CHANGE_WEAPON_EVENT:
-                    self.refresh_header_surface()
-
-                if event.type == Settings.EXIT_POINT_IS_OPEN_EVENT:
-                    self.level.show_exit_point()
-
-                if event.type == Settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
-                    self.level.show_player_vanishing_point()
-                    pygame.time.set_timer(
-                        pygame.event.Event(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
-
-                if event.type == Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
-                    pygame.time.set_timer(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
-                    self.game_state.load_next_level()
-
-                if event.type == Settings.NEXT_LEVEL_EVENT:
-                    self.game_state.set_level_completed()
-                    self.load_level_completed_message_dialog()
-
-                if event.type == Settings.REFRESH_OBSTACLE_MAP_EVENT:
-                    self.level.refresh_obstacle_map()
-
-                if event.type == Settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
-                    self.level.inform_about_player_tile_position()
-
-                if event.type == Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
-                    self.game_state.set_player_is_using_weapon(False)
-
-                if event.type == Settings.ADD_PARTICLE_EFFECT_EVENT:
-                    self.level.add_particle_effect(event.dict.get("position"),
-                                                   event.dict.get("number_of_sparks"),
-                                                   event.dict.get("colors"))
-
-                if event.type == Settings.PARTICLE_EVENT:
-                    self.level.add_spark_to_particle_effect()
-
-                if event.type == Settings.ADD_TOMBSTONE_EVENT:
-                    self.level.add_tombstone(event.dict.get("position"))
-
-                if event.type == Settings.ADD_VANISHING_POINT_EVENT:
-                    self.level.add_vanishing_point(event.dict.get("position"))
-
-                if event.type == Settings.CREATE_EGG_EVENT:
-                    self.level.create_egg(event.dict.get("position"))
-
-                if event.type == Settings.CREATE_MONSTER_EVENT:
-                    self.level.create_monster(event.dict.get("position"))
-
-                if event.type == Settings.PLAYER_LOST_LIFE_EVENT:
-                    self.level.show_player_tombstone()
-                    pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 2000)
-
-                if event.type == Settings.TELEPORT_PLAYER_EVENT:
-                    self.level.show_player_vanishing_point()
-                    pygame.time.set_timer(
-                        pygame.event.Event(Settings.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
-                        1000)
-
-                if event.type == Settings.RESPAWN_PLAYER_EVENT:
-                    player_new_position = event.dict.get("position")
-                    pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 0)
-                    self.level.respawn_player(player_new_position)
-                    self.refresh_dashboard_surface()
-
-                if event.type == Settings.GAME_OVER_EVENT:
-                    self.level.show_player_tombstone()
-                    pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 2000)
-
-                if event.type == Settings.GAME_OVER_SUMMARY_EVENT:
-                    pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 0)
-                    self.game_state.set_game_over()
-                    self.load_game_over_message_dialog()
-                    self.refresh_dashboard_surface()
+                self.handle_custom_events(event)
 
             if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
                 self.level.run()
@@ -273,6 +90,199 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(Settings.FPS)
+
+    def handle_keyboard_buttons_down(self, event):
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.game_state.set_player_movement(0, 1)
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.game_state.set_player_movement(0, -1)
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.game_state.set_player_movement(1, 0)
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.game_state.set_player_movement(-1, 0)
+        if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
+            self.game_state.set_player_is_using_weapon(True)
+        if event.key == pygame.K_x:
+            self.game_state.set_next_weapon()
+        if event.key == pygame.K_z:
+            self.game_state.set_previous_weapon()
+        if event.key == pygame.K_ESCAPE:
+            if self.game_state.game_status == GameStatus.FIRST_PAGE:
+                # Exit
+                return False
+            elif self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
+                # Open options dialog and pause the game
+                self.game_state.switch_escape_state()
+                self.load_game_options_message_dialog()
+            elif self.game_state.game_status == GameStatus.OPTIONS:
+                # Close options dialog and continue the game
+                self.dispose_message_dialog()
+                self.game_state.switch_escape_state()
+        if event.key == pygame.K_F5:
+            if self.game_state.game_status == GameStatus.FIRST_PAGE:
+                # Close first page and start next level
+                self.dispose_first_page()
+                self.game_state.set_next_level()
+                self.load_next_level_message_dialog()
+            elif self.game_state.game_status == GameStatus.OPTIONS:
+                # Close options dialog and restart level or call game over summary dialog
+                self.dispose_message_dialog()
+                self.game_state.decrease_number_of_lives()
+                if self.game_state.lives > 0:
+                    self.game_state.clear_settings_for_current_level()
+                    self.level = Level(self.screen, self.game_surface, self.game_state)
+                    self.game_state.set_next_level()
+                    self.load_next_level_message_dialog()
+                else:
+                    self.game_state.set_game_is_running()
+                    pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
+        if event.key == pygame.K_F7:
+            if self.game_state.game_status == GameStatus.OPTIONS:
+                # Close options dialog and quit the game
+                self.dispose_message_dialog()
+                self.game_state.clear_settings_for_first_level()
+                self.level = Level(self.screen, self.game_surface, self.game_state)
+                self.game_state.set_first_page()
+                self.clean_screen()
+                self.load_first_page()
+        if event.key == pygame.K_SPACE:
+            if self.game_state.game_status == GameStatus.GAME_IS_RUNNING:
+                # Open pause dialog and pause the game
+                self.game_state.switch_pause_state()
+                self.load_game_paused_message_dialog()
+            elif self.game_state.game_status == GameStatus.GAME_IS_PAUSED:
+                # Close pause dialog and continue the game
+                self.dispose_message_dialog()
+                self.game_state.switch_pause_state()
+            elif self.game_state.game_status == GameStatus.NEXT_LEVEL:
+                # Close next level dialog and continue the game
+                self.dispose_message_dialog()
+                self.game_state.set_game_is_running()
+                self.clean_screen()
+                self.refresh_header_surface()
+                self.refresh_dashboard_surface()
+            elif self.game_state.game_status == GameStatus.LEVEL_COMPLETED:
+                # Close level completed dialog, load next level and open next level dialog
+                self.dispose_message_dialog()
+                self.game_state.clear_settings_for_next_level()
+                self.level = Level(self.screen, self.game_surface, self.game_state)
+                self.game_state.set_next_level()
+                self.load_next_level_message_dialog()
+            elif self.game_state.game_status == GameStatus.GAME_OVER:
+                # Close game over dialog, load first level and open first page
+                self.dispose_message_dialog()
+                self.game_state.clear_settings_for_first_level()
+                self.level = Level(self.screen, self.game_surface, self.game_state)
+                self.game_state.set_first_page()
+                self.clean_screen()
+                self.load_first_page()
+
+        return True
+
+    def handle_keyboard_buttons_up(self, event):
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.game_state.set_player_movement(0, -1)
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.game_state.set_player_movement(0, 1)
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.game_state.set_player_movement(-1, 0)
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.game_state.set_player_movement(1, 0)
+
+    def handle_custom_events(self, event):
+        if event.type == Settings.CHANGE_SCORE_EVENT:
+            self.refresh_header_surface()
+
+        if event.type == Settings.COLLECT_DIAMOND_EVENT:
+            self.refresh_header_surface()
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.COLLECT_KEY_EVENT:
+            self.refresh_header_surface()
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.COLLECT_LIFE_EVENT:
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.CHANGE_WEAPON_CAPACITY_EVENT:
+            self.refresh_header_surface()
+
+        if event.type == Settings.CHANGE_ENERGY_EVENT:
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.CHANGE_WEAPON_EVENT:
+            self.refresh_header_surface()
+
+        if event.type == Settings.EXIT_POINT_IS_OPEN_EVENT:
+            self.level.show_exit_point()
+
+        if event.type == Settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+            self.level.show_player_vanishing_point()
+            pygame.time.set_timer(
+                pygame.event.Event(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
+
+        if event.type == Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+            pygame.time.set_timer(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
+            self.game_state.load_next_level()
+
+        if event.type == Settings.NEXT_LEVEL_EVENT:
+            self.game_state.set_level_completed()
+            self.load_level_completed_message_dialog()
+
+        if event.type == Settings.REFRESH_OBSTACLE_MAP_EVENT:
+            self.level.refresh_obstacle_map()
+
+        if event.type == Settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
+            self.level.inform_about_player_tile_position()
+
+        if event.type == Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
+            self.game_state.set_player_is_using_weapon(False)
+
+        if event.type == Settings.ADD_PARTICLE_EFFECT_EVENT:
+            self.level.add_particle_effect(event.dict.get("position"),
+                                           event.dict.get("number_of_sparks"),
+                                           event.dict.get("colors"))
+
+        if event.type == Settings.PARTICLE_EVENT:
+            self.level.add_spark_to_particle_effect()
+
+        if event.type == Settings.ADD_TOMBSTONE_EVENT:
+            self.level.add_tombstone(event.dict.get("position"))
+
+        if event.type == Settings.ADD_VANISHING_POINT_EVENT:
+            self.level.add_vanishing_point(event.dict.get("position"))
+
+        if event.type == Settings.CREATE_EGG_EVENT:
+            self.level.create_egg(event.dict.get("position"))
+
+        if event.type == Settings.CREATE_MONSTER_EVENT:
+            self.level.create_monster(event.dict.get("position"))
+
+        if event.type == Settings.PLAYER_LOST_LIFE_EVENT:
+            self.level.show_player_tombstone()
+            pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 2000)
+
+        if event.type == Settings.TELEPORT_PLAYER_EVENT:
+            self.level.show_player_vanishing_point()
+            pygame.time.set_timer(
+                pygame.event.Event(Settings.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
+                1000)
+
+        if event.type == Settings.RESPAWN_PLAYER_EVENT:
+            player_new_position = event.dict.get("position")
+            pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 0)
+            self.level.respawn_player(player_new_position)
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.GAME_OVER_EVENT:
+            self.level.show_player_tombstone()
+            pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 2000)
+
+        if event.type == Settings.GAME_OVER_SUMMARY_EVENT:
+            pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 0)
+            self.game_state.set_game_over()
+            self.load_game_over_message_dialog()
+            self.refresh_dashboard_surface()
 
     def load_first_page(self):
         self.first_page = FirstPage(self.screen)

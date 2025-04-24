@@ -1,4 +1,5 @@
 import pygame
+
 from settings import Settings
 from src.enums.direction import Direction
 from src.enums.game_status import GameStatus

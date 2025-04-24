@@ -1,4 +1,5 @@
 import pygame
+
 from settings import Settings
 from src.bar import Bar
 from src.color_set import ColorSet
