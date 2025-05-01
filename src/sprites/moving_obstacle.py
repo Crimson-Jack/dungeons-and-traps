@@ -5,7 +5,7 @@ from src.bar import Bar
 from src.color_set import ColorSet
 from src.enums.direction import Direction
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 
 
 class MovingObstacle(CustomDrawSprite):

@@ -4,7 +4,7 @@ from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.enums.direction import Direction
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_helper import SpriteHelper
 
 

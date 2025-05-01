@@ -1,4 +1,4 @@
-from src.sprite.spell import Spell
+from src.sprites.spell import Spell
 from src.tile_details.spell_tile_details import SpellTileDetails
 
 

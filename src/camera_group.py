@@ -1,10 +1,10 @@
 import pygame
 
 from settings import Settings
-from src.sprite.bat_enemy import BatEnemy
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.sprite.monster_enemy import MonsterEnemy
-from src.sprite.octopus_enemy import OctopusEnemy
+from src.sprites.bat_enemy import BatEnemy
+from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.sprites.monster_enemy import MonsterEnemy
+from src.sprites.octopus_enemy import OctopusEnemy
 from src.utilities.debug import Debug
 
 

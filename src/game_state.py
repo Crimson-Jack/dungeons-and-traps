@@ -5,8 +5,8 @@ from src.enums.direction import Direction
 from src.enums.game_status import GameStatus
 from src.enums.lighting_status import LightingStatus
 from src.enums.weapon_type import WeaponType
-from src.sprite.diamond import Diamond
-from src.sprite.key import Key
+from src.sprites.diamond import Diamond
+from src.sprites.key import Key
 
 
 class GameState:

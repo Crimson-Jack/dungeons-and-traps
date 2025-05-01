@@ -3,19 +3,18 @@ import random
 import pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
-from src.tile_details.monster_tile_details import MonsterTileDetails
+from src.tile_details.bat_tile_details import BatTileDetails
 
 
-class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
+class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_state, details: MonsterTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
+                 game_state, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
         # Base
@@ -46,13 +45,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Movement variables
         self.speed = details.speed
-        self.full_speed = self.speed
-        self.not_full_speed = self.speed * 0.6
         self.movement_vector = pygame.math.Vector2(0, 0)
         self.is_moving = False
         self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
-        self.range = 10
 
         # Set positions on map
         self.current_position_on_map = [
@@ -60,6 +56,11 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             (self.rect.bottom // Settings.TILE_SIZE) - 1
         ]
         self.new_position_on_map = list(self.current_position_on_map)
+
+        # Track variables
+        self.track = list()
+        self.create_track(self.current_position_on_map, details.points_path)
+        self.track_position = self.get_next_track_position()
 
         # Path variables
         self.all_tiles = []
@@ -82,6 +83,21 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.collided_with_weapon = False
         self.is_resting = False
 
+    def create_track(self, starting_point, points_path):
+        # Create relative track from points
+        relative_track = list()
+        # Add points in one direction
+        for point in points_path:
+            relative_track.append(point)
+        # Add points in the opposite direction (reverse)
+        for value in reversed(points_path):
+            relative_track.append((-value[0], -value[1]))
+
+        # Convert path from relative to absolute
+        self.track.append((starting_point[0], starting_point[1]))
+        for point in relative_track:
+            self.track.append((self.track[-1][0] + point[0], self.track[-1][1] + point[1]))
+
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
@@ -90,13 +106,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     self.obstacles.append((y, x))
 
     def update(self):
-        if len(self.path) > 0:
-            # If path is defined, full speed chase
-            self.speed = self.full_speed
-        else:
-            # If path is not defined, the monster walks slowly
-            self.speed = self.not_full_speed
-
         if self.number_of_sprites > 1:
             self.change_costume()
 
@@ -115,15 +124,32 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
-        if self.is_player_in_range():
-            self.calculate_path_to_player()
-            if self.try_to_set_movement_vector_from_path():
-                self.is_moving = True
+        if self.check_can_move():
+            if self.check_if_all_track_positions_are_blocked():
+                if self.try_to_set_random_movement_vector():
+                    self.is_moving = True
+                    self.path.clear()
+            else:
+                self.calculate_path()
+                if self.try_to_set_movement_vector_from_path():
+                    self.is_moving = True
 
-        if not self.is_moving:
-            if self.try_to_set_random_movement_vector():
-                self.is_moving = True
-                self.path.clear()
+                if not self.is_moving:
+                    self.track_position = self.get_next_track_position()
+                    self.calculate_path()
+                    if self.try_to_set_movement_vector_from_path():
+                        self.is_moving = True
+
+    def check_can_move(self):
+        # If all neighbours are obstacles - stop the movement
+        tile_top = self.obstacle_map[self.current_position_on_map[1] - 1][self.current_position_on_map[0]]
+        tile_bottom = self.obstacle_map[self.current_position_on_map[1] + 1][self.current_position_on_map[0]]
+        tile_left = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] - 1]
+        tile_right = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] + 1]
+        if tile_top and tile_bottom and tile_left and tile_right:
+            return False
+        else:
+            return True
 
     def move(self):
         # Calculate real y position
@@ -207,14 +233,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def try_to_set_movement_vector_from_path(self):
         movement_vector = None
 
-        if self.is_player_in_range():
-            for index, item in enumerate(self.path):
-                if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
-                    next_position_on_map = self.path[index + 1]
-                    movement_vector = pygame.math.Vector2(
-                        next_position_on_map[0] - self.current_position_on_map[0],
-                        next_position_on_map[1] - self.current_position_on_map[1])
-                    break
+        for index, item in enumerate(self.path):
+            if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
+                next_position_on_map = self.path[index + 1]
+                movement_vector = pygame.math.Vector2(
+                    next_position_on_map[0] - self.current_position_on_map[0],
+                    next_position_on_map[1] - self.current_position_on_map[1])
+                break
 
         self.movement_vector = movement_vector
         return self.movement_vector is not None
@@ -256,18 +281,11 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        if self.is_player_in_range():
-            self.calculate_path_to_player()
+        self.calculate_path()
 
-    def set_player_tile_position(self):
-        # pass
-        # Player has changed position - calculate a new path
-        if self.is_player_in_range():
-            self.calculate_path_to_player()
-
-    def calculate_path_to_player(self):
+    def calculate_path(self):
         start_position = tuple(self.current_position_on_map)
-        end_position = self.game_state.player_tile_position
+        end_position = self.track_position
 
         # Get path
         is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
@@ -279,7 +297,37 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path
-            self.path.append(self.game_state.player_tile_position)
+            self.path.append(self.track_position)
+
+    def get_next_track_position(self):
+        self.track.append(self.track[0])
+        self.track.remove(self.track[0])
+
+        return self.track[0]
+
+    def check_if_all_track_positions_are_blocked(self):
+        # Assumption - all route points are blocked
+        all_blocked = True
+
+        # Remove current position on the map form the track and convert list to set (to remove duplicates)
+        track_without_current_position = set(filter(lambda point: point != tuple(self.current_position_on_map),
+                                                    self.track))
+
+        for item in track_without_current_position:
+            # Check whether the track point is located at the location of the obstacle
+            if item not in self.obstacles:
+                start_position = tuple(self.current_position_on_map)
+                end_position = item
+                # Check whether the track point is reachable
+                is_end_reached, path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
+                                                                                                    self.obstacles,
+                                                                                                    start_position,
+                                                                                                    end_position)
+                if is_end_reached:
+                    all_blocked = False
+                    break
+
+        return all_blocked
 
     def decrease_energy(self, energy_decrease_step):
         self.collided_with_weapon = True
@@ -328,15 +376,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
             # Set new image
             self.image = self.sprites[self.costume_index].image
-
-    def is_player_in_range(self):
-        monster_tile_position = tuple(self.current_position_on_map)
-        player_tile_position = self.game_state.player_tile_position
-
-        distance = abs(monster_tile_position[0] - player_tile_position[0]), abs(
-            monster_tile_position[1] - player_tile_position[1])
-
-        return distance[0] < self.range and distance[1] < self.range
 
     def kill(self):
         super().kill()

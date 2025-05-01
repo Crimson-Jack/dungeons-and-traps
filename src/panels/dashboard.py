@@ -4,8 +4,8 @@ from settings import Settings
 from src.bar import Bar
 from src.color_set import ColorSet
 from src.game_helper import GameHelper
-from src.sprite.diamond import Diamond
-from src.sprite.key import Key
+from src.sprites.diamond import Diamond
+from src.sprites.key import Key
 from src.sprite_helper import SpriteHelper
 from src.tile_details.diamond_tile_details import DiamondTileDetails
 from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails

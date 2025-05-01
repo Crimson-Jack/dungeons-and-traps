@@ -3,8 +3,8 @@ import pygame
 from settings import Settings
 from src.camera_group import CameraGroup
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.sprite.player import Player
+from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.sprites.player import Player
 
 
 class CameraGroupWithYSort(CameraGroup):

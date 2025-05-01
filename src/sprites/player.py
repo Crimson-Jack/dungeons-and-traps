@@ -4,11 +4,11 @@ from settings import Settings
 from src.enums.direction import Direction
 from src.enums.weapon_type import WeaponType
 from src.game_helper import GameHelper
-from src.sprite.bow_weapon import BowWeapon
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.sprite.item_to_collect import ItemToCollect
-from src.sprite.powerup import Powerup
-from src.sprite.sword_weapon import SwordWeapon
+from src.sprites.bow_weapon import BowWeapon
+from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.sprites.item_to_collect import ItemToCollect
+from src.sprites.powerup import Powerup
+from src.sprites.sword_weapon import SwordWeapon
 from src.sprite_helper import SpriteHelper
 
 

@@ -1,7 +1,7 @@
 from src.enums.direction import Direction
 from src.game_helper import GameHelper
-from src.sprite.arrow import Arrow
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprites.arrow import Arrow
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_helper import SpriteHelper
 
 

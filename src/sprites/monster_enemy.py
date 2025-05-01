@@ -8,15 +8,14 @@ from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
-from src.sprite.fire_ball_enemy import FireBallEnemy
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
-from src.tile_details.octopus_tile_details import OctopusTileDetails
+from src.tile_details.monster_tile_details import MonsterTileDetails
 
 
-class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
+class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_state, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
+                 game_state, details: MonsterTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
         # Base
@@ -34,8 +33,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.costume_step_counter = 0
         self.costume_index = 0
 
-        # Sprite in a damage state
-        self.sprite_in_damage_state = sprite_image_in_damage_state
+        # Sprite image in a damage state
+        self.sprite_image_in_damage_state = sprite_image_in_damage_state
 
         # Image
         self.image = self.sprites[0].image
@@ -53,12 +52,12 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.is_moving = False
         self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
-        self.range = 15
+        self.range = 10
 
         # Set positions on map
         self.current_position_on_map = [
-            (self.rect.right // Settings.TILE_SIZE) - 2,
-            (self.rect.bottom // Settings.TILE_SIZE) - 2
+            (self.rect.right // Settings.TILE_SIZE) - 1,
+            (self.rect.bottom // Settings.TILE_SIZE) - 1
         ]
         self.new_position_on_map = list(self.current_position_on_map)
 
@@ -73,18 +72,15 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
-        # Obstacles and Moving obstacles
-        self.obstacle_sprites = obstacle_sprites
+        # Moving obstacles
         self.moving_obstacle_sprites = moving_obstacle_sprites
+
+        # Hostile forces
+        self.hostile_force_sprites = hostile_force_sprites
 
         # State variables
         self.collided_with_weapon = False
         self.is_resting = False
-
-        # Fireball
-        self.fire_ball_counter = 0
-        self.fire_ball_switching_threshold = 120
-        self.fire_balls = list()
 
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
@@ -104,8 +100,6 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         if self.number_of_sprites > 1:
             self.change_costume()
 
-        self.check_fireball()
-
         if self.is_moving:
             self.move()
         else:
@@ -117,6 +111,8 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                     self.is_resting = False
                     self.start_delay_counter = self.start_delay
                     self.set_next_move()
+
+        self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
         if self.is_player_in_range():
@@ -167,10 +163,10 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # Recognize the moment when monster moves to a new area
             # In this case TILE_SIZE is a divisor of "right" or "bottom"
             if self.rect.right % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 2
+                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 1
 
             if self.rect.bottom % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 2
+                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 1
 
             # If position was changed, change position and determine new direction
             if self.current_position_on_map != self.new_position_on_map:
@@ -191,18 +187,22 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Increase costume step counter
         self.costume_step_counter += 1
 
-        # Increase fireball counter
-        self.fire_ball_counter += 1
-
     def check_collision_with_moving_obstacles(self):
         is_collision_detected = False
 
         for sprite in self.moving_obstacle_sprites:
-            if sprite.hit_box.colliderect(self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)):
+            if sprite.hit_box.colliderect(self.hit_box):
                 is_collision_detected = True
                 break
 
         return is_collision_detected
+
+    def check_collision_with_hostile_forces(self):
+        for sprite in self.hostile_force_sprites:
+            if sprite.hit_box.colliderect(self.hit_box):
+                if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
+                                               pygame.sprite.collide_mask):
+                    self.decrease_energy(sprite.get_damage_power())
 
     def try_to_set_movement_vector_from_path(self):
         movement_vector = None
@@ -313,7 +313,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def change_costume(self):
         if self.is_resting:
-            self.image = self.sprite_in_damage_state
+            self.image = self.sprite_image_in_damage_state
 
         # Change costume only if threshold exceeded
         if self.costume_step_counter > self.sprites[self.costume_index].number_of_frames:
@@ -341,22 +341,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_state.increase_score(self.score)
-        center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
-        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": center_rectangle.topleft}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
         return self.damage_power
-
-    def check_fireball(self):
-        if self.fire_ball_counter > self.fire_ball_switching_threshold:
-            self.fire_ball_counter = 0
-
-            if len(self.path) > 0:
-                center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
-                self.fire_balls.append(
-                    FireBallEnemy(center_rectangle.topleft,
-                                  tuple(self.groups()),
-                                  self.game_state,
-                                  self.obstacle_sprites,
-                                  self.moving_obstacle_sprites)
-                )

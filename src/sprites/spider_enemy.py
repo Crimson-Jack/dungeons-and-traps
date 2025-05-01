@@ -3,7 +3,7 @@ import pygame
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.game_helper import GameHelper
-from src.sprite.custom_draw_sprite import CustomDrawSprite
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
 from src.tile_details.spider_tile_details import SpiderTileDetails
 

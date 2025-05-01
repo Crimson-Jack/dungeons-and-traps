@@ -1,7 +1,7 @@
-from src.sprite.bow_powerup import BowPowerup
-from src.sprite.energy_powerup import EnergyPowerup
-from src.sprite.life_powerup import LifePowerup
-from src.sprite.sword_powerup import SwordPowerup
+from src.sprites.bow_powerup import BowPowerup
+from src.sprites.energy_powerup import EnergyPowerup
+from src.sprites.life_powerup import LifePowerup
+from src.sprites.sword_powerup import SwordPowerup
 from src.tile_details.powerup_tile_details import PowerupTileDetails
 
 

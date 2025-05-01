@@ -1,4 +1,4 @@
-from src.sprite.powerup import Powerup
+from src.sprites.powerup import Powerup
 
 
 class EnergyPowerup(Powerup):
