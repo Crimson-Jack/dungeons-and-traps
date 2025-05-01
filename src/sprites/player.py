@@ -15,7 +15,7 @@ from src.sprite_helper import SpriteHelper
 class Player(CustomDrawSprite):
     def __init__(self, position, groups, weapon_groups, speed, exit_points, obstacle_sprites, moving_obstacle_sprites,
                  passage_sprites, teleport_sprites, collectable_sprites, enemy_sprites, hostile_force_sprites,
-                 game_state):
+                 game_manager):
         super().__init__(groups)
 
         # Create sprite animation variables
@@ -53,7 +53,7 @@ class Player(CustomDrawSprite):
         self.hostile_force_sprites = hostile_force_sprites
 
         # Game state
-        self.game_state = game_state
+        self.game_manager = game_manager
 
         # State variables
         self.visible = True
@@ -61,18 +61,18 @@ class Player(CustomDrawSprite):
 
         # Player weapon
         self.weapon_is_in_use = False
-        self.sword_weapon = SwordWeapon(position, weapon_groups, game_state, enemy_sprites, obstacle_sprites,
+        self.sword_weapon = SwordWeapon(position, weapon_groups, game_manager, enemy_sprites, obstacle_sprites,
                                         moving_obstacle_sprites)
         self.bow_weapon = BowWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
 
         # Tile position
         self.tile_position = GameHelper.get_tile_by_point(self.get_center_point())
-        self.game_state.set_player_tile_position(self.tile_position)
+        self.game_manager.set_player_tile_position(self.tile_position)
 
     def get_input(self):
-        self.movement_vector = self.game_state.player_movement_vector
-        self.movement_direction = self.game_state.player_movement_direction
-        self.weapon_is_in_use = self.game_state.player_is_using_weapon
+        self.movement_vector = self.game_manager.player_movement_vector
+        self.movement_direction = self.game_manager.player_movement_direction
+        self.weapon_is_in_use = self.game_manager.player_is_using_weapon
 
     def set_costume(self, current_direction, index):
         # Select appropriate costume for sprite
@@ -171,7 +171,7 @@ class Player(CustomDrawSprite):
             new_tile_position = GameHelper.get_tile_by_point(self.get_center_point())
             if new_tile_position != self.tile_position:
                 self.tile_position = new_tile_position
-                self.game_state.set_player_tile_position(self.tile_position)
+                self.game_manager.set_player_tile_position(self.tile_position)
                 pygame.event.post(pygame.event.Event(Settings.PLAYER_TILE_POSITION_CHANGED_EVENT))
 
         # Increase step counter
@@ -222,7 +222,7 @@ class Player(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
-                    self.game_state.decrease_player_energy(sprite.get_damage_power())
+                    self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
         # Check collision with hostile force sprites
         for sprite in self.hostile_force_sprites:
@@ -230,13 +230,13 @@ class Player(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     self.collided_with_enemy = True
-                    self.game_state.decrease_player_energy(sprite.get_damage_power())
+                    self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
     def check_horizontal_collision(self):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                if sprite in self.passage_sprites and self.game_manager.check_is_key_collected(sprite.key_name):
                     # Remove if key_name matches
                     sprite.kill()
                 if self.movement_vector.x > 0:
@@ -264,7 +264,7 @@ class Player(CustomDrawSprite):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_state.check_is_key_collected(sprite.key_name):
+                if sprite in self.passage_sprites and self.game_manager.check_is_key_collected(sprite.key_name):
                     # Remove if key_name matches
                     sprite.kill()
                 if self.movement_vector.y > 0:
@@ -289,12 +289,12 @@ class Player(CustomDrawSprite):
                     self.real_y_position = float(self.hit_box.y)
 
     def use_weapon(self):
-        if self.game_state.weapon_type == WeaponType.NONE:
+        if self.game_manager.weapon_type == WeaponType.NONE:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.disarm_weapon()
             pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
-        if self.game_state.weapon_type == WeaponType.SWORD:
+        if self.game_manager.weapon_type == WeaponType.SWORD:
             self.bow_weapon.disarm_weapon()
             self.sword_weapon.set_position(self.rect.topleft)
             self.sword_weapon.arm_weapon()
@@ -303,14 +303,14 @@ class Player(CustomDrawSprite):
             else:
                 self.sword_weapon.stop_cutting()
 
-        elif self.game_state.weapon_type == WeaponType.BOW:
+        elif self.game_manager.weapon_type == WeaponType.BOW:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.set_position(self.rect.topleft)
             self.bow_weapon.arm_weapon()
             if self.weapon_is_in_use:
-                if self.game_state.number_of_arrows > 0:
+                if self.game_manager.number_of_arrows > 0:
                     self.bow_weapon.fire()
-                    self.game_state.decrease_number_of_arrows()
+                    self.game_manager.decrease_number_of_arrows()
                 pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):

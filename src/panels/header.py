@@ -6,10 +6,10 @@ from src.sprite_helper import SpriteHelper
 
 
 class Header:
-    def __init__(self, screen, header_surface, game_state):
+    def __init__(self, screen, header_surface, game_manager):
         self.screen = screen
         self.header_surface = header_surface
-        self.game_state = game_state
+        self.game_manager = game_manager
 
         # Sword and bow images
         self.sword_images = SpriteHelper.get_sword_images_to_header_view()
@@ -98,34 +98,34 @@ class Header:
     def draw_level(self, surface):
         level_text = self.basic_font.render('Level ', True, self.text_color)
         surface.blit(level_text, (self.margin * 2, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
-        level_number = self.basic_font.render(f'{self.game_state.level + 1}', True, self.highlighted_text_color)
+        level_number = self.basic_font.render(f'{self.game_manager.level + 1}', True, self.highlighted_text_color)
         surface.blit(level_number, (self.margin * 2 + level_text.get_rect().width, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
 
     def draw_weapon(self, surface):
-        if self.game_state.weapon_type == WeaponType.NONE:
+        if self.game_manager.weapon_type == WeaponType.NONE:
             weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
-        if self.game_state.weapon_type == WeaponType.SWORD:
+        if self.game_manager.weapon_type == WeaponType.SWORD:
             self.set_sword_image()
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
             surface.blit(self.sword_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.sword_image.get_rect().height // 2))
-        elif self.game_state.weapon_type == WeaponType.BOW:
+        elif self.game_manager.weapon_type == WeaponType.BOW:
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
             surface.blit(self.bow_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.bow_image.get_rect().height // 2))
-            number_of_arrows_text = self.additional_info_font.render(f'({self.game_state.number_of_arrows})', True,
+            number_of_arrows_text = self.additional_info_font.render(f'({self.game_manager.number_of_arrows})', True,
                                                                      self.highlighted_text_color)
             surface.blit(number_of_arrows_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, surface.get_height() // 2 - number_of_arrows_text.get_rect().height // 2 - self.text_adjustment))
 
     def draw_score(self, surface):
         score_text = self.basic_font.render('Score ', True, self.text_color)
         surface.blit(score_text, (self.margin * 2, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
-        score_number = self.basic_font.render(f'{self.game_state.score}', True, self.highlighted_text_color)
+        score_number = self.basic_font.render(f'{self.game_manager.score}', True, self.highlighted_text_color)
         surface.blit(score_number, (self.margin * 2 + score_text.get_rect().width, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
 
     def set_sword_image(self):
-        sword_capacity = self.game_state.get_sword_capacity()
+        sword_capacity = self.game_manager.get_sword_capacity()
         if 0 <= sword_capacity < len(self.sword_images):
             self.sword_image = self.sword_images[sword_capacity]
         else:

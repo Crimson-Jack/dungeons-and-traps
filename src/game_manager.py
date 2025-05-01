@@ -9,11 +9,11 @@ from src.sprites.diamond import Diamond
 from src.sprites.key import Key
 
 
-class GameState:
+class GameManager:
     def __init__(self):
         self.LEVELS = [
-            'basic.tmx',
-            'basic_arena.tmx',
+            # 'basic.tmx',
+            # 'basic_arena.tmx',
             's01_level_01.tmx',
             's01_level_02.tmx',
             's01_level_03.tmx',

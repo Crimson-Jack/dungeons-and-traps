@@ -12,10 +12,10 @@ from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Dashboard:
-    def __init__(self, screen, dashboard_surface, game_state):
+    def __init__(self, screen, dashboard_surface, game_manager):
         self.screen = screen
         self.dashboard_surface = dashboard_surface
-        self.game_state = game_state
+        self.game_manager = game_manager
 
         # Life image
         self.life_image = SpriteHelper.get_life_sprite()
@@ -57,7 +57,7 @@ class Dashboard:
                 ((61, 80), (189, 244, 180)),    # Light green
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
-        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_state.player_max_energy,
+        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_manager.player_max_energy,
                               bar_colors, True, Settings.BORDER_COLOR, True,
                               Settings.SURFACE_COLOR, True, 'Energy', Settings.BAR_TEXT_COLOR)
 
@@ -87,22 +87,22 @@ class Dashboard:
         surface.blit(lives_counter_text, (self.margin * 2, self.left_top_surface.get_height() // 2 - lives_counter_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
-        for item in range(self.game_state.lives):
+        for item in range(self.game_manager.lives):
             surface.blit(self.life_image, (self.margin * 3 + lives_counter_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             count += 1
 
     def draw_energy_bar(self, surface):
-        self.energy_bar.draw(surface, self.game_state.player_energy)
+        self.energy_bar.draw(surface, self.game_manager.player_energy)
 
     def draw_keys(self, surface):
         keys_text = self.basic_font.render(f'Keys', True, self.text_color)
         surface.blit(keys_text, (self.margin * 2, self.right_bottom_surface.get_height() // 2 - keys_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
-        for item in self.game_state.keys:
+        for item in self.game_manager.keys:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Key(item.base_size_image, item.rect.topleft, tuple(), item.game_state, KeyAndDoorTileDetails.from_properties(item.key_name, item.score))
+                transparent_image = Key(item.base_size_image, item.rect.topleft, tuple(), item.game_manager, KeyAndDoorTileDetails.from_properties(item.key_name, item.score))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             else:
@@ -115,10 +115,10 @@ class Dashboard:
         surface.blit(diamonds_text, (self.margin * 2, self.right_bottom_surface.get_height() // 2 - diamonds_text.get_rect().height // 2 - self.text_adjustment))
 
         count = 0
-        for item in self.game_state.diamonds:
+        for item in self.game_manager.diamonds:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
-                transparent_image = Diamond(item.base_size_image, item.rect.topleft, tuple(), item.game_state, DiamondTileDetails.from_properties(item.score))
+                transparent_image = Diamond(item.base_size_image, item.rect.topleft, tuple(), item.game_manager, DiamondTileDetails.from_properties(item.score))
                 transparent_image.base_size_image.set_alpha(100)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + diamonds_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             else:

@@ -14,11 +14,11 @@ from src.tile_details.bat_tile_details import BatTileDetails
 
 class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_state, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
+                 game_manager, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
 
         # Base
-        self.game_state = game_state
+        self.game_manager = game_manager
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -379,7 +379,7 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
 
     def kill(self):
         super().kill()
-        self.game_state.increase_score(self.score)
+        self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):

@@ -7,8 +7,8 @@ from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Key(ItemToCollect):
-    def __init__(self, image, position, groups, game_state, details: KeyAndDoorTileDetails):
-        super().__init__(groups, game_state)
+    def __init__(self, image, position, groups, game_manager, details: KeyAndDoorTileDetails):
+        super().__init__(groups, game_manager)
 
         # Sprite
         self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -20,5 +20,5 @@ class Key(ItemToCollect):
         self.score = details.score
 
     def collect(self):
-        self.game_state.collect_key(self)
+        self.game_manager.collect_key(self)
         super().kill()

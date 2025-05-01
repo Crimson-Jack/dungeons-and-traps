@@ -7,8 +7,8 @@ from src.tile_details.diamond_tile_details import DiamondTileDetails
 
 
 class Diamond(ItemToCollect):
-    def __init__(self, image, position, groups, game_state, details: DiamondTileDetails):
-        super().__init__(groups, game_state)
+    def __init__(self, image, position, groups, game_manager, details: DiamondTileDetails):
+        super().__init__(groups, game_manager)
 
         # Sprite
         self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -20,5 +20,5 @@ class Diamond(ItemToCollect):
         self.score = details.score
 
     def collect(self):
-        self.game_state.collect_diamond(self)
+        self.game_manager.collect_diamond(self)
         super().kill()

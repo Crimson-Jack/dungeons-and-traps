@@ -11,13 +11,13 @@ class PowerupFactory:
         image = kwargs["image"]
         position = kwargs["position"]
         groups = kwargs["groups"]
-        game_state = kwargs["game_state"]
+        game_manager = kwargs["game_manager"]
 
         if tile_details.powerup_name == 'sword':
-            return SwordPowerup(image, position, groups, game_state)
+            return SwordPowerup(image, position, groups, game_manager)
         elif tile_details.powerup_name == 'bow':
-            return BowPowerup(image, position, groups, game_state, tile_details.powerup_volume)
+            return BowPowerup(image, position, groups, game_manager, tile_details.powerup_volume)
         elif tile_details.powerup_name == 'energy':
-            return EnergyPowerup(image, position, groups, game_state, tile_details.powerup_volume)
+            return EnergyPowerup(image, position, groups, game_manager, tile_details.powerup_volume)
         elif tile_details.powerup_name == 'life':
-            return LifePowerup(image, position, groups, game_state)
+            return LifePowerup(image, position, groups, game_manager)

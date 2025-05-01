@@ -9,12 +9,12 @@ from src.tile_details.spider_tile_details import SpiderTileDetails
 
 
 class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
-    def __init__(self, sprite_costumes_matrix: list[list[SpriteCostume]], position, groups, game_state,
+    def __init__(self, sprite_costumes_matrix: list[list[SpriteCostume]], position, groups, game_manager,
                  details: SpiderTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
-        self.game_state = game_state
+        self.game_manager = game_manager
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -210,7 +210,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
 
     def kill(self):
         super().kill()
-        self.game_state.increase_score(self.score)
+        self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):

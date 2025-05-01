@@ -6,8 +6,8 @@ from src.sprite_helper import SpriteHelper
 
 
 class Egg(ItemToCollect):
-    def __init__(self, position, groups, game_state):
-        super().__init__(groups, game_state)
+    def __init__(self, position, groups, game_manager):
+        super().__init__(groups, game_manager)
 
         # Sprite animation variables
         self.sprites = SpriteHelper.get_all_egg_sprites()

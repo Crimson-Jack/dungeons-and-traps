@@ -8,11 +8,11 @@ from src.sprite_helper import SpriteHelper
 
 
 class FireBallEnemy(pygame.sprite.Sprite):
-    def __init__(self, position, groups, game_state, obstacle_sprites, moving_obstacle_sprites):
+    def __init__(self, position, groups, game_manager, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(*groups)
 
         # Base
-        self.game_state = game_state
+        self.game_manager = game_manager
         self.damage_power = 40
 
         # Sprite animation variables
@@ -28,7 +28,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
         self.hit_box = self.rect
 
         # Player position
-        self.player_top_left_position = GameHelper.get_point_by_tile(self.game_state.player_tile_position)
+        self.player_top_left_position = GameHelper.get_point_by_tile(self.game_manager.player_tile_position)
 
         # Obstacles
         self.obstacle_sprites = obstacle_sprites

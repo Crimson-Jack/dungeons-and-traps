@@ -9,14 +9,14 @@ from src.sprites.custom_draw_sprite import CustomDrawSprite
 
 
 class MovingObstacle(CustomDrawSprite):
-    def __init__(self, image, position: list, groups, game_state, obstacle_map_items, collision_sprites):
+    def __init__(self, image, position: list, groups, game_manager, obstacle_map_items, collision_sprites):
         super().__init__(groups)
         self.position = position
         self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
         self.rect = self.image.get_rect(topleft=position)
         self.obstacle_map_items = obstacle_map_items
         self.collision_sprites = collision_sprites
-        self.game_state = game_state
+        self.game_manager = game_manager
 
         # Power variables to move obstacle
         self.power = 0

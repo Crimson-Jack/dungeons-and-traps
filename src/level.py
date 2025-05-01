@@ -51,7 +51,7 @@ from src.utilities.debug import Debug
 
 
 class Level:
-    def __init__(self, screen, game_surface, game_state):
+    def __init__(self, screen, game_surface, game_manager):
         # Factories
         self.powerup_factory = PowerupFactory()
 
@@ -59,11 +59,11 @@ class Level:
         self.screen = screen
         self.game_surface = game_surface
 
-        # Set game state
-        self.game_state = game_state
+        # Set game manager
+        self.game_manager = game_manager
 
         # Load tmx data - world map
-        self.tmx_data = load_pygame(f'data/tmx/{self.game_state.get_level_filename()}')
+        self.tmx_data = load_pygame(f'data/tmx/{self.game_manager.get_level_filename()}')
         size_of_map = (self.tmx_data.width, self.tmx_data.height)
 
         # Calculate game surface position
@@ -170,7 +170,7 @@ class Level:
                           self.collectable_sprites,
                           self.enemy_sprites,
                           self.hostile_force_sprites,
-                          self.game_state)
+                          self.game_manager)
 
     def create_check_point(self):
         try:
@@ -185,7 +185,7 @@ class Level:
             y = tile_y * Settings.TILE_SIZE
             groups = self.bottom_background_layer, self.collectable_sprites
 
-            return CheckPoint(check_point.image, (x, y), groups, self.game_state)
+            return CheckPoint(check_point.image, (x, y), groups, self.game_manager)
 
     def create_exit_point(self):
         try:
@@ -237,7 +237,7 @@ class Level:
                 elif layer_name == 'diamond':
                     groups = self.bottom_sprites_layer, self.collectable_sprites
                     tile_details = DiamondTileDetails(None, layer)
-                    self.game_state.add_diamond(Diamond(image, (x, y), groups, self.game_state, tile_details))
+                    self.game_manager.add_diamond(Diamond(image, (x, y), groups, self.game_manager, tile_details))
 
                 elif layer_name == 'obstacle':
                     groups = self.middle_sprites_layer, self.obstacle_sprites
@@ -250,7 +250,7 @@ class Level:
                                          self.moving_obstacle_sprites,
                                          self.collectable_sprites]
                     # Note: stone can be moved, so the list instead of tuple for position is used
-                    Stone(image, [x, y], groups, self.game_state, self.obstacle_map.items, collision_sprites)
+                    Stone(image, [x, y], groups, self.game_manager, self.obstacle_map.items, collision_sprites)
 
     def create_sprites_from_object_layer(self, layer_name):
         try:
@@ -267,7 +267,7 @@ class Level:
                     if layer_name == 'spell':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
                         tile_details = SpellTileDetails(item, layer)
-                        LightingSpell(item.image, (x, y), groups, self.game_state, tile_details)
+                        LightingSpell(item.image, (x, y), groups, self.game_manager, tile_details)
 
                     if layer_name == 'powerup':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
@@ -276,12 +276,12 @@ class Level:
                                                     image=item.image,
                                                     position=(x, y),
                                                     groups=groups,
-                                                    game_state=self.game_state)
+                                                    game_manager=self.game_manager)
 
                     if layer_name == 'key':
                         groups = self.bottom_sprites_layer, self.collectable_sprites
                         tile_details = KeyAndDoorTileDetails(item, layer)
-                        self.game_state.add_key(Key(item.image, (x, y), groups, self.game_state, tile_details))
+                        self.game_manager.add_key(Key(item.image, (x, y), groups, self.game_manager, tile_details))
 
                     elif layer_name == 'fire-flame-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -307,7 +307,7 @@ class Level:
                         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
-                        MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
+                        MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                      tile_details, self.obstacle_map.items, self.moving_obstacle_sprites,
                                      self.hostile_force_sprites)
 
@@ -317,7 +317,7 @@ class Level:
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
 
-                        SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_state, tile_details,
+                        SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_manager, tile_details,
                                     self.moving_obstacle_sprites)
 
                     elif layer_name == 'ghost-enemy':
@@ -332,7 +332,7 @@ class Level:
                         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
-                        BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
+                        BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                  tile_details, self.obstacle_map.items, self.moving_obstacle_sprites,
                                  self.hostile_force_sprites)
 
@@ -341,7 +341,7 @@ class Level:
                         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
-                        OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_state,
+                        OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                      tile_details, self.obstacle_map.items, self.obstacle_sprites,
                                      self.moving_obstacle_sprites)
 
@@ -381,7 +381,7 @@ class Level:
         self.debugger.show()
 
     def blit_dark_surface(self):
-        if self.game_state.lighting_status != LightingStatus.LIGHT_ON:
+        if self.game_manager.lighting_status != LightingStatus.LIGHT_ON:
             # Create surface with transparent color (alpha) with the same size as game surface
             dark_surface = pygame.Surface(pygame.Rect(self.game_surface_rect).size, pygame.SRCALPHA)
             dark_surface.fill((0, 0, 0))
@@ -390,9 +390,9 @@ class Level:
             circle_x = self.player.rect.centerx + offset.x
             circle_y = self.player.rect.centery + offset.y
 
-            if self.game_state.lighting_status == LightingStatus.TWILIGHT:
+            if self.game_manager.lighting_status == LightingStatus.TWILIGHT:
                 pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 80)
-            elif self.game_state.lighting_status == LightingStatus.TORCHLIGHT:
+            elif self.game_manager.lighting_status == LightingStatus.TORCHLIGHT:
                 circle_radius = 200, 220, 240, 260, 280
                 circle_alpha = 0, 50, 100, 150, 200
                 for index in range(4, -1, -1):
@@ -426,7 +426,7 @@ class Level:
         self.vanishing_points.append(VanishingPoint(position, (self.bottom_sprites_layer,)))
 
     def create_egg(self, position):
-        Egg(position, (self.bottom_sprites_layer, self.collectable_sprites), self.game_state)
+        Egg(position, (self.bottom_sprites_layer, self.collectable_sprites), self.game_manager)
 
     def create_monster(self, position):
         name = "monster-enemy-red"
@@ -436,7 +436,7 @@ class Level:
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
         groups = self.top_sprites_layer, self.enemy_sprites
         tile_details = MonsterTileDetails(None, None)
-        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_state, tile_details,
+        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
     def add_particle_effect(self, position, number_of_sparks, colors):
@@ -468,7 +468,7 @@ class Level:
 
     def respawn_player(self, position=None):
         if position is None:
-            position = self.game_state.get_check_point_position()
+            position = self.game_manager.get_check_point_position()
         self.player.respawn(position)
         self.player.enable()
 

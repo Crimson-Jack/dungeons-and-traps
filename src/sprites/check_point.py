@@ -6,8 +6,8 @@ from src.sprites.item_to_collect import ItemToCollect
 
 
 class CheckPoint(ItemToCollect):
-    def __init__(self, image, position, groups, game_state):
-        super().__init__(groups, game_state)
+    def __init__(self, image, position, groups, game_manager):
+        super().__init__(groups, game_manager)
 
         # Sprite
         self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -16,5 +16,5 @@ class CheckPoint(ItemToCollect):
                                          GameHelper.multiply_by_tile_size_ratio(-20))
 
     def collect(self):
-        self.game_state.collect_check_point(self.rect.topleft)
+        self.game_manager.collect_check_point(self.rect.topleft)
         super().kill()

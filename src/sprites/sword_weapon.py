@@ -9,11 +9,11 @@ from src.sprite_helper import SpriteHelper
 
 
 class SwordWeapon(CustomDrawSprite):
-    def __init__(self, position, groups, game_state, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
+    def __init__(self, position, groups, game_manager, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
-        self.game_state = game_state
+        self.game_manager = game_manager
 
         # Sprite animation variables
         self.sprites = SpriteHelper.get_all_sword_sprites()
@@ -106,7 +106,7 @@ class SwordWeapon(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
                     if isinstance(sprite, EnemyWithEnergy):
-                        self.game_state.decrease_sword_energy()
+                        self.game_manager.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
                         self.create_particle_effect(sprite_hit_box, 1, Settings.ENEMY_PARTICLE_COLORS)
         # Check collision with obstacle sprites

@@ -6,8 +6,8 @@ from src.sprites.item_to_collect import ItemToCollect
 
 
 class Spell(ItemToCollect):
-    def __init__(self, image, position, groups, game_state):
-        super().__init__(groups, game_state)
+    def __init__(self, image, position, groups, game_manager):
+        super().__init__(groups, game_manager)
 
         # Sprite
         self.image = pygame.transform.scale(image, (Settings.TILE_SIZE, Settings.TILE_SIZE))

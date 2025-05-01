@@ -2,9 +2,9 @@ from src.sprites.powerup import Powerup
 
 
 class LifePowerup(Powerup):
-    def __init__(self, image, position, groups, game_state):
-        super().__init__(image, position, groups, game_state)
+    def __init__(self, image, position, groups, game_manager):
+        super().__init__(image, position, groups, game_manager)
 
     def collect(self):
-        self.game_state.collect_life_powerup()
+        self.game_manager.collect_life_powerup()
         super().kill()

@@ -16,11 +16,11 @@ from src.tile_details.octopus_tile_details import OctopusTileDetails
 
 class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_state, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
+                 game_manager, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Base
-        self.game_state = game_state
+        self.game_manager = game_manager
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -267,7 +267,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def calculate_path_to_player(self):
         start_position = tuple(self.current_position_on_map)
-        end_position = self.game_state.player_tile_position
+        end_position = self.game_manager.player_tile_position
 
         # Get path
         is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
@@ -279,7 +279,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path
-            self.path.append(self.game_state.player_tile_position)
+            self.path.append(self.game_manager.player_tile_position)
 
     def decrease_energy(self, energy_decrease_step):
         self.collided_with_weapon = True
@@ -331,7 +331,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def is_player_in_range(self):
         monster_tile_position = tuple(self.current_position_on_map)
-        player_tile_position = self.game_state.player_tile_position
+        player_tile_position = self.game_manager.player_tile_position
 
         distance = abs(monster_tile_position[0] - player_tile_position[0]), abs(
             monster_tile_position[1] - player_tile_position[1])
@@ -340,7 +340,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
     def kill(self):
         super().kill()
-        self.game_state.increase_score(self.score)
+        self.game_manager.increase_score(self.score)
         center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": center_rectangle.topleft}))
 
@@ -356,7 +356,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 self.fire_balls.append(
                     FireBallEnemy(center_rectangle.topleft,
                                   tuple(self.groups()),
-                                  self.game_state,
+                                  self.game_manager,
                                   self.obstacle_sprites,
                                   self.moving_obstacle_sprites)
                 )
