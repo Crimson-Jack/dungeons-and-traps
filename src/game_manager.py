@@ -21,6 +21,7 @@ class GameManager:
             's01_level_05.tmx',
             's01_level_06.tmx',
             's01_level_07.tmx',
+            # 's01_level_08.tmx',
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
