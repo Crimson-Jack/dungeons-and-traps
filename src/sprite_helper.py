@@ -201,6 +201,24 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
+    def get_all_tnt_sprites():
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png', Settings.SOURCE_TILE_SIZE, SpriteHelper.SCALE,
+                                                         SpriteHelper.KEY_COLOR)
+
+        sprites = {
+            'left': [],
+            'right': [],
+            'up': [],
+            'down': []}
+
+        sprites['right'].append(sprite_sheet.get_image(0, 0))
+        sprites['left'].append(sprite_sheet.get_image(1, 0))
+        sprites['up'].append(sprite_sheet.get_image(2, 0))
+        sprites['down'].append(sprite_sheet.get_image(3, 0))
+
+        return sprites
+
+    @staticmethod
     def get_all_monster_sprites(name):
         sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', Settings.SOURCE_TILE_SIZE, SpriteHelper.SCALE, SpriteHelper.KEY_COLOR)
 
@@ -230,6 +248,11 @@ class SpriteHelper:
     def get_bow_image_to_header_view():
         sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', Settings.SOURCE_TILE_SIZE, (64, 64), SpriteHelper.KEY_COLOR)
         return sprite_sheet.get_image(1, 1)
+
+    @staticmethod
+    def get_explosion_image_to_header_view():
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', Settings.SOURCE_TILE_SIZE, (64, 64), SpriteHelper.KEY_COLOR)
+        return sprite_sheet.get_image(1, 0)
 
     @staticmethod
     def get_all_fire_ball_enemy_sprites():

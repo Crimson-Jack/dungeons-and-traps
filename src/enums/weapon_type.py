@@ -5,6 +5,7 @@ class WeaponType(IntEnum):
     NONE = 0
     SWORD = 1
     BOW = 2
+    EXPLOSION = 3
 
     def next(self):
         my_class = self.__class__

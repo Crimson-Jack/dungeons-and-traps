@@ -35,6 +35,7 @@ class GameManager:
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
         self.sword_max_energy = 100
+        self.number_of_explosions = 0
         self.number_of_sword_thresholds = 5
         self.sword_energy = self.sword_max_energy
 
@@ -170,6 +171,13 @@ class GameManager:
         self.weapon_type = WeaponType.BOW
         pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
+    def collect_explosion_powerup(self, number_of_explosions):
+        self.add_weapon(WeaponType.EXPLOSION)
+        self.number_of_explosions += number_of_explosions
+        self.remove_weapon(WeaponType.NONE)
+        self.weapon_type = WeaponType.EXPLOSION
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+
     def add_weapon(self, weapon):
         if weapon not in self.collected_weapons:
             self.collected_weapons.append(weapon)
@@ -215,6 +223,18 @@ class GameManager:
 
         if self.number_of_arrows <= 0:
             self.remove_weapon(WeaponType.BOW)
+            if len(self.collected_weapons) == 0:
+                self.add_weapon(WeaponType.NONE)
+            self.set_next_weapon()
+        else:
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
+
+    def decrease_number_of_explosions(self):
+        if self.number_of_explosions > 0:
+            self.number_of_explosions -= 1
+
+        if self.number_of_explosions <= 0:
+            self.remove_weapon(WeaponType.EXPLOSION)
             if len(self.collected_weapons) == 0:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()

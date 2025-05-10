@@ -6,6 +6,7 @@ from src.enums.weapon_type import WeaponType
 from src.game_helper import GameHelper
 from src.sprites.bow_weapon import BowWeapon
 from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.sprites.explosion_weapon import ExplosionWeapon
 from src.sprites.item_to_collect import ItemToCollect
 from src.sprites.powerup import Powerup
 from src.sprites.sword_weapon import SwordWeapon
@@ -64,6 +65,7 @@ class Player(CustomDrawSprite):
         self.sword_weapon = SwordWeapon(position, weapon_groups, game_manager, enemy_sprites, obstacle_sprites,
                                         moving_obstacle_sprites)
         self.bow_weapon = BowWeapon(position, weapon_groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites)
+        self.explosion_weapon = ExplosionWeapon(position, weapon_groups, enemy_sprites)
 
         # Tile position
         self.tile_position = GameHelper.get_tile_by_point(self.get_center_point())
@@ -154,6 +156,8 @@ class Player(CustomDrawSprite):
             self.sword_weapon.is_blocked = False
             # - set costume for bow
             self.bow_weapon.set_costume(self.movement_direction)
+            # - set costume for explosion
+            self.explosion_weapon.set_costume(self.movement_direction)
 
         # Check the movement
         if self.rect.center != self.hit_box.center:
@@ -292,10 +296,12 @@ class Player(CustomDrawSprite):
         if self.game_manager.weapon_type == WeaponType.NONE:
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.disarm_weapon()
+            self.explosion_weapon.disarm_weapon()
             pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
-        if self.game_manager.weapon_type == WeaponType.SWORD:
+        elif self.game_manager.weapon_type == WeaponType.SWORD:
             self.bow_weapon.disarm_weapon()
+            self.explosion_weapon.disarm_weapon()
             self.sword_weapon.set_position(self.rect.topleft)
             self.sword_weapon.arm_weapon()
             if self.weapon_is_in_use:
@@ -305,12 +311,24 @@ class Player(CustomDrawSprite):
 
         elif self.game_manager.weapon_type == WeaponType.BOW:
             self.sword_weapon.disarm_weapon()
+            self.explosion_weapon.disarm_weapon()
             self.bow_weapon.set_position(self.rect.topleft)
             self.bow_weapon.arm_weapon()
             if self.weapon_is_in_use:
                 if self.game_manager.number_of_arrows > 0:
                     self.bow_weapon.fire()
                     self.game_manager.decrease_number_of_arrows()
+                pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+
+        elif self.game_manager.weapon_type == WeaponType.EXPLOSION:
+            self.sword_weapon.disarm_weapon()
+            self.bow_weapon.disarm_weapon()
+            self.explosion_weapon.set_position(self.rect.topleft)
+            self.explosion_weapon.arm_weapon()
+            if self.weapon_is_in_use:
+                if self.game_manager.number_of_explosions > 0:
+                    self.explosion_weapon.fire()
+                    self.game_manager.decrease_number_of_explosions()
                 pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):

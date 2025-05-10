@@ -32,6 +32,8 @@ class Settings:
     TEXT_COLOR = 208, 208, 208
     HIGHLIGHTED_TEXT_COLOR = 255, 255, 255
     BAR_TEXT_COLOR = 50, 50, 50
+    BLAST_EFFECT_COLOR = 255, 255, 255
+    EXPLODE_EFFECT_COLOR = 172, 50, 50
 
     # Events
     GAME_OVER_EVENT = pygame.event.custom_type()
@@ -59,3 +61,4 @@ class Settings:
     RESPAWN_PLAYER_EVENT = pygame.event.custom_type()
     COLLECT_LIFE_EVENT = pygame.event.custom_type()
     CHANGE_SCORE_EVENT = pygame.event.custom_type()
+    CREATE_EXPLODE_EFFECT_EVENT = pygame.event.custom_type()

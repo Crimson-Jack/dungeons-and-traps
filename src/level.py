@@ -114,7 +114,8 @@ class Level:
         self.exit_point = self.create_exit_point()
 
         # Set blast effect details
-        self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, 'White')
+        self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, Settings.BLAST_EFFECT_COLOR)
+        self.explode_effect = BlastEffect(self.game_surface, self.game_surface_rect, 10, Settings.EXPLODE_EFFECT_COLOR)
         # Tombstones
         self.tombstones = list()
         # Vanishing points
@@ -357,6 +358,7 @@ class Level:
         # Run an update method for effects
         self.update_particle_effects()
         self.blast_effect.update()
+        self.explode_effect.update()
 
         # Clean game surface - fill with background color
         self.game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
@@ -370,6 +372,7 @@ class Level:
         # Draw effects
         self.draw_particle_effects()
         self.blast_effect.draw()
+        self.explode_effect.draw()
 
         # Blit game_surface on the main screen
         self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
@@ -418,6 +421,9 @@ class Level:
     def show_exit_point(self):
         self.blast_effect.run()
         self.exit_point.show()
+
+    def show_explode_effect(self):
+        self.explode_effect.run()
 
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, (self.bottom_sprites_layer,)))

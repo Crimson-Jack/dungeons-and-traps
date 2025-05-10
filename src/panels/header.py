@@ -15,6 +15,7 @@ class Header:
         self.sword_images = SpriteHelper.get_sword_images_to_header_view()
         self.sword_image = self.sword_images[0]
         self.bow_image = SpriteHelper.get_bow_image_to_header_view()
+        self.explosion_image = SpriteHelper.get_explosion_image_to_header_view()
 
         # Fonts
         self.text_color = Settings.TEXT_COLOR
@@ -117,6 +118,13 @@ class Header:
             number_of_arrows_text = self.additional_info_font.render(f'({self.game_manager.number_of_arrows})', True,
                                                                      self.highlighted_text_color)
             surface.blit(number_of_arrows_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, surface.get_height() // 2 - number_of_arrows_text.get_rect().height // 2 - self.text_adjustment))
+        elif self.game_manager.weapon_type == WeaponType.EXPLOSION:
+            weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
+            surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
+            surface.blit(self.explosion_image, (self.margin * 2 + weapon_text.get_width(), surface.get_height() // 2 - self.bow_image.get_rect().height // 2))
+            number_of_explosions_text = self.additional_info_font.render(f'({self.game_manager.number_of_explosions})', True,
+                                                                     self.highlighted_text_color)
+            surface.blit(number_of_explosions_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, surface.get_height() // 2 - number_of_explosions_text.get_rect().height // 2 - self.text_adjustment))
 
     def draw_score(self, surface):
         score_text = self.basic_font.render('Score ', True, self.text_color)

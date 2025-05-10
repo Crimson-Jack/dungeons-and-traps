@@ -274,6 +274,9 @@ class Game:
             self.level.respawn_player(player_new_position)
             self.refresh_dashboard_surface()
 
+        if event.type == Settings.CREATE_EXPLODE_EFFECT_EVENT:
+            self.level.show_explode_effect()
+
         if event.type == Settings.GAME_OVER_EVENT:
             self.level.show_player_tombstone()
             pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 2000)

@@ -6,12 +6,12 @@
  <tileset firstgid="113" source="../tsx/player.tsx"/>
  <tileset firstgid="153" source="../tsx/misc.tsx"/>
  <tileset firstgid="185" source="../tsx/powerup.tsx"/>
- <tileset firstgid="199" source="../tsx/monster-enemy-blue.tsx"/>
- <tileset firstgid="207" source="../tsx/monster-enemy-green.tsx"/>
- <tileset firstgid="215" source="../tsx/door.tsx"/>
- <tileset firstgid="227" source="../tsx/spider-enemy-small.tsx"/>
- <tileset firstgid="247" source="../tsx/collectable.tsx"/>
- <tileset firstgid="263" source="../tsx/spider-enemy-medium.tsx"/>
+ <tileset firstgid="203" source="../tsx/monster-enemy-blue.tsx"/>
+ <tileset firstgid="211" source="../tsx/monster-enemy-green.tsx"/>
+ <tileset firstgid="219" source="../tsx/door.tsx"/>
+ <tileset firstgid="231" source="../tsx/spider-enemy-small.tsx"/>
+ <tileset firstgid="251" source="../tsx/collectable.tsx"/>
+ <tileset firstgid="267" source="../tsx/spider-enemy-medium.tsx"/>
  <layer id="1" name="ground" width="40" height="22">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -101,7 +101,7 @@
  </layer>
  <group id="8" name="enemy">
   <objectgroup id="11" name="spider-enemy">
-   <object id="15" name="spider-enemy-small" gid="227" x="192" y="176" width="16" height="16">
+   <object id="15" name="spider-enemy-small" gid="231" x="192" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="100"/>
@@ -111,7 +111,7 @@
      <property name="speed" type="float" value="3"/>
     </properties>
    </object>
-   <object id="16" name="spider-enemy-small" gid="227" x="224" y="176" width="16" height="16">
+   <object id="16" name="spider-enemy-small" gid="231" x="224" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="100"/>
@@ -121,7 +121,7 @@
      <property name="speed" type="float" value="3"/>
     </properties>
    </object>
-   <object id="19" name="spider-enemy-medium" gid="263" x="304" y="176" width="16" height="16">
+   <object id="19" name="spider-enemy-medium" gid="267" x="304" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -131,7 +131,7 @@
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
-   <object id="20" name="spider-enemy-medium" gid="263" x="320" y="176" width="16" height="16">
+   <object id="20" name="spider-enemy-medium" gid="267" x="320" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -141,7 +141,7 @@
      <property name="speed" type="float" value="1.5"/>
     </properties>
    </object>
-   <object id="21" name="spider-enemy-medium" gid="263" x="336" y="176" width="16" height="16">
+   <object id="21" name="spider-enemy-medium" gid="267" x="336" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -151,7 +151,7 @@
      <property name="speed" type="float" value="1"/>
     </properties>
    </object>
-   <object id="22" name="spider-enemy-medium" gid="263" x="352" y="176" width="16" height="16">
+   <object id="22" name="spider-enemy-medium" gid="267" x="352" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="200"/>
@@ -161,7 +161,7 @@
      <property name="speed" type="float" value="0.5"/>
     </properties>
    </object>
-   <object id="23" name="spider-enemy-small" gid="227" x="528" y="176" width="16" height="16">
+   <object id="23" name="spider-enemy-small" gid="231" x="528" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="100"/>
@@ -171,7 +171,7 @@
      <property name="speed" type="float" value="3"/>
     </properties>
    </object>
-   <object id="24" name="spider-enemy-small" gid="227" x="544" y="176" width="16" height="16">
+   <object id="24" name="spider-enemy-small" gid="231" x="544" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="100"/>
@@ -181,7 +181,7 @@
      <property name="speed" type="float" value="3"/>
     </properties>
    </object>
-   <object id="25" name="spider-enemy-small" gid="227" x="560" y="176" width="16" height="16">
+   <object id="25" name="spider-enemy-small" gid="231" x="560" y="176" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="100"/>
@@ -193,7 +193,7 @@
    </object>
   </objectgroup>
   <objectgroup id="9" name="monster-enemy">
-   <object id="4" name="monster-enemy-blue" gid="199" x="432" y="304" width="16" height="16">
+   <object id="4" name="monster-enemy-blue" gid="203" x="432" y="304" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -202,7 +202,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="5" name="monster-enemy-blue" gid="199" x="368" y="240" width="16" height="16">
+   <object id="5" name="monster-enemy-blue" gid="203" x="368" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -211,7 +211,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="6" name="monster-enemy-blue" gid="199" x="352" y="320" width="16" height="16">
+   <object id="6" name="monster-enemy-blue" gid="203" x="352" y="320" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -220,7 +220,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="7" name="monster-enemy-green" gid="207" x="256" y="288" width="16" height="16">
+   <object id="7" name="monster-enemy-green" gid="211" x="256" y="288" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -229,7 +229,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="8" name="monster-enemy-green" gid="207" x="272" y="240" width="16" height="16">
+   <object id="8" name="monster-enemy-green" gid="211" x="272" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -238,7 +238,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="9" name="monster-enemy-green" gid="207" x="208" y="320" width="16" height="16">
+   <object id="9" name="monster-enemy-green" gid="211" x="208" y="320" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -247,7 +247,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="10" name="monster-enemy-green" gid="207" x="112" y="224" width="16" height="16">
+   <object id="10" name="monster-enemy-green" gid="211" x="112" y="224" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -256,7 +256,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="11" name="monster-enemy-green" gid="207" x="96" y="320" width="16" height="16">
+   <object id="11" name="monster-enemy-green" gid="211" x="96" y="320" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -265,7 +265,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="12" name="monster-enemy-blue" gid="199" x="48" y="288" width="16" height="16">
+   <object id="12" name="monster-enemy-blue" gid="203" x="48" y="288" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -274,7 +274,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="13" name="monster-enemy-blue" gid="199" x="80" y="256" width="16" height="16">
+   <object id="13" name="monster-enemy-blue" gid="203" x="80" y="256" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -283,7 +283,7 @@
      <property name="start_delay" type="int" value="20"/>
     </properties>
    </object>
-   <object id="31" name="monster-enemy-green" gid="207" x="544" y="32" width="16" height="16">
+   <object id="31" name="monster-enemy-green" gid="211" x="544" y="32" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -292,7 +292,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="32" name="monster-enemy-green" gid="207" x="496" y="128" width="16" height="16">
+   <object id="32" name="monster-enemy-green" gid="211" x="496" y="128" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -301,7 +301,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="33" name="monster-enemy-green" gid="207" x="592" y="144" width="16" height="16">
+   <object id="33" name="monster-enemy-green" gid="211" x="592" y="144" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -310,7 +310,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="34" name="monster-enemy-green" gid="207" x="416" y="48" width="16" height="16">
+   <object id="34" name="monster-enemy-green" gid="211" x="416" y="48" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -319,7 +319,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="35" name="monster-enemy-green" gid="207" x="448" y="112" width="16" height="16">
+   <object id="35" name="monster-enemy-green" gid="211" x="448" y="112" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -328,7 +328,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="36" name="monster-enemy-green" gid="207" x="416" y="128" width="16" height="16">
+   <object id="36" name="monster-enemy-green" gid="211" x="416" y="128" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -337,7 +337,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="37" name="monster-enemy-green" gid="207" x="496" y="64" width="16" height="16">
+   <object id="37" name="monster-enemy-green" gid="211" x="496" y="64" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -346,7 +346,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="38" name="monster-enemy-green" gid="207" x="608" y="64" width="16" height="16">
+   <object id="38" name="monster-enemy-green" gid="211" x="608" y="64" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -355,7 +355,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="39" name="monster-enemy-green" gid="207" x="464" y="32" width="16" height="16">
+   <object id="39" name="monster-enemy-green" gid="211" x="464" y="32" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -364,7 +364,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="40" name="monster-enemy-green" gid="207" x="448" y="80" width="16" height="16">
+   <object id="40" name="monster-enemy-green" gid="211" x="448" y="80" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -373,7 +373,7 @@
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="41" name="monster-enemy-green" gid="207" x="560" y="64" width="16" height="16">
+   <object id="41" name="monster-enemy-green" gid="211" x="560" y="64" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
@@ -388,17 +388,17 @@
   <layer id="13" name="diamond" width="40" height="22">
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,249,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,253,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,252,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,248,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,256,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,252,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,258,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,254,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,250,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -412,13 +412,13 @@
 </data>
   </layer>
   <objectgroup id="12" name="key">
-   <object id="17" name="key-violet" gid="256" x="592" y="256" width="16" height="16">
+   <object id="17" name="key-violet" gid="260" x="592" y="256" width="16" height="16">
     <properties>
      <property name="key_name" value="violet"/>
      <property name="score" type="int" value="100"/>
     </properties>
    </object>
-   <object id="28" name="key-gold" gid="258" x="368" y="176" width="16" height="16">
+   <object id="28" name="key-gold" gid="262" x="368" y="176" width="16" height="16">
     <properties>
      <property name="key_name" value="gold"/>
      <property name="score" type="int" value="100"/>
@@ -456,7 +456,7 @@
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
-   <object id="44" name="powerup-life" gid="192" x="608" y="32" width="16" height="16">
+   <object id="44" name="powerup-life" gid="194" x="608" y="32" width="16" height="16">
     <properties>
      <property name="powerup_name" value="life"/>
     </properties>
@@ -464,12 +464,12 @@
   </objectgroup>
  </group>
  <objectgroup id="10" name="door">
-  <object id="14" name="door-violet" gid="216" x="32" y="208" width="16" height="16">
+  <object id="14" name="door-violet" gid="220" x="32" y="208" width="16" height="16">
    <properties>
     <property name="key_name" value="violet"/>
    </properties>
   </object>
-  <object id="26" name="door-gold" gid="218" x="32" y="160" width="16" height="16">
+  <object id="26" name="door-gold" gid="222" x="32" y="160" width="16" height="16">
    <properties>
     <property name="key_name" value="gold"/>
    </properties>
