@@ -33,7 +33,7 @@ class Settings:
     HIGHLIGHTED_TEXT_COLOR = 255, 255, 255
     BAR_TEXT_COLOR = 50, 50, 50
     BLAST_EFFECT_COLOR = 255, 255, 255
-    EXPLODE_EFFECT_COLOR = 172, 50, 50
+    EXPLODE_EFFECT_COLOR = 150, 10, 10
 
     # Events
     GAME_OVER_EVENT = pygame.event.custom_type()

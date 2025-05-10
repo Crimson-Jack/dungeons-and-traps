@@ -115,7 +115,7 @@ class Level:
 
         # Set blast effect details
         self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, Settings.BLAST_EFFECT_COLOR)
-        self.explode_effect = BlastEffect(self.game_surface, self.game_surface_rect, 10, Settings.EXPLODE_EFFECT_COLOR)
+        self.explode_effect = BlastEffect(self.game_surface, self.game_surface_rect, 12, Settings.EXPLODE_EFFECT_COLOR)
         # Tombstones
         self.tombstones = list()
         # Vanishing points

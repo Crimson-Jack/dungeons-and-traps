@@ -22,6 +22,7 @@ class Header:
         self.highlighted_text_color = Settings.HIGHLIGHTED_TEXT_COLOR
         self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
         self.additional_info_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
+        self.weapon_details_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 12)
         self.text_adjustment = 2
         self.margin = 16
 
@@ -106,7 +107,7 @@ class Header:
         if self.game_manager.weapon_type == WeaponType.NONE:
             weapon_text = self.basic_font.render(f'Weapon -', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
-        if self.game_manager.weapon_type == WeaponType.SWORD:
+        elif self.game_manager.weapon_type == WeaponType.SWORD:
             self.set_sword_image()
             weapon_text = self.basic_font.render(f'Weapon', True, self.text_color)
             surface.blit(weapon_text, (self.margin * 2, surface.get_height() // 2 - weapon_text.get_rect().height // 2 - self.text_adjustment))
@@ -125,6 +126,13 @@ class Header:
             number_of_explosions_text = self.additional_info_font.render(f'({self.game_manager.number_of_explosions})', True,
                                                                      self.highlighted_text_color)
             surface.blit(number_of_explosions_text, (self.margin * 2 + weapon_text.get_width() + self.bow_image.get_rect().width, surface.get_height() // 2 - number_of_explosions_text.get_rect().height // 2 - self.text_adjustment))
+
+        if len(self.game_manager.collected_weapons) > 1:
+            change_weapon_text = self.weapon_details_font.render(
+                f'Press Z or X to change weapon', True, self.text_color)
+            surface.blit(change_weapon_text, (
+                self.margin * 2,
+                surface.get_height() // 2 + change_weapon_text.get_rect().height - self.text_adjustment))
 
     def draw_score(self, surface):
         score_text = self.basic_font.render('Score ', True, self.text_color)
