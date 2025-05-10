@@ -98,12 +98,21 @@ class SpriteHelper:
             'left': [],
             'right': [],
             'up': [],
-            'down': []}
+            'down': [],
+            'right_up': [],
+            'left_up': [],
+            'right_down': [],
+            'left_down': []
+        }
 
         sprites['right'].append(sprite_sheet.get_image(0, 0))
         sprites['left'].append(sprite_sheet.get_image(1, 0))
         sprites['up'].append(sprite_sheet.get_image(2, 0))
         sprites['down'].append(sprite_sheet.get_image(3, 0))
+        sprites['right_up'].append(sprite_sheet.get_image(4, 0))
+        sprites['left_up'].append(sprite_sheet.get_image(5, 0))
+        sprites['right_down'].append(sprite_sheet.get_image(6, 0))
+        sprites['left_down'].append(sprite_sheet.get_image(7, 0))
 
         return sprites
 

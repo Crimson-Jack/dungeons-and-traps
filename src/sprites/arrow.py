@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from settings import Settings
@@ -29,24 +31,38 @@ class Arrow(CustomDrawSprite):
 
         # Properties
         self.speed = GameHelper.multiply_by_tile_size_ratio(13)
+        if (
+                self.direction == Direction.RIGHT_UP or
+                self.direction == Direction.LEFT_UP or
+                self.direction == Direction.RIGHT_DOWN or
+                self.direction == Direction.LEFT_DOWN
+        ):
+            # Normalize
+            self.speed = self.speed / math.sqrt(2)
+
         self.damage_power = 60
 
     def get_image(self):
         sprites = SpriteHelper.get_all_arrow_sprites()
 
         image = None
+
         if self.direction == Direction.RIGHT:
             image = sprites['right'][0]
         elif self.direction == Direction.LEFT:
             image = sprites['left'][0]
-        elif (self.direction == Direction.UP or
-              self.direction == Direction.LEFT_UP or
-              self.direction == Direction.RIGHT_UP):
+        elif self.direction == Direction.UP:
             image = sprites['up'][0]
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
+        elif self.direction == Direction.DOWN:
             image = sprites['down'][0]
+        elif self.direction == Direction.RIGHT_UP:
+            image = sprites['right_up'][0]
+        elif self.direction == Direction.LEFT_UP:
+            image = sprites['left_up'][0]
+        elif self.direction == Direction.RIGHT_DOWN:
+            image = sprites['right_down'][0]
+        elif self.direction == Direction.LEFT_DOWN:
+            image = sprites['left_down'][0]
 
         return image
 
@@ -62,13 +78,21 @@ class Arrow(CustomDrawSprite):
             self.hit_box.x += self.speed
         elif self.direction == Direction.LEFT:
             self.hit_box.x -= self.speed
-        if (self.direction == Direction.UP or
-                self.direction == Direction.LEFT_UP or
-                self.direction == Direction.RIGHT_UP):
+        elif self.direction == Direction.UP:
             self.hit_box.y -= self.speed
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
+        elif self.direction == Direction.DOWN:
+            self.hit_box.y += self.speed
+        elif self.direction == Direction.RIGHT_UP:
+            self.hit_box.x += self.speed
+            self.hit_box.y -= self.speed
+        elif self.direction == Direction.LEFT_UP:
+            self.hit_box.x -= self.speed
+            self.hit_box.y -= self.speed
+        elif self.direction == Direction.RIGHT_DOWN:
+            self.hit_box.x += self.speed
+            self.hit_box.y += self.speed
+        elif self.direction == Direction.LEFT_DOWN:
+            self.hit_box.x -= self.speed
             self.hit_box.y += self.speed
 
         # Check collision
