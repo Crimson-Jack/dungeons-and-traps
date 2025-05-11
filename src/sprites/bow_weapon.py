@@ -44,14 +44,22 @@ class BowWeapon(CustomDrawSprite):
             new_position[0] += position_offset
         elif self.direction == Direction.LEFT:
             new_position[0] -= position_offset
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
+        elif self.direction == Direction.DOWN:
             new_position[1] += position_offset
-        elif (self.direction == Direction.UP or
-              self.direction == Direction.LEFT_UP or
-              self.direction == Direction.RIGHT_UP):
+        elif self.direction == Direction.UP:
             new_position[1] -= position_offset
+        elif self.direction == Direction.RIGHT_UP:
+            new_position[0] += position_offset
+            new_position[1] -= position_offset
+        elif self.direction == Direction.LEFT_UP:
+            new_position[0] -= position_offset
+            new_position[1] -= position_offset
+        elif self.direction == Direction.RIGHT_DOWN:
+            new_position[0] += position_offset
+            new_position[1] += position_offset
+        elif self.direction == Direction.LEFT_DOWN:
+            new_position[0] -= position_offset
+            new_position[1] += position_offset
 
         self.rect = self.image.get_rect(topleft=new_position)
         self.hit_box = self.rect
@@ -63,14 +71,18 @@ class BowWeapon(CustomDrawSprite):
             self.image = self.sprites['right'][0]
         elif self.direction == Direction.LEFT:
             self.image = self.sprites['left'][0]
-        elif (self.direction == Direction.UP or
-              self.direction == Direction.LEFT_UP or
-              self.direction == Direction.RIGHT_UP):
+        elif self.direction == Direction.UP:
             self.image = self.sprites['up'][0]
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
+        elif self.direction == Direction.DOWN:
             self.image = self.sprites['down'][0]
+        elif self.direction == Direction.RIGHT_UP:
+            self.image = self.sprites['right_up'][0]
+        elif self.direction == Direction.LEFT_UP:
+            self.image = self.sprites['left_up'][0]
+        elif self.direction == Direction.RIGHT_DOWN:
+            self.image = self.sprites['right_down'][0]
+        elif self.direction == Direction.LEFT_DOWN:
+            self.image = self.sprites['left_down'][0]
 
     def fire(self):
         self.arrows.append(Arrow(self.rect.topleft, tuple(self.groups()), self.enemy_sprites, self.obstacle_sprites,
