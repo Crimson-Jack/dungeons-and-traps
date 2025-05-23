@@ -390,7 +390,7 @@
    <object id="122" name="powerup-explosion" gid="188" x="352" y="272" width="16" height="16">
     <properties>
      <property name="powerup_name" value="explosion"/>
-     <property name="powerup_volume" type="int" value="2"/>
+     <property name="powerup_volume" type="int" value="20"/>
     </properties>
    </object>
   </objectgroup>

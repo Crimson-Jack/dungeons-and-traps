@@ -360,6 +360,7 @@ class Player(CustomDrawSprite):
         self.visible = False
         self.sword_weapon.disarm_weapon()
         self.bow_weapon.disarm_weapon()
+        self.explosion_weapon.disarm_weapon()
 
     def enable(self):
         self.visible = True

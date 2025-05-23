@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="10">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="17">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wall-l2.tsx"/>
  <tileset firstgid="97" source="../tsx/misc.tsx"/>
  <tileset firstgid="129" source="../tsx/player.tsx"/>
  <tileset firstgid="169" source="../tsx/octopus-enemy.tsx"/>
  <tileset firstgid="201" source="../tsx/powerup.tsx"/>
+ <tileset firstgid="219" source="../tsx/single-wall.tsx"/>
+ <tileset firstgid="235" source="../tsx/monster-enemy-green.tsx"/>
  <layer id="2" name="ground" width="52" height="26">
   <data encoding="csv">
 21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,
@@ -47,9 +49,9 @@
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
-84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
-84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
-84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
+84,0,0,0,0,0,0,0,0,0,219,223,221,223,221,223,221,223,221,223,221,223,221,223,220,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
+84,0,0,0,0,0,0,0,0,0,222,0,222,0,222,0,222,0,222,0,222,0,222,0,222,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
+84,0,0,0,0,0,0,0,0,0,227,223,229,223,229,223,229,223,229,223,229,223,229,223,228,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
 84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,
@@ -75,8 +77,73 @@
   </object>
  </objectgroup>
  <group id="5" name="enemy">
+  <objectgroup id="9" name="monster-enemy">
+   <object id="10" name="monster-enemy-green" gid="235" x="368" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="11" name="monster-enemy-green" gid="235" x="336" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="12" name="monster-enemy-green" gid="235" x="304" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="13" name="monster-enemy-green" gid="235" x="272" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="14" name="monster-enemy-green" gid="235" x="240" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="15" name="monster-enemy-green" gid="235" x="208" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="16" name="monster-enemy-green" gid="235" x="176" y="176" width="16" height="16">
+    <properties>
+     <property name="damage_power" type="int" value="5"/>
+     <property name="energy" type="int" value="200"/>
+     <property name="score" type="int" value="170"/>
+     <property name="speed" type="float" value="3"/>
+     <property name="start_delay" type="int" value="5"/>
+    </properties>
+   </object>
+  </objectgroup>
   <objectgroup id="6" name="octopus-enemy">
-   <object id="4" name="octopus-enemy" gid="169" x="144" y="192" width="48" height="48">
+   <object id="4" name="octopus-enemy" gid="169" x="752" y="384" width="48" height="48" visible="0">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="3500"/>

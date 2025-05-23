@@ -7,6 +7,7 @@ from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshS
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.effects.blast_effect import BlastEffect
+from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
@@ -114,8 +115,18 @@ class Level:
         self.exit_point = self.create_exit_point()
 
         # Set blast effect details
-        self.blast_effect = BlastEffect(self.game_surface, self.game_surface_rect, 8, Settings.BLAST_EFFECT_COLOR)
-        self.explode_effect = BlastEffect(self.game_surface, self.game_surface_rect, 12, Settings.EXPLODE_EFFECT_COLOR)
+        self.blast_effect = BlastEffect(self.game_surface,
+                                        8,
+                                        Settings.BLAST_EFFECT_COLOR,
+                                        (self.game_surface_rect.width,
+                                         self.game_surface_rect.height)
+                                        )
+        self.explode_effect = ExplodeEffect(self.game_surface,
+                                          Settings.NUMBER_OF_EXPLOSION_STEPS,
+                                          Settings.EXPLODE_EFFECT_COLOR,
+                                          (Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2,
+                                           Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
+                                          )
         # Tombstones
         self.tombstones = list()
         # Vanishing points
@@ -158,7 +169,8 @@ class Level:
         if player_object is not None and player_object.visible:
             x, y = TmxHelper.get_tile_position(player_object.x, player_object.y,
                                                 self.tmx_data.tilewidth, self.tmx_data.tileheight)
-            speed = GameHelper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
+            speed = GameHelper.multiply_by_tile_size_ratio(
+                TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
             return Player((x, y),
                           (self.middle_sprites_layer,),
                           [self.middle_sprites_layer],
@@ -422,8 +434,8 @@ class Level:
         self.blast_effect.run()
         self.exit_point.show()
 
-    def show_explode_effect(self):
-        self.explode_effect.run()
+    def show_explode_effect(self, position: tuple[int, int]):
+        self.explode_effect.run(position)
 
     def add_tombstone(self, position):
         self.tombstones.append(Tombstone(position, (self.bottom_sprites_layer,)))

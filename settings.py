@@ -20,6 +20,10 @@ class Settings:
     # Source (originate) tile size
     SOURCE_TILE_SIZE = 16
 
+    # Explosion
+    EXPLOSION_WEAPON_RANGE = 5
+    NUMBER_OF_EXPLOSION_STEPS = 12
+
     # Colors
     GAME_BACKGROUND_COLOR = 39, 39, 39
     ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]
@@ -33,7 +37,7 @@ class Settings:
     HIGHLIGHTED_TEXT_COLOR = 255, 255, 255
     BAR_TEXT_COLOR = 50, 50, 50
     BLAST_EFFECT_COLOR = 255, 255, 255
-    EXPLODE_EFFECT_COLOR = 150, 10, 10
+    EXPLODE_EFFECT_COLOR = 255, 210, 0
 
     # Events
     GAME_OVER_EVENT = pygame.event.custom_type()

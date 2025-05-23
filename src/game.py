@@ -275,7 +275,7 @@ class Game:
             self.refresh_dashboard_surface()
 
         if event.type == Settings.CREATE_EXPLODE_EFFECT_EVENT:
-            self.level.show_explode_effect()
+            self.level.show_explode_effect(event.dict.get("position"))
 
         if event.type == Settings.GAME_OVER_EVENT:
             self.level.show_player_tombstone()
