@@ -115,7 +115,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
-        if self.is_player_in_range():
+        if self.is_player_in_the_same_zone() and self.is_player_in_range():
             self.calculate_path_to_player()
             if self.try_to_set_movement_vector_from_path():
                 self.is_moving = True
@@ -207,7 +207,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def try_to_set_movement_vector_from_path(self):
         movement_vector = None
 
-        if self.is_player_in_range():
+        if self.is_player_in_the_same_zone() and self.is_player_in_range():
             for index, item in enumerate(self.path):
                 if item == tuple(self.current_position_on_map) and index + 1 < len(self.path):
                     next_position_on_map = self.path[index + 1]
@@ -256,13 +256,12 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        if self.is_player_in_range():
+        if self.is_player_in_the_same_zone() and self.is_player_in_range():
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # pass
         # Player has changed position - calculate a new path
-        if self.is_player_in_range():
+        if self.is_player_in_the_same_zone() and self.is_player_in_range():
             self.calculate_path_to_player()
 
     def calculate_path_to_player(self):
@@ -337,6 +336,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             monster_tile_position[1] - player_tile_position[1])
 
         return distance[0] < self.range and distance[1] < self.range
+
+    def is_player_in_the_same_zone(self):
+        return self.game_manager.check_is_in_player_zone(tuple(self.current_position_on_map))
 
     def kill(self):
         super().kill()
