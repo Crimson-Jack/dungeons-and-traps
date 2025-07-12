@@ -1,5 +1,6 @@
+import math
 import random
-
+import time
 import pygame
 
 from settings import Settings
@@ -8,6 +9,7 @@ from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
+from src.gbfs_helper import GBFSHelper
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
 from src.tile_details.monster_tile_details import MonsterTileDetails
@@ -65,7 +67,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search_helper = BreadthFirstSearchHelper()
+        self.breadth_first_search_helper = GBFSHelper()
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -332,10 +334,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         monster_tile_position = tuple(self.current_position_on_map)
         player_tile_position = self.game_manager.player_tile_position
 
-        distance = abs(monster_tile_position[0] - player_tile_position[0]), abs(
-            monster_tile_position[1] - player_tile_position[1])
-
-        return distance[0] < self.range and distance[1] < self.range
+        distance = ((monster_tile_position[0] - player_tile_position[0]) ** 2 + (monster_tile_position[1] - player_tile_position[1]) ** 2) ** 0.5
+        return math.floor(distance) + 1 < self.range
 
     def is_player_in_the_same_zone(self):
         return self.game_manager.check_is_in_player_zone(tuple(self.current_position_on_map))

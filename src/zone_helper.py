@@ -60,5 +60,3 @@ class ZoneHelper:
                     self.zones[start_tile] = zone_counter
                     frontier.put(start_tile)
                     reached.add(start_tile)
-
-        print(zone_counter)
