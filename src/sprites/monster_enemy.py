@@ -115,7 +115,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.check_line_of_fire():
             self.calculate_path_to_player()
             if self.try_to_set_movement_vector_from_path():
                 self.is_moving = True
@@ -256,14 +256,104 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.check_line_of_fire():
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
         # pass
         # Player has changed position - calculate a new path
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.check_line_of_fire():
             self.calculate_path_to_player()
+
+    def get_possible_obstacles(self, start_position, end_position):
+        possible_obstacles = list()
+
+        if start_position[0] < end_position[0]:
+            dx = 1
+        elif start_position[0] > end_position[0]:
+            dx = -1
+        else:
+            dx = 1
+
+        if start_position[1] < end_position[1]:
+            dy = 1
+        elif start_position[1] > end_position[1]:
+            dy = -1
+        else:
+            dy = 1
+
+        for item in self.obstacles:
+            if (start_position[0] * dx - item[0] * dx <= 0 and end_position[0] * dx - item[0] * dx >= 0
+                    and start_position[1] * dy - item[1] * dy <= 0 and end_position[1] * dy - item[1] * dy >= 0):
+                possible_obstacles.append(item)
+
+        return possible_obstacles
+
+    def get_center_tile_position(self, tile):
+        tile_center_position = tile[0] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2, tile[1] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2
+        return tile_center_position
+
+    def check_line_of_fire(self):
+        start_position = tuple(self.current_position_on_map)
+        end_position = self.game_manager.player_tile_position
+
+        possible_obstacles = self.get_possible_obstacles(start_position, end_position)
+
+        start_vector = pygame.Vector2(self.get_center_tile_position(start_position))
+        end_vector = pygame.Vector2(self.get_center_tile_position(end_position))
+
+        for obstacle in possible_obstacles:
+            rect = pygame.Rect(obstacle[0] * Settings.TILE_SIZE, obstacle[1] * Settings.TILE_SIZE, Settings.TILE_SIZE, Settings.TILE_SIZE)
+            intersections = self.calculate_intersections(start_vector, end_vector, rect)
+            if intersections:
+                return False
+
+        return True
+
+    def calculate_intersections(self, start_point: pygame.Vector2, end_point: pygame.Vector2,
+                                rectangle: pygame.Rect):
+        intersections = None
+
+        vertexes = [
+            pygame.Vector2(rectangle.topleft),
+            pygame.Vector2(rectangle.topright),
+            pygame.Vector2(rectangle.bottomright),
+            pygame.Vector2(rectangle.bottomleft)
+        ]
+
+        edges = [
+            (vertexes[0], vertexes[1]),  # top
+            (vertexes[1], vertexes[2]),  # right
+            (vertexes[2], vertexes[3]),  # bottom
+            (vertexes[3], vertexes[0])   # left
+        ]
+
+        for start_vertex, end_vertex in edges:
+            intersection = self.calculate_line_intersection(start_point, end_point, start_vertex, end_vertex)
+            if intersection:
+                if intersections is None:
+                    intersections = list()
+                intersections.append(intersection)
+
+        return intersections
+
+    def calculate_line_intersection(self, p1: pygame.Vector2, p2: pygame.Vector2,
+                                    q1: pygame.Vector2, q2: pygame.Vector2):
+
+        r = p2 - p1
+        s = q2 - q1
+        denom = r.cross(s)
+
+        if denom == 0:
+            return None
+
+        t = (q1 - p1).cross(s) / denom
+        u = (q1 - p1).cross(r) / denom
+
+        if 0 <= t <= 1 and 0 <= u <= 1:
+            return p1 + t * r
+
+        return None
 
     def calculate_path_to_player(self):
         start_position = tuple(self.current_position_on_map)
