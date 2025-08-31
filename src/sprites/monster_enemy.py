@@ -8,6 +8,7 @@ from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
+from src.gbfs_helper import GBFSHelper
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
 from src.tile_details.monster_tile_details import MonsterTileDetails
@@ -65,7 +66,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search_helper = BreadthFirstSearchHelper()
+        # self.breadth_first_search_helper = BreadthFirstSearchHelper()
+        self.breadth_first_search_helper = GBFSHelper()
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -85,9 +87,11 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
-                self.all_tiles.append((y, x))
+                # self.all_tiles.append((y, x))
                 if self.obstacle_map[x][y] > 0:
                     self.obstacles.append((y, x))
+                else:
+                    self.all_tiles.append((y, x))
 
     def update(self):
         if len(self.path) > 0:
