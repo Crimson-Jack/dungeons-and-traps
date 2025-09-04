@@ -1,5 +1,6 @@
 import heapq
 
+
 class UniquePriorityQueue:
     def __init__(self):
         self.heap = []

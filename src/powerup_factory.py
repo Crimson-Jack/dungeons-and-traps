@@ -24,3 +24,5 @@ class PowerupFactory:
             return EnergyPowerup(image, position, groups, game_manager, tile_details.powerup_volume)
         elif tile_details.powerup_name == 'life':
             return LifePowerup(image, position, groups, game_manager)
+        else:
+            raise ValueError(f'Unknown powerup name: {tile_details}')

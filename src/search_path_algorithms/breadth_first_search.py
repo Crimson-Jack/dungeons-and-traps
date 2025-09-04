@@ -2,7 +2,7 @@ import random
 from queue import Queue
 
 
-class BreadthFirstSearchHelper:
+class BreadthFirstSearch:
     def __init__(self):
         # All permutations
         self.neighbors_tile_orders = list()
@@ -62,8 +62,8 @@ class BreadthFirstSearchHelper:
 
         return return_path
 
-    def search(self, all_tiles, obstacles, start_tile, end_tile):
-        frontier = Queue(maxsize=1000)
+    def search(self, all_tiles, start_tile, end_tile):
+        frontier = Queue()
         frontier.put(start_tile)
         came_from = dict()
         came_from[start_tile] = None
@@ -77,7 +77,7 @@ class BreadthFirstSearchHelper:
                 path = self.get_path(current_tile, came_from)
             else:
                 for next_neighbor in self.get_neighbors(all_tiles, current_tile):
-                    if next_neighbor not in came_from and next_neighbor not in obstacles:
+                    if next_neighbor not in came_from:
                         came_from[next_neighbor] = current_tile
                         frontier.put(next_neighbor)
 

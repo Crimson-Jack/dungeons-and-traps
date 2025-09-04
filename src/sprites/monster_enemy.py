@@ -6,11 +6,10 @@ from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
-from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
-from src.gbfs_helper import GBFSHelper
-from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.search_path_algorithm_factory import SearchPathAlgorithmFactory
 from src.sprite_costume import SpriteCostume
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.tile_details.monster_tile_details import MonsterTileDetails
 
 
@@ -66,8 +65,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        # self.breadth_first_search_helper = BreadthFirstSearchHelper()
-        self.breadth_first_search_helper = GBFSHelper()
+        self.search_path = SearchPathAlgorithmFactory.create(details.search_path_algorithm)
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -87,7 +85,6 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
-                # self.all_tiles.append((y, x))
                 if self.obstacle_map[x][y] > 0:
                     self.obstacles.append((y, x))
                 else:
@@ -364,10 +361,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
-                                                                                                 self.obstacles,
-                                                                                                 start_position,
-                                                                                                 end_position)
+        is_end_reached, self.path, frontier, came_from = self.search_path.search(self.all_tiles,
+                                                                                 start_position,
+                                                                                 end_position)
 
         if is_end_reached:
             # Reverse the path (direction: from monster to player)

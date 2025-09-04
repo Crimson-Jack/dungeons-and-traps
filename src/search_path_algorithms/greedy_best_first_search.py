@@ -1,8 +1,9 @@
-from src.unique_priority_queue import UniquePriorityQueue
 import math
 
+from src.search_path_algorithms.unique_priority_queue import UniquePriorityQueue
 
-class GBFSHelper:
+
+class GreedyBestFirstSearch:
     def __init__(self):
         self.neighbors_tile_order = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
@@ -16,8 +17,6 @@ class GBFSHelper:
 
     @staticmethod
     def heuristic(a, b):
-        # Manhattan distance on a square grid
-        # return abs(a[0] - b[0]) + abs(a[1] - b[1])
         # Euclidian distance
         return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 
@@ -30,13 +29,13 @@ class GBFSHelper:
 
         return return_path
 
-    def search(self, all_tiles, obstacles, start_tile, end_tile):
+    def search(self, all_tiles, start_tile, end_tile):
         frontier = UniquePriorityQueue()
         frontier.add(start_tile, 0)
         came_from = dict()
         came_from[start_tile] = None
         is_end_reached = False
-        path = set()
+        path = list()
 
         while not is_end_reached and not frontier.is_empty():
             current_tile, current_tile_priority = frontier.pop()

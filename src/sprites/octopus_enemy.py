@@ -6,11 +6,11 @@ from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
-from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
+from src.search_path_algorithms.breadth_first_search import BreadthFirstSearch
+from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprites.fire_ball_enemy import FireBallEnemy
-from src.sprite_costume import SpriteCostume
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 
 
@@ -66,7 +66,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search_helper = BreadthFirstSearchHelper()
+        self.breadth_first_search_helper = BreadthFirstSearch()
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -89,9 +89,10 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
-                self.all_tiles.append((y, x))
                 if self.obstacle_map[x][y] > 0:
                     self.obstacles.append((y, x))
+                else:
+                    self.all_tiles.append((y, x))
 
     def update(self):
         if len(self.path) > 0:
@@ -271,7 +272,6 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         # Get path
         is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
-                                                                                                 self.obstacles,
                                                                                                  start_position,
                                                                                                  end_position)
 
