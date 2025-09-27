@@ -66,7 +66,7 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search_helper = BreadthFirstSearch()
+        self.breadth_first_search = BreadthFirstSearch()
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -289,11 +289,9 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
         end_position = self.track_position
 
         # Get path
-        is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
-                                                                                                 start_position,
-                                                                                                 end_position)
+        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position)
 
-        if is_end_reached:
+        if self.breadth_first_search.is_end_reached:
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path
@@ -319,10 +317,8 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
                 start_position = tuple(self.current_position_on_map)
                 end_position = item
                 # Check whether the track point is reachable
-                is_end_reached, path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
-                                                                                                    start_position,
-                                                                                                    end_position)
-                if is_end_reached:
+                self.breadth_first_search.search(self.all_tiles, start_position, end_position)
+                if self.breadth_first_search.is_end_reached:
                     all_blocked = False
                     break
 

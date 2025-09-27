@@ -68,7 +68,7 @@ class GameHelper:
         return list(map(GameHelper.convert_string_to_tuple, value.split(separator)))
 
     @staticmethod
-    def get_tile_by_point(position: tuple) -> tuple[int, int]:
+    def get_tile_by_point(position: tuple[int, int]) -> tuple[int, int]:
         """
         Return a tuple with the tile position.
 
@@ -81,17 +81,30 @@ class GameHelper:
         return x_tile, y_tile
 
     @staticmethod
-    def get_point_by_tile(tile: tuple) -> tuple:
+    def get_point_by_tile(tile: tuple[int, int]) -> tuple[int, int]:
         """
         Return a tuple with the position.
 
-        :param tile: tuple with tile position
+        :param tile: tuple with the tile position
         :return: tuple with the x, y coordinates
         """
         x_position = tile[0] * Settings.TILE_SIZE
         y_position = tile[1] * Settings.TILE_SIZE
 
         return  x_position, y_position
+
+    @staticmethod
+    def get_tile_center_position(tile: tuple[int, int]) -> tuple[int, int]:
+        """
+        Return a tuple with the tile center position.
+
+        :param tile: tuple with the tile position
+        :return: tuple with the tile center position
+        """
+        tile_center_position = (tile[0] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2,
+                                tile[1] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2)
+
+        return tile_center_position
 
     @staticmethod
     def get_collided_rectangle(rectangle_one: pygame.Rect, rectangle_two: pygame.Rect) -> pygame.Rect:

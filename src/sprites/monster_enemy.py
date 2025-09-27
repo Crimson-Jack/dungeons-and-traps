@@ -7,6 +7,7 @@ from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.game_helper import GameHelper
+from src.geometry_helper import GeometryHelper
 from src.search_path_algorithm_factory import SearchPathAlgorithmFactory
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
@@ -290,82 +291,31 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
 
         return possible_obstacles
 
-    def get_center_tile_position(self, tile):
-        tile_center_position = tile[0] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2, tile[1] * Settings.TILE_SIZE + Settings.TILE_SIZE // 2
-        return tile_center_position
-
     def check_line_of_fire(self):
-        start_position = tuple(self.current_position_on_map)
+        start_position = self.current_position_on_map[0], self.current_position_on_map[1]
         end_position = self.game_manager.player_tile_position
 
         possible_obstacles = self.get_possible_obstacles(start_position, end_position)
 
-        start_vector = pygame.Vector2(self.get_center_tile_position(start_position))
-        end_vector = pygame.Vector2(self.get_center_tile_position(end_position))
+        start_vector = pygame.Vector2(GameHelper.get_tile_center_position(start_position))
+        end_vector = pygame.Vector2(GameHelper.get_tile_center_position(end_position))
 
         for obstacle in possible_obstacles:
             rect = pygame.Rect(obstacle[0] * Settings.TILE_SIZE, obstacle[1] * Settings.TILE_SIZE, Settings.TILE_SIZE, Settings.TILE_SIZE)
-            intersections = self.calculate_intersections(start_vector, end_vector, rect)
-            if intersections:
+            intersection = GeometryHelper.check_intersection_of_segment_with_rectangle(start_vector, end_vector, rect)
+            if intersection:
                 return False
 
         return True
-
-    def calculate_intersections(self, start_point: pygame.Vector2, end_point: pygame.Vector2,
-                                rectangle: pygame.Rect):
-        intersections = None
-
-        vertexes = [
-            pygame.Vector2(rectangle.topleft),
-            pygame.Vector2(rectangle.topright),
-            pygame.Vector2(rectangle.bottomright),
-            pygame.Vector2(rectangle.bottomleft)
-        ]
-
-        edges = [
-            (vertexes[0], vertexes[1]),  # top
-            (vertexes[1], vertexes[2]),  # right
-            (vertexes[2], vertexes[3]),  # bottom
-            (vertexes[3], vertexes[0])   # left
-        ]
-
-        for start_vertex, end_vertex in edges:
-            intersection = self.calculate_line_intersection(start_point, end_point, start_vertex, end_vertex)
-            if intersection:
-                if intersections is None:
-                    intersections = list()
-                intersections.append(intersection)
-
-        return intersections
-
-    def calculate_line_intersection(self, p1: pygame.Vector2, p2: pygame.Vector2,
-                                    q1: pygame.Vector2, q2: pygame.Vector2):
-
-        r = p2 - p1
-        s = q2 - q1
-        denom = r.cross(s)
-
-        if denom == 0:
-            return None
-
-        t = (q1 - p1).cross(s) / denom
-        u = (q1 - p1).cross(r) / denom
-
-        if 0 <= t <= 1 and 0 <= u <= 1:
-            return p1 + t * r
-
-        return None
 
     def calculate_path_to_player(self):
         start_position = tuple(self.current_position_on_map)
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        is_end_reached, self.path, frontier, came_from = self.search_path.search(self.all_tiles,
-                                                                                 start_position,
-                                                                                 end_position)
+        self.path = self.search_path.search(self.all_tiles, start_position, end_position)
 
-        if is_end_reached:
+        if self.search_path.is_end_reached:
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path
