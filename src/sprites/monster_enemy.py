@@ -23,6 +23,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.game_manager = game_manager
         self.damage_power = details.damage_power
         self.score = details.score
+        self.attack_only_when_visible = details.attack_only_when_visible
 
         # Energy
         self.max_energy = details.energy
@@ -117,7 +118,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
-        if self.is_player_in_range() and self.check_line_of_fire():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
             if self.try_to_set_movement_vector_from_path():
                 self.is_moving = True
@@ -258,13 +259,12 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        if self.is_player_in_range() and self.check_line_of_fire():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # pass
         # Player has changed position - calculate a new path
-        if self.is_player_in_range() and self.check_line_of_fire():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
 
     def get_possible_obstacles(self, start_position, end_position):
@@ -290,6 +290,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                 possible_obstacles.append(item)
 
         return possible_obstacles
+
+    def verify_attack_readiness(self):
+        if self.attack_only_when_visible:
+            return self.check_line_of_fire()
+        else:
+            # If visibility is not important, the attack can be performed at any time
+            return True
 
     def check_line_of_fire(self):
         start_position = self.current_position_on_map[0], self.current_position_on_map[1]

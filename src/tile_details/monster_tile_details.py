@@ -14,6 +14,7 @@ class MonsterTileDetails(TileDetails):
         self._damage_power = int(TmxHelper.get_tiled_object_value('damage_power', 6, self.tile, self.layer))
         self._score = int(TmxHelper.get_tiled_object_value('score', 300, self.tile, self.layer))
         self._search_path_algorithm = TmxHelper.get_tiled_object_value('search_path_algorithm', SearchPathAlgorithm.BREADTH_FIRST_SEARCH, self.tile, self.layer)
+        self._attack_only_when_visible = bool(TmxHelper.get_tiled_object_value('attack_only_when_visible', False, self.tile, self.layer))
 
     @property
     def speed(self):
@@ -38,3 +39,7 @@ class MonsterTileDetails(TileDetails):
     @property
     def search_path_algorithm(self):
         return self._search_path_algorithm
+
+    @property
+    def attack_only_when_visible(self):
+        return self._attack_only_when_visible

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="22">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="22">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wood-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/door.tsx"/>
  <tileset firstgid="109" source="../tsx/collectable.tsx"/>
  <tileset firstgid="125" source="../tsx/player.tsx"/>
  <tileset firstgid="165" source="../tsx/misc.tsx"/>
- <tileset firstgid="181" source="../tsx/monster-enemy-blue.tsx"/>
- <tileset firstgid="189" source="../tsx/spider-enemy-small.tsx"/>
+ <tileset firstgid="197" source="../tsx/monster-enemy-blue.tsx"/>
+ <tileset firstgid="205" source="../tsx/spider-enemy-small.tsx"/>
  <layer id="1" name="ground" width="20" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -66,18 +66,20 @@
  </layer>
  <group id="9" name="enemy">
   <objectgroup id="10" name="monster-enemy">
-   <object id="15" name="monster-enemy-blue" gid="181" x="144" y="160" width="16" height="16">
+   <object id="15" name="monster-enemy-blue" gid="197" x="144" y="160" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="score" type="int" value="50"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="2"/>
      <property name="start_delay" type="int" value="0"/>
     </properties>
    </object>
   </objectgroup>
   <objectgroup id="11" name="spider-enemy">
-   <object id="16" name="spider-enemy-small" gid="189" x="288" y="32" width="16" height="16">
+   <object id="16" name="spider-enemy-small" gid="205" x="288" y="32" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -87,7 +89,7 @@
      <property name="speed" type="float" value="2"/>
     </properties>
    </object>
-   <object id="17" name="spider-enemy-small" gid="189" x="272" y="288" width="16" height="16">
+   <object id="17" name="spider-enemy-small" gid="205" x="272" y="288" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -97,7 +99,7 @@
      <property name="speed" type="float" value="1.5"/>
     </properties>
    </object>
-   <object id="18" name="spider-enemy-small" gid="189" x="224" y="80" width="16" height="16">
+   <object id="18" name="spider-enemy-small" gid="205" x="224" y="80" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -107,7 +109,7 @@
      <property name="speed" type="float" value="3.5"/>
     </properties>
    </object>
-   <object id="19" name="spider-enemy-small" gid="189" x="208" y="240" width="16" height="16">
+   <object id="19" name="spider-enemy-small" gid="205" x="208" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
@@ -117,7 +119,7 @@
      <property name="speed" type="float" value="2.5"/>
     </properties>
    </object>
-   <object id="20" name="spider-enemy-small" gid="189" x="112" y="240" width="16" height="16">
+   <object id="20" name="spider-enemy-small" gid="205" x="112" y="240" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>

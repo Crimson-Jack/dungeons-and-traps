@@ -153,36 +153,44 @@
   <objectgroup id="15" name="monster-enemy">
    <object id="22" name="monster-enemy-red" gid="295" x="800" y="160" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="6"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="23" name="monster-enemy-red" gid="295" x="800" y="192" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="6"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="24" name="monster-enemy-red" gid="295" x="800" y="224" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="6"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="25" name="monster-enemy-red" gid="295" x="800" y="272" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="6"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="6"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
