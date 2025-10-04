@@ -14,7 +14,6 @@ class GameManager:
         self.LEVELS = [
             # 'basic.tmx',
             # 'basic_arena.tmx',
-            # 'basic_zones.tmx'
             # 's01_level_01.tmx',
             # 's01_level_02.tmx',
             # 's01_level_03.tmx',
@@ -55,8 +54,6 @@ class GameManager:
 
         self.check_point_position = None
 
-        self.zones = dict()
-
     def clear_settings_for_first_level(self):
         self.lighting_status = LightingStatus.LIGHT_ON
 
@@ -67,7 +64,6 @@ class GameManager:
         self.weapon_type = WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
-        self.number_of_explosions = 0
         self.sword_energy = self.sword_max_energy
 
         self.diamonds.clear()
@@ -332,9 +328,3 @@ class GameManager:
 
     def set_lighting_spell(self, lighting_status: LightingStatus):
         self.lighting_status = lighting_status
-
-    def set_zones(self, zones):
-        self.zones = dict(zones)
-
-    def check_is_in_player_zone(self, tile_position):
-        return self.zones[tile_position] == self.zones[self.player_tile_position]

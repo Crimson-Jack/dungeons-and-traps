@@ -49,7 +49,6 @@ from src.tile_details.spider_tile_details import SpiderTileDetails
 from src.tile_details.teleport_tile_details import TeleportTileDetails
 from src.tmx_helper import TmxHelper
 from src.utilities.debug import Debug
-from src.zone_helper import ZoneHelper
 
 
 class Level:
@@ -105,9 +104,6 @@ class Level:
 
         # Create obstacle map
         self.obstacle_map = self.create_obstacle_map(size_of_map)
-        # Determine all zones
-        self.zone_helper = ZoneHelper()
-        self.refresh_zones()
 
         # Create sprites
         self.create_sprites()
@@ -163,18 +159,6 @@ class Level:
             moving_obstacle_data,
             door_layer_data
         ])
-
-    def refresh_zones(self):
-        all_tiles = list()
-        obstacles = set()
-        for x in range(len(self.obstacle_map.items)):
-            for y in range(len(self.obstacle_map.items[x])):
-                all_tiles.append((y, x))
-                if self.obstacle_map.items[x][y] > 0:
-                    obstacles.add((y, x))
-
-        self.zone_helper.find_all_zones(all_tiles, obstacles)
-        self.game_manager.set_zones(self.zone_helper.zones)
 
     def create_player(self):
         try:
@@ -433,9 +417,6 @@ class Level:
             self.screen.blit(dark_surface, self.game_surface_position)
 
     def refresh_obstacle_map(self):
-        # Refresh zones
-        self.refresh_zones()
-
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
             if isinstance(sprite, ObstacleMapRefreshSprite):
