@@ -2,7 +2,7 @@ import random
 from queue import Queue
 
 
-class BreadthFirstSearchHelper:
+class BreadthFirstSearch:
     def __init__(self):
         # All permutations
         self.neighbors_tile_orders = list()
@@ -32,53 +32,60 @@ class BreadthFirstSearchHelper:
         self.neighbors_tile_orders.append([(0, -1), (1, 0), (0, 1), (-1, 0)])
 
         # Neighbours tile order
-        self.neighbors_tile_order_selection = None
-        self.neighbors_tile_order = None
-
+        self._neighbors_tile_order_selection = None
+        self._neighbors_tile_order = None
         # Randomly choose one of the permutation options
-        self.set_random_neighbors_tile_order()
+        self._set_random_neighbors_tile_order()
 
-    def set_random_neighbors_tile_order(self):
-        self.neighbors_tile_order_selection = random.randint(0, len(self.neighbors_tile_orders) - 1)
-        self.neighbors_tile_order = self.neighbors_tile_orders[self.neighbors_tile_order_selection]
+        self._path = list()
+        self._is_end_reached = False
 
-    def get_neighbors(self, tiles, tile):
+    def _set_random_neighbors_tile_order(self):
+        self._neighbors_tile_order_selection = random.randint(0, len(self.neighbors_tile_orders) - 1)
+        self._neighbors_tile_order = self.neighbors_tile_orders[self._neighbors_tile_order_selection]
+
+    def _get_neighbors(self, tiles, tile):
         result = []
-        for direction in self.neighbors_tile_order:
+        for direction in self._neighbors_tile_order:
             neighbor = (tile[0] + direction[0], tile[1] + direction[1])
             if neighbor in tiles:
                 result.append(neighbor)
-        # Randomly choose one of the permutation options
-        self.set_random_neighbors_tile_order()
+
+        # Randomly choose one of the permutation options for next iteration
+        self._set_random_neighbors_tile_order()
 
         return result
 
-    @staticmethod
-    def get_path(current_item, items):
-        return_path = list()
+    def _generate_path(self, current_item, items):
         while items[current_item] is not None:
-            return_path.append(items[current_item])
+            self._path.append(items[current_item])
             current_item = items[current_item]
 
-        return return_path
-
-    def search(self, all_tiles, obstacles, start_tile, end_tile):
-        frontier = Queue(maxsize=1000)
+    def search(self, all_tiles: list[tuple], start_tile: tuple, end_tile: tuple) -> list[tuple]:
+        frontier = Queue()
         frontier.put(start_tile)
         came_from = dict()
         came_from[start_tile] = None
-        is_end_reached = False
-        path = list()
+        self._is_end_reached = False
+        self._path.clear()
 
-        while not is_end_reached and not frontier.empty():
+        while not self._is_end_reached and not frontier.empty():
             current_tile = frontier.get()
             if current_tile == end_tile:
-                is_end_reached = True
-                path = self.get_path(current_tile, came_from)
+                self._is_end_reached = True
+                self._generate_path(current_tile, came_from)
             else:
-                for next_neighbor in self.get_neighbors(all_tiles, current_tile):
-                    if next_neighbor not in came_from and next_neighbor not in obstacles:
+                for next_neighbor in self._get_neighbors(all_tiles, current_tile):
+                    if next_neighbor not in came_from:
                         came_from[next_neighbor] = current_tile
                         frontier.put(next_neighbor)
 
-        return is_end_reached, path, frontier, came_from
+        return self._path
+
+    @property
+    def path(self):
+        return self._path
+
+    @property
+    def is_end_reached(self):
+        return self._is_end_reached

@@ -134,9 +134,11 @@
   <objectgroup id="13" name="monster-enemy">
    <object id="25" name="monster-enemy-blue" gid="265" x="96" y="240" width="16" height="16">
     <properties>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="2"/>
      <property name="energy" type="int" value="100"/>
      <property name="score" type="int" value="50"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="2"/>
      <property name="start_delay" type="int" value="0"/>
     </properties>

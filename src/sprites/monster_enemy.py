@@ -6,10 +6,11 @@ from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
-from src.breadth_first_search_helper import BreadthFirstSearchHelper
 from src.game_helper import GameHelper
-from src.sprites.custom_draw_sprite import CustomDrawSprite
+from src.geometry_helper import GeometryHelper
+from src.search_path_algorithm_factory import SearchPathAlgorithmFactory
 from src.sprite_costume import SpriteCostume
+from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.tile_details.monster_tile_details import MonsterTileDetails
 
 
@@ -22,6 +23,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.game_manager = game_manager
         self.damage_power = details.damage_power
         self.score = details.score
+        self.attack_only_when_visible = details.attack_only_when_visible
 
         # Energy
         self.max_energy = details.energy
@@ -65,7 +67,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search_helper = BreadthFirstSearchHelper()
+        self.search_path = SearchPathAlgorithmFactory.create(details.search_path_algorithm)
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -85,9 +87,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def create_all_tiles_and_obstacles_lists(self):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
-                self.all_tiles.append((y, x))
                 if self.obstacle_map[x][y] > 0:
                     self.obstacles.append((y, x))
+                else:
+                    self.all_tiles.append((y, x))
 
     def update(self):
         if len(self.path) > 0:
@@ -115,7 +118,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def set_next_move(self):
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
             if self.try_to_set_movement_vector_from_path():
                 self.is_moving = True
@@ -256,26 +259,70 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # pass
         # Player has changed position - calculate a new path
-        if self.is_player_in_range():
+        if self.is_player_in_range() and self.verify_attack_readiness():
             self.calculate_path_to_player()
+
+    def get_possible_obstacles(self, start_position, end_position):
+        possible_obstacles = list()
+
+        if start_position[0] < end_position[0]:
+            dx = 1
+        elif start_position[0] > end_position[0]:
+            dx = -1
+        else:
+            dx = 1
+
+        if start_position[1] < end_position[1]:
+            dy = 1
+        elif start_position[1] > end_position[1]:
+            dy = -1
+        else:
+            dy = 1
+
+        for item in self.obstacles:
+            if (start_position[0] * dx - item[0] * dx <= 0 and end_position[0] * dx - item[0] * dx >= 0
+                    and start_position[1] * dy - item[1] * dy <= 0 and end_position[1] * dy - item[1] * dy >= 0):
+                possible_obstacles.append(item)
+
+        return possible_obstacles
+
+    def verify_attack_readiness(self):
+        if self.attack_only_when_visible:
+            return self.check_line_of_fire()
+        else:
+            # If visibility is not important, the attack can be performed at any time
+            return True
+
+    def check_line_of_fire(self):
+        start_position = self.current_position_on_map[0], self.current_position_on_map[1]
+        end_position = self.game_manager.player_tile_position
+
+        possible_obstacles = self.get_possible_obstacles(start_position, end_position)
+
+        start_vector = pygame.Vector2(GameHelper.get_tile_center_position(start_position))
+        end_vector = pygame.Vector2(GameHelper.get_tile_center_position(end_position))
+
+        for obstacle in possible_obstacles:
+            rect = pygame.Rect(obstacle[0] * Settings.TILE_SIZE, obstacle[1] * Settings.TILE_SIZE, Settings.TILE_SIZE, Settings.TILE_SIZE)
+            intersection = GeometryHelper.check_intersection_of_segment_with_rectangle(start_vector, end_vector, rect)
+            if intersection:
+                return False
+
+        return True
 
     def calculate_path_to_player(self):
         start_position = tuple(self.current_position_on_map)
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        is_end_reached, self.path, frontier, came_from = self.breadth_first_search_helper.search(self.all_tiles,
-                                                                                                 self.obstacles,
-                                                                                                 start_position,
-                                                                                                 end_position)
+        self.path = self.search_path.search(self.all_tiles, start_position, end_position)
 
-        if is_end_reached:
+        if self.search_path.is_end_reached:
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path
