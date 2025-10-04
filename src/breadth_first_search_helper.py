@@ -1,5 +1,4 @@
 import random
-import math
 from queue import Queue
 
 
@@ -39,8 +38,6 @@ class BreadthFirstSearchHelper:
         # Randomly choose one of the permutation options
         self.set_random_neighbors_tile_order()
 
-        self.max_distance = 10
-
     def set_random_neighbors_tile_order(self):
         self.neighbors_tile_order_selection = random.randint(0, len(self.neighbors_tile_orders) - 1)
         self.neighbors_tile_order = self.neighbors_tile_orders[self.neighbors_tile_order_selection]
@@ -66,30 +63,22 @@ class BreadthFirstSearchHelper:
         return return_path
 
     def search(self, all_tiles, obstacles, start_tile, end_tile):
-        frontier = Queue(maxsize=2080)
+        frontier = Queue(maxsize=1000)
         frontier.put(start_tile)
         came_from = dict()
         came_from[start_tile] = None
         is_end_reached = False
         path = list()
 
-        counter = 0
-
         while not is_end_reached and not frontier.empty():
-            counter += 1
             current_tile = frontier.get()
-            distance = ((start_tile[0] - current_tile[0]) ** 2 + (start_tile[1] - current_tile[1]) ** 2) ** 0.5
-
             if current_tile == end_tile:
                 is_end_reached = True
                 path = self.get_path(current_tile, came_from)
-            elif math.floor(distance) + 1 > self.max_distance:
-                continue
             else:
                 for next_neighbor in self.get_neighbors(all_tiles, current_tile):
                     if next_neighbor not in came_from and next_neighbor not in obstacles:
                         came_from[next_neighbor] = current_tile
                         frontier.put(next_neighbor)
 
-        print(counter)
         return is_end_reached, path, frontier, came_from

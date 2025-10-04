@@ -69,7 +69,6 @@ class Game:
 
         is_running = True
         while is_running:
-            print("Tick")
             for event in pygame.event.get():
                 # Input events: QUIT
                 if event.type == pygame.QUIT:
