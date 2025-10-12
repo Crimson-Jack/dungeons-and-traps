@@ -271,7 +271,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position)
+        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position, self.range)
 
         if self.breadth_first_search.is_end_reached:
             # Reverse the path (direction: from monster to player)
