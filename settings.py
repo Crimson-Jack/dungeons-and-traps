@@ -6,7 +6,7 @@ class Settings:
     FPS = 60
 
     # Screen size
-    FULL_SCREEN_MODE = False
+    FULL_SCREEN_MODE = True
     WIDTH = 960
     HEIGHT = 576
 
@@ -16,7 +16,7 @@ class Settings:
     DASHBOARD_HEIGHT = 144
 
     # Tile size
-    TILE_SIZE = 32
+    TILE_SIZE = 48
     # Source (originate) tile size
     SOURCE_TILE_SIZE = 16
 
