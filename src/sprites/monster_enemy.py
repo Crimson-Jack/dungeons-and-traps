@@ -320,7 +320,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        self.path = self.search_path.search(self.all_tiles, start_position, end_position)
+        self.path = self.search_path.search(self.all_tiles, start_position, end_position, self.range)
 
         if self.search_path.is_end_reached:
             # Reverse the path (direction: from monster to player)

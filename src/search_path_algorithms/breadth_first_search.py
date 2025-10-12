@@ -61,7 +61,7 @@ class BreadthFirstSearch:
             self._path.append(items[current_item])
             current_item = items[current_item]
 
-    def search(self, all_tiles: list[tuple], start_tile: tuple, end_tile: tuple) -> list[tuple]:
+    def search(self, all_tiles: list[tuple], start_tile: tuple, end_tile: tuple, max_distance:int = 10) -> list[tuple]:
         frontier = Queue()
         frontier.put(start_tile)
         came_from = dict()
@@ -77,8 +77,11 @@ class BreadthFirstSearch:
             else:
                 for next_neighbor in self._get_neighbors(all_tiles, current_tile):
                     if next_neighbor not in came_from:
-                        came_from[next_neighbor] = current_tile
-                        frontier.put(next_neighbor)
+                        # square shape max distance
+                        distance = abs(start_tile[0] - next_neighbor[0]), abs(start_tile[1] - next_neighbor[1])
+                        if distance[0] <= max_distance and distance[1] <= max_distance:
+                            came_from[next_neighbor] = current_tile
+                            frontier.put(next_neighbor)
 
         return self._path
 
