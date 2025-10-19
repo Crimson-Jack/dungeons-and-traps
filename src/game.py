@@ -229,6 +229,9 @@ class Game:
             self.game_manager.set_level_completed()
             self.load_level_completed_message_dialog()
 
+        if event.type == Settings.REMOVE_OBSTACLES_EVENT:
+            self.level.remove_obstacles()
+
         if event.type == Settings.REFRESH_OBSTACLE_MAP_EVENT:
             self.level.refresh_obstacle_map()
 
@@ -258,6 +261,9 @@ class Game:
         if event.type == Settings.CREATE_MONSTER_EVENT:
             self.level.create_monster(event.dict.get("position"))
 
+        if event.type == Settings.CREATE_BOSS_OCTOPUS_EVENT:
+            self.level.create_boss_octopus()
+
         if event.type == Settings.PLAYER_LOST_LIFE_EVENT:
             self.level.show_player_tombstone()
             pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 2000)
@@ -285,6 +291,15 @@ class Game:
             pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 0)
             self.game_manager.set_game_over()
             self.load_game_over_message_dialog()
+            self.refresh_dashboard_surface()
+
+        if event.type == Settings.YOU_WIN_EVENT:
+            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 2000)
+
+        if event.type == Settings.YOU_WIN_SUMMARY_EVENT:
+            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 0)
+            self.game_manager.set_game_over()
+            self.load_you_win_message_dialog()
             self.refresh_dashboard_surface()
 
     def load_first_page(self):
@@ -328,6 +343,12 @@ class Game:
     def load_game_over_message_dialog(self):
         messages = list()
         messages.append(Message('GAME OVER', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        self.message_dialog = MessageBox(self.screen, 800, 100, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+                                         Settings.MESSAGE_BORDER_COLOR, messages)
+
+    def load_you_win_message_dialog(self):
+        messages = list()
+        messages.append(Message('YOU WIN', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         self.message_dialog = MessageBox(self.screen, 800, 100, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 

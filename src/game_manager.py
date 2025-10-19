@@ -1,8 +1,10 @@
 import pygame
 
+
 from settings import Settings
 from src.enums.direction import Direction
 from src.enums.game_status import GameStatus
+from src.level_details import LevelDetails
 from src.enums.lighting_status import LightingStatus
 from src.enums.weapon_type import WeaponType
 from src.sprites.diamond import Diamond
@@ -12,6 +14,8 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
+            LevelDetails('basic.tmx', False),
+            # LevelDetails('basic_arena.tmx', False)
             # 'basic.tmx',
             # 'basic_arena.tmx',
             # 'basic_open_arena.tmx',
@@ -23,7 +27,7 @@ class GameManager:
             # 's01_level_06.tmx',
             # 's01_level_07.tmx',
             # 's01_level_08.tmx',
-            's01_level_09.tmx',
+            # 's01_level_09.tmx',
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -130,7 +134,7 @@ class GameManager:
             self.game_status = GameStatus.OPTIONS
 
     def get_level_filename(self):
-        return self.LEVELS[self.level]
+        return self.LEVELS[self.level].source_file
 
     def check_is_last_level(self):
         return self.level == len(self.LEVELS) - 1
@@ -139,7 +143,7 @@ class GameManager:
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.check_is_last_level():
                 self.game_status = GameStatus.GAME_OVER
-                pygame.event.post(pygame.event.Event(Settings.GAME_OVER_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))
             else:
                 pygame.event.post(pygame.event.Event(Settings.NEXT_LEVEL_EVENT))
 
@@ -251,7 +255,11 @@ class GameManager:
         self.score += diamond.score
         pygame.event.post(pygame.event.Event(Settings.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
-            pygame.event.post(pygame.event.Event(Settings.EXIT_POINT_IS_OPEN_EVENT))
+            if self.LEVELS[self.level].exit_point_enabled:
+                pygame.event.post(pygame.event.Event(Settings.EXIT_POINT_IS_OPEN_EVENT))
+            else:
+                pygame.event.post(pygame.event.Event(Settings.REMOVE_OBSTACLES_EVENT))
+                pygame.event.post(pygame.event.Event(Settings.CREATE_BOSS_OCTOPUS_EVENT))
 
     def add_key(self, key: Key):
         self.keys.append(key)

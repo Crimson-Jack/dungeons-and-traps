@@ -78,7 +78,7 @@
  </objectgroup>
  <group id="5" name="enemy">
   <objectgroup id="9" name="monster-enemy">
-   <object id="10" name="monster-enemy-green" gid="235" x="368" y="176" width="16" height="16">
+   <object id="10" name="monster-enemy-green" gid="235" x="368" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -89,7 +89,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="11" name="monster-enemy-green" gid="235" x="336" y="176" width="16" height="16">
+   <object id="11" name="monster-enemy-green" gid="235" x="336" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -100,7 +100,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="12" name="monster-enemy-green" gid="235" x="304" y="176" width="16" height="16">
+   <object id="12" name="monster-enemy-green" gid="235" x="304" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -111,7 +111,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="13" name="monster-enemy-green" gid="235" x="272" y="176" width="16" height="16">
+   <object id="13" name="monster-enemy-green" gid="235" x="272" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -122,7 +122,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="14" name="monster-enemy-green" gid="235" x="240" y="176" width="16" height="16">
+   <object id="14" name="monster-enemy-green" gid="235" x="240" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -133,7 +133,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="15" name="monster-enemy-green" gid="235" x="208" y="176" width="16" height="16">
+   <object id="15" name="monster-enemy-green" gid="235" x="208" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -144,7 +144,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="16" name="monster-enemy-green" gid="235" x="176" y="176" width="16" height="16">
+   <object id="16" name="monster-enemy-green" gid="235" x="176" y="176" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -157,7 +157,7 @@
    </object>
   </objectgroup>
   <objectgroup id="6" name="octopus-enemy">
-   <object id="4" name="octopus-enemy" gid="169" x="752" y="384" width="48" height="48" visible="0">
+   <object id="4" name="octopus-enemy" gid="169" x="752" y="384" width="48" height="48">
     <properties>
      <property name="damage_power" type="int" value="10"/>
      <property name="energy" type="int" value="3500"/>

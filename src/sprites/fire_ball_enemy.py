@@ -113,6 +113,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
         x = (self.player_top_left_position[0] - self.rect.topleft[0])
         y = (self.player_top_left_position[1] - self.rect.topleft[1])
 
+        #TODO: prevent ZeroDivisionError
         self.movement_vector = pygame.math.Vector2(x / distance, y / distance)
 
     def change_costume(self):

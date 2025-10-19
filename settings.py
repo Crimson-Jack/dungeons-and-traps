@@ -6,7 +6,7 @@ class Settings:
     FPS = 60
 
     # Screen size
-    FULL_SCREEN_MODE = True
+    FULL_SCREEN_MODE = False
     WIDTH = 960
     HEIGHT = 576
 
@@ -42,6 +42,8 @@ class Settings:
     # Events
     GAME_OVER_EVENT = pygame.event.custom_type()
     GAME_OVER_SUMMARY_EVENT = pygame.event.custom_type()
+    YOU_WIN_EVENT = pygame.event.custom_type()
+    YOU_WIN_SUMMARY_EVENT = pygame.event.custom_type()
     COLLECT_DIAMOND_EVENT = pygame.event.custom_type()
     COLLECT_KEY_EVENT = pygame.event.custom_type()
     CHANGE_WEAPON_CAPACITY_EVENT = pygame.event.custom_type()
@@ -58,6 +60,7 @@ class Settings:
     ADD_VANISHING_POINT_EVENT = pygame.event.custom_type()
     CREATE_EGG_EVENT = pygame.event.custom_type()
     CREATE_MONSTER_EVENT = pygame.event.custom_type()
+    CREATE_BOSS_OCTOPUS_EVENT = pygame.event.custom_type()
     ADD_PARTICLE_EFFECT_EVENT = pygame.event.custom_type()
     PARTICLE_EVENT = pygame.event.custom_type()
     PLAYER_LOST_LIFE_EVENT = pygame.event.custom_type()
@@ -66,3 +69,4 @@ class Settings:
     COLLECT_LIFE_EVENT = pygame.event.custom_type()
     CHANGE_SCORE_EVENT = pygame.event.custom_type()
     CREATE_EXPLODE_EFFECT_EVENT = pygame.event.custom_type()
+    REMOVE_OBSTACLES_EVENT = pygame.event.custom_type()

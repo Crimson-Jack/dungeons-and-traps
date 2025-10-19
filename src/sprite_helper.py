@@ -249,6 +249,36 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
+    def get_all_octopus_sprites(name):
+        octopus_source_tile_size = Settings.SOURCE_TILE_SIZE * 3
+        octopus_scale = int(Settings.TILE_SIZE * 3), int(Settings.TILE_SIZE * 3)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale, SpriteHelper.KEY_COLOR)
+
+        sprites = list()
+
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        sprites.append(sprite_sheet.get_image(0, 4))
+        sprites.append(sprite_sheet.get_image(0, 5))
+        sprites.append(sprite_sheet.get_image(0, 6))
+        sprites.append(sprite_sheet.get_image(0, 7))
+
+        sprites.append(sprite_sheet.get_image(0, 8))
+        sprites.append(sprite_sheet.get_image(0, 9))
+        sprites.append(sprite_sheet.get_image(0, 10))
+        sprites.append(sprite_sheet.get_image(0, 11))
+
+        sprites.append(sprite_sheet.get_image(0, 12))
+        sprites.append(sprite_sheet.get_image(0, 13))
+        sprites.append(sprite_sheet.get_image(0, 14))
+        sprites.append(sprite_sheet.get_image(0, 15))
+
+        return sprites
+
+    @staticmethod
     def get_sword_images_to_header_view():
         sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', Settings.SOURCE_TILE_SIZE, (64, 64), SpriteHelper.KEY_COLOR)
 

@@ -15,6 +15,7 @@ from src.obstacle_map import ObstacleMap
 from src.powerup_factory import PowerupFactory
 from src.sprites.bat_enemy import BatEnemy
 from src.sprites.check_point import CheckPoint
+from src.sprites.demolished_wall import DemolishedWall
 from src.sprites.diamond import Diamond
 from src.sprites.door import Door
 from src.sprites.egg import Egg
@@ -28,6 +29,7 @@ from src.sprites.lighting_spell import LightingSpell
 from src.sprites.monster_enemy import MonsterEnemy
 from src.sprites.octopus_enemy import OctopusEnemy
 from src.sprites.player import Player
+from src.sprites.removable_wall import RemovableWall
 from src.sprites.spider_enemy import SpiderEnemy
 from src.sprites.stone import Stone
 from src.sprites.teleport import Teleport
@@ -96,6 +98,7 @@ class Level:
         self.exit_points = pygame.sprite.Group()
         self.obstacle_sprites = pygame.sprite.Group()
         self.moving_obstacle_sprites = pygame.sprite.Group()
+        self.removable_obstacle_sprites = pygame.sprite.Group()
         self.passage_sprites = pygame.sprite.Group()
         self.teleport_sprites = pygame.sprite.Group()
         self.collectable_sprites = pygame.sprite.Group()
@@ -113,6 +116,8 @@ class Level:
         self.check_point = self.create_check_point()
         # Create exit point
         self.exit_point = self.create_exit_point()
+        # Get boss point position
+        self.boss_point_position = self.get_boss_point_position()
 
         # Set blast effect details
         self.blast_effect = BlastEffect(self.game_surface,
@@ -139,15 +144,18 @@ class Level:
 
     def create_obstacle_map(self, size_of_map):
         # Create obstacle map and combine all layers with obstacles
-        obstacle_data = None
-        moving_obstacle_data = None
+        obstacle_layer_data = None
+        moving_obstacle_layer_data = None
+        removable_obstacle_layer_data = None
         door_layer_data = None
 
         for layer in self.tmx_data.visible_layers:
             if layer.name == 'obstacle':
-                obstacle_data = self.tmx_data.get_layer_by_name('obstacle').data
+                obstacle_layer_data = self.tmx_data.get_layer_by_name('obstacle').data
             if layer.name == 'moving-obstacle':
-                moving_obstacle_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
+                moving_obstacle_layer_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
+            if layer.name == 'removable-obstacle':
+                removable_obstacle_layer_data = self.tmx_data.get_layer_by_name('removable-obstacle').data
             if layer.name == 'door':
                 door_layer_data = TmxHelper.get_data_map_by_layer(self.tmx_data.get_layer_by_name('door'),
                                                                    size_of_map,
@@ -155,8 +163,9 @@ class Level:
                                                                    self.tmx_data.tileheight)
 
         return ObstacleMap([
-            obstacle_data,
-            moving_obstacle_data,
+            obstacle_layer_data,
+            moving_obstacle_layer_data,
+            removable_obstacle_layer_data,
             door_layer_data
         ])
 
@@ -184,6 +193,8 @@ class Level:
                           self.enemy_sprites,
                           self.hostile_force_sprites,
                           self.game_manager)
+        else:
+            return None
 
     def create_check_point(self):
         try:
@@ -199,6 +210,8 @@ class Level:
             groups = self.bottom_background_layer, self.collectable_sprites
 
             return CheckPoint(check_point.image, (x, y), groups, self.game_manager)
+        else:
+            return None
 
     def create_exit_point(self):
         try:
@@ -214,12 +227,31 @@ class Level:
             groups = self.bottom_background_layer, self.exit_points
 
             return ExitPoint(exit_object.image, (x, y), groups, False)
+        else:
+            return None
+
+    def get_boss_point_position(self):
+        try:
+            boss_object = self.tmx_data.get_object_by_name('boss-point')
+        except (KeyError, ValueError):
+            boss_object = None
+
+        if boss_object is not None and boss_object.visible:
+            tile_x = int(boss_object.x // self.tmx_data.tilewidth)
+            tile_y = int(boss_object.y // self.tmx_data.tileheight)
+            x = tile_x * Settings.TILE_SIZE
+            y = tile_y * Settings.TILE_SIZE
+
+            return x, y
+        else:
+            return None
 
     def create_sprites(self):
         self.create_sprites_from_layer('ground')
         self.create_sprites_from_layer('diamond')
         self.create_sprites_from_layer('obstacle')
         self.create_sprites_from_layer('moving-obstacle')
+        self.create_sprites_from_layer('removable-obstacle')
         self.create_sprites_from_object_layer('spell')
         self.create_sprites_from_object_layer('powerup')
         self.create_sprites_from_object_layer('key')
@@ -264,6 +296,10 @@ class Level:
                                          self.collectable_sprites]
                     # Note: stone can be moved, so the list instead of tuple for position is used
                     Stone(image, [x, y], groups, self.game_manager, self.obstacle_map.items, collision_sprites)
+
+                elif layer_name == 'removable-obstacle':
+                    groups = self.middle_sprites_layer, self.obstacle_sprites, self.removable_obstacle_sprites
+                    DemolishedWall(image, (x, y), groups, self.obstacle_map.items)
 
     def create_sprites_from_object_layer(self, layer_name):
         try:
@@ -450,12 +486,26 @@ class Level:
         name = "monster-enemy-red"
         sprite_costumes = list()
         for image in SpriteHelper.get_all_monster_sprites(name):
-            sprite_costumes.append(SpriteCostume(image, 150))
+            sprite_costumes.append(SpriteCostume(image, 6))
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
         groups = self.top_sprites_layer, self.enemy_sprites
         tile_details = MonsterTileDetails(None, None)
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
+
+    def create_boss_octopus(self):
+        if self.boss_point_position is None:
+            raise ValueError(f'The boss point position is none. Add "boss-point" to "major-game-item" layer.')
+
+        name = "octopus-enemy"
+        sprite_costumes = list()
+        for image in SpriteHelper.get_all_octopus_sprites(name):
+            sprite_costumes.append(SpriteCostume(image, 6))
+        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = OctopusTileDetails(None, None)
+        OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
+                     tile_details, self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites)
 
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
@@ -489,6 +539,13 @@ class Level:
             position = self.game_manager.get_check_point_position()
         self.player.respawn(position)
         self.player.enable()
+
+    def remove_obstacles(self):
+        if len(self.removable_obstacle_sprites) > 0:
+            for sprite in self.removable_obstacle_sprites:
+                sprite.kill()
+            # Raise event to refresh obstacle map
+            pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
 
     def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:
