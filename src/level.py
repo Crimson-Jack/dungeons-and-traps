@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pytmx.util_pygame import load_pygame
 
@@ -11,6 +13,7 @@ from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
+from src.monster_tile_details_factory import MonsterTileDetailsFactory
 from src.obstacle_map import ObstacleMap
 from src.powerup_factory import PowerupFactory
 from src.sprites.bat_enemy import BatEnemy
@@ -486,15 +489,15 @@ class Level:
         Egg(position, (self.bottom_sprites_layer, self.collectable_sprites), self.game_manager)
 
     def create_monster(self, position):
+        name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
+        tile_details = MonsterTileDetailsFactory.create(name)
+
         sprite_costumes = list()
-        groups = self.top_sprites_layer, self.enemy_sprites
-        tile_details = MonsterTileDetails(None, None)
-
-
-        name = "monster-enemy-red"
         for image in SpriteHelper.get_all_monster_sprites(name):
             sprite_costumes.append(SpriteCostume(image, 6))
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
+
+        groups = self.top_sprites_layer, self.enemy_sprites
 
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
@@ -503,13 +506,16 @@ class Level:
         if self.boss_point_position is None:
             raise ValueError(f'The boss point position is none. Add "boss-point" to "major-game-item" layer.')
 
-        name = "octopus-enemy"
+        name = 'octopus-enemy'
+        tile_details = OctopusTileDetails(None, None)
+
         sprite_costumes = list()
         for image in SpriteHelper.get_all_octopus_sprites(name):
             sprite_costumes.append(SpriteCostume(image, 6))
         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
+
         groups = self.the_highest_sprites_layer, self.enemy_sprites
-        tile_details = OctopusTileDetails(None, None)
+
         OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
                      tile_details, self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites)
 
