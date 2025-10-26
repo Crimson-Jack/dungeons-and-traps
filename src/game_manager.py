@@ -14,7 +14,7 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
-            LevelDetails('basic.tmx', False),
+            LevelDetails('s01_level_09.tmx', False),
             # LevelDetails('basic_arena.tmx', False)
             # 'basic.tmx',
             # 'basic_arena.tmx',

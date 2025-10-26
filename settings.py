@@ -6,7 +6,7 @@ class Settings:
     FPS = 60
 
     # Screen size
-    FULL_SCREEN_MODE = False
+    FULL_SCREEN_MODE = True
     WIDTH = 960
     HEIGHT = 576
 

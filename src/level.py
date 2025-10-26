@@ -93,6 +93,7 @@ class Level:
         self.bottom_sprites_layer = CameraGroup(game_surface, size_of_map)
         self.middle_sprites_layer = CameraGroupWithYSort(game_surface, size_of_map)
         self.top_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self.the_highest_sprites_layer = CameraGroup(game_surface, size_of_map)
 
         # Set up functional groups
         self.exit_points = pygame.sprite.Group()
@@ -388,7 +389,7 @@ class Level:
                     elif layer_name == 'octopus-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
                         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
-                        groups = self.top_sprites_layer, self.enemy_sprites
+                        groups = self.the_highest_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                      tile_details, self.obstacle_map.items, self.obstacle_sprites,
@@ -402,6 +403,7 @@ class Level:
         self.bottom_sprites_layer.update()
         self.middle_sprites_layer.update()
         self.top_sprites_layer.update()
+        self.the_highest_sprites_layer.update()
 
         # Run an update method for effects
         self.update_particle_effects()
@@ -416,6 +418,7 @@ class Level:
         self.bottom_sprites_layer.custom_draw(self.player)
         self.middle_sprites_layer.custom_draw(self.player)
         self.top_sprites_layer.custom_draw(self.player)
+        self.the_highest_sprites_layer.custom_draw(self.player)
 
         # Draw effects
         self.draw_particle_effects()
@@ -483,13 +486,16 @@ class Level:
         Egg(position, (self.bottom_sprites_layer, self.collectable_sprites), self.game_manager)
 
     def create_monster(self, position):
-        name = "monster-enemy-red"
         sprite_costumes = list()
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = MonsterTileDetails(None, None)
+
+
+        name = "monster-enemy-red"
         for image in SpriteHelper.get_all_monster_sprites(name):
             sprite_costumes.append(SpriteCostume(image, 6))
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
-        groups = self.top_sprites_layer, self.enemy_sprites
-        tile_details = MonsterTileDetails(None, None)
+
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
                      self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
 
@@ -502,7 +508,7 @@ class Level:
         for image in SpriteHelper.get_all_octopus_sprites(name):
             sprite_costumes.append(SpriteCostume(image, 6))
         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
-        groups = self.top_sprites_layer, self.enemy_sprites
+        groups = self.the_highest_sprites_layer, self.enemy_sprites
         tile_details = OctopusTileDetails(None, None)
         OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
                      tile_details, self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites)

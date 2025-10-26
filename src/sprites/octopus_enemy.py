@@ -8,6 +8,7 @@ from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.game_helper import GameHelper
 from src.search_path_algorithms.breadth_first_search import BreadthFirstSearch
+from src.search_path_algorithms.greedy_best_first_search import GreedyBestFirstSearch
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprites.fire_ball_enemy import FireBallEnemy
@@ -54,7 +55,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.is_moving = False
         self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
-        self.range = 15
+        self.range = 12
 
         # Set positions on map
         self.current_position_on_map = [
@@ -67,7 +68,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.all_tiles = []
         self.obstacles = []
         self.create_all_tiles_and_obstacles_lists()
-        self.breadth_first_search = BreadthFirstSearch()
+        self.search_path = GreedyBestFirstSearch()
         self.path = []
 
         # Real position is required to store the real distance, which is then cast to integer
@@ -272,9 +273,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position, self.range)
+        self.path = self.search_path.search(self.all_tiles, start_position, end_position, self.range)
 
-        if self.breadth_first_search.is_end_reached:
+        if self.search_path.is_end_reached:
             # Reverse the path (direction: from monster to player)
             self.path.reverse()
             # Add player position to the end of the path

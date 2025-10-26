@@ -7,11 +7,11 @@ class OctopusTileDetails(TileDetails):
     def __init__(self, tile, layer):
         super().__init__(tile, layer)
 
-        self._speed = GameHelper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 3, self.tile, self.layer))
-        self._start_delay = TmxHelper.get_tiled_object_value('start_delay', 5, self.tile, self.layer)
-        self._energy = int(TmxHelper.get_tiled_object_value('energy', 500, self.tile, self.layer))
-        self._damage_power = int(TmxHelper.get_tiled_object_value('damage_power', 8, self.tile, self.layer))
-        self._score = int(TmxHelper.get_tiled_object_value('score', 250, self.tile, self.layer))
+        self._speed = GameHelper.multiply_by_tile_size_ratio(TmxHelper.get_tiled_object_value('speed', 4.4, self.tile, self.layer))
+        self._start_delay = TmxHelper.get_tiled_object_value('start_delay', 40, self.tile, self.layer)
+        self._energy = int(TmxHelper.get_tiled_object_value('energy', 5000, self.tile, self.layer))
+        self._damage_power = int(TmxHelper.get_tiled_object_value('damage_power', 10, self.tile, self.layer))
+        self._score = int(TmxHelper.get_tiled_object_value('score', 1000, self.tile, self.layer))
         self._is_boss = bool(TmxHelper.get_tiled_object_value('is_boss', True, self.tile, self.layer))
 
     @property

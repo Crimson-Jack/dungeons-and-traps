@@ -13,7 +13,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
 
         # Base
         self.game_manager = game_manager
-        self.damage_power = 40
+        self.damage_power = 30
 
         # Sprite animation variables
         self.sprites = SpriteHelper.get_all_fire_ball_enemy_sprites()
