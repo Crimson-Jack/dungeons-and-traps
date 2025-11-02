@@ -64,7 +64,7 @@ class TmxHelper:
         return x, y
 
     @staticmethod
-    def get_tiled_object_value(name: str, default, tiled_object: pytmx.TiledObject, layer: pytmx.TiledObjectGroup):
+    def get_tiled_object_value(name: str, default, tiled_object: pytmx.TiledObject, layer: pytmx.TiledObjectGroup | None):
         """
         Get the value from the tiled object.
         If not exists, get the value from the layer (group of tiled objects).

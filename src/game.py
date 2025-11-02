@@ -252,6 +252,9 @@ class Game:
         if event.type == Settings.ADD_TOMBSTONE_EVENT:
             self.level.add_tombstone(event.dict.get("position"))
 
+        if event.type == Settings.ADD_BOSS_TOMBSTONE_EVENT:
+            self.level.add_boss_tombstone(event.dict.get("position"))
+
         if event.type == Settings.ADD_VANISHING_POINT_EVENT:
             self.level.add_vanishing_point(event.dict.get("position"))
 
@@ -294,6 +297,7 @@ class Game:
             self.refresh_dashboard_surface()
 
         if event.type == Settings.YOU_WIN_EVENT:
+            self.level.remove_enemies()
             pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 2000)
 
         if event.type == Settings.YOU_WIN_SUMMARY_EVENT:

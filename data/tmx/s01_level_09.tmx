@@ -217,7 +217,7 @@
   <object id="121" name="boss-point" gid="395" x="384" y="160" width="48" height="48"/>
  </objectgroup>
  <group id="5" name="enemy">
-  <objectgroup id="16" name="fire-flame-enemy" visible="0">
+  <objectgroup id="16" name="fire-flame-enemy">
    <object id="97" name="fire-flame-enemy-left" gid="387" x="608" y="80" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
@@ -237,7 +237,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="15" name="bat-enemy" visible="0">
+  <objectgroup id="15" name="bat-enemy">
    <object id="60" name="bat-enemy" gid="347" x="368" y="512" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="4"/>
@@ -279,7 +279,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="10" name="spider-enemy" visible="0">
+  <objectgroup id="10" name="spider-enemy">
    <object id="44" name="spider-enemy-small" gid="235" x="368" y="464" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="5"/>

@@ -32,7 +32,6 @@ from src.sprites.lighting_spell import LightingSpell
 from src.sprites.monster_enemy import MonsterEnemy
 from src.sprites.octopus_enemy import OctopusEnemy
 from src.sprites.player import Player
-from src.sprites.removable_wall import RemovableWall
 from src.sprites.spider_enemy import SpiderEnemy
 from src.sprites.stone import Stone
 from src.sprites.teleport import Teleport
@@ -480,7 +479,12 @@ class Level:
         self.explode_effect.run(position)
 
     def add_tombstone(self, position):
-        self.tombstones.append(Tombstone(position, (self.bottom_sprites_layer,)))
+        sprites = SpriteHelper.get_all_tombstone_sprites()
+        self.tombstones.append(Tombstone(sprites, position, (self.bottom_sprites_layer,)))
+
+    def add_boss_tombstone(self, position):
+        sprites = SpriteHelper.get_all_boss_tombstone_sprites()
+        self.tombstones.append(Tombstone(sprites, position, (self.bottom_sprites_layer,)))
 
     def add_vanishing_point(self, position):
         self.vanishing_points.append(VanishingPoint(position, (self.bottom_sprites_layer,)))
@@ -558,6 +562,11 @@ class Level:
                 sprite.kill()
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
+
+    def remove_enemies(self):
+        if len(self.enemy_sprites)>0:
+            for sprite in self.enemy_sprites:
+                sprite.kill()
 
     def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:

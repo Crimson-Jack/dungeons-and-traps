@@ -177,6 +177,19 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
+    def get_all_boss_tombstone_sprites():
+        scale = int(Settings.TILE_SIZE * 3), int(Settings.TILE_SIZE * 3)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png', Settings.SOURCE_TILE_SIZE, scale, SpriteHelper.KEY_COLOR)
+
+        sprites = list()
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        return sprites
+
+    @staticmethod
     def get_all_vanishing_point_sprites():
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-point.png', Settings.SOURCE_TILE_SIZE, SpriteHelper.SCALE, SpriteHelper.KEY_COLOR)
 

@@ -57,6 +57,7 @@ class Settings:
     PLAYER_TILE_POSITION_CHANGED_EVENT = pygame.event.custom_type()
     PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
     ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
+    ADD_BOSS_TOMBSTONE_EVENT = pygame.event.custom_type()
     ADD_VANISHING_POINT_EVENT = pygame.event.custom_type()
     CREATE_EGG_EVENT = pygame.event.custom_type()
     CREATE_MONSTER_EVENT = pygame.event.custom_type()
