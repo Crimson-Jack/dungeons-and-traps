@@ -294,6 +294,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         if self.energy == 0:
             self.kill()
 
+        self.game_manager.boss_energy = self.energy
+        pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
+
     def custom_draw(self, game_surface, offset):
         # Draw sprite
         offset_position = self.rect.topleft + offset

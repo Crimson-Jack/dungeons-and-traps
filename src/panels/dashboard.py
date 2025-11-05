@@ -44,9 +44,10 @@ class Dashboard:
         self.right_bottom_surface = pygame.Surface(
             (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
 
-        # Energy bar
+        # Energy bars
         self.energy_bar_margin = 20
         bar_width = self.right_top_surface.get_width() - 2 * self.energy_bar_margin
+        bar_half_width = self.right_top_surface.get_width() // 2 - 2 * self.energy_bar_margin
         bar_height = 25
         bar_left = self.energy_bar_margin
         bar_top = self.right_top_surface.get_height() // 2 - (bar_height // 2)
@@ -57,9 +58,18 @@ class Dashboard:
                 ((61, 80), (189, 244, 180)),    # Light green
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
-        self.energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, self.game_manager.player_max_energy,
-                              bar_colors, True, Settings.BORDER_COLOR, True,
-                              Settings.SURFACE_COLOR, True, 'Energy', Settings.BAR_TEXT_COLOR)
+
+        self.player_energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, bar_colors, True,
+                                     Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'Energy',
+                                     Settings.BAR_TEXT_COLOR)
+
+        self.player_small_energy_bar = Bar((bar_left, bar_top), bar_half_width, bar_height, bar_colors, True,
+                                           Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'You',
+                                           Settings.BAR_TEXT_COLOR)
+
+        self.boss_small_energy_bar = Bar((bar_left + bar_half_width + 10, bar_top), bar_half_width, bar_height, bar_colors,
+                                         True, Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'Boss',
+                                         Settings.BAR_TEXT_COLOR)
 
     def clean(self):
         self.left_top_surface.fill(self.inner_background_color)
@@ -92,7 +102,11 @@ class Dashboard:
             count += 1
 
     def draw_energy_bar(self, surface):
-        self.energy_bar.draw(surface, self.game_manager.player_energy)
+        if not self.game_manager.is_boss_visible:
+            self.player_energy_bar.draw(surface, self.game_manager.player_energy, self.game_manager.player_max_energy)
+        else:
+            self.player_small_energy_bar.draw(surface, self.game_manager.player_energy, self.game_manager.player_max_energy)
+            self.boss_small_energy_bar.draw(surface, self.game_manager.boss_energy, self.game_manager.boss_max_energy)
 
     def draw_keys(self, surface):
         keys_text = self.basic_font.render(f'Keys', True, self.text_color)

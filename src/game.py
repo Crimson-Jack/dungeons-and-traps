@@ -266,6 +266,7 @@ class Game:
 
         if event.type == Settings.CREATE_BOSS_OCTOPUS_EVENT:
             self.level.create_boss_octopus()
+            self.refresh_dashboard_surface()
 
         if event.type == Settings.PLAYER_LOST_LIFE_EVENT:
             self.level.show_player_tombstone()

@@ -523,6 +523,10 @@ class Level:
         OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
                      tile_details, self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites)
 
+        self.game_manager.boss_max_energy = tile_details.energy
+        self.game_manager.boss_energy = tile_details.energy
+        self.game_manager.is_boss_visible = True
+
     def add_particle_effect(self, position, number_of_sparks, colors):
         self.particle_effects.append(
             ParticleEffect(self.game_surface, position, colors, number_of_sparks,

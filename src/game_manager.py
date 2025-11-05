@@ -57,6 +57,10 @@ class GameManager:
         self.player_movement_direction = Direction.RIGHT
         self.player_is_using_weapon = False
 
+        self.is_boss_visible = False
+        self.boss_max_energy = 0
+        self.boss_energy = self.boss_max_energy
+
         self.check_point_position = None
 
     def clear_settings_for_first_level(self):
@@ -79,6 +83,8 @@ class GameManager:
         self.set_player_max_energy()
         self.reset_player_direction()
 
+        self.is_boss_visible = False
+
         self.check_point_position = None
 
     def clear_settings_for_next_level(self):
@@ -90,6 +96,8 @@ class GameManager:
         self.collected_keys.clear()
 
         self.reset_player_direction()
+
+        self.is_boss_visible = False
 
         self.check_point_position = None
 
@@ -103,6 +111,8 @@ class GameManager:
 
         self.set_player_max_energy()
         self.reset_player_direction()
+
+        self.is_boss_visible = False
 
         self.check_point_position = None
 

@@ -2,12 +2,11 @@ import pygame
 
 
 class Bar:
-    def __init__(self, position, width, height, max_value, bar_colors, draw_outline, outline_color,
+    def __init__(self, position, width, height, bar_colors, draw_outline, outline_color,
                  draw_background, background_color, draw_text, text, text_color):
         self.position = position
         self.width = width
         self.height = height
-        self.max_value = max_value
 
         # Bar colors
         self.bar_colors = bar_colors
@@ -31,16 +30,16 @@ class Bar:
     def change_position(self, position):
         self.position = position
 
-    def draw(self, surface, value, offset=None):
+    def draw(self, surface, value, max_value, offset=None):
         if offset is None:
             offset = pygame.math.Vector2()
 
         # Create bar rectangle
-        bar_width = (self.width * value) / self.max_value
+        bar_width = (self.width * value) / max_value
         bar_rectangle = pygame.rect.Rect(self.position + offset, (bar_width, self.height)).inflate(-8, -8)
 
         # Calculate percent
-        percent = int(100 * value / self.max_value)
+        percent = int(100 * value / max_value)
 
         # Draw background
         if self.draw_background:
@@ -51,7 +50,7 @@ class Bar:
         pygame.draw.rect(surface, self.bar_colors.get_color(percent), bar_rectangle)
 
         # Blit the text
-        if self.draw_text and percent >= 10:
+        if self.draw_text and percent >= 25:
             # Create text
             rendered_text = self.basic_font.render(f'{self.text} {percent}%', True, self.text_color)
 
