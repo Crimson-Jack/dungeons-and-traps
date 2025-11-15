@@ -178,14 +178,29 @@ class SpriteHelper:
 
     @staticmethod
     def get_all_boss_tombstone_sprites():
+        source_tile_size = Settings.SOURCE_TILE_SIZE * 3
         scale = int(Settings.TILE_SIZE * 3), int(Settings.TILE_SIZE * 3)
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png', Settings.SOURCE_TILE_SIZE, scale, SpriteHelper.KEY_COLOR)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-flare-point.png', source_tile_size, scale, SpriteHelper.KEY_COLOR)
 
         sprites = list()
         sprites.append(sprite_sheet.get_image(0, 0))
         sprites.append(sprite_sheet.get_image(0, 1))
         sprites.append(sprite_sheet.get_image(0, 2))
         sprites.append(sprite_sheet.get_image(0, 3))
+        sprites.append(sprite_sheet.get_image(0, 4))
+        sprites.append(sprite_sheet.get_image(0, 5))
+        sprites.append(sprite_sheet.get_image(0, 6))
+        sprites.append(sprite_sheet.get_image(0, 7))
+        sprites.append(sprite_sheet.get_image(0, 8))
+        sprites.append(sprite_sheet.get_image(0, 9))
+        sprites.append(sprite_sheet.get_image(0, 10))
+        sprites.append(sprite_sheet.get_image(0, 11))
+        sprites.append(sprite_sheet.get_image(0, 12))
+        sprites.append(sprite_sheet.get_image(0, 13))
+        sprites.append(sprite_sheet.get_image(0, 14))
+        sprites.append(sprite_sheet.get_image(0, 15))
+        sprites.append(sprite_sheet.get_image(0, 16))
+        sprites.append(sprite_sheet.get_image(0, 17))
 
         return sprites
 

@@ -484,7 +484,7 @@ class Level:
 
     def add_boss_tombstone(self, position):
         sprites = SpriteHelper.get_all_boss_tombstone_sprites()
-        self.tombstones.append(Tombstone(sprites, position, (self.bottom_sprites_layer,)))
+        self.tombstones.append(Tombstone(sprites, position, (self.bottom_sprites_layer,), 0))
 
     def add_vanishing_point(self, position):
         self.vanishing_points.append(VanishingPoint(position, (self.bottom_sprites_layer,)))

@@ -2,13 +2,13 @@ import pygame
 
 
 class Tombstone(pygame.sprite.Sprite):
-    def __init__(self, sprites: list[pygame.Surface], position, groups):
+    def __init__(self, sprites: list[pygame.Surface], position, groups, last_slide_counter=10):
         super().__init__(*groups)
 
         # Sprite animation variables
         self.sprites = sprites
         self.number_of_sprites = len(self.sprites) - 1
-        self.costume_switching_threshold = self.number_of_sprites + 1
+        self.number_of_frames = 4
         self.costume_step_counter = 0
         self.costume_step_counter_increment = 1
         self.costume_index = 0
@@ -18,7 +18,7 @@ class Tombstone(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
-        self.can_be_removed_counter = 10
+        self.last_slide_counter = last_slide_counter
 
     def update(self):
         # Increase costume step counter
@@ -27,7 +27,7 @@ class Tombstone(pygame.sprite.Sprite):
 
     def change_costume(self):
         # Change costume only if threshold exceeded
-        if self.costume_step_counter > self.costume_switching_threshold:
+        if self.costume_step_counter > self.number_of_frames:
             # Reset counter
             self.costume_step_counter = 0
             if self.costume_index < self.number_of_sprites:
@@ -36,7 +36,7 @@ class Tombstone(pygame.sprite.Sprite):
                 # Set new image
                 self.image = self.sprites[self.costume_index]
             else:
-                self.can_be_removed_counter -= 1
+                self.last_slide_counter -= 1
 
     def is_expired(self):
-        return self.can_be_removed_counter < 0
+        return self.last_slide_counter < 0
