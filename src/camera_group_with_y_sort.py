@@ -11,9 +11,12 @@ class CameraGroupWithYSort(CameraGroup):
     def __init__(self, game_surface, size_of_map):
         super().__init__(game_surface, size_of_map)
 
-    def custom_draw(self, player):
+    def custom_draw(self, player, additional_offset = None):
         # Calculate map offset
         super().set_map_offset(player)
+        # Add additional offset
+        if additional_offset is not None:
+            self.offset += additional_offset
 
         # Draw each tile with an offset on game_surface keeping Y order
         for sprite in sorted(self.sprites(), key=lambda item: item.rect.centery):

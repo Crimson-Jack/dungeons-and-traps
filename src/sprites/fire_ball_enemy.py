@@ -88,6 +88,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
                                                pygame.sprite.collide_mask):
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
+                    pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
         # Check collision with moving obstacle sprites
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
@@ -95,6 +96,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
                                                pygame.sprite.collide_mask):
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
+                    pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
         collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center

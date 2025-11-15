@@ -71,3 +71,4 @@ class Settings:
     CHANGE_SCORE_EVENT = pygame.event.custom_type()
     CREATE_EXPLODE_EFFECT_EVENT = pygame.event.custom_type()
     REMOVE_OBSTACLES_EVENT = pygame.event.custom_type()
+    TILT_EFFECT_EVENT = pygame.event.custom_type()

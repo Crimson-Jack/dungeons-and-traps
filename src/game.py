@@ -307,6 +307,9 @@ class Game:
             self.load_you_win_message_dialog()
             self.refresh_dashboard_surface()
 
+        if event.type == Settings.TILT_EFFECT_EVENT:
+            self.level.enable_tilt_effect(event.dict.get("tilt_cursor_increment_value"))
+
     def load_first_page(self):
         self.first_page = FirstPage(self.screen)
 

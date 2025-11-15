@@ -344,9 +344,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_manager.increase_score(self.score)
-        # center_rectangle = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
         pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
         if self.is_boss:
+            pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
             pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))
 
     def get_damage_power(self):

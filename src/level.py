@@ -142,6 +142,14 @@ class Level:
         # Particle effects
         self.particle_effects = list()
 
+        # Tilt effect variables
+        self.tilt_effect_enabled = False
+        self.tilt_offset_values = (-25, 20, -15, 14, -9, 9, -6, 5, -5, 4, -5, 4, -4, 3, -4, 3, -3, 2, -3, 2, -2, 2, -2,
+                                   1, -1, 1, -1, 1, -1, 1, -1, 1)
+        self.tilt_cursor = 0
+        self.tilt_cursor_increment_base_value = 0.75
+        self.tilt_cursor_increment_value = self.tilt_cursor_increment_base_value
+
         # Create debugger
         self.debugger = Debug()
 
@@ -416,11 +424,12 @@ class Level:
         self.game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
 
         # Draw all visible sprites
-        self.bottom_background_layer.custom_draw(self.player)
-        self.bottom_sprites_layer.custom_draw(self.player)
-        self.middle_sprites_layer.custom_draw(self.player)
-        self.top_sprites_layer.custom_draw(self.player)
-        self.the_highest_sprites_layer.custom_draw(self.player)
+        tilt_offset = self.get_tilt_effect_offset()
+        self.bottom_background_layer.custom_draw(self.player, tilt_offset)
+        self.bottom_sprites_layer.custom_draw(self.player, tilt_offset)
+        self.middle_sprites_layer.custom_draw(self.player, tilt_offset)
+        self.top_sprites_layer.custom_draw(self.player, tilt_offset)
+        self.the_highest_sprites_layer.custom_draw(self.player, tilt_offset)
 
         # Draw effects
         self.draw_particle_effects()
@@ -584,3 +593,25 @@ class Level:
         for particle_effect in self.particle_effects:
             if particle_effect.is_expired():
                 self.particle_effects.remove(particle_effect)
+
+    def get_tilt_effect_offset(self):
+        tilt_offset = None
+
+        if self.tilt_effect_enabled:
+            if self.tilt_cursor < len(self.tilt_offset_values):
+                tilt_offset = pygame.math.Vector2()
+                tilt_offset.y = self.tilt_offset_values[int(self.tilt_cursor)]
+                self.tilt_cursor += self.tilt_cursor_increment_value
+            else:
+                self.tilt_effect_enabled = False
+                self.tilt_cursor = 0
+
+        return tilt_offset
+
+    def enable_tilt_effect(self, tilt_cursor_increment_value: float = None):
+        self.tilt_effect_enabled = True
+
+        if tilt_cursor_increment_value is not None:
+            self.tilt_cursor_increment_value = tilt_cursor_increment_value
+        else:
+            self.tilt_cursor_increment_value = self.tilt_cursor_increment_base_value
