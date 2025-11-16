@@ -66,6 +66,10 @@ class CameraGroup(pygame.sprite.Group):
             if self.debugger.enabled:
                 self.draw_grid(sprite)
 
+        # Remove additional offset
+        if additional_offset is not None:
+            self.offset -= additional_offset
+
     def draw_grid(self, sprite):
         # Draw grid for each tile that uses CameraGroup class for rendering
         new_rect = pygame.rect.Rect(sprite.rect)
