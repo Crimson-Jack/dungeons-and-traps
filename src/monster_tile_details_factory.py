@@ -1,4 +1,5 @@
 from src.enums.search_path_algorithm import SearchPathAlgorithm
+from src.game_helper import GameHelper
 from src.tile_details.monster_tile_details import MonsterTileDetails
 
 
@@ -8,7 +9,7 @@ class MonsterTileDetailsFactory:
         if monster_name == 'monster-enemy-blue-deaf':
             tile_details = MonsterTileDetails(None, None)
             tile_details.set_all_properties(
-                3.2,
+                GameHelper.multiply_by_tile_size_ratio(3.2),
                 20,
                 100,
                 2,
@@ -20,7 +21,7 @@ class MonsterTileDetailsFactory:
         elif monster_name == 'monster-enemy-green-deaf':
             tile_details = MonsterTileDetails(None, None)
             tile_details.set_all_properties(
-                5.0,
+                GameHelper.multiply_by_tile_size_ratio(5.0),
                 10,
                 200,
                 4,
@@ -32,7 +33,7 @@ class MonsterTileDetailsFactory:
         elif monster_name == 'monster-enemy-red-deaf':
             tile_details = MonsterTileDetails(None, None)
             tile_details.set_all_properties(
-                6.5,
+                GameHelper.multiply_by_tile_size_ratio(6.5),
                 5,
                 500,
                 1,
