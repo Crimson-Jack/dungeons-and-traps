@@ -326,7 +326,7 @@ class Game:
 
         if event.type == Settings.YOU_WIN_EVENT:
             self.level.remove_enemies()
-            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 2000)
+            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 3000)
 
         if event.type == Settings.YOU_WIN_SUMMARY_EVENT:
             pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 0)

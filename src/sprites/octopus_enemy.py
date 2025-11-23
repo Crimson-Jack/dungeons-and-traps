@@ -373,11 +373,13 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def kill(self):
         super().kill()
         self.game_manager.increase_score(self.score)
+
         pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
         pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomleft}))
         pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topright}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomright}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.center}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left, self.rect.top - self.rect.height)}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left - self.rect.width, self.rect.top)}))
+
         if self.is_boss:
             pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
             pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))
