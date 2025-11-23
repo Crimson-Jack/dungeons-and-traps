@@ -16,7 +16,8 @@ from src.tile_details.monster_tile_details import MonsterTileDetails
 
 class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_manager, details: MonsterTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
+                 game_manager, details: MonsterTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites,
+                 hostile_force_sprites):
         super().__init__(groups)
 
         # Base
@@ -74,7 +75,8 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
 
-        # Moving obstacles
+        # Obstacles and Moving obstacles
+        self.obstacle_sprites = obstacle_sprites
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
         # Hostile forces
@@ -106,27 +108,22 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         if self.is_moving:
             self.move()
         else:
-            if not self.is_resting:
-                self.set_next_move()
-            else:
+            if self.is_resting:
                 self.start_delay_counter -= 1
                 if self.start_delay_counter < 0:
-                    self.is_resting = False
                     self.start_delay_counter = self.start_delay
-                    self.set_next_move()
+                    self.is_resting = False
+            if not self.is_resting:
+                if self.is_player_in_range() and self.verify_attack_readiness():
+                    self.calculate_path_to_player()
+                    if self.try_to_set_movement_vector_from_path():
+                        self.is_moving = True
+                if not self.is_moving:
+                    if self.try_to_set_random_movement_vector():
+                        self.path.clear()
+                        self.is_moving = True
 
         self.check_collision_with_hostile_forces()
-
-    def set_next_move(self):
-        if self.is_player_in_range() and self.verify_attack_readiness():
-            self.calculate_path_to_player()
-            if self.try_to_set_movement_vector_from_path():
-                self.is_moving = True
-
-        if not self.is_moving:
-            if self.try_to_set_random_movement_vector():
-                self.is_moving = True
-                self.path.clear()
 
     def move(self):
         # Calculate real y position
@@ -150,53 +147,89 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
 
-        if self.check_collision_with_moving_obstacles():
-            # Collision with moving obstacle sprites was detected
-            # Monster must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
-
-            # Adjust real position after collision
+        # Check collisions with obstacles and moving obstacles
+        if self.check_collision_with_all_obstacles():
+            # Adjust position after collision
             self.real_x_position = float(self.hit_box.x)
             self.real_y_position = float(self.hit_box.y)
+            # Remove path
+            self.path.clear()
+            # Try to find random vector
+            self.try_to_set_random_movement_vector()
 
-            # Stop moving and early return
-            self.is_moving = False
-        else:
-            # Recognize the moment when monster moves to a new area
-            # In this case TILE_SIZE is a divisor of "right" or "bottom"
-            if self.rect.right % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 1
+        # Recognize the moment when monster moves to a new area
+        # In this case TILE_SIZE is a divisor of "right" or "bottom"
+        if self.rect.right % Settings.TILE_SIZE == 0:
+            self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 1
 
-            if self.rect.bottom % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 1
+        if self.rect.bottom % Settings.TILE_SIZE == 0:
+            self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 1
 
-            # If position was changed, change position and determine new direction
-            if self.current_position_on_map != self.new_position_on_map:
-                # Adjust real position
-                self.real_x_position = self.hit_box.x
-                self.real_y_position = self.hit_box.y
+        # If position was changed, change position and determine new direction
+        if self.current_position_on_map != self.new_position_on_map:
+            # Adjust real position
+            self.real_x_position = self.hit_box.x
+            self.real_y_position = self.hit_box.y
 
-                # Change current position (x or y or both)
-                if self.current_position_on_map[0] != self.new_position_on_map[0]:
-                    self.current_position_on_map[0] = self.new_position_on_map[0]
-                if self.current_position_on_map[1] != self.new_position_on_map[1]:
-                    self.current_position_on_map[1] = self.new_position_on_map[1]
+            # Change current position (x or y or both)
+            if self.current_position_on_map[0] != self.new_position_on_map[0]:
+                self.current_position_on_map[0] = self.new_position_on_map[0]
+            if self.current_position_on_map[1] != self.new_position_on_map[1]:
+                self.current_position_on_map[1] = self.new_position_on_map[1]
 
-                # Find out if the next move is possible
-                if not self.try_to_set_movement_vector_from_path():
-                    self.is_moving = False
+            # Find out if the next move is possible
+            if not self.try_to_set_movement_vector_from_path():
+                self.is_moving = False
 
         # Increase costume step counter
         self.costume_step_counter += 1
 
-    def check_collision_with_moving_obstacles(self):
+    def check_collision_with_all_obstacles(self):
+        # Note, that for this case monster collision with the obstacle is checked based on the obstacle
+        # rectangle, not a hitbox. The reason is to avoid monster to be over the obstacle.
         is_collision_detected = False
+        monster_hitbox = self.hit_box
 
-        for sprite in self.moving_obstacle_sprites:
-            if sprite.hit_box.colliderect(self.hit_box):
-                is_collision_detected = True
-                break
+        # Obstacle
+        for sprite in self.obstacle_sprites:
+            if sprite.rect.colliderect(monster_hitbox):
+                if self.movement_vector.x > 0:
+                    self.hit_box.right = sprite.rect.left
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.x < 0:
+                    self.hit_box.left = sprite.rect.right
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.y > 0:
+                    self.hit_box.bottom = sprite.rect.top
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.y < 0:
+                    self.hit_box.top = sprite.rect.bottom
+                    is_collision_detected = True
+                    break
+
+        if not is_collision_detected:
+            # Moving obstacle
+            for sprite in self.moving_obstacle_sprites:
+                if sprite.rect.colliderect(monster_hitbox):
+                    if self.movement_vector.x > 0:
+                        self.hit_box.right = sprite.rect.left
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.x < 0:
+                        self.hit_box.left = sprite.rect.right
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.y > 0:
+                        self.hit_box.bottom = sprite.rect.top
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.y < 0:
+                        self.hit_box.top = sprite.rect.bottom
+                        is_collision_detected = True
+                        break
 
         return is_collision_detected
 

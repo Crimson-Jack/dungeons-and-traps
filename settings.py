@@ -3,7 +3,9 @@ import pygame
 
 class Settings:
     # Clock
-    FPS = 60
+    FPS = 45
+    # NOTE: experimental feature
+    DYNAMIC_FPS_ENABLED = True
 
     # Screen size
     FULL_SCREEN_MODE = True

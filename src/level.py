@@ -368,8 +368,8 @@ class Level:
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
                         MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     tile_details, self.obstacle_map.items, self.moving_obstacle_sprites,
-                                     self.hostile_force_sprites)
+                                     tile_details, self.obstacle_map.items, self.obstacle_sprites,
+                                     self.moving_obstacle_sprites, self.hostile_force_sprites)
 
                     elif layer_name == 'spider-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -513,7 +513,8 @@ class Level:
         groups = self.top_sprites_layer, self.enemy_sprites
 
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
-                     self.obstacle_map.items, self.moving_obstacle_sprites, self.hostile_force_sprites)
+                     self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites,
+                     self.hostile_force_sprites)
 
     def create_boss_octopus(self):
         if self.boss_point_position is None:

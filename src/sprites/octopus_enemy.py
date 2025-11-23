@@ -7,7 +7,6 @@ from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
 from src.game_helper import GameHelper
-from src.search_path_algorithms.breadth_first_search import BreadthFirstSearch
 from src.search_path_algorithms.greedy_best_first_search import GreedyBestFirstSearch
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
@@ -112,25 +111,20 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         if self.is_moving:
             self.move()
         else:
-            if not self.is_resting:
-                self.set_next_move()
-            else:
+            if self.is_resting:
                 self.start_delay_counter -= 1
                 if self.start_delay_counter < 0:
-                    self.is_resting = False
                     self.start_delay_counter = self.start_delay
-                    self.set_next_move()
-
-    def set_next_move(self):
-        if self.is_player_in_range():
-            self.calculate_path_to_player()
-            if self.try_to_set_movement_vector_from_path():
-                self.is_moving = True
-
-        if not self.is_moving:
-            if self.try_to_set_random_movement_vector():
-                self.is_moving = True
-                self.path.clear()
+                    self.is_resting = False
+            if not self.is_resting:
+                if self.is_player_in_range():
+                    self.calculate_path_to_player()
+                    if self.try_to_set_movement_vector_from_path():
+                        self.is_moving = True
+                if not self.is_moving:
+                    if self.try_to_set_random_movement_vector():
+                        self.path.clear()
+                        self.is_moving = True
 
     def move(self):
         # Calculate real y position
@@ -154,42 +148,39 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             # TODO: Calculate value based on the direction
             self.hit_box.y = self.hit_box.y - y_remainder
 
-        if self.check_collision_with_moving_obstacles():
-            # Collision with moving obstacle sprites was detected
-            # Monster must be moved to the last valid position (using current map position)
-            self.hit_box.x = self.current_position_on_map[0] * Settings.TILE_SIZE
-            self.hit_box.y = self.current_position_on_map[1] * Settings.TILE_SIZE
-
-            # Adjust real position after collision
+        # Check collisions with obstacles and moving obstacles
+        if self.check_collision_with_all_obstacles():
+            # Adjust position after collision
             self.real_x_position = float(self.hit_box.x)
             self.real_y_position = float(self.hit_box.y)
+            # Remove path
+            self.path.clear()
+            # Try to find random vector
+            self.try_to_set_random_movement_vector()
 
-            # Stop moving and early return
-            self.is_moving = False
-        else:
-            # Recognize the moment when monster moves to a new area
-            # In this case TILE_SIZE is a divisor of "right" or "bottom"
-            if self.rect.right % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 2
+        # Recognize the moment when monster moves to a new area
+        # In this case TILE_SIZE is a divisor of "right" or "bottom"
+        if self.rect.right % Settings.TILE_SIZE == 0:
+            self.new_position_on_map[0] = (self.rect.right // Settings.TILE_SIZE) - 2
 
-            if self.rect.bottom % Settings.TILE_SIZE == 0:
-                self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 2
+        if self.rect.bottom % Settings.TILE_SIZE == 0:
+            self.new_position_on_map[1] = (self.rect.bottom // Settings.TILE_SIZE) - 2
 
-            # If position was changed, change position and determine new direction
-            if self.current_position_on_map != self.new_position_on_map:
-                # Adjust real position
-                self.real_x_position = self.hit_box.x
-                self.real_y_position = self.hit_box.y
+        # If position was changed, change position and determine new direction
+        if self.current_position_on_map != self.new_position_on_map:
+            # Adjust real position
+            self.real_x_position = self.hit_box.x
+            self.real_y_position = self.hit_box.y
 
-                # Change current position (x or y or both)
-                if self.current_position_on_map[0] != self.new_position_on_map[0]:
-                    self.current_position_on_map[0] = self.new_position_on_map[0]
-                if self.current_position_on_map[1] != self.new_position_on_map[1]:
-                    self.current_position_on_map[1] = self.new_position_on_map[1]
+            # Change current position (x or y or both)
+            if self.current_position_on_map[0] != self.new_position_on_map[0]:
+                self.current_position_on_map[0] = self.new_position_on_map[0]
+            if self.current_position_on_map[1] != self.new_position_on_map[1]:
+                self.current_position_on_map[1] = self.new_position_on_map[1]
 
-                # Find out if the next move is possible
-                if not self.try_to_set_movement_vector_from_path():
-                    self.is_moving = False
+            # Find out if the next move is possible
+            if not self.try_to_set_movement_vector_from_path():
+                self.is_moving = False
 
         # Increase costume step counter
         self.costume_step_counter += 1
@@ -197,13 +188,52 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         # Increase fireball counter
         self.fire_ball_counter += 1
 
-    def check_collision_with_moving_obstacles(self):
+    def check_collision_with_all_obstacles(self):
+        # Note, that for this case monster collision with the obstacle is checked based on the obstacle
+        # rectangle, not a hitbox. The reason is to avoid monster to be over the obstacle.
         is_collision_detected = False
+        octopus_center_hitbox = self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)
 
-        for sprite in self.moving_obstacle_sprites:
-            if sprite.hit_box.colliderect(self.rect.inflate(-Settings.TILE_SIZE * 2, -Settings.TILE_SIZE * 2)):
-                is_collision_detected = True
-                break
+        # Obstacle
+        for sprite in self.obstacle_sprites:
+            if sprite.rect.colliderect(octopus_center_hitbox):
+                if self.movement_vector.x > 0:
+                    self.hit_box.right = sprite.rect.left + Settings.TILE_SIZE
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.x < 0:
+                    self.hit_box.left = sprite.rect.right - Settings.TILE_SIZE
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.y > 0:
+                    self.hit_box.bottom = sprite.rect.top + Settings.TILE_SIZE
+                    is_collision_detected = True
+                    break
+                elif self.movement_vector.y < 0:
+                    self.hit_box.top = sprite.rect.bottom - Settings.TILE_SIZE
+                    is_collision_detected = True
+                    break
+
+        if not is_collision_detected:
+            # Moving obstacle
+            for sprite in self.moving_obstacle_sprites:
+                if sprite.rect.colliderect(octopus_center_hitbox):
+                    if self.movement_vector.x > 0:
+                        self.hit_box.right = sprite.rect.left + Settings.TILE_SIZE
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.x < 0:
+                        self.hit_box.left = sprite.rect.right - Settings.TILE_SIZE
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.y > 0:
+                        self.hit_box.bottom = sprite.rect.top + Settings.TILE_SIZE
+                        is_collision_detected = True
+                        break
+                    elif self.movement_vector.y < 0:
+                        self.hit_box.top = sprite.rect.bottom - Settings.TILE_SIZE
+                        is_collision_detected = True
+                        break
 
         return is_collision_detected
 
@@ -263,7 +293,6 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.calculate_path_to_player()
 
     def set_player_tile_position(self):
-        # pass
         # Player has changed position - calculate a new path
         if self.is_player_in_range():
             self.calculate_path_to_player()
@@ -345,6 +374,10 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         super().kill()
         self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomleft}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topright}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomright}))
+        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.center}))
         if self.is_boss:
             pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
             pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))

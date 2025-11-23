@@ -78,6 +78,12 @@ class CameraGroup(pygame.sprite.Group):
 
         # Draw a path from the player to monster, bat or octopus enemy
         if isinstance(sprite, MonsterEnemy) or isinstance(sprite, OctopusEnemy) or isinstance(sprite, BatEnemy):
+            if sprite.current_position_on_map:
+                new_rect = pygame.rect.Rect(sprite.current_position_on_map[0] * Settings.TILE_SIZE,
+                                            sprite.current_position_on_map[1] * Settings.TILE_SIZE,
+                                            Settings.TILE_SIZE, Settings.TILE_SIZE)
+                new_rect.topleft += self.offset
+                pygame.draw.rect(self.game_surface, self.debugger.path_color, new_rect, 6)
             if sprite.path:
                 for path_item in sprite.path:
                     new_rect = pygame.rect.Rect(path_item[0] * Settings.TILE_SIZE,

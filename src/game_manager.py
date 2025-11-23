@@ -14,20 +14,19 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
-            LevelDetails('s01_level_09.tmx', False),
-            # LevelDetails('basic_arena.tmx', False)
-            # 'basic.tmx',
-            # 'basic_arena.tmx',
-            # 'basic_open_arena.tmx',
-            # 's01_level_01.tmx',
-            # 's01_level_02.tmx',
-            # 's01_level_03.tmx',
-            # 's01_level_04.tmx',
-            # 's01_level_05.tmx',
-            # 's01_level_06.tmx',
-            # 's01_level_07.tmx',
-            # 's01_level_08.tmx',
-            # 's01_level_09.tmx',
+            # LevelDetails('basic.tmx', True),
+            # LevelDetails('basic_arena.tmx', True),
+            # LevelDetails('basic_open_arena.tmx', True),
+
+            LevelDetails('s01_level_01.tmx', True),
+            LevelDetails('s01_level_02.tmx', True),
+            LevelDetails('s01_level_03.tmx', True),
+            LevelDetails('s01_level_04.tmx', True),
+            LevelDetails('s01_level_05.tmx', True),
+            LevelDetails('s01_level_06.tmx', True),
+            LevelDetails('s01_level_07.tmx', True),
+            LevelDetails('s01_level_08.tmx', True),
+            LevelDetails('s01_level_09.tmx', False)
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
