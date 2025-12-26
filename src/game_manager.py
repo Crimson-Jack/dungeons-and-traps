@@ -18,15 +18,15 @@ class GameManager:
             # LevelDetails('basic_arena.tmx', True),
             # LevelDetails('basic_open_arena.tmx', True),
 
-            LevelDetails('s01_level_01.tmx', True),
-            LevelDetails('s01_level_02.tmx', True),
-            LevelDetails('s01_level_03.tmx', True),
-            LevelDetails('s01_level_04.tmx', True),
-            LevelDetails('s01_level_05.tmx', True),
-            LevelDetails('s01_level_06.tmx', True),
-            LevelDetails('s01_level_07.tmx', True),
-            LevelDetails('s01_level_08.tmx', True),
-            LevelDetails('s01_level_09.tmx', False)
+            LevelDetails('s01_level_01.tmx', True, 'c1'),
+            LevelDetails('s01_level_02.tmx', True, 'c2'),
+            LevelDetails('s01_level_03.tmx', True, 'c3'),
+            LevelDetails('s01_level_04.tmx', True, 'c4'),
+            LevelDetails('s01_level_05.tmx', True, 'c5'),
+            LevelDetails('s01_level_06.tmx', True, 'c6'),
+            LevelDetails('s01_level_07.tmx', True, 'c7'),
+            LevelDetails('s01_level_08.tmx', True, 'c8'),
+            LevelDetails('s01_level_09.tmx', False, 'c9')
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -62,10 +62,10 @@ class GameManager:
 
         self.check_point_position = None
 
-    def clear_settings_for_first_level(self):
+    def clear_settings_for_first_level(self, level_number:int = 0):
         self.lighting_status = LightingStatus.LIGHT_ON
 
-        self.level = 0
+        self.level = level_number
         self.lives = 2
         self.score = 0
 
@@ -117,6 +117,9 @@ class GameManager:
 
     def set_first_page(self):
         self.game_status = GameStatus.FIRST_PAGE
+
+    def set_secret_code(self):
+        self.game_status = GameStatus.SECRET_CODE
 
     def set_next_level(self):
         self.game_status = GameStatus.NEXT_LEVEL
@@ -329,6 +332,10 @@ class GameManager:
         elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
             self.player_movement_direction = Direction.RIGHT_UP
 
+    def reset_player_movement(self):
+        self.player_movement_vector.x = 0
+        self.player_movement_vector.y = 0
+
     def reset_player_direction(self):
         self.player_movement_direction = Direction.RIGHT
 
@@ -346,3 +353,10 @@ class GameManager:
 
     def set_lighting_spell(self, lighting_status: LightingStatus):
         self.lighting_status = lighting_status
+
+    def check_secret_code(self, code):
+        for item in self.LEVELS:
+            if item.secret_code is not None and item.secret_code == code:
+                return self.LEVELS.index(item)
+
+        return None

@@ -4,10 +4,10 @@ from enum import IntEnum
 class GameStatus(IntEnum):
     UNKNOWN = 0
     FIRST_PAGE = 1
-    NEXT_LEVEL = 2
-    GAME_IS_RUNNING = 3
-    GAME_IS_PAUSED = 4
-    OPTIONS = 5
-    LEVEL_COMPLETED = 6
-    GAME_OVER = 7
-
+    SECRET_CODE = 2
+    NEXT_LEVEL = 3
+    GAME_IS_RUNNING = 4
+    GAME_IS_PAUSED = 5
+    OPTIONS = 6
+    LEVEL_COMPLETED = 7
+    GAME_OVER = 8
