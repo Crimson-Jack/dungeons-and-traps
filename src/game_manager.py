@@ -121,6 +121,9 @@ class GameManager:
     def set_secret_code(self):
         self.game_status = GameStatus.SECRET_CODE
 
+    def set_secret_code_is_valid(self):
+        self.game_status = GameStatus.SECRET_CODE_IS_VALID
+
     def set_next_level(self):
         self.game_status = GameStatus.NEXT_LEVEL
 
@@ -354,7 +357,7 @@ class GameManager:
     def set_lighting_spell(self, lighting_status: LightingStatus):
         self.lighting_status = lighting_status
 
-    def check_secret_code(self, code):
+    def validate_secret_code(self, code):
         for item in self.LEVELS:
             if item.secret_code is not None and item.secret_code == code:
                 return self.LEVELS.index(item)

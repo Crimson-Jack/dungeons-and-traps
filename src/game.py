@@ -106,7 +106,7 @@ class Game:
             self.clock.tick(self.calculate_fps())
 
             # TODO: Remove
-            print(self.game_manager.player_movement_vector)
+            # print(self.game_manager.player_movement_vector)
 
         # TODO: Remove
         # print(sum(times_elapsed) / len(times_elapsed))
@@ -125,6 +125,16 @@ class Game:
             return new_fps
 
     def handle_keyboard_buttons_down(self, event):
+        # Note: Always capture player movement events
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.game_manager.set_player_movement(0, 1)
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.game_manager.set_player_movement(0, -1)
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.game_manager.set_player_movement(1, 0)
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.game_manager.set_player_movement(-1, 0)
+        # Note: Capture other events only when the appropriate game status is present
         if self.game_manager.game_status == GameStatus.FIRST_PAGE:
             if event.key == pygame.K_ESCAPE:
                 # Exit
@@ -147,20 +157,37 @@ class Game:
                 self.clean_screen()
                 self.load_first_page()
             elif event.key == pygame.K_RETURN:
-                # Check secret code
-                secret_code_level_index = self.game_manager.check_secret_code(self.secret_code_text)
+                # Validate secret code
+                secret_code_level_index = self.game_manager.validate_secret_code(self.secret_code_text)
                 if secret_code_level_index is not None:
+                    # Prepare selected level and change game status
                     self.game_manager.clear_settings_for_first_level(secret_code_level_index)
                     self.level = Level(self.screen, self.game_surface, self.game_manager)
-                    self.load_secret_code_message_dialog('The code is valid - START the game!')
+                    self.game_manager.set_secret_code_is_valid()
+                    messages = list()
+                    messages.append(Message('The code is valid!', Settings.HIGHLIGHTED_TEXT_COLOR, 20))
+                    messages.append(Message('Press any button to start the game', Settings.TEXT_COLOR, 16))
+                    self.load_secret_code_message_dialog(messages)
                 else:
-                    self.load_secret_code_message_dialog('The code is not valid - please try again!')
+                    # Show error message
+                    messages = list()
+                    messages.append(Message('The code is not valid - please try again!', Settings.TEXT_COLOR, 16))
+                    self.load_secret_code_message_dialog(messages)
             elif event.key == pygame.K_BACKSPACE:
+                # Remove last char
                 self.secret_code_text = self.secret_code_text[:-1]
                 self.load_secret_code_message_dialog()
             else:
-                self.secret_code_text += event.unicode
+                if len(self.secret_code_text) < 16 and event.unicode.isascii() and event.unicode.isalnum():
+                    # Add char to secret code text only if it's ASCII alphanumeric
+                    self.secret_code_text += event.unicode
                 self.load_secret_code_message_dialog()
+        elif self.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID:
+            # Close secret code dialog and open next level dialog
+            self.dispose_message_dialog()
+            self.game_manager.set_next_level()
+            self.load_next_level_message_dialog()
+            self.secret_code_text = ''
         elif self.game_manager.game_status == GameStatus.NEXT_LEVEL:
             if event.key == pygame.K_SPACE:
                 # Close next level dialog and continue the game
@@ -178,14 +205,6 @@ class Game:
                 # Open pause dialog and pause the game
                 self.game_manager.switch_pause_state()
                 self.load_game_paused_message_dialog()
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                self.game_manager.set_player_movement(0, 1)
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
-                self.game_manager.set_player_movement(0, -1)
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                self.game_manager.set_player_movement(1, 0)
-            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                self.game_manager.set_player_movement(-1, 0)
             if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
                 self.game_manager.set_player_is_using_weapon(True)
             if event.key == pygame.K_x:
@@ -243,15 +262,15 @@ class Game:
         return True
 
     def handle_keyboard_buttons_up(self, event):
-        if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                self.game_manager.set_player_movement(0, -1)
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
-                self.game_manager.set_player_movement(0, 1)
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                self.game_manager.set_player_movement(-1, 0)
-            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                self.game_manager.set_player_movement(1, 0)
+        # Note: Always capture player movement events
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.game_manager.set_player_movement(0, -1)
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.game_manager.set_player_movement(0, 1)
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.game_manager.set_player_movement(-1, 0)
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.game_manager.set_player_movement(1, 0)
 
     def handle_custom_events(self, event):
         if event.type == Settings.CHANGE_SCORE_EVENT:
@@ -424,16 +443,17 @@ class Game:
         self.message_dialog = MessageBox(self.screen, 800, 100, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
-    def load_secret_code_message_dialog(self, dialog_response: str = None):
+    def load_secret_code_message_dialog(self, dialog_response_messages: list[Message] = None):
         messages = list()
         messages.append(Message('ENTER THE SECRET CODE', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('And play the specified level', Settings.TEXT_COLOR, 20))
-        messages.append(InputMessage(self.secret_code_text, Settings.TEXT_COLOR, 40, 430, 50, -5, 10, 20))
-        if dialog_response is not None:
-            messages.append(Message(dialog_response, Settings.HIGHLIGHTED_TEXT_COLOR, 20))
-        messages.append(Message('', Settings.TEXT_COLOR, 25))
-        messages.append(Message('Press the ESC button to return to the main page', Settings.TEXT_COLOR, 16))
-        self.message_dialog = MessageBox(self.screen, 800, 320, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        messages.append(InputMessage(self.secret_code_text, Settings.TEXT_COLOR, 40, 610, 50, -5, 10, 20))
+        if dialog_response_messages is not None:
+            for item in dialog_response_messages:
+                messages.append(item)
+        else:
+            messages.append(Message('Press the ESC button to return to the main page', Settings.TEXT_COLOR, 16))
+        self.message_dialog = MessageBox(self.screen, 800, 300, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                               Settings.MESSAGE_BORDER_COLOR, messages)
 
     def dispose_message_dialog(self):
