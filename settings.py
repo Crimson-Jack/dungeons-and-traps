@@ -8,7 +8,7 @@ class Settings:
     DYNAMIC_FPS_ENABLED = True
 
     # Screen size
-    FULL_SCREEN_MODE = False
+    FULL_SCREEN_MODE = True
     WIDTH = 960
     HEIGHT = 576
 

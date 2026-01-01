@@ -428,8 +428,16 @@ class Game:
         messages = list()
         messages.append(Message(f'LEVEL {self.game_manager.level + 1}', Settings.HIGHLIGHTED_TEXT_COLOR, 80))
         messages.append(Message('Press the SPACE button to start', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 80,
+        secret_code = self.game_manager.get_secret_code()
+        if secret_code is not None and len(secret_code) > 0:
+            messages.append(Message('', Settings.TEXT_COLOR, 90))
+            messages.append(Message('The secret code for this level is', Settings.TEXT_COLOR, 16))
+            messages.append(Message(self.game_manager.get_secret_code(), Settings.HIGHLIGHTED_TEXT_COLOR, 20))
+            self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 140,
                                          Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
+        else:
+            self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 80,
+                                             Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_game_over_message_dialog(self):
         messages = list()

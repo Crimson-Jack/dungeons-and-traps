@@ -18,7 +18,7 @@ class GameManager:
             # LevelDetails('basic_arena.tmx', True),
             # LevelDetails('basic_open_arena.tmx', True),
 
-            LevelDetails('s01_level_01.tmx', True, 'c1'),
+            LevelDetails('s01_level_01.tmx', True),
             LevelDetails('s01_level_02.tmx', True, 'c2'),
             LevelDetails('s01_level_03.tmx', True, 'c3'),
             LevelDetails('s01_level_04.tmx', True, 'c4'),
@@ -363,3 +363,6 @@ class GameManager:
                 return self.LEVELS.index(item)
 
         return None
+
+    def get_secret_code(self):
+        return self.LEVELS[self.level].secret_code
