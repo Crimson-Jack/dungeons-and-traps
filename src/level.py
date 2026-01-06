@@ -456,7 +456,7 @@ class Level:
             circle_y = self.player.rect.centery + offset.y
 
             if self.game_manager.lighting_status == LightingStatus.TWILIGHT:
-                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 80)
+                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 100)
             elif self.game_manager.lighting_status == LightingStatus.TORCHLIGHT:
                 circle_radius = 200, 220, 240, 260, 280
                 circle_alpha = 0, 50, 100, 150, 200

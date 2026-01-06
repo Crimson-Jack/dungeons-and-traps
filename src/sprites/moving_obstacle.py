@@ -21,7 +21,7 @@ class MovingObstacle(CustomDrawSprite):
         # Power variables to move obstacle
         self.power = 0
         self.power_step = 5
-        self.power_needed_to_move_obstacle = 100
+        self.power_needed_to_move_obstacle = 50
 
         # Create power bar
         bar_width = Settings.TILE_SIZE - GameHelper.multiply_by_tile_size_ratio(10)
