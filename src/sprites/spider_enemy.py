@@ -2,7 +2,9 @@ import pygame
 
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_costume import SpriteCostume
 from src.tile_details.spider_tile_details import SpiderTileDetails
@@ -12,6 +14,9 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
     def __init__(self, sprite_costumes_matrix: list[list[SpriteCostume]], position, groups, game_manager,
                  details: SpiderTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -209,6 +214,7 @@ class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
             self.image = self.sprite_costumes_matrix[self.costume_index][costume_index_for_damaged_state].image
 
     def kill(self):
+        self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))

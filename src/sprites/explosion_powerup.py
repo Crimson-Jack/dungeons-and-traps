@@ -1,3 +1,5 @@
+from src.enums.sound_effect import SoundEffect
+from src.sound_manager import SoundManager
 from src.sprites.powerup import Powerup
 
 
@@ -6,6 +8,10 @@ class ExplosionPowerup(Powerup):
         super().__init__(image, position, groups, game_manager)
         self.number_of_explosions = powerup_volume
 
+        # Sound
+        self.sound_manager = SoundManager()
+
     def activate(self):
+        self.sound_manager.play_sfx(SoundEffect.COLLECT_EXPLOSION)
         self.game_manager.collect_explosion_powerup(self.number_of_explosions)
         super().kill()

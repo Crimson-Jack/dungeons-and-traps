@@ -5,7 +5,9 @@ import pygame
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.enums.direction import Direction
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_helper import SpriteHelper
 
@@ -13,6 +15,9 @@ from src.sprite_helper import SpriteHelper
 class Arrow(CustomDrawSprite):
     def __init__(self, position, groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites, arrow_direction):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Direction and states
         self.direction = arrow_direction
@@ -106,6 +111,7 @@ class Arrow(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
                     if isinstance(sprite, EnemyWithEnergy):
+                        self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_BOW)
                         sprite.decrease_energy(self.damage_power)
                         self.kill()
                         self.create_particle_effect(sprite_hit_box, 12, Settings.ENEMY_PARTICLE_COLORS)
@@ -114,6 +120,7 @@ class Arrow(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_ARROW_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
         # Check collision with moving obstacle sprites
@@ -121,6 +128,7 @@ class Arrow(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_ARROW_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
 

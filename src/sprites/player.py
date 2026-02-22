@@ -1,9 +1,13 @@
+from graphlib import TopologicalSorter
+
 import pygame
 
 from settings import Settings
 from src.enums.direction import Direction
+from src.enums.sound_effect import SoundEffect
 from src.enums.weapon_type import WeaponType
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprites.bow_weapon import BowWeapon
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprites.explosion_weapon import ExplosionWeapon
@@ -18,6 +22,9 @@ class Player(CustomDrawSprite):
                  passage_sprites, teleport_sprites, collectable_sprites, enemy_sprites, hostile_force_sprites,
                  game_manager):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Create sprite animation variables
         self.costume_switching_threshold = 5
@@ -118,6 +125,9 @@ class Player(CustomDrawSprite):
                 # Set image based on direction and costume index
                 self.set_costume(self.movement_direction, self.costume_index)
 
+                # Sfx
+                self.sound_manager.play_sfx(SoundEffect.MOVE_PLAYER)
+
             # The player's move is complete
             self.is_moving = False
         else:
@@ -161,7 +171,6 @@ class Player(CustomDrawSprite):
 
         # Check the movement
         if self.rect.center != self.hit_box.center:
-
             # Set the movement offset
             self.rect.center = self.hit_box.center
 
@@ -187,6 +196,7 @@ class Player(CustomDrawSprite):
         # Check collision with exit points
         for sprite in self.exit_points:
             if sprite.visible and sprite.hit_box.colliderect(self.hit_box):
+                self.sound_manager.play_sfx(SoundEffect.COMPLETE_LEVEL)
                 # Player is invisible
                 self.visible = False
                 # Trigger teleport player to next level event
@@ -199,6 +209,7 @@ class Player(CustomDrawSprite):
                     destinations = list(
                         filter(lambda item: item.port_name == sprite.destination, self.teleport_sprites))
                     if len(destinations) == 1:
+                        self.sound_manager.play_sfx(SoundEffect.TELEPORT)
                         destination = destinations[0]
                         # Destination is selected = blocked for teleportation
                         destination.select()
@@ -225,6 +236,7 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_ENEMY)
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
@@ -233,6 +245,7 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_HOSTILE_FORCE)
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
@@ -366,6 +379,7 @@ class Player(CustomDrawSprite):
         self.visible = True
 
     def trigger_tombstone_creation(self):
+        self.sound_manager.play_sfx(SoundEffect.LOST_LIFE)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def trigger_vanishing_point_creation(self):
