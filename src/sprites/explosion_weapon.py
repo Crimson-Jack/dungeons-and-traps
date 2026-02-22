@@ -2,7 +2,9 @@ import pygame
 
 from settings import Settings
 from src.enums.direction import Direction
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprite_helper import SpriteHelper
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.sprites.custom_draw_sprite import CustomDrawSprite
@@ -11,6 +13,11 @@ from src.sprites.custom_draw_sprite import CustomDrawSprite
 class ExplosionWeapon(CustomDrawSprite):
     def __init__(self, position, groups, enemy_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
+
+        # Enemies
         self.enemy_sprites = enemy_sprites
 
         # Sprite animation variables
@@ -42,6 +49,7 @@ class ExplosionWeapon(CustomDrawSprite):
                 # Damage enemies in range
                 for enemy in self.enemy_sprites:
                     if self.is_enemy_in_range(enemy) and isinstance(enemy, EnemyWithEnergy):
+                        self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_EXPLOSION)
                         enemy.decrease_energy(self.damage_power)
                 # Reset counter
                 self.step_counter = 0
