@@ -213,16 +213,22 @@ class GameManager:
             self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.next()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.next()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.previous()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.previous()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:

@@ -6,8 +6,10 @@ from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.search_path_algorithms.greedy_best_first_search import GreedyBestFirstSearch
+from src.sound_manager import SoundManager
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprites.fire_ball_enemy import FireBallEnemy
@@ -18,6 +20,9 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
                  game_manager, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -371,6 +376,7 @@ class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         return distance[0] < self.range and distance[1] < self.range
 
     def kill(self):
+        self.sound_manager.play_sfx(SoundEffect.KILL_OCTOPUS)
         super().kill()
         self.game_manager.increase_score(self.score)
 

@@ -3,13 +3,18 @@ import math
 import pygame
 
 from settings import Settings
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprite_helper import SpriteHelper
 
 
 class FireBallEnemy(pygame.sprite.Sprite):
     def __init__(self, position, groups, game_manager, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(*groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -86,6 +91,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_FIREBALL_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
                     pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
@@ -94,6 +100,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_FIREBALL_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
                     pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
