@@ -5,8 +5,10 @@ import pygame
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.search_path_algorithms.breadth_first_search import BreadthFirstSearch
+from src.sound_manager import SoundManager
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.tile_details.bat_tile_details import BatTileDetails
@@ -16,6 +18,9 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
                  game_manager, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -373,6 +378,7 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
             self.image = self.sprites[self.costume_index].image
 
     def kill(self):
+        self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))

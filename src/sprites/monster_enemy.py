@@ -6,9 +6,11 @@ from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.geometry_helper import GeometryHelper
 from src.search_path_algorithm_factory import SearchPathAlgorithmFactory
+from src.sound_manager import SoundManager
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.tile_details.monster_tile_details import MonsterTileDetails
@@ -19,6 +21,9 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
                  game_manager, details: MonsterTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites,
                  hostile_force_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -238,6 +243,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
+                    self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_SWORD)
                     self.decrease_energy(sprite.get_damage_power())
 
     def try_to_set_movement_vector_from_path(self):
@@ -402,9 +408,13 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
             self.costume_step_counter = 0
             self.costume_index += 1
 
-            # If it's the last costume - start from the second costume (index = 1)
+            # If it's the last costume
             if self.costume_index >= self.number_of_sprites:
+                # Start from the first costume (index = 0)
                 self.costume_index = 0
+                # Sfx
+                if self.path is not None and len(self.path) > 0:
+                    self.sound_manager.play_sfx(SoundEffect.MOVE_ENEMY)
 
             # Set new image
             self.image = self.sprites[self.costume_index].image
@@ -419,6 +429,7 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         return distance[0] < self.range and distance[1] < self.range
 
     def kill(self):
+        self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))

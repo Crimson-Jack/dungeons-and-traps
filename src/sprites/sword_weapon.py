@@ -3,7 +3,9 @@ import pygame
 from settings import Settings
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
 from src.enums.direction import Direction
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_helper import SpriteHelper
 
@@ -11,6 +13,9 @@ from src.sprite_helper import SpriteHelper
 class SwordWeapon(CustomDrawSprite):
     def __init__(self, position, groups, game_manager, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Base
         self.game_manager = game_manager
@@ -106,6 +111,7 @@ class SwordWeapon(CustomDrawSprite):
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
                     if isinstance(sprite, EnemyWithEnergy):
+                        self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_SWORD)
                         self.game_manager.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)
                         self.create_particle_effect(sprite_hit_box, 1, Settings.ENEMY_PARTICLE_COLORS)
@@ -154,6 +160,8 @@ class SwordWeapon(CustomDrawSprite):
         self.is_armed = False
 
     def start_cutting(self):
+        if not self.is_moving:
+            self.sound_manager.play_sfx(SoundEffect.STRIKE_WITH_SWORD)
         self.is_moving = True
 
     def stop_cutting(self):

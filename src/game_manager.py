@@ -4,9 +4,11 @@ import pygame
 from settings import Settings
 from src.enums.direction import Direction
 from src.enums.game_status import GameStatus
+from src.enums.sound_effect import SoundEffect
 from src.level_details import LevelDetails
 from src.enums.lighting_status import LightingStatus
 from src.enums.weapon_type import WeaponType
+from src.sound_manager import SoundManager
 from src.sprites.diamond import Diamond
 from src.sprites.key import Key
 
@@ -14,11 +16,11 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
-            # LevelDetails('basic.tmx', True),
-            # LevelDetails('basic_arena.tmx', True),
+            LevelDetails('basic.tmx', True),
+            LevelDetails('basic_arena.tmx', False),
             # LevelDetails('basic_open_arena.tmx', True),
 
-            LevelDetails('s01_level_01.tmx', True),
+            LevelDetails('s01_level_01.tmx', True, 'c1'),
             LevelDetails('s01_level_02.tmx', True, 'c2'),
             LevelDetails('s01_level_03.tmx', True, 'c3'),
             LevelDetails('s01_level_04.tmx', True, 'c4'),
@@ -61,6 +63,9 @@ class GameManager:
         self.boss_energy = self.boss_max_energy
 
         self.check_point_position = None
+
+        # Sound
+        self.sound_manager = SoundManager()
 
     def clear_settings_for_first_level(self, level_number:int = 0):
         self.lighting_status = LightingStatus.LIGHT_ON
@@ -208,16 +213,22 @@ class GameManager:
             self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.next()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.next()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.previous()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.previous()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
