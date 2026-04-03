@@ -11,6 +11,7 @@ class SoundEffect(StrEnum):
     COLLECT_LIFE = 'collect_life'
     COLLECT_CHECKPOINT = 'collect_checkpoint'
     COLLECT_LIGHTNING_SPELL = 'collect_lighting_spell'
+    COLLECT_LIGHTNING_SPELL_TWILIGHT = 'collect_lighting_spell_twilight'
     COLLECT_EGG = 'collect_egg'
 
     STRIKE_WITH_SWORD = 'strike_with_sword'

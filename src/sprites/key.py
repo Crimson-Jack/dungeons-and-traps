@@ -21,6 +21,7 @@ class Key(ItemToCollect):
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-35),
                                          GameHelper.multiply_by_tile_size_ratio(-35))
+
         self.key_name = details.key_name
         self.score = details.score
 
