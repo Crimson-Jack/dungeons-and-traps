@@ -17,7 +17,7 @@ class GameManager:
     def __init__(self):
         self.LEVELS = [
             LevelDetails('basic.tmx', True),
-            # LevelDetails('basic_arena.tmx', True),
+            LevelDetails('basic_arena.tmx', False),
             # LevelDetails('basic_open_arena.tmx', True),
 
             LevelDetails('s01_level_01.tmx', True, 'c1'),

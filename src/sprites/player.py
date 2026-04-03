@@ -236,7 +236,7 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
-                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_ENEMY)
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_PLAYER_WITH_ENEMY)
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
@@ -245,7 +245,7 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
-                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_HOSTILE_FORCE)
+                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_PLAYER_WITH_HOSTILE_FORCE)
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
