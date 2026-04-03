@@ -1,5 +1,7 @@
 from src.enums.direction import Direction
+from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
+from src.sound_manager import SoundManager
 from src.sprites.arrow import Arrow
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.sprite_helper import SpriteHelper
@@ -8,6 +10,9 @@ from src.sprite_helper import SpriteHelper
 class BowWeapon(CustomDrawSprite):
     def __init__(self, position, groups, enemy_sprites, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Sprite animation variables
         self.sprites = SpriteHelper.get_all_bow_sprites()
@@ -85,8 +90,10 @@ class BowWeapon(CustomDrawSprite):
             self.image = self.sprites['left_down'][0]
 
     def fire(self):
-        self.arrows.append(Arrow(self.rect.topleft, tuple(self.groups()), self.enemy_sprites, self.obstacle_sprites,
-                                 self.moving_obstacle_sprites, self.direction))
+        if self.is_armed:
+            self.sound_manager.play_sfx(SoundEffect.SHOOT_ARROW)
+            self.arrows.append(Arrow(self.rect.topleft, tuple(self.groups()), self.enemy_sprites, self.obstacle_sprites,
+                                     self.moving_obstacle_sprites, self.direction))
 
     def arm_weapon(self):
         self.is_armed = True

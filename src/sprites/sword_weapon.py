@@ -160,6 +160,8 @@ class SwordWeapon(CustomDrawSprite):
         self.is_armed = False
 
     def start_cutting(self):
+        if not self.is_moving:
+            self.sound_manager.play_sfx(SoundEffect.STRIKE_WITH_SWORD)
         self.is_moving = True
 
     def stop_cutting(self):

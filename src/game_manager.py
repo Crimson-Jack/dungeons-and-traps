@@ -354,13 +354,6 @@ class GameManager:
         self.player_movement_direction = Direction.RIGHT
 
     def set_player_is_using_weapon(self, status):
-        if self.weapon_type == WeaponType.SWORD:
-            self.sound_manager.play_sfx(SoundEffect.STRIKE_WITH_SWORD)
-        elif self.weapon_type == WeaponType.BOW:
-            self.sound_manager.play_sfx(SoundEffect.SHOOT_ARROW)
-        elif self.weapon_type == WeaponType.EXPLOSION:
-            self.sound_manager.play_sfx(SoundEffect.EXPLODE)
-
         self.player_is_using_weapon = status
 
     def set_player_tile_position(self, position):
