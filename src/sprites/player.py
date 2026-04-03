@@ -25,6 +25,8 @@ class Player(CustomDrawSprite):
 
         # Sound
         self.sound_manager = SoundManager()
+        self.sound_switching_threshold = 8
+        self.sound_counter = 0
 
         # Create sprite animation variables
         self.costume_switching_threshold = 5
@@ -236,7 +238,11 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
-                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_ENEMY)
+                    if self.sound_counter > self.sound_switching_threshold:
+                        self.sound_manager.play_sfx(SoundEffect.COLLIDE_PLAYER_WITH_ENEMY)
+                        self.sound_counter = 0
+                    else:
+                        self.sound_counter += 1
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 
@@ -245,7 +251,11 @@ class Player(CustomDrawSprite):
             if sprite.hit_box.colliderect(self.hit_box):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
-                    self.sound_manager.play_sfx(SoundEffect.COLLIDE_WITH_HOSTILE_FORCE)
+                    if self.sound_counter > self.sound_switching_threshold:
+                        self.sound_manager.play_sfx(SoundEffect.COLLIDE_PLAYER_WITH_HOSTILE_FORCE)
+                        self.sound_counter = 0
+                    else:
+                        self.sound_counter += 1
                     self.collided_with_enemy = True
                     self.game_manager.decrease_player_energy(sprite.get_damage_power())
 

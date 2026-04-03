@@ -1,6 +1,8 @@
 import pygame
 
 from settings import Settings
+from src.enums.sound_effect import SoundEffect
+from src.sound_manager import SoundManager
 from src.sprites.item_to_collect import ItemToCollect
 from src.sprite_helper import SpriteHelper
 
@@ -8,6 +10,9 @@ from src.sprite_helper import SpriteHelper
 class Egg(ItemToCollect):
     def __init__(self, position, groups, game_manager):
         super().__init__(groups, game_manager)
+
+        # Sound
+        self.sound_manager = SoundManager()
 
         # Sprite animation variables
         self.sprites = SpriteHelper.get_all_egg_sprites()
@@ -22,6 +27,7 @@ class Egg(ItemToCollect):
         self.hit_box = self.rect
 
     def collect(self):
+        self.sound_manager.play_sfx(SoundEffect.COLLECT_EGG)
         super().kill()
 
     def update(self):
@@ -41,6 +47,7 @@ class Egg(ItemToCollect):
 
             # If it's the last costume - create a monster
             if self.costume_index >= self.number_of_sprites:
+                self.sound_manager.play_sfx(SoundEffect.CREATE_MONSTER)
                 pygame.event.post(
                     pygame.event.Event(Settings.CREATE_MONSTER_EVENT, {"position": self.rect.topleft}))
                 self.kill()

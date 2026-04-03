@@ -109,6 +109,7 @@ class ExplosionWeapon(CustomDrawSprite):
 
     def fire(self):
         if self.is_armed:
+            self.sound_manager.play_sfx(SoundEffect.EXPLODE)
             pygame.event.post(pygame.event.Event(Settings.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.last_center_position_with_offset}))
             self.is_fired = True
 

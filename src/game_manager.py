@@ -17,7 +17,7 @@ class GameManager:
     def __init__(self):
         self.LEVELS = [
             LevelDetails('basic.tmx', True),
-            # LevelDetails('basic_arena.tmx', True),
+            LevelDetails('basic_arena.tmx', False),
             # LevelDetails('basic_open_arena.tmx', True),
 
             LevelDetails('s01_level_01.tmx', True, 'c1'),
@@ -213,16 +213,22 @@ class GameManager:
             self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.next()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.next()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
+        current_weapon_type = self.weapon_type
         self.weapon_type = self.weapon_type.previous()
         while self.weapon_type not in self.collected_weapons:
             self.weapon_type = self.weapon_type.previous()
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
@@ -348,13 +354,6 @@ class GameManager:
         self.player_movement_direction = Direction.RIGHT
 
     def set_player_is_using_weapon(self, status):
-        if self.weapon_type == WeaponType.SWORD:
-            self.sound_manager.play_sfx(SoundEffect.STRIKE_WITH_SWORD)
-        elif self.weapon_type == WeaponType.BOW:
-            self.sound_manager.play_sfx(SoundEffect.SHOOT_ARROW)
-        elif self.weapon_type == WeaponType.EXPLOSION:
-            self.sound_manager.play_sfx(SoundEffect.EXPLODE)
-
         self.player_is_using_weapon = status
 
     def set_player_tile_position(self, position):
