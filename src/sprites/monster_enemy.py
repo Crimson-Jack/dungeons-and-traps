@@ -3,20 +3,20 @@ import random
 import pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_brain import EnemyWithBrain
-from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
+from src.abstract_classes.damageable_enemy import DamageableEnemy
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.geometry_helper import GeometryHelper
-from src.search_path_algorithm_factory import SearchPathAlgorithmFactory
+from src.factories.search_path_algorithm_factory import SearchPathAlgorithmFactory
 from src.sound_manager import SoundManager
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 from src.tile_details.monster_tile_details import MonsterTileDetails
 
 
-class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
+class MonsterEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, ObstacleMapObserver):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
                  game_manager, details: MonsterTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites,
                  hostile_force_sprites):
@@ -131,9 +131,10 @@ class MonsterEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMa
         self.check_collision_with_hostile_forces()
 
     def move(self):
-        # Calculate real y position
-        self.real_x_position += float(self.movement_vector.x * self.speed)
-        self.real_y_position += float(self.movement_vector.y * self.speed)
+        # Calculate real position
+        if self.movement_vector:
+            self.real_x_position += float(self.movement_vector.x * self.speed)
+            self.real_y_position += float(self.movement_vector.y * self.speed)
 
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)

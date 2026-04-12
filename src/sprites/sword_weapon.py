@@ -1,7 +1,7 @@
 import pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.enums.direction import Direction
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
@@ -110,7 +110,7 @@ class SwordWeapon(CustomDrawSprite):
                 if pygame.sprite.spritecollide(self, pygame.sprite.GroupSingle(sprite), False,
                                                pygame.sprite.collide_mask):
                     sprite_hit_box = sprite.hit_box
-                    if isinstance(sprite, EnemyWithEnergy):
+                    if isinstance(sprite, DamageableEnemy):
                         self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_SWORD)
                         self.game_manager.decrease_sword_energy()
                         sprite.decrease_energy(self.damage_power)

@@ -6,7 +6,7 @@ from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.sound_manager import SoundManager
 from src.sprite_helper import SpriteHelper
-from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 
 
@@ -48,7 +48,7 @@ class ExplosionWeapon(CustomDrawSprite):
             if self.step_counter > self.explosion_starting_threshold:
                 # Damage enemies in range
                 for enemy in self.enemy_sprites:
-                    if self.is_enemy_in_range(enemy) and isinstance(enemy, EnemyWithEnergy):
+                    if self.is_enemy_in_range(enemy) and isinstance(enemy, DamageableEnemy):
                         self.sound_manager.play_sfx(SoundEffect.DECREASE_ENEMY_ENERGY_USING_EXPLOSION)
                         enemy.decrease_energy(self.damage_power)
                 # Reset counter
