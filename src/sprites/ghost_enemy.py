@@ -1,12 +1,12 @@
 import pygame
 
 from settings import Settings
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.sprite_costume import SpriteCostume
 from src.tile_details.ghost_tile_details import GhostTileDetails
 
 
-class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
+class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
     def __init__(self, sprites: list[SpriteCostume], position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
         super().__init__(*groups)
 

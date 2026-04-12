@@ -5,7 +5,7 @@ from pytmx.util_pygame import load_pygame
 
 from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.effects.blast_effect import BlastEffect
@@ -469,10 +469,10 @@ class Level:
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
         for sprite in self.hostile_force_sprites.sprites():
-            if isinstance(sprite, ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
 
     def inform_about_player_tile_position(self):

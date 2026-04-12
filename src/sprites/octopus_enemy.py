@@ -5,7 +5,7 @@ import pygame
 from settings import Settings
 from src.abstract_classes.enemy_with_brain import EnemyWithBrain
 from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.search_path_algorithms.greedy_best_first_search import GreedyBestFirstSearch
@@ -16,7 +16,7 @@ from src.sprites.fire_ball_enemy import FireBallEnemy
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 
 
-class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapRefreshSprite):
+class OctopusEnemy(CustomDrawSprite, EnemyWithBrain, EnemyWithEnergy, ObstacleMapObserver):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
                  game_manager, details: OctopusTileDetails, obstacle_map, obstacle_sprites, moving_obstacle_sprites):
         super().__init__(groups)
