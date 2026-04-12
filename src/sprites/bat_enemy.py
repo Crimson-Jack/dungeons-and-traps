@@ -158,9 +158,10 @@ class BatEnemy(CustomDrawSprite, EnemyWithEnergy, ObstacleMapRefreshSprite):
             return True
 
     def move(self):
-        # Calculate real y position
-        self.real_x_position += float(self.movement_vector.x * self.speed)
-        self.real_y_position += float(self.movement_vector.y * self.speed)
+        # Calculate real position
+        if self.movement_vector:
+            self.real_x_position += float(self.movement_vector.x * self.speed)
+            self.real_y_position += float(self.movement_vector.y * self.speed)
 
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
