@@ -13,9 +13,9 @@ from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
-from src.monster_tile_details_factory import MonsterTileDetailsFactory
+from src.factories.monster_tile_details_factory import MonsterTileDetailsFactory
 from src.obstacle_map import ObstacleMap
-from src.powerup_factory import PowerupFactory
+from src.factories.powerup_factory import PowerupFactory
 from src.sprites.bat_enemy import BatEnemy
 from src.sprites.check_point import CheckPoint
 from src.sprites.demolished_wall import DemolishedWall
