@@ -1,7 +1,7 @@
 import pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_energy import EnemyWithEnergy
+from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.sound_manager import SoundManager
@@ -10,7 +10,7 @@ from src.sprite_costume import SpriteCostume
 from src.tile_details.spider_tile_details import SpiderTileDetails
 
 
-class SpiderEnemy(CustomDrawSprite, EnemyWithEnergy):
+class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
     def __init__(self, sprite_costumes_matrix: list[list[SpriteCostume]], position, groups, game_manager,
                  details: SpiderTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
