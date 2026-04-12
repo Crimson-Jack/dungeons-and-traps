@@ -4,7 +4,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_brain import EnemyWithBrain
+from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
@@ -477,7 +477,7 @@ class Level:
 
     def inform_about_player_tile_position(self):
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, EnemyWithBrain):
+            if isinstance(sprite, PathfindingEnemy):
                 sprite.set_player_tile_position()
 
     def show_exit_point(self):
