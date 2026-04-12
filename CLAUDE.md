@@ -78,9 +78,9 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Sprite Hierarchy
 
-- Enemies that use pathfinding extend `EnemyWithBrain` (marker interface) — `Level.inform_about_player_tile_position()` calls `set_player_tile_position()` on them each time the player moves to a new tile.
-- Enemies that need to refresh their collision map extend `ObstacleMapRefreshSprite`.
-- `EnemyWithEnergy` (abstract) handles HP and damage logic.
+- Enemies that use pathfinding extend `PathfindingEnemy` (marker interface) — `Level.inform_about_player_tile_position()` calls `set_player_tile_position()` on them each time the player moves to a new tile.
+- Enemies that need to refresh their collision map extend `ObstacleMapObserver`.
+- `DamageableEnemy` (abstract) handles HP and damage logic.
 
 ### Obstacle Map
 
