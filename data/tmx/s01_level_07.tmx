@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="79">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="81">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wood-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/player.tsx"/>
@@ -64,7 +64,7 @@
     <property name="port_name" value="port_1"/>
    </properties>
   </object>
-  <object id="8" name="port_2" gid="226" x="720" y="336" width="16" height="16">
+  <object id="8" name="port_2" gid="226" x="704" y="304" width="16" height="16">
    <properties>
     <property name="destination" value="port_1"/>
     <property name="port_name" value="port_2"/>
@@ -144,9 +144,9 @@
 84,0,0,0,84,0,84,0,0,0,0,0,0,0,81,90,0,81,85,85,85,85,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,180,170,0,0,0,183,84,0,84,
 84,0,0,0,84,0,84,0,0,0,0,0,0,81,90,0,0,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,180,174,170,0,0,0,95,0,84,
 84,0,0,0,84,0,84,0,0,0,0,0,81,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,177,179,179,176,0,0,0,0,84,
-84,0,0,0,84,0,89,85,85,85,85,85,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,81,85,85,85,85,85,85,85,88,0,0,0,84,
-84,0,0,0,84,0,0,0,0,0,0,0,0,0,81,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,0,0,84,
-89,85,85,85,91,85,85,85,85,85,85,85,85,85,91,91,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,91,85,85,85,85,85,85,85,85,85,85,85,90
+84,0,0,0,84,0,89,85,85,85,85,85,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,81,85,85,85,85,85,85,85,88,0,87,0,84,
+84,0,0,0,84,0,0,0,0,0,0,0,0,0,81,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,84,0,84,
+89,85,85,85,91,85,85,85,85,85,85,85,85,85,91,91,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,91,85,85,85,85,85,85,85,85,85,91,85,90
 </data>
  </layer>
  <layer id="4" name="moving-obstacle" width="52" height="26">
@@ -271,7 +271,7 @@
    </object>
   </objectgroup>
   <objectgroup id="10" name="monster-enemy">
-   <object id="5" name="monster-enemy-red" gid="203" x="672" y="400" width="16" height="16" visible="0">
+   <object id="5" name="monster-enemy-red" gid="203" x="672" y="400" width="16" height="16">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="6"/>
@@ -293,7 +293,7 @@
      <property name="start_delay" type="int" value="10"/>
     </properties>
    </object>
-   <object id="16" name="monster-enemy-green" gid="211" x="128" y="128" width="16" height="16" visible="0">
+   <object id="16" name="monster-enemy-green" gid="211" x="128" y="128" width="16" height="16">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="4"/>
@@ -532,7 +532,7 @@
 </data>
   </layer>
   <objectgroup id="6" name="spell">
-   <object id="2" name="lighting-twilight" gid="161" x="704" y="400" width="16" height="16">
+   <object id="2" name="lighting-twilight" gid="161" x="80" y="176" width="16" height="16">
     <properties>
      <property name="spell_name" value="twilight"/>
     </properties>
@@ -547,9 +547,14 @@
      <property name="spell_name" value="light_on"/>
     </properties>
    </object>
+   <object id="79" name="lighting-torchlight" gid="163" x="800" y="384" width="16" height="16">
+    <properties>
+     <property name="spell_name" value="torchlight"/>
+    </properties>
+   </object>
   </objectgroup>
   <objectgroup id="12" name="key">
-   <object id="15" name="key-violet" gid="252" x="672" y="400" width="16" height="16">
+   <object id="15" name="key-violet" gid="252" x="720" y="304" width="16" height="16">
     <properties>
      <property name="key_name" value="violet"/>
      <property name="score" type="int" value="100"/>
@@ -563,7 +568,7 @@
    </object>
   </objectgroup>
   <objectgroup id="7" name="powerup">
-   <object id="10" name="powerup-energy" gid="189" x="768" y="352" width="16" height="16">
+   <object id="10" name="powerup-energy" gid="189" x="768" y="352" width="16" height="16" visible="0">
     <properties>
      <property name="powerup_name" value="energy"/>
      <property name="powerup_volume" type="int" value="10"/>
@@ -631,6 +636,12 @@
    <object id="67" name="powerup-energy" gid="198" x="480" y="80" width="16" height="16">
     <properties>
      <property name="powerup_name" value="energy"/>
+     <property name="powerup_volume" type="int" value="10"/>
+    </properties>
+   </object>
+   <object id="80" name="powerup-bow" gid="186" x="336" y="304" width="16" height="16">
+    <properties>
+     <property name="powerup_name" value="bow"/>
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
