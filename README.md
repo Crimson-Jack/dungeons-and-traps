@@ -37,8 +37,8 @@ Each level requires collecting all diamonds to open the exit. Keys unlock locked
 ### Requirements
 
 - Python 3.11.x
-- [pygame](https://www.pygame.org/) 2.1.3
-- [PyTMX](https://pytmx.readthedocs.io/) 3.31
+- [pygame-ce](https://pyga.me/) 2.5.6
+- [PyTMX](https://pytmx.readthedocs.io/) 3.32
 
 ### How to run the game?
     

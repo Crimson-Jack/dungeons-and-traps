@@ -31,7 +31,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Dependencies: `pygame==2.1.3`, `PyTMX==3.31`
+Dependencies: `pygame-ce==2.5.6`, `PyTMX==3.32`
 
 There are no automated tests in this project.
 
