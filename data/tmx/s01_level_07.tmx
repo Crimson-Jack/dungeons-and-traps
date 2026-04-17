@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="79">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="81">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wood-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/player.tsx"/>
@@ -40,11 +40,11 @@
 31,31,32,31,0,21,0,31,31,32,33,0,34,31,31,0,21,0,33,31,31,32,32,0,0,0,0,23,23,23,26,0,0,0,0,31,31,31,31,32,31,31,31,31,31,31,31,31,33,0,21,0,
 31,32,31,32,0,22,0,33,32,31,32,31,31,31,32,0,28,0,32,33,0,0,0,0,1610612761,24,26,64,0,0,0,0,31,31,31,31,31,31,31,31,33,31,31,0,0,0,0,0,0,0,21,0,
 31,31,32,31,0,21,0,31,0,0,0,0,0,0,0,0,27,0,0,0,0,23,23,23,26,0,0,0,0,31,31,31,31,31,32,32,32,32,31,31,32,31,31,0,23,25,0,0,0,0,22,0,
-31,32,34,32,0,21,0,31,33,31,34,31,31,31,32,0,21,27,38,21,21,21,0,0,0,0,31,31,31,31,31,31,31,32,32,32,32,32,32,31,31,32,31,0,21,2684354586,25,0,0,0,21,0,
-31,31,31,65,0,21,0,32,31,32,31,31,32,31,0,0,27,0,0,0,0,0,0,31,31,31,31,31,31,32,31,31,31,32,31,31,32,31,32,31,33,31,31,0,0,21,2684354586,25,0,0,21,0,
-31,75,34,31,0,27,0,31,31,31,31,31,31,0,0,21,21,0,32,31,31,31,31,32,32,31,31,31,31,31,33,31,31,32,32,32,31,32,31,31,34,32,31,0,0,0,27,2684354586,25,0,21,0,
+31,32,34,66,0,21,0,31,33,31,34,31,31,31,32,0,21,27,38,21,21,21,0,0,0,0,31,31,31,31,31,31,31,32,32,32,32,32,32,31,31,32,31,0,21,2684354586,25,0,0,0,21,0,
+31,75,32,31,0,21,0,32,31,32,31,31,32,31,0,0,27,0,0,0,0,0,0,31,31,31,31,31,31,32,31,31,31,32,31,31,32,31,32,31,33,31,31,0,0,21,2684354586,25,0,0,21,0,
+31,32,34,32,0,27,0,31,31,31,31,31,31,0,0,21,21,0,32,31,31,31,31,32,32,31,31,31,31,31,33,31,31,32,32,32,31,32,31,31,34,32,31,0,0,0,27,2684354586,25,0,21,0,
 31,31,33,65,0,21,0,33,31,32,31,31,0,0,22,22,0,0,34,31,31,31,31,34,32,31,33,32,31,31,32,31,31,31,32,32,31,32,31,31,31,31,31,0,0,0,0,22,21,21,21,0,
-31,75,34,31,0,21,0,0,0,0,0,0,0,21,21,0,0,31,31,31,31,32,31,31,31,31,31,31,31,31,31,31,31,31,32,32,32,32,31,0,0,0,0,0,0,0,0,0,21,21,21,0,
+31,76,34,32,0,21,0,0,0,0,0,0,0,21,21,0,0,31,31,31,31,32,31,31,31,31,31,31,31,31,31,31,31,31,32,32,32,32,31,0,0,0,0,0,0,0,0,0,21,21,21,0,
 31,31,33,31,0,22,21,21,21,27,21,21,21,22,0,0,32,31,31,31,34,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,0,21,27,21,21,21,22,21,21,21,22,21,0,
 31,31,31,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
@@ -64,7 +64,7 @@
     <property name="port_name" value="port_1"/>
    </properties>
   </object>
-  <object id="8" name="port_2" gid="226" x="720" y="336" width="16" height="16">
+  <object id="8" name="port_2" gid="226" x="704" y="304" width="16" height="16">
    <properties>
     <property name="destination" value="port_1"/>
     <property name="port_name" value="port_2"/>
@@ -144,9 +144,9 @@
 84,0,0,0,84,0,84,0,0,0,0,0,0,0,81,90,0,81,85,85,85,85,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,180,170,0,0,0,183,84,0,84,
 84,0,0,0,84,0,84,0,0,0,0,0,0,81,90,0,0,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,180,174,170,0,0,0,95,0,84,
 84,0,0,0,84,0,84,0,0,0,0,0,81,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,177,179,179,176,0,0,0,0,84,
-84,0,0,0,84,0,89,85,85,85,85,85,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,81,85,85,85,85,85,85,85,88,0,0,0,84,
-84,0,0,0,84,0,0,0,0,0,0,0,0,0,81,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,0,0,84,
-89,85,85,85,91,85,85,85,85,85,85,85,85,85,91,91,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,91,85,85,85,85,85,85,85,85,85,85,85,90
+84,0,0,0,84,0,89,85,85,85,85,85,90,0,0,81,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,81,85,85,85,85,85,85,85,88,0,87,0,84,
+84,0,0,0,84,0,0,0,0,0,0,0,0,0,81,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,84,0,84,
+89,85,85,85,91,85,85,85,85,85,85,85,85,85,91,91,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,91,85,85,85,85,85,85,85,85,85,91,85,90
 </data>
  </layer>
  <layer id="4" name="moving-obstacle" width="52" height="26">
@@ -282,7 +282,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="6" name="monster-enemy-green" gid="211" x="704" y="400" width="16" height="16">
+   <object id="6" name="monster-enemy-green" gid="211" x="720" y="304" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="4"/>
@@ -390,7 +390,7 @@
      <property name="speed" type="float" value="5.5"/>
     </properties>
    </object>
-   <object id="28" name="fire-flame-enemy-right" gid="295" x="16" y="352" width="16" height="16">
+   <object id="28" name="fire-flame-enemy-right" gid="295" x="16" y="336" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
      <property name="direction" value="right"/>
@@ -399,7 +399,7 @@
      <property name="speed" type="float" value="6"/>
     </properties>
    </object>
-   <object id="31" name="fire-flame-enemy-left" gid="291" x="48" y="336" width="16" height="16">
+   <object id="31" name="fire-flame-enemy-left" gid="291" x="48" y="320" width="16" height="16">
     <properties>
      <property name="damage_power" type="int" value="12"/>
      <property name="direction" value="left"/>
@@ -532,7 +532,7 @@
 </data>
   </layer>
   <objectgroup id="6" name="spell">
-   <object id="2" name="lighting-twilight" gid="161" x="800" y="272" width="16" height="16">
+   <object id="2" name="lighting-twilight" gid="161" x="80" y="176" width="16" height="16">
     <properties>
      <property name="spell_name" value="twilight"/>
     </properties>
@@ -547,9 +547,14 @@
      <property name="spell_name" value="light_on"/>
     </properties>
    </object>
+   <object id="79" name="lighting-torchlight" gid="163" x="800" y="384" width="16" height="16">
+    <properties>
+     <property name="spell_name" value="torchlight"/>
+    </properties>
+   </object>
   </objectgroup>
   <objectgroup id="12" name="key">
-   <object id="15" name="key-violet" gid="252" x="800" y="256" width="16" height="16">
+   <object id="15" name="key-violet" gid="252" x="720" y="304" width="16" height="16">
     <properties>
      <property name="key_name" value="violet"/>
      <property name="score" type="int" value="100"/>
@@ -563,7 +568,7 @@
    </object>
   </objectgroup>
   <objectgroup id="7" name="powerup">
-   <object id="10" name="powerup-energy" gid="189" x="768" y="352" width="16" height="16">
+   <object id="10" name="powerup-energy" gid="189" x="768" y="352" width="16" height="16" visible="0">
     <properties>
      <property name="powerup_name" value="energy"/>
      <property name="powerup_volume" type="int" value="10"/>
@@ -631,6 +636,12 @@
    <object id="67" name="powerup-energy" gid="198" x="480" y="80" width="16" height="16">
     <properties>
      <property name="powerup_name" value="energy"/>
+     <property name="powerup_volume" type="int" value="10"/>
+    </properties>
+   </object>
+   <object id="80" name="powerup-bow" gid="186" x="336" y="304" width="16" height="16">
+    <properties>
+     <property name="powerup_name" value="bow"/>
      <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>

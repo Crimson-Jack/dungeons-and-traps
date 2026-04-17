@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="45">
+<map version="1.11" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="46">
  <tileset firstgid="1" source="../tsx/ground.tsx"/>
  <tileset firstgid="81" source="../tsx/single-wall.tsx"/>
  <tileset firstgid="97" source="../tsx/single-wood-wall.tsx"/>
@@ -248,7 +248,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="9" name="monster-enemy-green" gid="211" x="208" y="320" width="16" height="16">
+   <object id="9" name="monster-enemy-green" gid="211" x="208" y="320" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
@@ -281,7 +281,7 @@
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
-   <object id="12" name="monster-enemy-blue" gid="203" x="48" y="288" width="16" height="16">
+   <object id="12" name="monster-enemy-blue" gid="203" x="64" y="288" width="16" height="16">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="2"/>
@@ -387,18 +387,18 @@
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="search_path_algorithm" value="BFS"/>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="3.5"/>
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
-   <object id="39" name="monster-enemy-green" gid="211" x="464" y="32" width="16" height="16">
+   <object id="39" name="monster-enemy-green" gid="211" x="464" y="32" width="16" height="16" visible="0">
     <properties>
      <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="5"/>
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="search_path_algorithm" value="BFS"/>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="3.4"/>
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
@@ -409,7 +409,7 @@
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="search_path_algorithm" value="BFS"/>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="3.8"/>
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
@@ -420,7 +420,7 @@
      <property name="energy" type="int" value="200"/>
      <property name="score" type="int" value="170"/>
      <property name="search_path_algorithm" value="BFS"/>
-     <property name="speed" type="float" value="5"/>
+     <property name="speed" type="float" value="3.8"/>
      <property name="start_delay" type="int" value="1"/>
     </properties>
    </object>
@@ -501,6 +501,12 @@
    <object id="44" name="powerup-life" gid="194" x="608" y="32" width="16" height="16">
     <properties>
      <property name="powerup_name" value="life"/>
+    </properties>
+   </object>
+   <object id="45" name="powerup-bow" gid="186" x="48" y="288" width="16" height="16">
+    <properties>
+     <property name="powerup_name" value="bow"/>
+     <property name="powerup_volume" type="int" value="10"/>
     </properties>
    </object>
   </objectgroup>

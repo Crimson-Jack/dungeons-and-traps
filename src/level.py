@@ -4,8 +4,8 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from settings import Settings
-from src.abstract_classes.enemy_with_brain import EnemyWithBrain
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.effects.blast_effect import BlastEffect
@@ -13,9 +13,9 @@ from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
-from src.monster_tile_details_factory import MonsterTileDetailsFactory
+from src.factories.monster_tile_details_factory import MonsterTileDetailsFactory
 from src.obstacle_map import ObstacleMap
-from src.powerup_factory import PowerupFactory
+from src.factories.powerup_factory import PowerupFactory
 from src.sprites.bat_enemy import BatEnemy
 from src.sprites.check_point import CheckPoint
 from src.sprites.demolished_wall import DemolishedWall
@@ -456,7 +456,7 @@ class Level:
             circle_y = self.player.rect.centery + offset.y
 
             if self.game_manager.lighting_status == LightingStatus.TWILIGHT:
-                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 80)
+                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 100)
             elif self.game_manager.lighting_status == LightingStatus.TORCHLIGHT:
                 circle_radius = 200, 220, 240, 260, 280
                 circle_alpha = 0, 50, 100, 150, 200
@@ -469,15 +469,15 @@ class Level:
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
         for sprite in self.hostile_force_sprites.sprites():
-            if isinstance(sprite, ObstacleMapRefreshSprite):
+            if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
 
     def inform_about_player_tile_position(self):
         for sprite in self.enemy_sprites.sprites():
-            if isinstance(sprite, EnemyWithBrain):
+            if isinstance(sprite, PathfindingEnemy):
                 sprite.set_player_tile_position()
 
     def show_exit_point(self):

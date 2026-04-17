@@ -1,12 +1,12 @@
 import pygame
 
 from settings import Settings
-from src.abstract_classes.obstacle_map_refresh_sprite import ObstacleMapRefreshSprite
+from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.sprite_costume import SpriteCostume
 from src.tile_details.ghost_tile_details import GhostTileDetails
 
 
-class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
+class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
     def __init__(self, sprites: list[SpriteCostume], position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
         super().__init__(*groups)
 
@@ -51,9 +51,10 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapRefreshSprite):
         self.moving_obstacle_sprites = moving_obstacle_sprites
 
     def move(self):
-        # Calculate real y position
-        self.real_x_position += float(self.movement_vector.x * self.speed)
-        self.real_y_position += float(self.movement_vector.y * self.speed)
+        # Calculate real position
+        if self.movement_vector:
+            self.real_x_position += float(self.movement_vector.x * self.speed)
+            self.real_y_position += float(self.movement_vector.y * self.speed)
 
         # Cast real position to integer
         self.hit_box.x = int(self.real_x_position)
