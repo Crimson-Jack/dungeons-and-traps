@@ -14,7 +14,7 @@ class SoundManager(metaclass=SingletonMeta):
 
     def _load_sfx_collection(self):
         for item in SoundEffect:
-            self.sfx_collection[item] = pygame.mixer.Sound(f'sound/sfx/{self.music_set}/{item}.wav')
+            self.sfx_collection[item] = pygame.mixer.Sound(f'sound/sfx/{self.music_set}/{item}.ogg')
 
     def play_sfx(self, sound_effect: SoundEffect):
         # NOTE: If there are no inactive channels and the force argument is True,
