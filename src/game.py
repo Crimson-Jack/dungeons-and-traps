@@ -1,3 +1,5 @@
+import asyncio
+
 import pygame
 import time
 
@@ -70,7 +72,7 @@ class Game:
         self.dashboard.clean()
         self.dashboard.draw()
 
-    def run(self):
+    async def run(self):
         pygame.time.set_timer(Settings.PARTICLE_EVENT, 40)
 
         is_running = True
@@ -104,6 +106,9 @@ class Game:
             # Save end time and calculate FPS parameter
             self.loop_end_time = time.time()
             self.clock.tick(self.calculate_fps())
+
+            # It must be called on every frame
+            await asyncio.sleep(0)
 
             # TODO: Remove
             # print(self.game_manager.player_movement_vector)
