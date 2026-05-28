@@ -31,9 +31,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Dependencies: `pygame-ce==2.5.6`, `PyTMX==3.32`
+Dependencies: `pygame-ce==2.5.6`, `PyTMX==3.32`, `pytest`
 
-There are no automated tests in this project.
+Tests are located in `tests/` and mirror the structure of `src/`. Run with:
+
+```bash
+pytest tests/
+```
 
 ## Architecture Overview
 
@@ -43,7 +47,7 @@ There are no automated tests in this project.
 
 - **`settings.py:Settings`** — single class of static constants: screen dimensions, tile size, FPS, colors, and all custom Pygame event type IDs. Touch this when adding new global settings or events.
 
-- **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, and the ordered `LEVELS` list. Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
+- **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, the ordered `LEVELS` list, and `kill_stats: list[LevelKillStats]` (one entry per played level, persists until game over). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
 
 - **`src/game.py:Game`** — the main game loop. Owns the three UI surfaces (header, dashboard, game area), handles all keyboard input via a state-machine driven by `game_manager.game_status`, dispatches custom events to `Level` methods, and manages transitions between screens/dialogs.
 
@@ -88,7 +92,20 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Sound
 
-`SoundManager` (`src/sound_manager.py`) is a Singleton. It loads all `.wav` files from `sound/sfx/set_01/` keyed by `SoundEffect` enum values on startup. Call `sound_manager.play_sfx(SoundEffect.XYZ)` to play a sound.
+`SoundManager` (`src/sound_manager.py`) is a Singleton. It loads all `.ogg` files from `sound/sfx/set_01/` keyed by `SoundEffect` enum values on startup. Call `sound_manager.play_sfx(SoundEffect.XYZ)` to play a sound.
+
+### Kill Statistics
+
+`LevelKillStats` (`src/level_kill_stats.py`) tracks per-level enemy statistics. For each `EnemyType` (`src/enums/enemy_type.py`) it records:
+- `count` — total enemies spawned on the level
+- `killed` — enemies killed by the player
+- `score` — points earned from kills
+
+`EnemyKillRecord` (`src/enemy_kill_record.py`) holds the three values above for a single enemy type.
+
+`GameManager.kill_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a 1000 pt bonus is awarded at level completion.
+
+Enemy types tracked: `SPIDER_SMALL`, `SPIDER_MEDIUM`, `SPIDER_BIG`, `MONSTER_BLUE`, `MONSTER_GREEN`, `MONSTER_RED`, `MONSTER_BLUE_DEAF`, `MONSTER_GREEN_DEAF`, `MONSTER_RED_DEAF`, `BAT`.
 
 ### Tile Size Scaling
 

@@ -32,6 +32,8 @@ Each level requires collecting all diamonds to open the exit. Keys unlock locked
 - Teleports and checkpoints
 - Dynamic lighting system
 - Level select via secret codes
+- Kill statistics per level (spiders, monsters, bats) with score breakdown
+- Extra bonus for defeating all enemies in a level
 - Original pixel-art graphics and sound effects
 
 ### Requirements
@@ -39,6 +41,7 @@ Each level requires collecting all diamonds to open the exit. Keys unlock locked
 - Python 3.11.x
 - [pygame-ce](https://pyga.me/) 2.5.6
 - [PyTMX](https://pytmx.readthedocs.io/) 3.32
+- [pytest](https://pytest.org/) (for running tests)
 
 ### How to run the game?
     
@@ -80,12 +83,18 @@ dungeons-and-traps/
 │   ├── tmx/                 # Level maps (Tiled Map Editor)
 │   └── tsx/                 # Tilesets
 ├── img/                     # Sprite sheets (PNG)
-├── sound/sfx/set_01/        # Sound effects (WAV)
+├── sound/sfx/set_01/        # Sound effects (OGG)
 ├── font/silkscreen/         # Silkscreen font
+├── tests/
+│   ├── enums/               # Tests for enums
+│   ├── test_enemy_kill_record.py
+│   └── test_level_kill_stats.py
 └── src/
     ├── game.py              # Main game loop and input handling
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
     ├── level.py             # Level loading and sprite management
+    ├── level_kill_stats.py  # Kill statistics tracker per level
+    ├── enemy_kill_record.py # Single enemy type kill record (count, killed, score)
     ├── obstacle_map.py      # 2D grid used by enemy pathfinding
     ├── sound_manager.py     # Sound playback (Singleton)
     ├── sprites/             # All game objects (player, enemies, items, weapons…)
@@ -93,7 +102,7 @@ dungeons-and-traps/
     ├── panels/              # UI panels (header, dashboard, dialogs)
     ├── search_path_algorithms/  # BFS and Greedy Best-First Search
     ├── abstract_classes/    # Base classes for enemies
-    ├── enums/               # Game enums (GameStatus, WeaponType, SoundEffect…)
+    ├── enums/               # Game enums (GameStatus, WeaponType, SoundEffect, EnemyType…)
     └── tile_details/        # TMX object property parsers per sprite type
 ```
 

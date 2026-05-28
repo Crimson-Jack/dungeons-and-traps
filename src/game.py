@@ -446,7 +446,7 @@ class Game:
 
             if monster_kills > 0:
                 monster_score = current_stats.get_monster_total_score()
-                messages.append(Message(f'Monsters: {monster_kills} / {monster_count} ({monster_score} pts)', Settings.TEXT_COLOR, 16))
+                messages.append(Message(f'Goblins: {monster_kills} / {monster_count} ({monster_score} pts)', Settings.TEXT_COLOR, 16))
                 kill_lines_count += 1
 
             if bat_kills > 0:
