@@ -2,6 +2,7 @@ import pygame
 
 from settings import Settings
 from src.abstract_classes.damageable_enemy import DamageableEnemy
+from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.sound_manager import SoundManager
@@ -12,7 +13,7 @@ from src.tile_details.spider_tile_details import SpiderTileDetails
 
 class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
     def __init__(self, sprite_costumes_matrix: list[list[SpriteCostume]], position, groups, game_manager,
-                 details: SpiderTileDetails, moving_obstacle_sprites):
+                 enemy_type: EnemyType, details: SpiderTileDetails, moving_obstacle_sprites):
         super().__init__(groups)
 
         # Sound
@@ -20,6 +21,7 @@ class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
 
         # Base
         self.game_manager = game_manager
+        self.enemy_type = enemy_type
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -217,6 +219,7 @@ class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
         self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
+        self.game_manager.kill_stats[-1].record_kill(self.enemy_type, self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):

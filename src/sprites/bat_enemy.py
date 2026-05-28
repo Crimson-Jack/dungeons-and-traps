@@ -5,6 +5,7 @@ import pygame
 from settings import Settings
 from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
+from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.search_path_algorithms.breadth_first_search import BreadthFirstSearch
@@ -16,7 +17,8 @@ from src.tile_details.bat_tile_details import BatTileDetails
 
 class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
     def __init__(self, sprites: list[SpriteCostume], sprite_image_in_damage_state: pygame.Surface, position, groups,
-                 game_manager, details: BatTileDetails, obstacle_map, moving_obstacle_sprites, hostile_force_sprites):
+                 game_manager, enemy_type: EnemyType, details: BatTileDetails, obstacle_map, moving_obstacle_sprites,
+                 hostile_force_sprites):
         super().__init__(groups)
 
         # Sound
@@ -24,6 +26,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
 
         # Base
         self.game_manager = game_manager
+        self.enemy_type = enemy_type
         self.damage_power = details.damage_power
         self.score = details.score
 
@@ -382,6 +385,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
+        self.game_manager.kill_stats[-1].record_kill(self.enemy_type, self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):

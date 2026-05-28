@@ -6,6 +6,7 @@ from pytmx.util_pygame import load_pygame
 from settings import Settings
 from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
+from src.enums.enemy_type import EnemyType
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.effects.blast_effect import BlastEffect
@@ -367,18 +368,21 @@ class Level:
                         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = MonsterTileDetails(item, layer)
+                        enemy_type = EnemyType.from_name(item.name)
                         MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     tile_details, self.obstacle_map.items, self.obstacle_sprites,
-                                     self.moving_obstacle_sprites, self.hostile_force_sprites)
+                                     enemy_type, tile_details, self.obstacle_map.items,
+                                     self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
+                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
 
                     elif layer_name == 'spider-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
                         sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = SpiderTileDetails(item, layer)
-
-                        SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_manager, tile_details,
-                                    self.moving_obstacle_sprites)
+                        enemy_type = EnemyType.from_name(item.name)
+                        SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_manager,
+                                    enemy_type, tile_details, self.moving_obstacle_sprites)
+                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
 
                     elif layer_name == 'ghost-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -392,9 +396,11 @@ class Level:
                         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
                         groups = self.top_sprites_layer, self.enemy_sprites
                         tile_details = BatTileDetails(item, layer)
+                        enemy_type = EnemyType.from_name(item.name)
                         BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                 tile_details, self.obstacle_map.items, self.moving_obstacle_sprites,
-                                 self.hostile_force_sprites)
+                                 enemy_type, tile_details, self.obstacle_map.items,
+                                 self.moving_obstacle_sprites, self.hostile_force_sprites)
+                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
 
                     elif layer_name == 'octopus-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
@@ -512,9 +518,11 @@ class Level:
 
         groups = self.top_sprites_layer, self.enemy_sprites
 
-        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager, tile_details,
-                     self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites,
-                     self.hostile_force_sprites)
+        enemy_type = EnemyType.from_name(name)
+        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager,
+                     enemy_type, tile_details, self.obstacle_map.items,
+                     self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
+        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
 
     def create_boss_octopus(self):
         if self.boss_point_position is None:

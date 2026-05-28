@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from src.enums.direction import Direction
+from src.level_kill_stats import LevelKillStats
 from src.enums.game_status import GameStatus
 from src.enums.sound_effect import SoundEffect
 from src.level_details import LevelDetails
@@ -64,6 +65,9 @@ class GameManager:
 
         self.check_point_position = None
 
+        # Kill stats — one entry per level, persists until game over
+        self.kill_stats: list[LevelKillStats] = [LevelKillStats()]
+
         # Sound
         self.sound_manager = SoundManager()
 
@@ -91,6 +95,8 @@ class GameManager:
 
         self.check_point_position = None
 
+        self.kill_stats = [LevelKillStats()]
+
     def clear_settings_for_next_level(self):
         self.level += 1
 
@@ -104,6 +110,8 @@ class GameManager:
         self.is_boss_visible = False
 
         self.check_point_position = None
+
+        self.kill_stats.append(LevelKillStats())
 
     def clear_settings_for_current_level(self):
         self.lighting_status = LightingStatus.LIGHT_ON
@@ -119,6 +127,8 @@ class GameManager:
         self.is_boss_visible = False
 
         self.check_point_position = None
+
+        self.kill_stats[-1].reset()
 
     def set_first_page(self):
         self.game_status = GameStatus.FIRST_PAGE
