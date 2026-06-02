@@ -2,13 +2,49 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Strict Rules
+
+**Never:**
+- Modify any file in `data/` (images, sounds, tilesets, maps) unless explicitly asked.
+- Add, remove, or upgrade a dependency in `requirements.txt` without stating the reason in your response.
+- Install packages into the global pip — always use the project's virtual environment.
+- Create documentation files (`.md`) or architecture diagrams unless explicitly asked.
+- Add new Python modules outside the `src/` directory.
+
+**Always:**
+- Run `pytest tests/` before reporting a task complete. If tests fail, fix them first.
+- Use full, descriptive names for all identifiers — no abbreviations or single-letter variables (`enemy_type` not `et`, `center_x` not `cx`).
+- Note any new constant added to `settings.py` explicitly in your response.
+- Use Pygame custom events (defined in `Settings`) for cross-system communication — never call across system boundaries directly.
+- Place new test files in `tests/` mirroring the path of the module under test.
+
+## Change Workflow
+
+For any non-trivial change (new sprite, enemy, UI panel, event, core class refactor):
+1. **Describe first** — state the plan and list every file that will be touched.
+2. **Wait for confirmation** — do not edit production code until the plan is approved. Confirmation means an explicit approval in the current conversation turn — a prior standing instruction does not substitute.
+3. **Implement** — make the change, run `pytest tests/`, report results.
+
+Simple bug fixes and one-liners may skip steps 1–2.
+
+## Stop and Ask
+
+Halt and request human input when:
+- Requirements for a new feature or behavior are ambiguous.
+- A new Pygame event type is needed and its name or scope is unclear.
+- `pytest tests/` fails after a change and the fix is non-obvious.
+- A change affects more than one rendering layer or `ObstacleMap` in a non-obvious way.
+- A change modifies `GameManager` state shared across `Game`, `Level`, and sprites.
+- A new class or module has been added and there is no corresponding test file in `tests/`.
+- The virtual environment is not activated, `pytest` cannot be found, or `pygame-ce` fails to import.
+
 ## Running the Game
 
 ```bash
 python main.py
 ```
 
-Requires Python 3.11.x. Never install packages into the global pip — always use the project's virtual environment.
+Requires Python 3.11.x.
 
 **Option 1 — launcher scripts (recommended).** Automatically create the venv if missing, install dependencies, and start the game:
 
@@ -33,7 +69,7 @@ python main.py
 
 Dependencies: `pygame-ce==2.5.6`, `PyTMX==3.32`, `pytest`
 
-Tests are located in `tests/` and mirror the structure of `src/`. Run with:
+Run tests with:
 
 ```bash
 pytest tests/
@@ -45,7 +81,7 @@ pytest tests/
 
 ### Core Objects and Their Roles
 
-- **`settings.py:Settings`** — single class of static constants: screen dimensions, tile size, FPS, colors, and all custom Pygame event type IDs. Touch this when adding new global settings or events.
+- **`settings.py:Settings`** — single class of static constants: screen dimensions, FPS, colors, and all custom Pygame event type IDs. Rendered tile size is `TILE_SIZE` (scaled from `SOURCE_TILE_SIZE`); use `GameHelper.multiply_by_tile_size_ratio()` when hardcoding speed or geometry values. Touch this when adding new global settings or events.
 
 - **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, the ordered `LEVELS` list, and `kill_stats: list[LevelKillStats]` (one entry per played level, persists until game over). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
 
@@ -96,17 +132,5 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Kill Statistics
 
-`LevelKillStats` (`src/level_kill_stats.py`) tracks per-level enemy statistics. For each `EnemyType` (`src/enums/enemy_type.py`) it records:
-- `count` — total enemies spawned on the level
-- `killed` — enemies killed by the player
-- `score` — points earned from kills
+`LevelKillStats` (`src/level_kill_stats.py`) tracks per-level enemy statistics. For each `EnemyType` it records `count` (spawned), `killed`, and `score`. `GameManager.kill_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a bonus is awarded at level completion.
 
-`EnemyKillRecord` (`src/enemy_kill_record.py`) holds the three values above for a single enemy type.
-
-`GameManager.kill_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a 1000 pt bonus is awarded at level completion.
-
-Enemy types tracked: `SPIDER_SMALL`, `SPIDER_MEDIUM`, `SPIDER_BIG`, `MONSTER_BLUE`, `MONSTER_GREEN`, `MONSTER_RED`, `MONSTER_BLUE_DEAF`, `MONSTER_GREEN_DEAF`, `MONSTER_RED_DEAF`, `BAT`.
-
-### Tile Size Scaling
-
-`Settings.SOURCE_TILE_SIZE = 16` (original art resolution), `Settings.TILE_SIZE = 48` (rendered size). `GameHelper.get_tile_size_ratio()` and `GameHelper.multiply_by_tile_size_ratio()` are used to scale speed and geometry values when the tile size changes.
