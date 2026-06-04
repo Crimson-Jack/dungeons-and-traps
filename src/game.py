@@ -320,8 +320,8 @@ class Game:
 
         if event.type == Settings.NEXT_LEVEL_EVENT:
             self.game_manager.set_level_completed()
-            if self.game_manager.kill_stats[-1].all_enemies_defeated():
-                self.game_manager.increase_score(1000)
+            if self.game_manager.level_stats[-1].all_enemies_defeated():
+                self.game_manager.award_completion_bonus(1000)
             self.load_level_completed_message_dialog()
 
         if event.type == Settings.REMOVE_OBSTACLES_EVENT:
@@ -429,19 +429,19 @@ class Game:
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_level_completed_message_dialog(self):
-        current_stats = self.game_manager.kill_stats[-1]
+        current_stats = self.game_manager.level_stats[-1]
 
         messages = list()
         messages.append(Message('CONGRATULATIONS', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Level completed', Settings.TEXT_COLOR, 20))
         messages.append(Message('', Settings.TEXT_COLOR, 15))
 
-        spider_kills = current_stats.get_spider_total_kills()
-        spider_count = current_stats.get_spider_total_count()
-        monster_kills = current_stats.get_monster_total_kills()
-        monster_count = current_stats.get_monster_total_count()
-        bat_kills = current_stats.get_bat_total_kills()
-        bat_count = current_stats.get_bat_total_count()
+        spider_kills = current_stats.get_enemy_spider_total_kills()
+        spider_count = current_stats.get_enemy_spider_total_count()
+        monster_kills = current_stats.get_enemy_monster_total_kills()
+        monster_count = current_stats.get_enemy_monster_total_count()
+        bat_kills = current_stats.get_enemy_bat_total_kills()
+        bat_count = current_stats.get_enemy_bat_total_count()
 
         kill_lines_count = 0
 
@@ -450,17 +450,17 @@ class Game:
             kill_lines_count += 1
 
             if spider_kills > 0:
-                spider_score = current_stats.get_spider_total_score()
+                spider_score = current_stats.get_enemy_spider_total_score()
                 messages.append(Message(f'Spiders: {spider_kills} / {spider_count} ({spider_score} pts)', Settings.TEXT_COLOR, 16))
                 kill_lines_count += 1
 
             if monster_kills > 0:
-                monster_score = current_stats.get_monster_total_score()
+                monster_score = current_stats.get_enemy_monster_total_score()
                 messages.append(Message(f'Goblins: {monster_kills} / {monster_count} ({monster_score} pts)', Settings.TEXT_COLOR, 16))
                 kill_lines_count += 1
 
             if bat_kills > 0:
-                bat_score = current_stats.get_bat_total_score()
+                bat_score = current_stats.get_enemy_bat_total_score()
                 messages.append(Message(f'Bats: {bat_kills} / {bat_count} ({bat_score} pts)', Settings.TEXT_COLOR, 16))
                 kill_lines_count += 1
 

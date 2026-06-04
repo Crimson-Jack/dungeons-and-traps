@@ -372,7 +372,7 @@ class Level:
                         MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                      enemy_type, tile_details, self.obstacle_map.items,
                                      self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
-                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
+                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
                     elif layer_name == 'spider-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -382,7 +382,7 @@ class Level:
                         enemy_type = EnemyType.from_name(item.name)
                         SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_manager,
                                     enemy_type, tile_details, self.moving_obstacle_sprites)
-                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
+                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
                     elif layer_name == 'ghost-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -400,7 +400,7 @@ class Level:
                         BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
                                  enemy_type, tile_details, self.obstacle_map.items,
                                  self.moving_obstacle_sprites, self.hostile_force_sprites)
-                        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
+                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
                     elif layer_name == 'octopus-enemy':
                         sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
@@ -522,7 +522,7 @@ class Level:
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager,
                      enemy_type, tile_details, self.obstacle_map.items,
                      self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
-        self.game_manager.kill_stats[-1].record_spawn(enemy_type)
+        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
     def create_boss_octopus(self):
         if self.boss_point_position is None:

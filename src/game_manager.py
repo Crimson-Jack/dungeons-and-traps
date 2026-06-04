@@ -6,7 +6,7 @@ from src.enemy_kill_record import EnemyKillRecord
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
 from src.enums.game_status import GameStatus
-from src.level_kill_stats import LevelKillStats
+from src.level_stats import LevelStats
 from src.enums.sound_effect import SoundEffect
 from src.level_details import LevelDetails
 from src.enums.lighting_status import LightingStatus
@@ -67,8 +67,8 @@ class GameManager:
 
         self.check_point_position = None
 
-        # Kill stats — one entry per level, persists until game over
-        self.kill_stats: list[LevelKillStats] = [LevelKillStats()]
+        # Level stats — one entry per level, persists until game over
+        self.level_stats: list[LevelStats] = [LevelStats()]
 
         # Sound
         self.sound_manager = SoundManager()
@@ -97,7 +97,7 @@ class GameManager:
 
         self.check_point_position = None
 
-        self.kill_stats = [LevelKillStats()]
+        self.level_stats = [LevelStats()]
 
     def clear_settings_for_next_level(self):
         self.level += 1
@@ -113,7 +113,7 @@ class GameManager:
 
         self.check_point_position = None
 
-        self.kill_stats.append(LevelKillStats())
+        self.level_stats.append(LevelStats())
 
     def clear_settings_for_current_level(self):
         self.lighting_status = LightingStatus.LIGHT_ON
@@ -130,7 +130,7 @@ class GameManager:
 
         self.check_point_position = None
 
-        self.kill_stats[-1].reset()
+        self.level_stats[-1].reset()
 
     def set_first_page(self):
         self.game_status = GameStatus.FIRST_PAGE
@@ -158,9 +158,9 @@ class GameManager:
 
     def get_aggregate_kill_stats(self) -> dict:
         totals = {enemy_type: EnemyKillRecord() for enemy_type in EnemyType}
-        for level_stats in self.kill_stats:
+        for stats in self.level_stats:
             for enemy_type in EnemyType:
-                level_record = level_stats.get_record(enemy_type)
+                level_record = stats.get_enemy_record(enemy_type)
                 totals[enemy_type].count += level_record.count
                 totals[enemy_type].killed += level_record.killed
                 totals[enemy_type].score += level_record.score
@@ -300,10 +300,12 @@ class GameManager:
 
     def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
+        self.level_stats[-1].record_diamond_placed()
 
     def collect_diamond(self, diamond: Diamond):
         self.collected_diamonds.append(diamond)
         self.score += diamond.score
+        self.level_stats[-1].record_diamond_collected(diamond.score)
         pygame.event.post(pygame.event.Event(Settings.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.LEVELS[self.level].exit_point_enabled:
@@ -314,11 +316,17 @@ class GameManager:
 
     def add_key(self, key: Key):
         self.keys.append(key)
+        self.level_stats[-1].record_key_placed()
 
     def collect_key(self, key: Key):
         self.collected_keys.append(key)
         self.score += key.score
+        self.level_stats[-1].record_key_collected(key.score)
         pygame.event.post(pygame.event.Event(Settings.COLLECT_KEY_EVENT))
+
+    def award_completion_bonus(self, score: int):
+        self.increase_score(score)
+        self.level_stats[-1].record_bonus_awarded(score)
 
     def check_is_key_collected(self, key_name):
         count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))

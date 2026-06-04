@@ -385,7 +385,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         self.sound_manager.play_sfx(SoundEffect.KILL_ENEMY)
         super().kill()
         self.game_manager.increase_score(self.score)
-        self.game_manager.kill_stats[-1].record_kill(self.enemy_type, self.score)
+        self.game_manager.level_stats[-1].record_enemy_kill(self.enemy_type, self.score)
         pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
