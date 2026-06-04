@@ -2,9 +2,11 @@ import pygame
 
 
 from settings import Settings
+from src.enemy_kill_record import EnemyKillRecord
 from src.enums.direction import Direction
-from src.level_kill_stats import LevelKillStats
+from src.enums.enemy_type import EnemyType
 from src.enums.game_status import GameStatus
+from src.level_kill_stats import LevelKillStats
 from src.enums.sound_effect import SoundEffect
 from src.level_details import LevelDetails
 from src.enums.lighting_status import LightingStatus
@@ -150,6 +152,19 @@ class GameManager:
 
     def set_game_over(self):
         self.game_status = GameStatus.GAME_OVER
+
+    def set_kill_summary(self):
+        self.game_status = GameStatus.KILL_SUMMARY
+
+    def get_aggregate_kill_stats(self) -> dict:
+        totals = {enemy_type: EnemyKillRecord() for enemy_type in EnemyType}
+        for level_stats in self.kill_stats:
+            for enemy_type in EnemyType:
+                level_record = level_stats.get_record(enemy_type)
+                totals[enemy_type].count += level_record.count
+                totals[enemy_type].killed += level_record.killed
+                totals[enemy_type].score += level_record.score
+        return totals
 
     def switch_pause_state(self):
         if self.game_status == GameStatus.GAME_IS_PAUSED:

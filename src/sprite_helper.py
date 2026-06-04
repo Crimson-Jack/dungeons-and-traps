@@ -264,6 +264,12 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
+    def get_enemy_icon(enemy_type, size: tuple[int, int]) -> pygame.Surface:
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', Settings.SOURCE_TILE_SIZE, size,
+                                                         SpriteHelper.KEY_COLOR)
+        return sprite_sheet.get_image(0, 0)
+
+    @staticmethod
     def get_all_monster_sprites(name):
         sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', Settings.SOURCE_TILE_SIZE, SpriteHelper.SCALE, SpriteHelper.KEY_COLOR)
 
