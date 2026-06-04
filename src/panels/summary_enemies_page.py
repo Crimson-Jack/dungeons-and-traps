@@ -22,20 +22,29 @@ class SummaryEnemiesPage(PanelPage):
 
     ICON_SIZE = (32, 32)
     ROW_HEIGHT = 52
+    MAX_ROWS_PER_PAGE = 6
     FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
 
-    def __init__(self, aggregate_kill_stats: dict):
-        self.rows = [
-            (enemy_type, record)
-            for enemy_type, record in aggregate_kill_stats.items()
-            if record.count > 0
-        ]
+    def __init__(self, rows: list):
+        self.rows = rows
         self.icons = {
             enemy_type: SpriteHelper.get_enemy_icon(enemy_type, self.ICON_SIZE)
             for enemy_type, _ in self.rows
         }
         self.font_header = pygame.font.Font(self.FONT_PATH, 20)
         self.font_row    = pygame.font.Font(self.FONT_PATH, 16)
+
+    @classmethod
+    def create_pages(cls, aggregate_kill_stats: dict) -> list:
+        all_rows = [
+            (enemy_type, record)
+            for enemy_type, record in aggregate_kill_stats.items()
+            if record.count > 0
+        ]
+        pages = []
+        for offset in range(0, max(len(all_rows), 1), cls.MAX_ROWS_PER_PAGE):
+            pages.append(cls(all_rows[offset:offset + cls.MAX_ROWS_PER_PAGE]))
+        return pages
 
     @property
     def title(self) -> str:

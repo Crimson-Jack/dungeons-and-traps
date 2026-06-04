@@ -498,11 +498,11 @@ class Game:
 
     def load_summary_panel(self):
         diamond_record, key_record, bonus_record = self.game_manager.get_aggregate_collectable_stats()
-        pages = [
-            SummaryTrophyPage(self.game_manager.score),
-            SummaryEnemiesPage(self.game_manager.get_aggregate_kill_stats()),
-            SummaryCollectablesPage(diamond_record, key_record, bonus_record),
-        ]
+        pages = (
+            [SummaryTrophyPage(self.game_manager.score)]
+            + SummaryEnemiesPage.create_pages(self.game_manager.get_aggregate_kill_stats())
+            + [SummaryCollectablesPage(diamond_record, key_record, bonus_record)]
+        )
         self.summary_panel = MultiPagePanel(self.screen, pages)
         self.game_manager.set_summary()
 
