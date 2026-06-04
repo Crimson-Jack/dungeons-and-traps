@@ -10,7 +10,10 @@ from src.panels.first_page import FirstPage
 from src.panels.header import Header
 from src.panels.input_message import InputMessage
 from src.panels.message import Message
-from src.panels.kill_summary_panel import KillSummaryPanel
+from src.panels.multi_page_panel import MultiPagePanel
+from src.panels.summary_collectables_page import SummaryCollectablesPage
+from src.panels.summary_enemies_page import SummaryEnemiesPage
+from src.panels.summary_trophy_page import SummaryTrophyPage
 from src.panels.message_box import MessageBox
 
 
@@ -45,10 +48,10 @@ class Game:
         self.header = Header(self.screen, self.header_surface, self.game_manager)
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_manager)
 
-        # First page, message dialog and kill summary panel
+        # First page, message dialog and summary panel
         self.first_page = None
         self.message_dialog = None
-        self.kill_summary_panel = None
+        self.summary_panel = None
 
         # Select startup mode and load first page
         self.game_manager.set_first_page()
@@ -98,8 +101,8 @@ class Game:
                 self.level.run()
             elif self.game_manager.game_status == GameStatus.FIRST_PAGE and self.first_page is not None:
                 self.first_page.draw()
-            elif self.game_manager.game_status == GameStatus.KILL_SUMMARY and self.kill_summary_panel is not None:
-                self.kill_summary_panel.draw()
+            elif self.game_manager.game_status == GameStatus.SUMMARY and self.summary_panel is not None:
+                self.summary_panel.draw()
             elif self.message_dialog is not None:
                 self.message_dialog.draw()
 
@@ -203,7 +206,7 @@ class Game:
         elif self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
             if event.key == pygame.K_F9:
                 # NOTE: For testing purposes; DO NOT REMOVE!
-                self.load_kill_summary_panel()
+                self.load_summary_panel()
             if event.key == pygame.K_ESCAPE:
                 # Open options dialog and pause the game
                 self.game_manager.switch_escape_state()
@@ -259,10 +262,12 @@ class Game:
         elif self.game_manager.game_status == GameStatus.GAME_OVER:
             if event.key == pygame.K_SPACE:
                 self.dispose_message_dialog()
-                self.load_kill_summary_panel()
-        elif self.game_manager.game_status == GameStatus.KILL_SUMMARY:
+                self.load_summary_panel()
+        elif self.game_manager.game_status == GameStatus.SUMMARY:
             if event.key == pygame.K_SPACE:
-                self.kill_summary_panel = None
+                self.summary_panel.next_page()
+            elif event.key == pygame.K_ESCAPE:
+                self.summary_panel = None
                 self.game_manager.clear_settings_for_first_level()
                 self.level = Level(self.screen, self.game_surface, self.game_manager)
                 self.game_manager.set_first_page()
@@ -491,9 +496,15 @@ class Game:
             self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 80,
                                              Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
 
-    def load_kill_summary_panel(self):
-        self.kill_summary_panel = KillSummaryPanel(self.screen, self.game_manager.get_aggregate_kill_stats())
-        self.game_manager.set_kill_summary()
+    def load_summary_panel(self):
+        diamond_record, key_record, bonus_record = self.game_manager.get_aggregate_collectable_stats()
+        pages = [
+            SummaryTrophyPage(self.game_manager.score),
+            SummaryEnemiesPage(self.game_manager.get_aggregate_kill_stats()),
+            SummaryCollectablesPage(diamond_record, key_record, bonus_record),
+        ]
+        self.summary_panel = MultiPagePanel(self.screen, pages)
+        self.game_manager.set_summary()
 
     def load_game_over_message_dialog(self):
         messages = list()

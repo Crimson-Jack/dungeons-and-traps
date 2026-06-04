@@ -12,4 +12,4 @@ class GameStatus(IntEnum):
     OPTIONS = 7
     LEVEL_COMPLETED = 8
     GAME_OVER = 9
-    KILL_SUMMARY = 10
+    SUMMARY = 10

@@ -6,6 +6,8 @@ from src.enemy_kill_record import EnemyKillRecord
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
 from src.enums.game_status import GameStatus
+from src.bonus_record import BonusRecord
+from src.collectable_record import CollectableRecord
 from src.level_stats import LevelStats
 from src.enums.sound_effect import SoundEffect
 from src.level_details import LevelDetails
@@ -153,8 +155,26 @@ class GameManager:
     def set_game_over(self):
         self.game_status = GameStatus.GAME_OVER
 
-    def set_kill_summary(self):
-        self.game_status = GameStatus.KILL_SUMMARY
+    def set_summary(self):
+        self.game_status = GameStatus.SUMMARY
+
+    def get_aggregate_collectable_stats(self) -> tuple[CollectableRecord, CollectableRecord, BonusRecord]:
+        diamond_totals = CollectableRecord()
+        key_totals = CollectableRecord()
+        bonus_totals = BonusRecord()
+        for stats in self.level_stats:
+            diamond_record = stats.get_diamond_record()
+            diamond_totals.count += diamond_record.count
+            diamond_totals.collected += diamond_record.collected
+            diamond_totals.score += diamond_record.score
+            key_record = stats.get_key_record()
+            key_totals.count += key_record.count
+            key_totals.collected += key_record.collected
+            key_totals.score += key_record.score
+            bonus_record = stats.get_bonus_record()
+            bonus_totals.awarded += bonus_record.awarded
+            bonus_totals.score += bonus_record.score
+        return diamond_totals, key_totals, bonus_totals
 
     def get_aggregate_kill_stats(self) -> dict:
         totals = {enemy_type: EnemyKillRecord() for enemy_type in EnemyType}
