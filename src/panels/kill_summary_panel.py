@@ -93,8 +93,10 @@ class KillSummaryPanel:
             name_surface = self.font_row.render(self.ENEMY_DISPLAY_NAMES[enemy_type], True, Settings.TEXT_COLOR)
             self.screen.blit(name_surface, (self.x_name, row_center_y - name_surface.get_height() // 2))
 
-            self._blit_centered(self.font_row, str(record.killed),    Settings.HIGHLIGHTED_TEXT_COLOR, self.x_killed, row_center_y - self.font_row.get_height() // 2)
-            self._blit_centered(self.font_row, f'{record.score} pts', Settings.HIGHLIGHTED_TEXT_COLOR, self.x_score,  row_center_y - self.font_row.get_height() // 2)
+            self._blit_centered(self.font_row, f' {record.killed} / {record.count}', Settings.HIGHLIGHTED_TEXT_COLOR,
+                                self.x_killed, row_center_y - self.font_row.get_height() // 2)
+            self._blit_centered(self.font_row, f'{record.score} pts', Settings.HIGHLIGHTED_TEXT_COLOR, self.x_score,
+                                row_center_y - self.font_row.get_height() // 2)
 
             total_killed += record.killed
             total_score += record.score
