@@ -1,5 +1,6 @@
 import pygame
 import pytmx
+from typing import Any
 
 from settings import Settings
 from src.game_helper import GameHelper
@@ -64,7 +65,8 @@ class TmxHelper:
         return x, y
 
     @staticmethod
-    def get_tiled_object_value(name: str, default, tiled_object: pytmx.TiledObject, layer: pytmx.TiledObjectGroup | None):
+    def get_tiled_object_value(name: str, default: Any, tiled_object: pytmx.TiledObject,
+                               layer: pytmx.TiledObjectGroup | None) -> Any:
         """
         Get the value from the tiled object.
         If not exists, get the value from the layer (group of tiled objects).
@@ -86,7 +88,8 @@ class TmxHelper:
         return value
 
     @staticmethod
-    def convert_to_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject, size: tuple[float, float] = None) -> list[SpriteCostume]:
+    def convert_to_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject,
+                                   size: tuple[float, float] | None = None) -> list[SpriteCostume]:
         """
         Convert each id and duration from the tiled object to a sprite costume object with an image and number of frames.
         Image can be scaled by size argument.

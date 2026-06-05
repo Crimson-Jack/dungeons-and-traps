@@ -17,7 +17,7 @@ class GameHelper:
         return Settings.TILE_SIZE / GameHelper.BASE_TILE_SIZE
 
     @staticmethod
-    def multiply_by_tile_size_ratio(value: float, minimum: float = None) -> float:
+    def multiply_by_tile_size_ratio(value: float, minimum: float | None = None) -> float:
         """
         Multiply value by the ratio of the current tile size to the base tile size.
         If result is lower than 'minimum' argument, return the 'minimum' value.
