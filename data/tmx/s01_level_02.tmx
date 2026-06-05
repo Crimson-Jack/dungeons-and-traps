@@ -147,6 +147,9 @@
  </group>
  <group id="9" name="collectable">
   <layer id="10" name="diamond" width="20" height="20">
+   <properties>
+    <property name="score" type="int" value="120"/>
+   </properties>
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,209,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

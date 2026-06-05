@@ -165,6 +165,9 @@
    </object>
   </objectgroup>
   <layer id="6" name="diamond" width="20" height="20">
+   <properties>
+    <property name="score" type="int" value="100"/>
+   </properties>
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
