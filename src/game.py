@@ -222,7 +222,7 @@ class Game:
             if event.key == pygame.K_z:
                 self.game_manager.set_previous_weapon()
         elif self.game_manager.game_status == GameStatus.GAME_IS_PAUSED:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_ESCAPE:
                 # Close pause dialog and continue the game
                 self.dispose_message_dialog()
                 self.game_manager.switch_pause_state()
@@ -421,7 +421,7 @@ class Game:
     def load_game_paused_message_dialog(self):
         messages = list()
         messages.append(Message('PAUSED', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        messages.append(Message('Press the SPACE button to return to the game', Settings.TEXT_COLOR, 20))
+        messages.append(Message('Press the ESC button to return to the game', Settings.TEXT_COLOR, 20))
         self.message_dialog = MessageBox(self.screen, 740, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
@@ -511,7 +511,8 @@ class Game:
     def load_game_over_message_dialog(self):
         messages = list()
         messages.append(Message('GAME OVER', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        self.message_dialog = MessageBox(self.screen, 800, 100, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        messages.append(Message('Press the SPACE button to open summary page', Settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, 800, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_you_win_message_dialog(self):
