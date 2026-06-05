@@ -2,8 +2,21 @@ import pygame
 
 
 class GeometryHelper:
+    """Collection of static geometry helpers for segment and rectangle intersection tests."""
+
     @staticmethod
-    def check_intersection_of_two_segments(a: pygame.Vector2, b: pygame.Vector2, c: pygame.Vector2, d: pygame.Vector2):
+    def check_intersection_of_two_segments(
+            a: pygame.Vector2, b: pygame.Vector2,
+            c: pygame.Vector2, d: pygame.Vector2) -> bool:
+        """
+        Check whether segment AB intersects segment CD.
+
+        :param a: start point of the first segment
+        :param b: end point of the first segment
+        :param c: start point of the second segment
+        :param d: end point of the second segment
+        :return: True if the segments intersect, False otherwise
+        """
         # a + t*ab = c + u*cd
         # t*ab - u*cd = c-a
 
@@ -34,7 +47,18 @@ class GeometryHelper:
             return False
 
     @staticmethod
-    def check_intersection_of_segment_with_rectangle(start_point: pygame.Vector2, end_point: pygame.Vector2, rectangle: pygame.Rect):
+    def check_intersection_of_segment_with_rectangle(
+            start_point: pygame.Vector2,
+            end_point: pygame.Vector2,
+            rectangle: pygame.Rect) -> bool:
+        """
+        Check whether a segment intersects any edge of a rectangle.
+
+        :param start_point: start point of the segment
+        :param end_point: end point of the segment
+        :param rectangle: rectangle to test against
+        :return: True if the segment intersects any edge, False otherwise
+        """
         vertexes = [
             pygame.Vector2(rectangle.topleft),
             pygame.Vector2(rectangle.topright),
