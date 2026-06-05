@@ -29,7 +29,8 @@ class GeometryHelper:
         cd_x = -(d.x - c.x)
         cd_y = -(d.y - c.y)
         ac_x = c.x - a.x
-        ac_y = c.y - a.y
+        # ac_y = c.y - a.y
+        ac_y = c.y - a.x
 
         w = ab_x * cd_y - ab_y * cd_x
         if w == 0:
