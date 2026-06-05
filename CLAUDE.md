@@ -132,5 +132,5 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Kill Statistics
 
-`LevelKillStats` (`src/level_kill_stats.py`) tracks per-level enemy statistics. For each `EnemyType` it records `count` (spawned), `killed`, and `score`. `GameManager.kill_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a bonus is awarded at level completion.
+`LevelStats` (`src/level_stats.py`) tracks per-level statistics: enemy kills (count, killed, score per `EnemyType`), diamonds, keys, and bonus. `GameManager.level_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a bonus is awarded at level completion.
 
