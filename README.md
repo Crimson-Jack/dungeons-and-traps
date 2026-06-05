@@ -1,5 +1,8 @@
 # Dungeons and Traps: Willy's First Adventure
 
+[![Tests](https://github.com/Crimson-Jack/dungeons-and-traps/actions/workflows/tests.yml/badge.svg)](https://github.com/Crimson-Jack/dungeons-and-traps/actions/workflows/tests.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Simple maze game with a view - from the top. The hero can move blocks and explore new terrain. He fights with monsters, collects keys and diamonds.
 The goal: teaching how to create a simple game, Pygame exploratory, checking features.
 
@@ -87,8 +90,12 @@ dungeons-and-traps/
 ├── font/silkscreen/         # Silkscreen font
 ├── tests/
 │   ├── enums/               # Tests for enums
+│   ├── search_path_algorithms/  # Tests for BFS, Greedy Best-First Search, UniquePriorityQueue
 │   ├── test_enemy_kill_record.py
-│   └── test_level_kill_stats.py
+│   ├── test_bonus_record.py
+│   ├── test_collectable_record.py
+│   ├── test_level_stats.py
+│   └── test_geometry_helper.py
 └── src/
     ├── game.py              # Main game loop and input handling
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
