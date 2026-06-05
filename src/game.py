@@ -264,8 +264,10 @@ class Game:
                 self.dispose_message_dialog()
                 self.load_summary_panel()
         elif self.game_manager.game_status == GameStatus.SUMMARY:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                 self.summary_panel.next_page()
+            elif event.key == pygame.K_LEFT:
+                self.summary_panel.previous_page()
             elif event.key == pygame.K_ESCAPE:
                 self.summary_panel = None
                 self.game_manager.clear_settings_for_first_level()
@@ -430,7 +432,7 @@ class Game:
         messages.append(Message('F7 - Quit game', Settings.TEXT_COLOR, 20))
         messages.append(Message('', Settings.TEXT_COLOR, 20))
         messages.append(Message('Press the ESC button to return to the game', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, 740, 210, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        self.message_dialog = MessageBox(self.screen, 740, 208, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_level_completed_message_dialog(self):
@@ -469,7 +471,7 @@ class Game:
                 messages.append(Message(f'Bats: {bat_kills} / {bat_count} ({bat_score} pts)', Settings.TEXT_COLOR, 16))
                 kill_lines_count += 1
 
-        dialog_height = 200 + kill_lines_count * 20
+        dialog_height = 196 + kill_lines_count * 20
 
         if current_stats.all_enemies_defeated():
             messages.append(Message('EXTRA BONUS +1000 pts', Settings.HIGHLIGHTED_TEXT_COLOR, 20))

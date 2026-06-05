@@ -31,7 +31,7 @@ class MultiPagePanel:
             + max_content_height
             + 16
             + footer_height
-            + 20
+            + 32
         )
 
         center_x = screen.get_rect().centerx
@@ -55,6 +55,9 @@ class MultiPagePanel:
     def next_page(self) -> None:
         self.current_page_index = (self.current_page_index + 1) % len(self.pages)
 
+    def previous_page(self) -> None:
+        self.current_page_index = (self.current_page_index - 1) % len(self.pages)
+
     def draw(self) -> None:
         pygame.draw.rect(self.screen, Settings.MESSAGE_BACKGROUND_COLOR, self.rect)
         pygame.draw.rect(self.screen, Settings.MESSAGE_BORDER_COLOR, self.rect.inflate(-8, -8), 4)
@@ -66,11 +69,11 @@ class MultiPagePanel:
 
         current_page.draw_content(self.screen, self.content_rect)
 
-        footer_y = self.rect.bottom - 20 - self.font_footer.get_height()
+        footer_y = self.rect.bottom - 32 - self.font_footer.get_height()
         esc_surface = self.font_footer.render('Press ESC to close', True, Settings.TEXT_COLOR)
         self.screen.blit(esc_surface, (self.rect.centerx - esc_surface.get_width() // 2, footer_y))
 
         if len(self.pages) > 1:
-            space_surface = self.font_footer.render('Press SPACE for next page', True, Settings.TEXT_COLOR)
+            space_surface = self.font_footer.render('< previous                               next page >', True, Settings.TEXT_COLOR)
             space_y = footer_y - self.font_footer.get_height() - 6
             self.screen.blit(space_surface, (self.rect.centerx - space_surface.get_width() // 2, space_y))
