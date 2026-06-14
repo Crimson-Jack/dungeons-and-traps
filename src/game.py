@@ -208,10 +208,6 @@ class Game:
                 # NOTE: For testing purposes; DO NOT REMOVE!
                 self.load_summary_panel()
             if event.key == pygame.K_ESCAPE:
-                # Open options dialog and pause the game
-                self.game_manager.switch_escape_state()
-                self.load_game_options_message_dialog()
-            if event.key == pygame.K_SPACE:
                 # Open pause dialog and pause the game
                 self.game_manager.switch_pause_state()
                 self.load_game_paused_message_dialog()
@@ -226,13 +222,8 @@ class Game:
                 # Close pause dialog and continue the game
                 self.dispose_message_dialog()
                 self.game_manager.switch_pause_state()
-        elif self.game_manager.game_status == GameStatus.OPTIONS:
-            if event.key == pygame.K_ESCAPE:
-                # Close options dialog and continue the game
-                self.dispose_message_dialog()
-                self.game_manager.switch_escape_state()
             if event.key == pygame.K_F5:
-                # Close options dialog and restart level or call game over summary dialog
+                # Restart level or trigger game over if no lives left
                 self.dispose_message_dialog()
                 self.game_manager.decrease_number_of_lives()
                 if self.game_manager.lives > 0:
@@ -244,7 +235,7 @@ class Game:
                     self.game_manager.set_game_is_running()
                     pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
             if event.key == pygame.K_F7:
-                # Close options dialog and quit the game
+                # Quit to main menu and reset all progress
                 self.dispose_message_dialog()
                 self.game_manager.clear_settings_for_first_level()
                 self.level = Level(self.screen, self.game_surface, self.game_manager)
@@ -421,13 +412,6 @@ class Game:
     def load_game_paused_message_dialog(self):
         messages = list()
         messages.append(Message('PAUSED', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        messages.append(Message('Press the ESC button to return to the game', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, 740, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
-                                         Settings.MESSAGE_BORDER_COLOR, messages)
-
-    def load_game_options_message_dialog(self):
-        messages = list()
-        messages.append(Message('SELECT OPTION', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('F5 - Restart level', Settings.TEXT_COLOR, 20))
         messages.append(Message('F7 - Quit game', Settings.TEXT_COLOR, 20))
         messages.append(Message('', Settings.TEXT_COLOR, 20))
@@ -518,7 +502,8 @@ class Game:
     def load_you_win_message_dialog(self):
         messages = list()
         messages.append(Message('YOU WIN', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        self.message_dialog = MessageBox(self.screen, 800, 100, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        messages.append(Message('Press the SPACE button to open summary page', Settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, 800, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_secret_code_message_dialog(self, dialog_response_messages: list[Message] = None):

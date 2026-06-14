@@ -9,7 +9,6 @@ class GameStatus(IntEnum):
     NEXT_LEVEL = 4
     GAME_IS_RUNNING = 5
     GAME_IS_PAUSED = 6
-    OPTIONS = 7
-    LEVEL_COMPLETED = 8
-    GAME_OVER = 9
-    SUMMARY = 10
+    LEVEL_COMPLETED = 7
+    GAME_OVER = 8
+    SUMMARY = 9

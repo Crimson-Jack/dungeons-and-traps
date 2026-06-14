@@ -192,12 +192,6 @@ class GameManager:
         else:
             self.game_status = GameStatus.GAME_IS_PAUSED
 
-    def switch_escape_state(self):
-        if self.game_status == GameStatus.OPTIONS:
-            self.game_status = GameStatus.GAME_IS_RUNNING
-        else:
-            self.game_status = GameStatus.OPTIONS
-
     def get_level_filename(self):
         return self.LEVELS[self.level].source_file
 
