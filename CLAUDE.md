@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Add new Python modules outside the `src/` directory.
 
 **Always:**
-- Run `pytest tests/` before reporting a task complete. If tests fail, fix them first.
+- Run `venv\Scripts\python.exe -m pytest tests/` (PowerShell) before reporting a task complete. If tests fail, fix them first.
 - Use full, descriptive names for all identifiers — no abbreviations or single-letter variables (`enemy_type` not `et`, `center_x` not `cx`).
 - Note any new constant added to `settings.py` explicitly in your response.
 - Use Pygame custom events (defined in `Settings`) for cross-system communication — never call across system boundaries directly.
@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 For any non-trivial change (new sprite, enemy, UI panel, event, core class refactor):
 1. **Describe first** — state the plan and list every file that will be touched.
 2. **Wait for confirmation** — do not edit production code until the plan is approved. Confirmation means an explicit approval in the current conversation turn — a prior standing instruction does not substitute.
-3. **Implement** — make the change, run `pytest tests/`, report results.
+3. **Implement** — make the change, run `venv\Scripts\python.exe -m pytest tests/` (PowerShell), report results.
 
 Simple bug fixes and one-liners may skip steps 1–2.
 
@@ -69,10 +69,10 @@ python main.py
 
 Dependencies: `pygame-ce==2.5.6`, `PyTMX==3.32`, `pytest`
 
-Run tests with:
+Run tests with (PowerShell):
 
-```bash
-pytest tests/
+```powershell
+venv\Scripts\python.exe -m pytest tests/
 ```
 
 ## Architecture Overview
