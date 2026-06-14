@@ -14,6 +14,7 @@ from src.panels.multi_page_panel import MultiPagePanel
 from src.panels.summary_collectables_page import SummaryCollectablesPage
 from src.panels.summary_enemies_page import SummaryEnemiesPage
 from src.panels.summary_trophy_page import SummaryTrophyPage
+from src.panels.menu_box import MenuBox
 from src.panels.message_box import MessageBox
 
 
@@ -58,11 +59,16 @@ class Game:
         self.clean_screen()
         self.load_first_page()
 
+        # Clock and time variables
         self.loop_start_time = None
         self.loop_end_time = None
         self.clock = pygame.time.Clock()
 
+        # Secret code input
         self.secret_code_text = ""
+
+        # Tracks movement keys pressed in GAME_IS_RUNNING so KEYUP events from other states are ignored
+        self.active_movement_keys = set()
 
     def clean_screen(self):
         self.screen.fill(Settings.GAME_BACKGROUND_COLOR)
@@ -88,9 +94,10 @@ class Game:
                 # Input events: QUIT
                 if event.type == pygame.QUIT:
                     is_running = False
-                # Input events: keyboard (down or up)
+                # Input events: keyboard (down)
                 if event.type == pygame.KEYDOWN:
                     is_running = self.handle_keyboard_buttons_down(event)
+                # Input events: keyboard (up)
                 if event.type == pygame.KEYUP:
                     self.handle_keyboard_buttons_up(event)
                 # Custom events
@@ -114,6 +121,7 @@ class Game:
 
             # TODO: Remove
             # print(self.game_manager.player_movement_vector)
+            # print(self.active_movement_keys)
 
         # TODO: Remove
         # print(sum(times_elapsed) / len(times_elapsed))
@@ -132,16 +140,6 @@ class Game:
             return new_fps
 
     def handle_keyboard_buttons_down(self, event):
-        # Note: Always capture player movement events
-        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-            self.game_manager.set_player_movement(0, 1)
-        if event.key == pygame.K_UP or event.key == pygame.K_w:
-            self.game_manager.set_player_movement(0, -1)
-        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-            self.game_manager.set_player_movement(1, 0)
-        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-            self.game_manager.set_player_movement(-1, 0)
-        # Note: Capture other events only when the appropriate game status is present
         if self.game_manager.game_status == GameStatus.FIRST_PAGE:
             if event.key == pygame.K_ESCAPE:
                 # Exit
@@ -204,44 +202,69 @@ class Game:
                 self.refresh_header_surface()
                 self.refresh_dashboard_surface()
         elif self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
-            if event.key == pygame.K_F9:
-                # NOTE: For testing purposes; DO NOT REMOVE!
-                self.load_summary_panel()
-            if event.key == pygame.K_ESCAPE:
-                # Open pause dialog and pause the game
-                self.game_manager.switch_pause_state()
-                self.load_game_paused_message_dialog()
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                self.active_movement_keys.add(event.key)
+                self.game_manager.set_player_movement(0, 1)
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
+                self.active_movement_keys.add(event.key)
+                self.game_manager.set_player_movement(0, -1)
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                self.active_movement_keys.add(event.key)
+                self.game_manager.set_player_movement(1, 0)
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                self.active_movement_keys.add(event.key)
+                self.game_manager.set_player_movement(-1, 0)
             if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
                 self.game_manager.set_player_is_using_weapon(True)
             if event.key == pygame.K_x:
                 self.game_manager.set_next_weapon()
             if event.key == pygame.K_z:
                 self.game_manager.set_previous_weapon()
+            if event.key == pygame.K_ESCAPE:
+                # Open pause dialog and pause the game
+                self.active_movement_keys.clear()
+                self.game_manager.reset_player_movement()
+                self.game_manager.switch_pause_state()
+                self.load_game_paused_message_dialog()
         elif self.game_manager.game_status == GameStatus.GAME_IS_PAUSED:
             if event.key == pygame.K_ESCAPE:
-                # Close pause dialog and continue the game
+                # Close pause menu and continue the game
+                self.active_movement_keys.clear()
+                self.game_manager.reset_player_movement()
                 self.dispose_message_dialog()
                 self.game_manager.switch_pause_state()
-            if event.key == pygame.K_F5:
-                # Restart level or trigger game over if no lives left
-                self.dispose_message_dialog()
-                self.game_manager.decrease_number_of_lives()
-                if self.game_manager.lives > 0:
-                    self.game_manager.clear_settings_for_current_level()
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
+                self.message_dialog.select_previous()
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                self.message_dialog.select_next()
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                selected = self.message_dialog.get_selected_index()
+                if selected == 0:
+                    # Resume
+                    self.active_movement_keys.clear()
+                    self.game_manager.reset_player_movement()
+                    self.dispose_message_dialog()
+                    self.game_manager.switch_pause_state()
+                elif selected == 1:
+                    # Restart level or trigger game over if no lives left
+                    self.dispose_message_dialog()
+                    self.game_manager.decrease_number_of_lives()
+                    if self.game_manager.lives > 0:
+                        self.game_manager.clear_settings_for_current_level()
+                        self.level = Level(self.screen, self.game_surface, self.game_manager)
+                        self.game_manager.set_next_level()
+                        self.load_next_level_message_dialog()
+                    else:
+                        self.game_manager.set_game_is_running()
+                        pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
+                elif selected == 2:
+                    # Quit to main menu and reset all progress
+                    self.dispose_message_dialog()
+                    self.game_manager.clear_settings_for_first_level()
                     self.level = Level(self.screen, self.game_surface, self.game_manager)
-                    self.game_manager.set_next_level()
-                    self.load_next_level_message_dialog()
-                else:
-                    self.game_manager.set_game_is_running()
-                    pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
-            if event.key == pygame.K_F7:
-                # Quit to main menu and reset all progress
-                self.dispose_message_dialog()
-                self.game_manager.clear_settings_for_first_level()
-                self.level = Level(self.screen, self.game_surface, self.game_manager)
-                self.game_manager.set_first_page()
-                self.clean_screen()
-                self.load_first_page()
+                    self.game_manager.set_first_page()
+                    self.clean_screen()
+                    self.load_first_page()
         elif self.game_manager.game_status == GameStatus.LEVEL_COMPLETED:
             if event.key == pygame.K_SPACE:
                 # Close level completed dialog, load next level and open next level dialog
@@ -270,15 +293,16 @@ class Game:
         return True
 
     def handle_keyboard_buttons_up(self, event):
-        # Note: Always capture player movement events
-        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-            self.game_manager.set_player_movement(0, -1)
-        if event.key == pygame.K_UP or event.key == pygame.K_w:
-            self.game_manager.set_player_movement(0, 1)
-        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-            self.game_manager.set_player_movement(-1, 0)
-        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-            self.game_manager.set_player_movement(1, 0)
+        if event.key in self.active_movement_keys:
+            self.active_movement_keys.discard(event.key)
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                self.game_manager.set_player_movement(0, -1)
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
+                self.game_manager.set_player_movement(0, 1)
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                self.game_manager.set_player_movement(-1, 0)
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                self.game_manager.set_player_movement(1, 0)
 
     def handle_custom_events(self, event):
         if event.type == Settings.CHANGE_SCORE_EVENT:
@@ -410,14 +434,10 @@ class Game:
         self.first_page = None
 
     def load_game_paused_message_dialog(self):
-        messages = list()
-        messages.append(Message('PAUSED', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        messages.append(Message('F5 - Restart level', Settings.TEXT_COLOR, 20))
-        messages.append(Message('F7 - Quit game', Settings.TEXT_COLOR, 20))
-        messages.append(Message('', Settings.TEXT_COLOR, 20))
-        messages.append(Message('Press the ESC button to return to the game', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, 740, 208, 20, Settings.MESSAGE_BACKGROUND_COLOR,
-                                         Settings.MESSAGE_BORDER_COLOR, messages)
+        self.message_dialog = MenuBox(self.screen, 740, 200, 20,
+                                      Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR,
+                                      Settings.HIGHLIGHTED_TEXT_COLOR, Settings.TEXT_COLOR,
+                                      'PAUSED', ['Resume', 'Restart level', 'Quit game'])
 
     def load_level_completed_message_dialog(self):
         current_stats = self.game_manager.level_stats[-1]
