@@ -88,6 +88,7 @@ dungeons-and-traps/
 ├── img/                     # Sprite sheets (PNG)
 ├── sound/sfx/set_01/        # Sound effects (OGG)
 ├── font/silkscreen/         # Silkscreen font
+├── font/trade_winds/        # Trade Winds font (first page title)
 ├── tests/
 │   ├── enums/               # Tests for enums
 │   ├── search_path_algorithms/  # Tests for BFS, Greedy Best-First Search, UniquePriorityQueue
@@ -118,6 +119,7 @@ dungeons-and-traps/
 - **Tiny Dungeon** tileset by [Kenney](https://kenney.nl/assets/tiny-dungeon) — CC0, used as inspiration for original graphics
 - **ChipTone** by [SFBGames](https://sfbgames.itch.io/chiptone) — used to create sound effects
 - **Silkscreen** font by Jason Kottke — [SIL Open Font License 1.1](font/silkscreen/OFL.txt)
+- **Trade Winds** font by Sideshow (Font Diner, Inc) — [SIL Open Font License 1.1](font/trade_winds/OFL.txt)
 
 ### License
 
@@ -127,6 +129,6 @@ dungeons-and-traps/
 **Graphics and sounds** (`data/`, `img/`, `sound/`) — [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
 > You are free to use and adapt the assets, provided that you credit the original author and publish your modifications under the same license.
 
-**Font** (`font/silkscreen/`) — [SIL Open Font License 1.1](font/silkscreen/OFL.txt)
+**Fonts** (`font/silkscreen/`, `font/trade_winds/`) — [SIL Open Font License 1.1](font/silkscreen/OFL.txt)
 
 © Crimson-Jack
