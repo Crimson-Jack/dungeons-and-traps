@@ -11,7 +11,8 @@ class MenuBox:
     def __init__(self, screen: pygame.Surface, width: int, height: int, top_margin: int,
                  background_color: pygame.Color, border_color: pygame.Color,
                  highlighted_color: pygame.Color, normal_color: pygame.Color,
-                 title: str, items: list[str]):
+                 title: str | None, items: list[str],
+                 show_border: bool = True):
         self.screen = screen
         self.width = width
         self.height = height
@@ -21,6 +22,7 @@ class MenuBox:
         self.normal_color = normal_color
         self.title = title
         self.items = items
+        self.show_border = show_border
         self.selected_index = 0
 
         self.rect_position = (screen.get_rect().width // 2 - width // 2,
@@ -39,17 +41,18 @@ class MenuBox:
 
     def draw(self):
         rectangle = pygame.rect.Rect(self.rect_position[0], self.rect_position[1], self.width, self.height)
-        border = rectangle.inflate(-8, -8)
         pygame.draw.rect(self.screen, self.background_color, rectangle)
-        pygame.draw.rect(self.screen, self.border_color, border, 4)
+        if self.show_border:
+            pygame.draw.rect(self.screen, self.border_color, rectangle.inflate(-8, -8), 4)
 
-        title_font = pygame.font.Font(self._FONT_PATH, self._TITLE_FONT_SIZE)
         item_font = pygame.font.Font(self._FONT_PATH, self._ITEM_FONT_SIZE)
 
-        title_surface = title_font.render(self.title, True, self.highlighted_color, self.background_color)
-        self.screen.blit(title_surface, (self.text_center_x - title_surface.get_width() // 2, self.text_start_y))
-
-        y_offset = title_surface.get_height() + self._TITLE_BOTTOM_GAP
+        y_offset = 0
+        if self.title is not None:
+            title_font = pygame.font.Font(self._FONT_PATH, self._TITLE_FONT_SIZE)
+            title_surface = title_font.render(self.title, True, self.highlighted_color, self.background_color)
+            self.screen.blit(title_surface, (self.text_center_x - title_surface.get_width() // 2, self.text_start_y))
+            y_offset = title_surface.get_height() + self._TITLE_BOTTOM_GAP
 
         for index, item_text in enumerate(self.items):
             if index == self.selected_index:
