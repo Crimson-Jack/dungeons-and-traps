@@ -12,6 +12,9 @@ from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 
 
 class Dashboard:
+    _FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
+    _BASIC_FONT_SIZE = 24
+
     def __init__(self, screen, dashboard_surface, game_manager):
         self.screen = screen
         self.dashboard_surface = dashboard_surface
@@ -22,7 +25,7 @@ class Dashboard:
 
         # Fonts
         self.text_color = Settings.TEXT_COLOR
-        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
+        self.basic_font = pygame.font.Font(self._FONT_PATH, self._BASIC_FONT_SIZE)
         self.text_adjustment = 2
         self.margin = 16
 

@@ -6,6 +6,10 @@ from src.sprite_helper import SpriteHelper
 
 
 class Header:
+    _FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
+    _BASIC_FONT_SIZE = 24
+    _WEAPON_DETAILS_FONT_SIZE = 12
+
     def __init__(self, screen, header_surface, game_manager):
         self.screen = screen
         self.header_surface = header_surface
@@ -20,9 +24,9 @@ class Header:
         # Fonts
         self.text_color = Settings.TEXT_COLOR
         self.highlighted_text_color = Settings.HIGHLIGHTED_TEXT_COLOR
-        self.basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
-        self.additional_info_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 24)
-        self.weapon_details_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', 12)
+        self.basic_font = pygame.font.Font(self._FONT_PATH, self._BASIC_FONT_SIZE)
+        self.additional_info_font = pygame.font.Font(self._FONT_PATH, self._BASIC_FONT_SIZE)
+        self.weapon_details_font = pygame.font.Font(self._FONT_PATH, self._WEAPON_DETAILS_FONT_SIZE)
         self.text_adjustment = 2
         self.margin = 16
 

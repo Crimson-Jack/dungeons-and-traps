@@ -5,6 +5,8 @@ from src.panels.message import Message
 
 
 class MessageBox:
+    _FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
+
     def __init__(self, screen: pygame.Surface, width: int, height: int, top_margin: int, background_color: pygame.Color,
                  border_color: pygame.Color, messages: list[Message]):
         self.screen = screen
@@ -30,7 +32,7 @@ class MessageBox:
         y_offset = 0
         for message in self.messages:
             if isinstance(message, InputMessage):
-                basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', message.size)
+                basic_font = pygame.font.Font(self._FONT_PATH, message.size)
                 text_layer = basic_font.render(message.text + '_', True, message.color, self.background_color)
                 input_rectangle = pygame.rect.Rect(self.text_position[0] - message.input_width // 2,
                                                    self.text_position[1] + y_offset + message.input_top_and_bottom_margin,
@@ -41,7 +43,7 @@ class MessageBox:
                                          input_rectangle))
                 y_offset += message.input_top_and_bottom_margin * 2 + message.input_height
             elif isinstance(message, Message):
-                basic_font = pygame.font.Font('font/silkscreen/silkscreen-regular.ttf', message.size)
+                basic_font = pygame.font.Font(self._FONT_PATH, message.size)
                 text_layer = basic_font.render(message.text, True, message.color, self.background_color)
                 self.text_layers.append((text_layer,
                                          text_layer.get_size()[0] // 2,
