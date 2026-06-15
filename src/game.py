@@ -451,8 +451,12 @@ class Game:
         self.first_page = FirstPage(self.screen)
         self.menu_dialog = MenuBox(self.screen, 500, 0, 0,
                                    Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR,
-                                   Settings.HIGHLIGHTED_TEXT_COLOR, Settings.TEXT_COLOR,
-                                   None, ['New Game', 'Secret Code', 'Quit'],
+                                   Settings.HIGHLIGHTED_TEXT_COLOR,
+                                   None, [
+                                       Message('New Game', Settings.TEXT_COLOR, 35),
+                                       Message('Secret Code', Settings.TEXT_COLOR, 25),
+                                       Message('Quit', Settings.TEXT_COLOR, 25),
+                                   ],
                                    show_border=False)
 
     def dispose_first_page(self):
@@ -462,8 +466,12 @@ class Game:
     def load_game_paused_menu(self):
         self.menu_dialog = MenuBox(self.screen, 740, 200, 20,
                                    Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR,
-                                   Settings.HIGHLIGHTED_TEXT_COLOR, Settings.TEXT_COLOR,
-                                   'PAUSED', ['Resume', 'Restart level', 'Quit game'])
+                                   Settings.HIGHLIGHTED_TEXT_COLOR,
+                                   Message('PAUSED', Settings.HIGHLIGHTED_TEXT_COLOR, 40), [
+                                       Message('Resume', Settings.TEXT_COLOR, 20),
+                                       Message('Restart level', Settings.TEXT_COLOR, 20),
+                                       Message('Quit game', Settings.TEXT_COLOR, 20),
+                                   ])
 
     def load_level_completed_message_dialog(self):
         current_stats = self.game_manager.level_stats[-1]
