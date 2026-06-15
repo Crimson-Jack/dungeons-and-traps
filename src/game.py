@@ -217,12 +217,13 @@ class Game:
                     self.game_manager.set_secret_code_is_valid()
                     messages = list()
                     messages.append(Message('The code is valid!', Settings.HIGHLIGHTED_TEXT_COLOR, 20))
-                    messages.append(Message('Press any button to start the game', Settings.TEXT_COLOR, 16))
+                    messages.append(Message('Press any button to start the game', Settings.TEXT_COLOR, 20))
                     self.load_secret_code_message_dialog(messages)
                 else:
                     # Show error message
                     messages = list()
-                    messages.append(Message('The code is not valid - please try again!', Settings.TEXT_COLOR, 16))
+                    messages.append(Message('', Settings.TEXT_COLOR, 20))
+                    messages.append(Message('The code is not valid - please try again!', Settings.TEXT_COLOR, 20))
                     self.load_secret_code_message_dialog(messages)
             elif event.key == pygame.K_BACKSPACE:
                 # Remove last char
@@ -287,7 +288,7 @@ class Game:
                     self.clean_screen()
                     self.load_first_page()
         elif self.game_manager.game_status == GameStatus.LEVEL_COMPLETED:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 # Close level completed dialog, load next level and open next level dialog
                 self.dispose_message_dialog()
                 self.game_manager.clear_settings_for_next_level()
@@ -304,7 +305,7 @@ class Game:
             elif event.key == pygame.K_LEFT:
                 self.summary_panel.previous_page()
             elif event.key == pygame.K_ESCAPE:
-                self.summary_panel = None
+                self.dispose_summary_panel()
                 self.game_manager.clear_settings_for_first_level()
                 self.level = Level(self.screen, self.game_surface, self.game_manager)
                 self.game_manager.set_first_page()
@@ -551,27 +552,28 @@ class Game:
         messages = list()
         messages.append(Message('GAME OVER', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Press the SPACE button to open summary page', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, 800, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        self.message_dialog = MessageBox(self.screen, 740, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_you_win_message_dialog(self):
         messages = list()
         messages.append(Message('YOU WIN', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
         messages.append(Message('Press the SPACE button to open summary page', Settings.TEXT_COLOR, 20))
-        self.message_dialog = MessageBox(self.screen, 800, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+        self.message_dialog = MessageBox(self.screen, 740, 130, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                          Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_secret_code_message_dialog(self, dialog_response_messages: list[Message] = None):
         messages = list()
-        messages.append(Message('ENTER THE SECRET CODE', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
-        messages.append(Message('And play the specified level', Settings.TEXT_COLOR, 20))
+        messages.append(Message('SECRET CODE', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        messages.append(Message('to jump to a specific level', Settings.TEXT_COLOR, 16))
         messages.append(InputMessage(self.secret_code_text, Settings.TEXT_COLOR, 40, 610, 50, -5, 10, 20))
         if dialog_response_messages is not None:
             for item in dialog_response_messages:
                 messages.append(item)
         else:
-            messages.append(Message('Press the ESC button to return to the main page', Settings.TEXT_COLOR, 16))
-        self.message_dialog = MessageBox(self.screen, 800, 300, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+            messages.append(Message('', Settings.TEXT_COLOR, 20))
+            messages.append(Message('Press ESC to cancel', Settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, 740, 270, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                               Settings.MESSAGE_BORDER_COLOR, messages)
 
     def dispose_menu_dialog(self):
@@ -579,3 +581,6 @@ class Game:
 
     def dispose_message_dialog(self):
         self.message_dialog = None
+
+    def dispose_summary_panel(self):
+        self.summary_panel = None
