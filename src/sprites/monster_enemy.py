@@ -3,6 +3,7 @@ import random
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
@@ -436,7 +437,7 @@ class MonsterEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         super().kill()
         self.game_manager.increase_score(self.score)
         self.game_manager.level_stats[-1].record_enemy_kill(self.enemy_type, self.score)
-        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
         return self.damage_power

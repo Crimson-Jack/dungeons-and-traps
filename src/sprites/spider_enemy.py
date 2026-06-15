@@ -1,6 +1,7 @@
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
@@ -220,7 +221,7 @@ class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
         super().kill()
         self.game_manager.increase_score(self.score)
         self.game_manager.level_stats[-1].record_enemy_kill(self.enemy_type, self.score)
-        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def get_damage_power(self):
         return self.damage_power

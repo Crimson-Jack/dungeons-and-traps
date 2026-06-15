@@ -1,6 +1,6 @@
 import pygame
 
-from settings import Settings
+from src.events import Events
 from src.enums.sound_effect import SoundEffect
 from src.sound_manager import SoundManager
 from src.sprites.removable_wall import RemovableWall
@@ -20,4 +20,4 @@ class Door(RemovableWall):
         self.sound_manager.play_sfx(SoundEffect.OPEN_DOOR)
         super().kill()
         # Raise event to refresh obstacle map
-        pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
+        pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))

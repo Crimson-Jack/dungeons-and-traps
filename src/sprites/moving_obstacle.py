@@ -1,6 +1,7 @@
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.bar import Bar
 from src.color_set import ColorSet
 from src.enums.direction import Direction
@@ -96,7 +97,7 @@ class MovingObstacle(CustomDrawSprite):
                 self.obstacle_map_items[old_map_y][old_map_x] = 0
                 self.obstacle_map_items[new_map_y][new_map_x] = 1
                 # Raise event to refresh obstacle map
-                pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
+                pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
                 # Reset power
                 self.reset_power()
                 # Obstacle has been moved

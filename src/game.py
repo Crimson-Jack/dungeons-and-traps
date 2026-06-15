@@ -2,6 +2,7 @@ import pygame
 import time
 
 from settings import Settings
+from src.events import Events
 from src.enums.game_status import GameStatus
 from src.game_manager import GameManager
 from src.level import Level
@@ -83,7 +84,7 @@ class Game:
         self.dashboard.draw()
 
     def run(self):
-        pygame.time.set_timer(Settings.PARTICLE_EVENT, 40)
+        pygame.time.set_timer(Events.PARTICLE_EVENT, 40)
 
         is_running = True
         while is_running:
@@ -276,7 +277,7 @@ class Game:
                         self.load_next_level_message_dialog()
                     else:
                         self.game_manager.set_game_is_running()
-                        pygame.event.post(pygame.event.Event(Settings.GAME_OVER_SUMMARY_EVENT))
+                        pygame.event.post(pygame.event.Event(Events.GAME_OVER_SUMMARY_EVENT))
                 elif selected == 2:
                     # Quit to main menu and reset all progress
                     self.dispose_menu_dialog()
@@ -325,126 +326,126 @@ class Game:
                 self.game_manager.set_player_movement(1, 0)
 
     def handle_custom_events(self, event):
-        if event.type == Settings.CHANGE_SCORE_EVENT:
+        if event.type == Events.CHANGE_SCORE_EVENT:
             self.refresh_header_surface()
 
-        if event.type == Settings.COLLECT_DIAMOND_EVENT:
-            self.refresh_header_surface()
-            self.refresh_dashboard_surface()
-
-        if event.type == Settings.COLLECT_KEY_EVENT:
+        if event.type == Events.COLLECT_DIAMOND_EVENT:
             self.refresh_header_surface()
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.COLLECT_LIFE_EVENT:
+        if event.type == Events.COLLECT_KEY_EVENT:
+            self.refresh_header_surface()
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.CHANGE_WEAPON_CAPACITY_EVENT:
-            self.refresh_header_surface()
-
-        if event.type == Settings.CHANGE_ENERGY_EVENT:
+        if event.type == Events.COLLECT_LIFE_EVENT:
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.CHANGE_WEAPON_EVENT:
+        if event.type == Events.CHANGE_WEAPON_CAPACITY_EVENT:
             self.refresh_header_surface()
 
-        if event.type == Settings.EXIT_POINT_IS_OPEN_EVENT:
+        if event.type == Events.CHANGE_ENERGY_EVENT:
+            self.refresh_dashboard_surface()
+
+        if event.type == Events.CHANGE_WEAPON_EVENT:
+            self.refresh_header_surface()
+
+        if event.type == Events.EXIT_POINT_IS_OPEN_EVENT:
             self.level.show_exit_point()
 
-        if event.type == Settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+        if event.type == Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
             self.level.show_player_vanishing_point()
             pygame.time.set_timer(
-                pygame.event.Event(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
+                pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
 
-        if event.type == Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
-            pygame.time.set_timer(Settings.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
+        if event.type == Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
+            pygame.time.set_timer(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
             self.game_manager.load_next_level()
 
-        if event.type == Settings.NEXT_LEVEL_EVENT:
+        if event.type == Events.NEXT_LEVEL_EVENT:
             self.game_manager.set_level_completed()
             if self.game_manager.level_stats[-1].all_enemies_defeated():
                 self.game_manager.award_completion_bonus(1000)
             self.load_level_completed_message_dialog()
 
-        if event.type == Settings.REMOVE_OBSTACLES_EVENT:
+        if event.type == Events.REMOVE_OBSTACLES_EVENT:
             self.level.remove_obstacles()
 
-        if event.type == Settings.REFRESH_OBSTACLE_MAP_EVENT:
+        if event.type == Events.REFRESH_OBSTACLE_MAP_EVENT:
             self.level.refresh_obstacle_map()
 
-        if event.type == Settings.PLAYER_TILE_POSITION_CHANGED_EVENT:
+        if event.type == Events.PLAYER_TILE_POSITION_CHANGED_EVENT:
             self.level.inform_about_player_tile_position()
 
-        if event.type == Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT:
+        if event.type == Events.PLAYER_IS_NOT_USING_WEAPON_EVENT:
             self.game_manager.set_player_is_using_weapon(False)
 
-        if event.type == Settings.ADD_PARTICLE_EFFECT_EVENT:
+        if event.type == Events.ADD_PARTICLE_EFFECT_EVENT:
             self.level.add_particle_effect(event.dict.get("position"),
                                            event.dict.get("number_of_sparks"),
                                            event.dict.get("colors"))
 
-        if event.type == Settings.PARTICLE_EVENT:
+        if event.type == Events.PARTICLE_EVENT:
             self.level.add_spark_to_particle_effect()
 
-        if event.type == Settings.ADD_TOMBSTONE_EVENT:
+        if event.type == Events.ADD_TOMBSTONE_EVENT:
             self.level.add_tombstone(event.dict.get("position"))
 
-        if event.type == Settings.ADD_BOSS_TOMBSTONE_EVENT:
+        if event.type == Events.ADD_BOSS_TOMBSTONE_EVENT:
             self.level.add_boss_tombstone(event.dict.get("position"))
 
-        if event.type == Settings.ADD_VANISHING_POINT_EVENT:
+        if event.type == Events.ADD_VANISHING_POINT_EVENT:
             self.level.add_vanishing_point(event.dict.get("position"))
 
-        if event.type == Settings.CREATE_EGG_EVENT:
+        if event.type == Events.CREATE_EGG_EVENT:
             self.level.create_egg(event.dict.get("position"))
 
-        if event.type == Settings.CREATE_MONSTER_EVENT:
+        if event.type == Events.CREATE_MONSTER_EVENT:
             self.level.create_monster(event.dict.get("position"))
 
-        if event.type == Settings.CREATE_BOSS_OCTOPUS_EVENT:
+        if event.type == Events.CREATE_BOSS_OCTOPUS_EVENT:
             self.level.create_boss_octopus()
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.PLAYER_LOST_LIFE_EVENT:
+        if event.type == Events.PLAYER_LOST_LIFE_EVENT:
             self.level.show_player_tombstone()
-            pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 2000)
+            pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, 2000)
 
-        if event.type == Settings.TELEPORT_PLAYER_EVENT:
+        if event.type == Events.TELEPORT_PLAYER_EVENT:
             self.level.show_player_vanishing_point()
             pygame.time.set_timer(
-                pygame.event.Event(Settings.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
+                pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
                 1000)
 
-        if event.type == Settings.RESPAWN_PLAYER_EVENT:
+        if event.type == Events.RESPAWN_PLAYER_EVENT:
             player_new_position = event.dict.get("position")
-            pygame.time.set_timer(Settings.RESPAWN_PLAYER_EVENT, 0)
+            pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, 0)
             self.level.respawn_player(player_new_position)
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.CREATE_EXPLODE_EFFECT_EVENT:
+        if event.type == Events.CREATE_EXPLODE_EFFECT_EVENT:
             self.level.show_explode_effect(event.dict.get("position"))
 
-        if event.type == Settings.GAME_OVER_EVENT:
+        if event.type == Events.GAME_OVER_EVENT:
             self.level.show_player_tombstone()
-            pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 2000)
+            pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 2000)
 
-        if event.type == Settings.GAME_OVER_SUMMARY_EVENT:
-            pygame.time.set_timer(Settings.GAME_OVER_SUMMARY_EVENT, 0)
+        if event.type == Events.GAME_OVER_SUMMARY_EVENT:
+            pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 0)
             self.game_manager.set_game_over()
             self.load_game_over_message_dialog()
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.YOU_WIN_EVENT:
+        if event.type == Events.YOU_WIN_EVENT:
             self.level.remove_enemies()
-            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 3000)
+            pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 3000)
 
-        if event.type == Settings.YOU_WIN_SUMMARY_EVENT:
-            pygame.time.set_timer(Settings.YOU_WIN_SUMMARY_EVENT, 0)
+        if event.type == Events.YOU_WIN_SUMMARY_EVENT:
+            pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 0)
             self.game_manager.set_game_over()
             self.load_you_win_message_dialog()
             self.refresh_dashboard_surface()
 
-        if event.type == Settings.TILT_EFFECT_EVENT:
+        if event.type == Events.TILT_EFFECT_EVENT:
             self.level.enable_tilt_effect(event.dict.get("tilt_cursor_increment_value"))
 
     def load_first_page(self):

@@ -3,6 +3,7 @@ import math
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.sound_manager import SoundManager
@@ -64,7 +65,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
 
             if abs(self.hit_box.x - position[0]) <= 2 and abs(self.hit_box.y - position[1]) <= 2:
                 pygame.event.post(
-                    pygame.event.Event(Settings.CREATE_EGG_EVENT, {"position": position}))
+                    pygame.event.Event(Events.CREATE_EGG_EVENT, {"position": position}))
                 self.kill()
 
     def move(self):
@@ -94,7 +95,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
                     self.sound_manager.play_sfx(SoundEffect.COLLIDE_FIREBALL_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
-                    pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
+                    pygame.event.post(pygame.event.Event(Events.TILT_EFFECT_EVENT))
         # Check collision with moving obstacle sprites
         for sprite in self.moving_obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
@@ -103,12 +104,12 @@ class FireBallEnemy(pygame.sprite.Sprite):
                     self.sound_manager.play_sfx(SoundEffect.COLLIDE_FIREBALL_WITH_OBSTACLE)
                     self.kill()
                     self.create_particle_effect(sprite.hit_box, 12, Settings.OBSTACLE_PARTICLE_COLORS)
-                    pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT))
+                    pygame.event.post(pygame.event.Event(Events.TILT_EFFECT_EVENT))
 
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
         collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
-            pygame.event.Event(Settings.ADD_PARTICLE_EFFECT_EVENT,
+            pygame.event.Event(Events.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,
                                 "number_of_sparks": number_of_sparks,
                                 "colors": colors}))

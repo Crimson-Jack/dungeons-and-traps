@@ -1,6 +1,6 @@
 import pygame
 
-from settings import Settings
+from src.events import Events
 from src.enums.sound_effect import SoundEffect
 from src.sound_manager import SoundManager
 from src.sprites.removable_wall import RemovableWall
@@ -18,4 +18,4 @@ class DemolishedWall(RemovableWall):
         super().kill()
 
         # Raise event to show vanishing point
-        pygame.event.post(pygame.event.Event(Settings.ADD_VANISHING_POINT_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_VANISHING_POINT_EVENT, {"position": self.rect.topleft}))

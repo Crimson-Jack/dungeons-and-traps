@@ -1,6 +1,7 @@
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.enums.direction import Direction
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
@@ -110,7 +111,7 @@ class ExplosionWeapon(CustomDrawSprite):
     def fire(self):
         if self.is_armed:
             self.sound_manager.play_sfx(SoundEffect.EXPLODE)
-            pygame.event.post(pygame.event.Event(Settings.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.last_center_position_with_offset}))
+            pygame.event.post(pygame.event.Event(Events.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.last_center_position_with_offset}))
             self.is_fired = True
 
     def arm_weapon(self):

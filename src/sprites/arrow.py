@@ -3,6 +3,7 @@ import math
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.enums.direction import Direction
 from src.enums.sound_effect import SoundEffect
@@ -135,7 +136,7 @@ class Arrow(CustomDrawSprite):
     def create_particle_effect(self, target_sprite_hit_box, number_of_sparks, colors):
         collided_position = GameHelper.get_collided_rectangle(target_sprite_hit_box, self.hit_box).center
         pygame.event.post(
-            pygame.event.Event(Settings.ADD_PARTICLE_EFFECT_EVENT,
+            pygame.event.Event(Events.ADD_PARTICLE_EFFECT_EVENT,
                                {"position": collided_position,
                                 "number_of_sparks": number_of_sparks,
                                 "colors": colors}))

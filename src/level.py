@@ -4,6 +4,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from settings import Settings
+from src.events import Events
 from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.enums.enemy_type import EnemyType
@@ -583,7 +584,7 @@ class Level:
             for sprite in self.removable_obstacle_sprites:
                 sprite.kill()
             # Raise event to refresh obstacle map
-            pygame.event.post(pygame.event.Event(Settings.REFRESH_OBSTACLE_MAP_EVENT))
+            pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
     def remove_enemies(self):
         if len(self.enemy_sprites)>0:

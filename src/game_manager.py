@@ -1,7 +1,7 @@
 import pygame
 
 
-from settings import Settings
+from src.events import Events
 from src.enemy_kill_record import EnemyKillRecord
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
@@ -202,46 +202,46 @@ class GameManager:
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.check_is_last_level():
                 self.game_status = GameStatus.GAME_OVER
-                pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))
+                pygame.event.post(pygame.event.Event(Events.YOU_WIN_EVENT))
             else:
-                pygame.event.post(pygame.event.Event(Settings.NEXT_LEVEL_EVENT))
+                pygame.event.post(pygame.event.Event(Events.NEXT_LEVEL_EVENT))
 
     def life_lost(self):
         self.lives -= 1
         if self.lives > 0:
             self.set_player_max_energy()
             self.reset_player_direction()
-            pygame.event.post(pygame.event.Event(Settings.PLAYER_LOST_LIFE_EVENT))
+            pygame.event.post(pygame.event.Event(Events.PLAYER_LOST_LIFE_EVENT))
         else:
-            pygame.event.post(pygame.event.Event(Settings.GAME_OVER_EVENT))
+            pygame.event.post(pygame.event.Event(Events.GAME_OVER_EVENT))
 
     def decrease_number_of_lives(self):
         self.lives -= 1
 
     def increase_score(self, value):
         self.score += value
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_SCORE_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_SCORE_EVENT))
 
     def collect_sword_powerup(self):
         self.add_weapon(WeaponType.SWORD)
         self.sword_energy = self.sword_max_energy
         self.remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.SWORD
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
         self.add_weapon(WeaponType.BOW)
         self.number_of_arrows += number_of_arrows
         self.remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.BOW
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def collect_explosion_powerup(self, number_of_explosions):
         self.add_weapon(WeaponType.EXPLOSION)
         self.number_of_explosions += number_of_explosions
         self.remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.EXPLOSION
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def add_weapon(self, weapon):
         if weapon not in self.collected_weapons:
@@ -258,7 +258,7 @@ class GameManager:
             self.weapon_type = self.weapon_type.next()
         if current_weapon_type != self.weapon_type:
             self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
-            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def set_previous_weapon(self):
         current_weapon_type = self.weapon_type
@@ -267,7 +267,7 @@ class GameManager:
             self.weapon_type = self.weapon_type.previous()
         if current_weapon_type != self.weapon_type:
             self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
-            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_EVENT))
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
@@ -279,7 +279,7 @@ class GameManager:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
-            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def get_sword_capacity(self):
         threshold = self.sword_max_energy // self.number_of_sword_thresholds
@@ -298,7 +298,7 @@ class GameManager:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
-            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def decrease_number_of_explosions(self):
         if self.number_of_explosions > 0:
@@ -310,7 +310,7 @@ class GameManager:
                 self.add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
-            pygame.event.post(pygame.event.Event(Settings.CHANGE_WEAPON_CAPACITY_EVENT))
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
 
     def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
@@ -320,13 +320,13 @@ class GameManager:
         self.collected_diamonds.append(diamond)
         self.score += diamond.score
         self.level_stats[-1].record_diamond_collected(diamond.score)
-        pygame.event.post(pygame.event.Event(Settings.COLLECT_DIAMOND_EVENT))
+        pygame.event.post(pygame.event.Event(Events.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
             if self.LEVELS[self.level].exit_point_enabled:
-                pygame.event.post(pygame.event.Event(Settings.EXIT_POINT_IS_OPEN_EVENT))
+                pygame.event.post(pygame.event.Event(Events.EXIT_POINT_IS_OPEN_EVENT))
             else:
-                pygame.event.post(pygame.event.Event(Settings.REMOVE_OBSTACLES_EVENT))
-                pygame.event.post(pygame.event.Event(Settings.CREATE_BOSS_OCTOPUS_EVENT))
+                pygame.event.post(pygame.event.Event(Events.REMOVE_OBSTACLES_EVENT))
+                pygame.event.post(pygame.event.Event(Events.CREATE_BOSS_OCTOPUS_EVENT))
 
     def add_key(self, key: Key):
         self.keys.append(key)
@@ -336,7 +336,7 @@ class GameManager:
         self.collected_keys.append(key)
         self.score += key.score
         self.level_stats[-1].record_key_collected(key.score)
-        pygame.event.post(pygame.event.Event(Settings.COLLECT_KEY_EVENT))
+        pygame.event.post(pygame.event.Event(Events.COLLECT_KEY_EVENT))
 
     def award_completion_bonus(self, score: int):
         self.increase_score(score)
@@ -348,7 +348,7 @@ class GameManager:
 
     def collect_life_powerup(self):
         self.lives += 1
-        pygame.event.post(pygame.event.Event(Settings.COLLECT_LIFE_EVENT))
+        pygame.event.post(pygame.event.Event(Events.COLLECT_LIFE_EVENT))
 
     def decrease_player_energy(self, damage_power=1):
         if self.player_energy > 0:
@@ -356,7 +356,7 @@ class GameManager:
             if self.player_energy <= 0:
                 self.life_lost()
             else:
-                pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
+                pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
     def increase_player_energy(self, volume, is_percentage=True):
         if is_percentage:
@@ -365,7 +365,7 @@ class GameManager:
             self.player_energy += volume
         if self.player_energy > self.player_max_energy:
             self.player_energy = self.player_max_energy
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
     def set_player_max_energy(self):
         self.player_energy = self.player_max_energy

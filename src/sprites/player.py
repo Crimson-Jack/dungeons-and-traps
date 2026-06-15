@@ -2,7 +2,7 @@ from graphlib import TopologicalSorter
 
 import pygame
 
-from settings import Settings
+from src.events import Events
 from src.enums.direction import Direction
 from src.enums.sound_effect import SoundEffect
 from src.enums.weapon_type import WeaponType
@@ -187,7 +187,7 @@ class Player(CustomDrawSprite):
             if new_tile_position != self.tile_position:
                 self.tile_position = new_tile_position
                 self.game_manager.set_player_tile_position(self.tile_position)
-                pygame.event.post(pygame.event.Event(Settings.PLAYER_TILE_POSITION_CHANGED_EVENT))
+                pygame.event.post(pygame.event.Event(Events.PLAYER_TILE_POSITION_CHANGED_EVENT))
 
         # Increase step counter
         self.step_counter += 1
@@ -202,7 +202,7 @@ class Player(CustomDrawSprite):
                 # Player is invisible
                 self.visible = False
                 # Trigger teleport player to next level event
-                pygame.event.post(pygame.event.Event(Settings.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT))
+                pygame.event.post(pygame.event.Event(Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT))
 
         # Check collision with teleport sprites
         for sprite in self.teleport_sprites:
@@ -219,7 +219,7 @@ class Player(CustomDrawSprite):
                         self.visible = False
                         # Trigger teleport event
                         pygame.event.post(
-                            pygame.event.Event(Settings.TELEPORT_PLAYER_EVENT, {"position": destination.rect.topleft}))
+                            pygame.event.Event(Events.TELEPORT_PLAYER_EVENT, {"position": destination.rect.topleft}))
             else:
                 if self.visible:
                     # Unselect = unblock
@@ -320,7 +320,7 @@ class Player(CustomDrawSprite):
             self.sword_weapon.disarm_weapon()
             self.bow_weapon.disarm_weapon()
             self.explosion_weapon.disarm_weapon()
-            pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+            pygame.event.post(pygame.event.Event(Events.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
         elif self.game_manager.weapon_type == WeaponType.SWORD:
             self.bow_weapon.disarm_weapon()
@@ -341,7 +341,7 @@ class Player(CustomDrawSprite):
                 if self.game_manager.number_of_arrows > 0:
                     self.bow_weapon.fire()
                     self.game_manager.decrease_number_of_arrows()
-                pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+                pygame.event.post(pygame.event.Event(Events.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
         elif self.game_manager.weapon_type == WeaponType.EXPLOSION:
             self.sword_weapon.disarm_weapon()
@@ -352,7 +352,7 @@ class Player(CustomDrawSprite):
                 if self.game_manager.number_of_explosions > 0:
                     self.explosion_weapon.fire()
                     self.game_manager.decrease_number_of_explosions()
-                pygame.event.post(pygame.event.Event(Settings.PLAYER_IS_NOT_USING_WEAPON_EVENT))
+                pygame.event.post(pygame.event.Event(Events.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):
         if self.visible:
@@ -390,10 +390,10 @@ class Player(CustomDrawSprite):
 
     def trigger_tombstone_creation(self):
         self.sound_manager.play_sfx(SoundEffect.LOST_LIFE)
-        pygame.event.post(pygame.event.Event(Settings.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
 
     def trigger_vanishing_point_creation(self):
-        pygame.event.post(pygame.event.Event(Settings.ADD_VANISHING_POINT_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_VANISHING_POINT_EVENT, {"position": self.rect.topleft}))
 
     def respawn(self, position=None):
         if position is None:

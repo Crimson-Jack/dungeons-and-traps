@@ -81,7 +81,7 @@ python main.py
 ```
 dungeons-and-traps/
 ├── main.py                  # Entry point
-├── settings.py              # Global constants and Pygame event IDs
+├── settings.py              # Global constants (screen size, FPS, colors, tile size)
 ├── data/
 │   ├── tmx/                 # Level maps (Tiled Map Editor)
 │   └── tsx/                 # Tilesets
@@ -100,6 +100,7 @@ dungeons-and-traps/
 └── src/
     ├── game.py              # Main game loop and input handling
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
+    ├── events.py            # Custom Pygame event type IDs
     ├── level.py             # Level loading and sprite management
     ├── level_kill_stats.py  # Kill statistics tracker per level
     ├── enemy_kill_record.py # Single enemy type kill record (count, killed, score)

@@ -3,6 +3,7 @@ import random
 import pygame
 
 from settings import Settings
+from src.events import Events
 from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.damageable_enemy import DamageableEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
@@ -330,7 +331,7 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
             self.kill()
 
         self.game_manager.boss_energy = self.energy
-        pygame.event.post(pygame.event.Event(Settings.CHANGE_ENERGY_EVENT))
+        pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
     def custom_draw(self, game_surface, offset):
         # Draw sprite
@@ -381,15 +382,15 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         super().kill()
         self.game_manager.increase_score(self.score)
 
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomleft}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topright}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left, self.rect.top - self.rect.height)}))
-        pygame.event.post(pygame.event.Event(Settings.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left - self.rect.width, self.rect.top)}))
+        pygame.event.post(pygame.event.Event(Events.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.bottomleft}))
+        pygame.event.post(pygame.event.Event(Events.ADD_BOSS_TOMBSTONE_EVENT, {"position": self.rect.topright}))
+        pygame.event.post(pygame.event.Event(Events.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left, self.rect.top - self.rect.height)}))
+        pygame.event.post(pygame.event.Event(Events.ADD_BOSS_TOMBSTONE_EVENT, {"position": (self.rect.left - self.rect.width, self.rect.top)}))
 
         if self.is_boss:
-            pygame.event.post(pygame.event.Event(Settings.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
-            pygame.event.post(pygame.event.Event(Settings.YOU_WIN_EVENT))
+            pygame.event.post(pygame.event.Event(Events.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
+            pygame.event.post(pygame.event.Event(Events.YOU_WIN_EVENT))
 
     def get_damage_power(self):
         return self.damage_power

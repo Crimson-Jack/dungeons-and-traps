@@ -1,6 +1,6 @@
 import pygame
 
-from settings import Settings
+from src.events import Events
 from src.enums.sound_effect import SoundEffect
 from src.sound_manager import SoundManager
 from src.sprites.item_to_collect import ItemToCollect
@@ -49,7 +49,7 @@ class Egg(ItemToCollect):
             if self.costume_index >= self.number_of_sprites:
                 self.sound_manager.play_sfx(SoundEffect.CREATE_MONSTER)
                 pygame.event.post(
-                    pygame.event.Event(Settings.CREATE_MONSTER_EVENT, {"position": self.rect.topleft}))
+                    pygame.event.Event(Events.CREATE_MONSTER_EVENT, {"position": self.rect.topleft}))
                 self.kill()
             else:
                 # Set new image

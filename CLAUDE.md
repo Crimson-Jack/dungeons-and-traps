@@ -14,8 +14,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Always:**
 - Run `venv\Scripts\python.exe -m pytest tests/` (PowerShell) before reporting a task complete. If tests fail, fix them first.
 - Use full, descriptive names for all identifiers — no abbreviations or single-letter variables (`enemy_type` not `et`, `center_x` not `cx`).
-- Note any new constant added to `settings.py` explicitly in your response.
-- Use Pygame custom events (defined in `Settings`) for cross-system communication — never call across system boundaries directly.
+- Note any new constant added to `settings.py` or `src/events.py` explicitly in your response.
+- Use Pygame custom events (defined in `Events`) for cross-system communication — never call across system boundaries directly.
 - Place new test files in `tests/` mirroring the path of the module under test.
 
 ## Change Workflow
@@ -81,7 +81,9 @@ venv\Scripts\python.exe -m pytest tests/
 
 ### Core Objects and Their Roles
 
-- **`settings.py:Settings`** — single class of static constants: screen dimensions, FPS, colors, and all custom Pygame event type IDs. Rendered tile size is `TILE_SIZE` (scaled from `SOURCE_TILE_SIZE`); use `GameHelper.multiply_by_tile_size_ratio()` when hardcoding speed or geometry values. Touch this when adding new global settings or events.
+- **`settings.py:Settings`** — single class of static constants: screen dimensions, FPS, colors, and tile sizes. Rendered tile size is `TILE_SIZE` (scaled from `SOURCE_TILE_SIZE`); use `GameHelper.multiply_by_tile_size_ratio()` when hardcoding speed or geometry values. Touch this when adding new global settings.
+
+- **`src/events.py:Events`** — single class of all custom Pygame event type IDs. Touch this when adding a new cross-system event.
 
 - **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, the ordered `LEVELS` list, and `kill_stats: list[LevelKillStats]` (one entry per played level, persists until game over). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
 
@@ -103,7 +105,7 @@ venv\Scripts\python.exe -m pytest tests/
 
 ### Event-Driven Communication
 
-Sprites communicate back to the game loop via Pygame custom events defined in `Settings`. For example:
+Sprites communicate back to the game loop via Pygame custom events defined in `Events`. For example:
 - Collecting all diamonds posts `EXIT_POINT_IS_OPEN_EVENT` or `CREATE_BOSS_OCTOPUS_EVENT` (depending on `LevelDetails.exit_point_enabled`).
 - Enemy death posts `ADD_TOMBSTONE_EVENT` with a position dict.
 - Level completion triggers a chain: `START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT` → (1s delay) → `FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT` → `NEXT_LEVEL_EVENT`.
