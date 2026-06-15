@@ -239,7 +239,7 @@ class Game:
             self.load_next_level_message_dialog()
             self.secret_code_text = ''
         elif self.game_manager.game_status == GameStatus.NEXT_LEVEL:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 # Close next level dialog and continue the game
                 self.dispose_message_dialog()
                 self.game_manager.set_game_is_running()
@@ -294,11 +294,11 @@ class Game:
                 self.game_manager.set_next_level()
                 self.load_next_level_message_dialog()
         elif self.game_manager.game_status == GameStatus.GAME_OVER:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 self.dispose_message_dialog()
                 self.load_summary_panel()
         elif self.game_manager.game_status == GameStatus.SUMMARY:
-            if event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                 self.summary_panel.next_page()
             elif event.key == pygame.K_LEFT:
                 self.summary_panel.previous_page()
