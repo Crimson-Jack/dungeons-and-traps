@@ -546,17 +546,40 @@ class Game:
     def load_next_level_message_dialog(self):
         messages = list()
         messages.append(Message(f'LEVEL {self.game_manager.level + 1}', Settings.HIGHLIGHTED_TEXT_COLOR, 80))
-        messages.append(Message('Press the SPACE button to start', Settings.TEXT_COLOR, 20))
+
+        level_name = self.game_manager.get_level_name()
+        if level_name is not None:
+            messages.append(Message('', Settings.TEXT_COLOR, 20))
+            messages.append(Message(level_name, Settings.HIGHLIGHTED_TEXT_COLOR, 20))
+
+        level_description = self.game_manager.get_level_description()
+        if level_description is not None:
+            sentences = level_description.split('. ')
+            messages.append(Message('', Settings.TEXT_COLOR, 20))
+            for sentence in sentences:
+                if not sentence.endswith(('.', '!', '?')):
+                    sentence += '.'
+                messages.append(Message(sentence, Settings.TEXT_COLOR, 16))
+
         secret_code = self.game_manager.get_secret_code()
         if secret_code is not None and len(secret_code) > 0:
-            messages.append(Message('', Settings.TEXT_COLOR, 90))
+            messages.append(Message('', Settings.TEXT_COLOR, 80))
             messages.append(Message('The secret code for this level is', Settings.TEXT_COLOR, 16))
-            messages.append(Message(self.game_manager.get_secret_code(), Settings.HIGHLIGHTED_TEXT_COLOR, 20))
-            self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 140,
+            messages.append(Message(secret_code, Settings.HIGHLIGHTED_TEXT_COLOR, 20))
+
+        messages.append(Message('', Settings.TEXT_COLOR, 80))
+        messages.append(Message('Press the SPACE button to start', Settings.TEXT_COLOR, 20))
+
+        top_margin = 40
+        if level_name is None:
+            top_margin += 40
+        if level_description is None:
+            top_margin += 36
+
+        print(top_margin)
+
+        self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, top_margin,
                                          Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
-        else:
-            self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, Settings.HEIGHT // 2 - 80,
-                                             Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
 
     def load_summary_panel(self):
         diamond_record, key_record, bonus_record = self.game_manager.get_aggregate_collectable_stats()

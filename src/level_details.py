@@ -17,3 +17,11 @@ class LevelDetails:
     @property
     def secret_code(self):
         return self._secret_code
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def description(self):
+        return self._description

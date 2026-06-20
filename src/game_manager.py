@@ -21,18 +21,37 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
-            LevelDetails('s01_level_01.tmx', True, 'c1'),
-            LevelDetails('s01_level_02.tmx', True, 'c2'),
-            LevelDetails('s01_level_03.tmx', True, 'c3'),
-            LevelDetails('s01_level_04.tmx', True, 'c4'),
-            LevelDetails('s01_level_05.tmx', True, 'c5'),
-            LevelDetails('s01_level_06.tmx', True, 'c6'),
-            LevelDetails('s01_level_07.tmx', True, 'c7'),
-            LevelDetails('s01_level_08.tmx', True, 'c8'),
-            LevelDetails('s01_level_09.tmx', False, 'c9'),
-            LevelDetails('basic.tmx', True),
-            LevelDetails('basic_arena.tmx', False),
-            LevelDetails('basic_open_arena.tmx', True),
+            LevelDetails('s01_level_01.tmx', True, 'c1',
+                "Top of the Tower",
+                "The catapult hurled you to the very top of the Count's cursed tower. Collect keys and open doors. Avoid Creeplins and Bluemantles. Gather diamonds to reveal the secret passage below."),
+            LevelDetails('s01_level_02.tmx', True, 'c2',
+                "Chamber of Spirits",
+                "Spirits have claimed these chambers — they cannot be slain, so run. Find the sword and cut down Bluemantles and Lurkers. Drink a potion to restore your strength. Descend to the floor below."),
+            LevelDetails('s01_level_03.tmx', True, 'c3',
+                "Floor of Stone Secrets",
+                "Boulders can be pushed to block the passages. Ravenous Bluemantles and Thornbacks will give you no rest. Reach for the bow when enemies are in range. Descend from the tower into the courtyard."),
+            LevelDetails('s01_level_04.tmx', True, 'c4',
+                "The Forsaken Courtyard",
+                "The Count's manor stands empty and forsaken. Cross the abandoned courtyard and pass the graveyard. Hellfire devours all living things — stay away. Find the entrance to the cellars."),
+            LevelDetails('s01_level_05.tmx', True, 'c5',
+                "Cellars of Nightmares",
+                "Duskwings and bloodthirsty Webmasters lurk in every shadow. Bloodclaws are lightning-fast and hear your every step. The green spirits haunting this level are terrifyingly fast. Descend deeper still — into the underground labyrinth."),
+            LevelDetails('s01_level_06.tmx', True, 'c6',
+                "The Portal Labyrinth",
+                "The Count's dark magic raises monsters and tears open portals of teleportation. Traverse the chambers and collect diamonds guarded by spirits and goblins. Step through the portals to reach chambers otherwise inaccessible. Pass through the shadows and descend into the dungeons."),
+            LevelDetails('s01_level_07.tmx', True, 'c7',
+                "Dungeons of Eternal Night",
+                "Thick darkness engulfs the dungeons — your lantern is your only hope. Webmasters lurk around every corner. Not all walls are what they seem. Descend into the antechamber of hell."),
+            LevelDetails('s01_level_08.tmx', True, 'c8',
+                "The Antechamber of Hell",
+                "You'll find the magic of Explosion — it destroys monsters even through walls. Hidden alcoves are scattered throughout — explore every corner. Hordes of frenzied Duskwings stand guard at every portal. Find the last door leading to the Count's hell."),
+            LevelDetails('s01_level_09.tmx', False, 'c9',
+                "The Count's Infernal Keep",
+                "Collect all diamonds — the walls will crack. Claim the weapons and face the fire-breathing octopus. Beware its goblin spawn — each fireball hatches a new foe. Defeat the boss and break the Count's curse forever!"),
+            
+            LevelDetails('basic.tmx', True, 'a1'),
+            LevelDetails('basic_arena.tmx', False, 'a2'),
+            LevelDetails('basic_open_arena.tmx', True, 'a3'),
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -426,3 +445,9 @@ class GameManager:
 
     def get_secret_code(self):
         return self.LEVELS[self.level].secret_code
+
+    def get_level_name(self):
+        return self.LEVELS[self.level].name
+
+    def get_level_description(self):
+        return self.LEVELS[self.level].description
