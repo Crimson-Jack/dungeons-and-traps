@@ -21,10 +21,6 @@ from src.sprites.key import Key
 class GameManager:
     def __init__(self):
         self.LEVELS = [
-            LevelDetails('basic.tmx', True),
-            LevelDetails('basic_arena.tmx', False),
-            # LevelDetails('basic_open_arena.tmx', True),
-
             LevelDetails('s01_level_01.tmx', True, 'c1'),
             LevelDetails('s01_level_02.tmx', True, 'c2'),
             LevelDetails('s01_level_03.tmx', True, 'c3'),
@@ -33,7 +29,10 @@ class GameManager:
             LevelDetails('s01_level_06.tmx', True, 'c6'),
             LevelDetails('s01_level_07.tmx', True, 'c7'),
             LevelDetails('s01_level_08.tmx', True, 'c8'),
-            LevelDetails('s01_level_09.tmx', False, 'c9')
+            LevelDetails('s01_level_09.tmx', False, 'c9'),
+            LevelDetails('basic.tmx', True),
+            LevelDetails('basic_arena.tmx', False),
+            LevelDetails('basic_open_arena.tmx', True),
         ]
 
         self.game_status = GameStatus.FIRST_PAGE
@@ -133,6 +132,9 @@ class GameManager:
         self.check_point_position = None
 
         self.level_stats[-1].reset()
+
+    def set_studio_page(self):
+        self.game_status = GameStatus.STUDIO_PAGE
 
     def set_first_page(self):
         self.game_status = GameStatus.FIRST_PAGE

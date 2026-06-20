@@ -23,6 +23,9 @@ class Settings:
     EXPLOSION_WEAPON_RANGE = 5
     NUMBER_OF_EXPLOSION_STEPS = 12
 
+    # Studio page
+    STUDIO_PAGE_VISIBILITY = True
+
     # Colors
     GAME_BACKGROUND_COLOR = 39, 39, 39
     ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]

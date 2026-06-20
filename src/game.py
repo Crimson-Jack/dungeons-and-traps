@@ -8,6 +8,7 @@ from src.game_manager import GameManager
 from src.level import Level
 from src.panels.dashboard import Dashboard
 from src.panels.first_page import FirstPage
+from src.panels.studio_page import StudioPage
 from src.panels.header import Header
 from src.panels.input_message import InputMessage
 from src.panels.message import Message
@@ -50,16 +51,22 @@ class Game:
         self.header = Header(self.screen, self.header_surface, self.game_manager)
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_manager)
 
-        # First page, dialogs and summary panel
+        # Studio page, first page, dialogs and summary panel
+        self.studio_page = None
         self.first_page = None
         self.menu_dialog = None
         self.message_dialog = None
         self.summary_panel = None
 
-        # Select startup mode and load first page
-        self.game_manager.set_first_page()
-        self.clean_screen()
-        self.load_first_page()
+        # Select startup mode
+        if Settings.STUDIO_PAGE_VISIBILITY:
+            self.game_manager.set_studio_page()
+            self.clean_screen()
+            self.load_studio_page()
+        else:
+            self.game_manager.set_first_page()
+            self.clean_screen()
+            self.load_first_page()
 
         # Clock and time variables
         self.loop_start_time = None
@@ -108,6 +115,8 @@ class Game:
             if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
                 # Main game logic
                 self.level.run()
+            elif self.game_manager.game_status == GameStatus.STUDIO_PAGE:
+                self.studio_page.draw()
             elif self.game_manager.game_status == GameStatus.FIRST_PAGE:
                 self.first_page.draw()
                 self.menu_dialog.draw()
@@ -178,6 +187,11 @@ class Game:
                 self.game_manager.reset_player_movement()
                 self.game_manager.switch_pause_state()
                 self.load_game_paused_menu()
+        elif self.game_manager.game_status == GameStatus.STUDIO_PAGE:
+            self.dispose_studio_page()
+            self.game_manager.set_first_page()
+            self.clean_screen()
+            self.load_first_page()
         elif self.game_manager.game_status == GameStatus.FIRST_PAGE:
             if event.key == pygame.K_ESCAPE:
                 return False
@@ -448,6 +462,12 @@ class Game:
 
         if event.type == Events.TILT_EFFECT_EVENT:
             self.level.enable_tilt_effect(event.dict.get("tilt_cursor_increment_value"))
+
+    def load_studio_page(self):
+        self.studio_page = StudioPage(self.screen)
+
+    def dispose_studio_page(self):
+        self.studio_page = None
 
     def load_first_page(self):
         self.first_page = FirstPage(self.screen)
