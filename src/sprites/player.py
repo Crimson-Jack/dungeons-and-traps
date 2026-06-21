@@ -359,6 +359,9 @@ class Player(CustomDrawSprite):
             self.get_input()
             self.change_costume()
             self.move()
+        # NOTE: move() may set visible=False via teleport/exit collision.
+        # Re-checked here to prevent weapon firing during transition animations.
+        if self.visible:
             self.use_weapon()
 
     def custom_draw(self, game_surface, offset):

@@ -289,6 +289,7 @@ class Game:
                     self.game_manager.decrease_number_of_lives()
                     if self.game_manager.lives > 0:
                         self.game_manager.clear_settings_for_current_level()
+                        self.game_manager.set_player_is_using_weapon(False)
                         self.level = Level(self.screen, self.game_surface, self.game_manager)
                         self.game_manager.set_next_level()
                         self.load_next_level_message_dialog()
@@ -308,6 +309,7 @@ class Game:
                 # Close level completed dialog, load next level and open next level dialog
                 self.dispose_message_dialog()
                 self.game_manager.clear_settings_for_next_level()
+                self.game_manager.set_player_is_using_weapon(False)
                 self.level = Level(self.screen, self.game_surface, self.game_manager)
                 self.game_manager.set_next_level()
                 self.load_next_level_message_dialog()
@@ -440,6 +442,7 @@ class Game:
         if event.type == Events.RESPAWN_PLAYER_EVENT:
             player_new_position = event.dict.get("position")
             pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, 0)
+            self.game_manager.set_player_is_using_weapon(False)
             self.level.respawn_player(player_new_position)
             self.refresh_dashboard_surface()
 
