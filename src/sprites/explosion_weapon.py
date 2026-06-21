@@ -108,11 +108,14 @@ class ExplosionWeapon(CustomDrawSprite):
               self.direction == Direction.RIGHT_DOWN):
             self.image = self.sprites['down'][0]
 
-    def fire(self):
-        if self.is_armed:
+    def fire(self) -> bool:
+        if self.is_armed and self.last_center_position_with_offset is not None:
             self.sound_manager.play_sfx(SoundEffect.EXPLODE)
             pygame.event.post(pygame.event.Event(Events.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.last_center_position_with_offset}))
             self.is_fired = True
+            return True
+        else:
+            return False
 
     def arm_weapon(self):
         self.is_armed = True

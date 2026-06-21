@@ -350,8 +350,8 @@ class Player(CustomDrawSprite):
             self.explosion_weapon.arm_weapon()
             if self.weapon_is_in_use:
                 if self.game_manager.number_of_explosions > 0:
-                    self.explosion_weapon.fire()
-                    self.game_manager.decrease_number_of_explosions()
+                    if self.explosion_weapon.fire():
+                        self.game_manager.decrease_number_of_explosions()
                 pygame.event.post(pygame.event.Event(Events.PLAYER_IS_NOT_USING_WEAPON_EVENT))
 
     def update(self):
