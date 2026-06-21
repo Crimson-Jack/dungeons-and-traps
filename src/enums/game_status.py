@@ -12,4 +12,5 @@ class GameStatus(IntEnum):
     GAME_IS_PAUSED = 7
     LEVEL_COMPLETED = 8
     GAME_OVER = 9
-    SUMMARY = 10
+    YOU_WIN = 10
+    SUMMARY = 11

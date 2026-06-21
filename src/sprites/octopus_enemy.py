@@ -390,7 +390,7 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
 
         if self.is_boss:
             pygame.event.post(pygame.event.Event(Events.TILT_EFFECT_EVENT, {"tilt_cursor_increment_value": 0.5}))
-            pygame.event.post(pygame.event.Event(Events.YOU_WIN_EVENT))
+            pygame.event.post(pygame.event.Event(Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT))
 
     def get_damage_power(self):
         return self.damage_power

@@ -586,11 +586,6 @@ class Level:
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
-    def remove_enemies(self):
-        if len(self.enemy_sprites)>0:
-            for sprite in self.enemy_sprites:
-                sprite.kill()
-
     def remove_unnecessary_effects(self):
         for tombstone in self.tombstones:
             if tombstone.is_expired():

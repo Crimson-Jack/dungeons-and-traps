@@ -132,6 +132,8 @@ class Game:
                 self.message_dialog.draw()
             elif self.game_manager.game_status == GameStatus.GAME_OVER:
                 self.message_dialog.draw()
+            elif self.game_manager.game_status == GameStatus.YOU_WIN:
+                self.message_dialog.draw()
             elif self.game_manager.game_status == GameStatus.SUMMARY:
                 self.summary_panel.draw()
 
@@ -313,6 +315,10 @@ class Game:
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 self.dispose_message_dialog()
                 self.load_summary_panel()
+        elif self.game_manager.game_status == GameStatus.YOU_WIN:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                self.dispose_message_dialog()
+                self.load_summary_panel()
         elif self.game_manager.game_status == GameStatus.SUMMARY:
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                 self.summary_panel.next_page()
@@ -370,7 +376,7 @@ class Game:
         if event.type == Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
             self.level.show_player_vanishing_point()
             pygame.time.set_timer(
-                pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 1000)
+                pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 2500)
 
         if event.type == Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT:
             pygame.time.set_timer(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
@@ -442,7 +448,7 @@ class Game:
 
         if event.type == Events.GAME_OVER_EVENT:
             self.level.show_player_tombstone()
-            pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 2000)
+            pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 2500)
 
         if event.type == Events.GAME_OVER_SUMMARY_EVENT:
             pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 0)
@@ -451,12 +457,11 @@ class Game:
             self.refresh_dashboard_surface()
 
         if event.type == Events.YOU_WIN_EVENT:
-            self.level.remove_enemies()
-            pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 3000)
+            pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 2500)
 
         if event.type == Events.YOU_WIN_SUMMARY_EVENT:
             pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 0)
-            self.game_manager.set_game_over()
+            self.game_manager.set_you_win()
             self.load_you_win_message_dialog()
             self.refresh_dashboard_surface()
 
@@ -575,8 +580,6 @@ class Game:
             top_margin += 40
         if level_description is None:
             top_margin += 36
-
-        print(top_margin)
 
         self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, top_margin,
                                          Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
