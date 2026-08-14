@@ -182,6 +182,9 @@ class GameManager:
     def set_secret_code(self):
         self.game_status = GameStatus.SECRET_CODE
 
+    def set_credits(self):
+        self.game_status = GameStatus.CREDITS
+
     def set_secret_code_is_valid(self):
         self.game_status = GameStatus.SECRET_CODE_IS_VALID
 

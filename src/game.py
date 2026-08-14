@@ -120,6 +120,8 @@ class Game:
             elif self.game_manager.game_status == GameStatus.FIRST_PAGE:
                 self.first_page.draw()
                 self.menu_dialog.draw()
+            elif self.game_manager.game_status == GameStatus.CREDITS:
+                self.message_dialog.draw()
             elif self.game_manager.game_status == GameStatus.SECRET_CODE:
                 self.message_dialog.draw()
             elif self.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID:
@@ -214,8 +216,20 @@ class Game:
                     self.game_manager.set_secret_code()
                     self.load_secret_code_message_dialog()
                 elif selected == 2:
+                    # Credits
+                    self.dispose_first_page()
+                    self.game_manager.set_credits()
+                    self.load_credits_message_dialog()
+                elif selected == 3:
                     # Quit
                     return False
+        elif self.game_manager.game_status == GameStatus.CREDITS:
+            if event.key == pygame.K_ESCAPE:
+                # Close credits dialog and show first page
+                self.dispose_message_dialog()
+                self.game_manager.set_first_page()
+                self.clean_screen()
+                self.load_first_page()
         elif self.game_manager.game_status == GameStatus.SECRET_CODE:
             if event.key == pygame.K_ESCAPE:
                 # Close secret code dialog and show first page
@@ -485,6 +499,7 @@ class Game:
                                    None, [
                                        Message('New Game', Settings.TEXT_COLOR, 35),
                                        Message('Secret Code', Settings.TEXT_COLOR, 25),
+                                       Message('Credits', Settings.TEXT_COLOR, 25),
                                        Message('Quit', Settings.TEXT_COLOR, 25),
                                    ],
                                    show_border=False)
@@ -624,6 +639,36 @@ class Game:
             messages.append(Message('Press ESC to cancel', Settings.TEXT_COLOR, 20))
         self.message_dialog = MessageBox(self.screen, 740, 270, 20, Settings.MESSAGE_BACKGROUND_COLOR,
                                               Settings.MESSAGE_BORDER_COLOR, messages)
+
+    def load_credits_message_dialog(self):
+        messages = list()
+        messages.append(Message('CREDITS', Settings.HIGHLIGHTED_TEXT_COLOR, 40))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('A game by Crimson-Jack', Settings.TEXT_COLOR, 20))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('Graphics:', Settings.TEXT_COLOR, 16))
+        messages.append(Message('Original graphics by Crimson-Jack,', Settings.TEXT_COLOR, 12))
+        messages.append(Message('inspired by Tiny Dungeon tileset by Kenney - CC0', Settings.TEXT_COLOR, 12))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('Sound:', Settings.TEXT_COLOR, 16))
+        messages.append(Message('Effects by Crimson-Jack,', Settings.TEXT_COLOR, 12))
+        messages.append(Message('created with ChipTone by SFBGames', Settings.TEXT_COLOR, 12))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('Fonts:', Settings.TEXT_COLOR, 16))
+        messages.append(Message('Silkscreen font by Jason Kottke', Settings.TEXT_COLOR, 12))
+        messages.append(Message('Trade Winds font by Sideshow (Font Diner, Inc)', Settings.TEXT_COLOR, 12))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('Thanks to:', Settings.TEXT_COLOR, 16))
+        messages.append(Message('My wife and kids, who are always so eager', Settings.TEXT_COLOR, 12))
+        messages.append(Message('to help me pursue my indie game-making passion :-)', Settings.TEXT_COLOR, 12))
+        messages.append(Message('My friend MAK and all my mates from CF', Settings.TEXT_COLOR, 12))
+        messages.append(Message('The whole Polish retro YouTube community,', Settings.TEXT_COLOR, 12))
+        messages.append(Message('especially fans of 8-bit computers from the 80s and 90s,', Settings.TEXT_COLOR, 12))
+        messages.append(Message('in particular: ARF, Retrobajtel and more ... ', Settings.TEXT_COLOR, 12))
+        messages.append(Message('', Settings.TEXT_COLOR, 15))
+        messages.append(Message('Press ESC to return', Settings.TEXT_COLOR, 20))
+        self.message_dialog = MessageBox(self.screen, 740, 560, 20, Settings.MESSAGE_BACKGROUND_COLOR,
+                                         Settings.MESSAGE_BORDER_COLOR, messages)
 
     def dispose_menu_dialog(self):
         self.menu_dialog = None
