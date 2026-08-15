@@ -6,6 +6,19 @@
 Simple maze game with a view - from the top. The hero can move blocks and explore new terrain. He fights with monsters, collects keys and diamonds.
 The goal: teaching how to create a simple game, Pygame exploratory, checking features.
 
+### Screenshots
+
+<p align="center">
+  <img src="screenshots/gameplay-01.png" width="45%" />
+  <img src="screenshots/gameplay-02.png" width="45%" />
+  <img src="screenshots/gameplay-03.png" width="45%" />
+  <img src="screenshots/gameplay-04.png" width="45%" />
+  <img src="screenshots/gameplay-05.png" width="45%" />
+  <img src="screenshots/gameplay-06.png" width="45%" />
+  <img src="screenshots/gameplay-07.png" width="45%" />
+  <img src="screenshots/gameplay-08.png" width="45%" />
+</p>
+
 ### Gameplay
 
 Use **arrow keys** or **WASD** to move the hero through the maze.
@@ -86,6 +99,7 @@ dungeons-and-traps/
 │   ├── tmx/                 # Level maps (Tiled Map Editor)
 │   └── tsx/                 # Tilesets
 ├── img/                     # Sprite sheets (PNG)
+├── screenshots/             # Gameplay screenshots for README
 ├── sound/sfx/set_01/        # Sound effects (OGG)
 ├── font/silkscreen/         # Silkscreen font
 ├── font/trade_winds/        # Trade Winds font (first page title)

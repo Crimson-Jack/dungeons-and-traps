@@ -6,8 +6,8 @@ class Settings:
 
     # Screen size
     FULL_SCREEN_MODE = False
-    WIDTH = 960
-    HEIGHT = 640
+    WIDTH = 1200
+    HEIGHT = 720
 
     # Header size
     HEADER_HEIGHT = 80
