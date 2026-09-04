@@ -6,18 +6,21 @@ class Settings:
 
     # Screen size
     FULL_SCREEN_MODE = False
+    # WIDTH/HEIGHT below are ignored when FULL_SCREEN_MODE is True — they get overwritten at
+    # startup with the monitor resolution (see game.py).
     WIDTH = 1200
     HEIGHT = 720
 
+    # HEADER_HEIGHT + DASHBOARD_HEIGHT must be smaller than HEIGHT — the remaining space becomes
+    # the game surface height (see game.py).
     # Header size
     HEADER_HEIGHT = 80
     # Dashboard size
     DASHBOARD_HEIGHT = 144
 
-    # Tile size
+    # Tile size (rendered). Should be a multiple of 16 (source sprite pixel size) so scaling
+    # stays an even integer ratio and pixels don't get blurred/misaligned.
     TILE_SIZE = 48
-    # Source (originate) tile size
-    SOURCE_TILE_SIZE = 16
 
     # Explosion
     EXPLOSION_WEAPON_RANGE = 5

@@ -81,7 +81,7 @@ venv\Scripts\python.exe -m pytest tests/
 
 ### Core Objects and Their Roles
 
-- **`settings.py:Settings`** — single class of static constants: screen dimensions, FPS, colors, and tile sizes. Rendered tile size is `TILE_SIZE` (scaled from `SOURCE_TILE_SIZE`); use `GameHelper.multiply_by_tile_size_ratio()` when hardcoding speed or geometry values. Touch this when adding new global settings.
+- **`settings.py:Settings`** — single class of static constants: screen dimensions, FPS, colors, and rendered tile size (`TILE_SIZE`). Use `GameHelper.multiply_by_tile_size_ratio()` when hardcoding speed or geometry values. Touch this when adding new global settings. The source spritesheet tile size (`SOURCE_TILE_SIZE`) is asset-derived, not a tunable setting — it lives on `SpriteHelper` (`src/sprite_helper.py`) instead.
 
 - **`src/events.py:Events`** — single class of all custom Pygame event type IDs. Touch this when adding a new cross-system event.
 
