@@ -57,6 +57,7 @@ class Game:
         self.menu_dialog = None
         self.message_dialog = None
         self.summary_panel = None
+        self.first_page_selected_index = 0
 
         # Select startup mode
         if Settings.STUDIO_PAGE_VISIBILITY:
@@ -503,8 +504,11 @@ class Game:
                                        Message('Quit', Settings.TEXT_COLOR, 25),
                                    ],
                                    show_border=False)
+        self.menu_dialog.selected_index = self.first_page_selected_index
 
     def dispose_first_page(self):
+        if self.menu_dialog is not None:
+            self.first_page_selected_index = self.menu_dialog.get_selected_index()
         self.first_page = None
         self.menu_dialog = None
 
