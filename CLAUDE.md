@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Add new Python modules outside the `src/` directory.
 
 **Always:**
-- Run `venv\Scripts\python.exe -m pytest tests/` (PowerShell) before reporting a task complete. If tests fail, fix them first.
+- Run `venv\Scripts\python.exe -m pytest tests/` (PowerShell) only when the user explicitly asks for it — never automatically after a change or as a default step before reporting a task complete. If the user does ask and tests fail, fix them first.
 - Use full, descriptive names for all identifiers — no abbreviations or single-letter variables (`enemy_type` not `et`, `center_x` not `cx`).
 - Note any new constant added to `settings.py` or `src/events.py` explicitly in your response.
 - Use Pygame custom events (defined in `Events`) for cross-system communication — never call across system boundaries directly.
@@ -20,12 +20,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Change Workflow
 
-For any non-trivial change (new sprite, enemy, UI panel, event, core class refactor):
+For every change to production code — including one-liners, simple bug fixes, and follow-up corrections requested after a prior change:
 1. **Describe first** — state the plan and list every file that will be touched.
-2. **Wait for confirmation** — do not edit production code until the plan is approved. Confirmation means an explicit approval in the current conversation turn — a prior standing instruction does not substitute.
-3. **Implement** — make the change, run `venv\Scripts\python.exe -m pytest tests/` (PowerShell), report results.
+2. **Wait for confirmation** — do not edit production code until the plan is approved. Confirmation means an explicit approval in the current conversation turn — a prior standing instruction does not substitute, and approval of an earlier change does not carry over to a later one.
+3. **Implement** — make the change and report results. Only run `venv\Scripts\python.exe -m pytest tests/` (PowerShell) if the user explicitly asks for it.
 
-Simple bug fixes and one-liners may skip steps 1–2.
+There is no exception for changes that look small or obvious — always describe and wait for approval first.
 
 ## Stop and Ask
 
