@@ -331,11 +331,11 @@ class Game:
         elif self.game_manager.game_status == GameStatus.GAME_OVER:
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 self.dispose_message_dialog()
-                self.load_summary_panel()
+                self.load_summary_panel(player_won=False)
         elif self.game_manager.game_status == GameStatus.YOU_WIN:
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 self.dispose_message_dialog()
-                self.load_summary_panel()
+                self.load_summary_panel(player_won=True)
         elif self.game_manager.game_status == GameStatus.SUMMARY:
             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
                 self.summary_panel.next_page()
@@ -606,10 +606,10 @@ class Game:
         self.message_dialog = MessageBox(self.screen, Settings.WIDTH, Settings.HEIGHT, top_margin,
                                          Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
 
-    def load_summary_panel(self):
+    def load_summary_panel(self, player_won: bool):
         diamond_record, key_record, bonus_record = self.game_manager.get_aggregate_collectable_stats()
         pages = (
-            [SummaryTrophyPage(self.game_manager.score)]
+            [SummaryTrophyPage(self.game_manager.score, player_won)]
             + SummaryEnemiesPage.create_pages(self.game_manager.get_aggregate_kill_stats())
             + [SummaryCollectablesPage(diamond_record, key_record, bonus_record)]
         )

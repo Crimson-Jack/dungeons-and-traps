@@ -2,16 +2,22 @@ import pygame
 
 from settings import Settings
 from src.panels.panel_page import PanelPage
+from src.sprite_helper import SpriteHelper
 
 
 class SummaryTrophyPage(PanelPage):
     FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
     TROPHY_PLACEHOLDER_SIZE = (120, 120)
 
-    def __init__(self, total_score: int):
+    def __init__(self, total_score: int, player_won: bool):
         self.total_score = total_score
+        self.player_won = player_won
         self.font_score = pygame.font.Font(self.FONT_PATH, 56)
         self.font_label = pygame.font.Font(self.FONT_PATH, 20)
+        if player_won:
+            self.trophy_image = SpriteHelper.get_game_over_win_image(self.TROPHY_PLACEHOLDER_SIZE)
+        else:
+            self.trophy_image = SpriteHelper.get_game_over_lose_image(self.TROPHY_PLACEHOLDER_SIZE)
 
     @property
     def title(self) -> str:
@@ -26,15 +32,14 @@ class SummaryTrophyPage(PanelPage):
         )
 
     def draw_content(self, screen: pygame.Surface, content_rect: pygame.Rect) -> None:
-        # Trophy placeholder
+        # Trophy image
         trophy_rect = pygame.Rect(
             content_rect.centerx - self.TROPHY_PLACEHOLDER_SIZE[0] // 2,
             content_rect.y,
             self.TROPHY_PLACEHOLDER_SIZE[0],
             self.TROPHY_PLACEHOLDER_SIZE[1]
         )
-        pygame.draw.rect(screen, Settings.SURFACE_COLOR, trophy_rect)
-        pygame.draw.rect(screen, Settings.MESSAGE_BORDER_COLOR, trophy_rect, 2)
+        screen.blit(self.trophy_image, trophy_rect)
 
         # Score label
         label_y = trophy_rect.bottom + 20

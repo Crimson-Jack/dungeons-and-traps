@@ -249,8 +249,7 @@ class SpriteHelper:
 
     @staticmethod
     def get_all_tnt_sprites():
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE,
-                                                         SpriteHelper.KEY_COLOR)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE, SpriteHelper.KEY_COLOR)
 
         sprites = {
             'left': [],
@@ -267,8 +266,7 @@ class SpriteHelper:
 
     @staticmethod
     def get_enemy_icon(enemy_type, size: tuple[int, int]) -> pygame.Surface:
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', SpriteHelper.SOURCE_TILE_SIZE, size,
-                                                         SpriteHelper.KEY_COLOR)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', SpriteHelper.SOURCE_TILE_SIZE, size, SpriteHelper.KEY_COLOR)
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
@@ -349,6 +347,18 @@ class SpriteHelper:
         sprites.append(sprite_sheet.get_image(0, 3))
 
         return sprites
+
+    @staticmethod
+    def get_game_over_lose_image(size: tuple[int, int]) -> pygame.Surface:
+        game_over_image_source_size = 120
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/game-over-you-lose.png', game_over_image_source_size, size, SpriteHelper.KEY_COLOR)
+        return sprite_sheet.get_image(0, 0)
+
+    @staticmethod
+    def get_game_over_win_image(size: tuple[int, int]) -> pygame.Surface:
+        game_over_image_source_size = 120
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/game-over-you-win.png', game_over_image_source_size, size, SpriteHelper.KEY_COLOR)
+        return sprite_sheet.get_image(0, 0)
 
     @staticmethod
     def get_all_egg_sprites():
