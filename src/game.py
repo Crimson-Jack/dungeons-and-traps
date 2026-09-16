@@ -1,5 +1,4 @@
 import pygame
-import time
 
 from settings import Settings
 from src.events import Events
@@ -69,9 +68,7 @@ class Game:
             self.clean_screen()
             self.load_first_page()
 
-        # Clock and time variables
-        self.loop_start_time = None
-        self.loop_end_time = None
+        # Clock
         self.clock = pygame.time.Clock()
 
         # Secret code input text
@@ -96,9 +93,6 @@ class Game:
 
         is_running = True
         while is_running:
-            # Save start time
-            self.loop_start_time = time.time()
-
             # Handle events
             for event in pygame.event.get():
                 # Input events: QUIT
@@ -142,9 +136,7 @@ class Game:
 
             pygame.display.update()
 
-            # Save end time and calculate FPS parameter
-            self.loop_end_time = time.time()
-            self.clock.tick(self.calculate_fps())
+            self.clock.tick(Settings.FPS)
 
             # TODO: Remove
             # print(self.game_manager.player_movement_vector)
@@ -152,19 +144,6 @@ class Game:
 
         # TODO: Remove
         # print(sum(times_elapsed) / len(times_elapsed))
-
-    def calculate_fps(self):
-        if not Settings.DYNAMIC_FPS_ENABLED:
-            return Settings.FPS
-        else:
-            base_frame_time = (1 / Settings.FPS)
-            new_frame_time = base_frame_time - (self.loop_end_time - self.loop_start_time)
-            new_fps = 1 / new_frame_time
-
-            # TODO: Remove
-            # print(f"Time {(self.loop_end_time - self.loop_start_time) * 1000:.2f} millisecond. New frame {new_frame_time}. New fps {new_fps}")
-
-            return new_fps
 
     def handle_keyboard_buttons_down(self, event):
         if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
