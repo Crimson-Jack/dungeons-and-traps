@@ -47,7 +47,7 @@ class BreadthFirstSearch:
         self._neighbors_tile_order_selection = random.randint(0, len(self.neighbors_tile_orders) - 1)
         self._neighbors_tile_order = self.neighbors_tile_orders[self._neighbors_tile_order_selection]
 
-    def _get_neighbors(self, tiles: list[tuple[int, int]], tile: tuple[int, int]) -> list[tuple[int, int]]:
+    def _get_neighbors(self, tiles: set[tuple[int, int]], tile: tuple[int, int]) -> list[tuple[int, int]]:
         result = []
         for direction in self._neighbors_tile_order:
             neighbor = (tile[0] + direction[0], tile[1] + direction[1])
@@ -65,14 +65,14 @@ class BreadthFirstSearch:
             self._path.append(items[current_item])
             current_item = items[current_item]
 
-    def search(self, all_tiles: list[tuple[int, int]], start_tile: tuple[int, int], end_tile: tuple[int, int],
+    def search(self, all_tiles: set[tuple[int, int]], start_tile: tuple[int, int], end_tile: tuple[int, int],
                max_distance: int = 10) -> list[tuple[int, int]]:
         """
         Find a path from start_tile to end_tile within the given tile set.
         The result is stored in the path property and returned.
         The path is in reverse order (from the tile before end_tile back to start_tile).
 
-        :param all_tiles: list of all walkable tile coordinates
+        :param all_tiles: set of all walkable tile coordinates
         :param start_tile: starting tile coordinates
         :param end_tile: target tile coordinates
         :param max_distance: maximum allowed distance (in tiles) from start in each axis

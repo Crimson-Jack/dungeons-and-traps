@@ -118,293 +118,293 @@
   <objectgroup id="4" name="monster-enemy">
    <object id="1" name="monster-enemy-red" gid="97" x="352" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.5"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="2" name="monster-enemy-red" gid="97" x="432" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.5"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="3" name="monster-enemy-red" gid="97" x="352" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.5"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="4" name="monster-enemy-red" gid="97" x="368" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.5"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="5" name="monster-enemy-red" gid="97" x="352" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.5"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="6" name="monster-enemy-red" gid="97" x="432" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="7" name="monster-enemy-red" gid="97" x="416" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="8" name="monster-enemy-red" gid="97" x="432" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="9" name="monster-enemy-red" gid="97" x="416" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="10" name="monster-enemy-red" gid="97" x="416" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="11" name="monster-enemy-red" gid="97" x="432" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="12" name="monster-enemy-red" gid="97" x="400" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="13" name="monster-enemy-red" gid="97" x="432" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="14" name="monster-enemy-red" gid="97" x="416" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="15" name="monster-enemy-red" gid="97" x="416" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.3"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="16" name="monster-enemy-red" gid="97" x="400" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.2"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="17" name="monster-enemy-red" gid="97" x="384" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.2"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="18" name="monster-enemy-red" gid="97" x="400" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.2"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="19" name="monster-enemy-red" gid="97" x="384" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.2"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="20" name="monster-enemy-red" gid="97" x="384" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.2"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="21" name="monster-enemy-red" gid="97" x="400" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.1"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="22" name="monster-enemy-red" gid="97" x="368" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.1"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="23" name="monster-enemy-red" gid="97" x="400" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.1"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="24" name="monster-enemy-red" gid="97" x="384" y="192" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.1"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="25" name="monster-enemy-red" gid="97" x="384" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4.1"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="26" name="monster-enemy-red" gid="97" x="368" y="208" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
-     <property name="search_path_algorithm" value="GBFS"/>
+     <property name="search_path_algorithm" value="BFS"/>
      <property name="speed" type="float" value="4"/>
      <property name="start_delay" type="int" value="5"/>
     </properties>
    </object>
    <object id="27" name="monster-enemy-red" gid="97" x="368" y="176" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
@@ -415,7 +415,7 @@
    </object>
    <object id="28" name="monster-enemy-red" gid="97" x="352" y="144" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
@@ -426,7 +426,7 @@
    </object>
    <object id="29" name="monster-enemy-red" gid="97" x="368" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>
@@ -437,7 +437,7 @@
    </object>
    <object id="30" name="monster-enemy-red" gid="97" x="352" y="160" width="16" height="16">
     <properties>
-     <property name="attack_only_when_visible" type="bool" value="true"/>
+     <property name="attack_only_when_visible" type="bool" value="false"/>
      <property name="damage_power" type="int" value="1"/>
      <property name="energy" type="int" value="500"/>
      <property name="score" type="int" value="300"/>

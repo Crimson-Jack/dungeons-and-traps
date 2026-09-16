@@ -70,8 +70,8 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         self.new_position_on_map = list(self.current_position_on_map)
 
         # Path variables
-        self.all_tiles = []
-        self.obstacles = []
+        self.all_tiles = set()
+        self.obstacles = set()
         self.create_all_tiles_and_obstacles_lists()
         self.search_path = GreedyBestFirstSearch()
         self.path = []
@@ -97,9 +97,9 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
                 if self.obstacle_map[x][y] > 0:
-                    self.obstacles.append((y, x))
+                    self.obstacles.add((y, x))
                 else:
-                    self.all_tiles.append((y, x))
+                    self.all_tiles.add((y, x))
 
     def update(self):
         if len(self.path) > 0:
@@ -293,8 +293,8 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
 
     def refresh_obstacle_map(self):
         # The obstacle map has changed - regenerate lists and calculate a new path
-        self.all_tiles = []
-        self.obstacles = []
+        self.all_tiles = set()
+        self.obstacles = set()
         self.create_all_tiles_and_obstacles_lists()
         if self.is_player_in_range():
             self.calculate_path_to_player()

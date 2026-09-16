@@ -72,8 +72,8 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         self.track_position = self.get_next_track_position()
 
         # Path variables
-        self.all_tiles = []
-        self.obstacles = []
+        self.all_tiles = set()
+        self.obstacles = set()
         self.create_all_tiles_and_obstacles_lists()
         self.breadth_first_search = BreadthFirstSearch()
         self.path = []
@@ -111,9 +111,9 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         for x in range(len(self.obstacle_map)):
             for y in range(len(self.obstacle_map[x])):
                 if self.obstacle_map[x][y] > 0:
-                    self.obstacles.append((y, x))
+                    self.obstacles.add((y, x))
                 else:
-                    self.all_tiles.append((y, x))
+                    self.all_tiles.add((y, x))
 
     def update(self):
         if self.number_of_sprites > 1:
@@ -289,8 +289,8 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
 
     def refresh_obstacle_map(self):
         # The obstacle map has changed - regenerate lists and calculate a new path
-        self.all_tiles = []
-        self.obstacles = []
+        self.all_tiles = set()
+        self.obstacles = set()
         self.create_all_tiles_and_obstacles_lists()
         self.calculate_path()
 
