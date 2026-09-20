@@ -475,6 +475,8 @@ class Level:
 
     def refresh_obstacle_map(self):
         # Refresh obstacle map if is required
+        self.obstacle_map.calculate_regions()
+
         for sprite in self.enemy_sprites.sprites():
             if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
