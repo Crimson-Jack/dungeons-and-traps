@@ -1,6 +1,6 @@
 class Settings:
     # Clock
-    FPS = 45
+    FPS = 60
 
     # Screen size
     FULL_SCREEN_MODE = False
