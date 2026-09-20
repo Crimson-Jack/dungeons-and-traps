@@ -108,9 +108,9 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
             self.track.append((self.track[-1][0] + point[0], self.track[-1][1] + point[1]))
 
     def create_all_tiles_and_obstacles_lists(self):
-        for x in range(len(self.obstacle_map)):
-            for y in range(len(self.obstacle_map[x])):
-                if self.obstacle_map[x][y] > 0:
+        for x in range(len(self.obstacle_map.items)):
+            for y in range(len(self.obstacle_map.items[x])):
+                if self.obstacle_map.items[x][y] > 0:
                     self.obstacles.add((y, x))
                 else:
                     self.all_tiles.add((y, x))
@@ -152,10 +152,10 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
 
     def check_can_move(self):
         # If all neighbours are obstacles - stop the movement
-        tile_top = self.obstacle_map[self.current_position_on_map[1] - 1][self.current_position_on_map[0]]
-        tile_bottom = self.obstacle_map[self.current_position_on_map[1] + 1][self.current_position_on_map[0]]
-        tile_left = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] - 1]
-        tile_right = self.obstacle_map[self.current_position_on_map[1]][self.current_position_on_map[0] + 1]
+        tile_top = self.obstacle_map.items[self.current_position_on_map[1] - 1][self.current_position_on_map[0]]
+        tile_bottom = self.obstacle_map.items[self.current_position_on_map[1] + 1][self.current_position_on_map[0]]
+        tile_left = self.obstacle_map.items[self.current_position_on_map[1]][self.current_position_on_map[0] - 1]
+        tile_right = self.obstacle_map.items[self.current_position_on_map[1]][self.current_position_on_map[0] + 1]
         if tile_top and tile_bottom and tile_left and tile_right:
             return False
         else:
@@ -299,7 +299,8 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         end_position = self.track_position
 
         # Get path
-        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position)
+        self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position,
+                                                       obstacle_map=self.obstacle_map)
 
         if self.breadth_first_search.is_end_reached:
             # Reverse the path (direction: from monster to player)
@@ -327,7 +328,8 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
                 start_position = tuple(self.current_position_on_map)
                 end_position = item
                 # Check whether the track point is reachable
-                self.breadth_first_search.search(self.all_tiles, start_position, end_position)
+                self.breadth_first_search.search(self.all_tiles, start_position, end_position,
+                                                  obstacle_map=self.obstacle_map)
                 if self.breadth_first_search.is_end_reached:
                     all_blocked = False
                     break

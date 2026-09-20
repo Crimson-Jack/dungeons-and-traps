@@ -371,7 +371,7 @@ class Level:
                         tile_details = MonsterTileDetails(item, layer)
                         enemy_type = EnemyType.from_name(item.name)
                         MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     enemy_type, tile_details, self.obstacle_map.items,
+                                     enemy_type, tile_details, self.obstacle_map,
                                      self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
                         self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
@@ -399,7 +399,7 @@ class Level:
                         tile_details = BatTileDetails(item, layer)
                         enemy_type = EnemyType.from_name(item.name)
                         BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                 enemy_type, tile_details, self.obstacle_map.items,
+                                 enemy_type, tile_details, self.obstacle_map,
                                  self.moving_obstacle_sprites, self.hostile_force_sprites)
                         self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
@@ -409,7 +409,7 @@ class Level:
                         groups = self.the_highest_sprites_layer, self.enemy_sprites
                         tile_details = OctopusTileDetails(item, layer)
                         OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     tile_details, self.obstacle_map.items, self.obstacle_sprites,
+                                     tile_details, self.obstacle_map, self.obstacle_sprites,
                                      self.moving_obstacle_sprites)
 
     def run(self):
@@ -523,7 +523,7 @@ class Level:
 
         enemy_type = EnemyType.from_name(name)
         MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager,
-                     enemy_type, tile_details, self.obstacle_map.items,
+                     enemy_type, tile_details, self.obstacle_map,
                      self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
         self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
@@ -542,7 +542,7 @@ class Level:
         groups = self.the_highest_sprites_layer, self.enemy_sprites
 
         OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
-                     tile_details, self.obstacle_map.items, self.obstacle_sprites, self.moving_obstacle_sprites)
+                     tile_details, self.obstacle_map, self.obstacle_sprites, self.moving_obstacle_sprites)
 
         self.game_manager.boss_max_energy = tile_details.energy
         self.game_manager.boss_energy = tile_details.energy

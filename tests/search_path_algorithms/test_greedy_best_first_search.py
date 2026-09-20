@@ -1,10 +1,20 @@
 import pytest
 
+from src.obstacle_map import ObstacleMap
 from src.search_path_algorithms.greedy_best_first_search import GreedyBestFirstSearch
 
 
 def make_grid(width: int, height: int) -> list[tuple[int, int]]:
     return [(column, row) for column in range(width) for row in range(height)]
+
+
+def free_tiles_from_layer(layer: list[list[int]]) -> set[tuple[int, int]]:
+    tiles = set()
+    for row_index, row in enumerate(layer):
+        for column_index, value in enumerate(row):
+            if value == 0:
+                tiles.add((column_index, row_index))
+    return tiles
 
 
 class TestGreedyBestFirstSearchWhenPathExists:
@@ -96,6 +106,58 @@ class TestGreedyBestFirstSearchStateReset:
         assert gbfs.is_end_reached is True
         gbfs.search(make_grid(5, 5), (0, 0), (99, 99))
         assert gbfs.is_end_reached is False
+
+
+class TestGreedyBestFirstSearchWithObstacleMapRegionCheck:
+    def test_different_regions_returns_empty_path_without_searching(self):
+        layer = [
+            [0, 1, 0],
+            [0, 1, 0],
+            [0, 1, 0],
+        ]
+        obstacle_map = ObstacleMap([layer])
+        all_tiles = free_tiles_from_layer(layer)
+        gbfs = GreedyBestFirstSearch()
+        result = gbfs.search(all_tiles, (0, 0), (2, 0), max_distance=10, obstacle_map=obstacle_map)
+        assert result == []
+        assert gbfs.is_end_reached is False
+
+    def test_same_region_search_still_finds_path(self):
+        layer = [
+            [0, 0, 0],
+            [0, 0, 0],
+        ]
+        obstacle_map = ObstacleMap([layer])
+        all_tiles = free_tiles_from_layer(layer)
+        gbfs = GreedyBestFirstSearch()
+        result = gbfs.search(all_tiles, (0, 0), (2, 0), max_distance=10, obstacle_map=obstacle_map)
+        assert gbfs.is_end_reached is True
+        assert len(result) > 0
+
+    def test_blocked_start_tile_does_not_skip_search(self):
+        layer = [
+            [1, 0, 0],
+        ]
+        obstacle_map = ObstacleMap([layer])
+        all_tiles = {(0, 0), (1, 0), (2, 0)}
+        gbfs = GreedyBestFirstSearch()
+        result = gbfs.search(all_tiles, (0, 0), (2, 0), max_distance=10, obstacle_map=obstacle_map)
+        assert gbfs.is_end_reached is True
+        assert len(result) > 0
+
+    def test_early_out_clears_stale_state_from_previous_successful_search(self):
+        connected_layer = [[0, 0, 0]]
+        connected_obstacle_map = ObstacleMap([connected_layer])
+        gbfs = GreedyBestFirstSearch()
+        gbfs.search(free_tiles_from_layer(connected_layer), (0, 0), (2, 0), max_distance=10,
+                    obstacle_map=connected_obstacle_map)
+        assert gbfs.is_end_reached is True
+
+        split_layer = [[0, 1, 0]]
+        split_obstacle_map = ObstacleMap([split_layer])
+        gbfs.search({(0, 0), (2, 0)}, (0, 0), (2, 0), max_distance=10, obstacle_map=split_obstacle_map)
+        assert gbfs.is_end_reached is False
+        assert gbfs.path == []
 
 
 class TestGreedyBestFirstSearchHeuristic:

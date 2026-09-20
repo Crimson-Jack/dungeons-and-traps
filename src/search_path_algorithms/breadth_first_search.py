@@ -2,6 +2,8 @@ import random
 
 from queue import Queue
 
+from src.obstacle_map import ObstacleMap
+
 
 class BreadthFirstSearch:
     """Pathfinding algorithm that explores tiles in all directions equally, randomising neighbour order each step."""
@@ -66,7 +68,7 @@ class BreadthFirstSearch:
             current_item = items[current_item]
 
     def search(self, all_tiles: set[tuple[int, int]], start_tile: tuple[int, int], end_tile: tuple[int, int],
-               max_distance: int = 10) -> list[tuple[int, int]]:
+               max_distance: int = 10, obstacle_map: ObstacleMap | None = None) -> list[tuple[int, int]]:
         """
         Find a path from start_tile to end_tile within the given tile set.
         The result is stored in the path property and returned.
@@ -76,14 +78,23 @@ class BreadthFirstSearch:
         :param start_tile: starting tile coordinates
         :param end_tile: target tile coordinates
         :param max_distance: maximum allowed distance (in tiles) from start in each axis
+        :param obstacle_map: optional obstacle map used to skip the search entirely when
+            start_tile and end_tile are in different, definitely disconnected regions
         :return: path as a list of tile coordinates, empty if end_tile is unreachable
         """
+        self._is_end_reached = False
+        self._path.clear()
+
+        if obstacle_map is not None:
+            start_region_id = obstacle_map.get_region_id(start_tile)
+            end_region_id = obstacle_map.get_region_id(end_tile)
+            if start_region_id != ObstacleMap.BLOCKED_REGION_ID and start_region_id != end_region_id:
+                return self._path
+
         frontier = Queue()
         frontier.put(start_tile)
         came_from = dict()
         came_from[start_tile] = None
-        self._is_end_reached = False
-        self._path.clear()
 
         while not self._is_end_reached and not frontier.empty():
             current_tile = frontier.get()

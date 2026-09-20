@@ -94,9 +94,9 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         self.fire_balls = list()
 
     def create_all_tiles_and_obstacles_lists(self):
-        for x in range(len(self.obstacle_map)):
-            for y in range(len(self.obstacle_map[x])):
-                if self.obstacle_map[x][y] > 0:
+        for x in range(len(self.obstacle_map.items)):
+            for y in range(len(self.obstacle_map.items[x])):
+                if self.obstacle_map.items[x][y] > 0:
                     self.obstacles.add((y, x))
                 else:
                     self.all_tiles.add((y, x))
@@ -309,7 +309,8 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         end_position = self.game_manager.player_tile_position
 
         # Get path
-        self.path = self.search_path.search(self.all_tiles, start_position, end_position, self.range)
+        self.path = self.search_path.search(self.all_tiles, start_position, end_position, self.range,
+                                             self.obstacle_map)
 
         if self.search_path.is_end_reached:
             # Reverse the path (direction: from monster to player)

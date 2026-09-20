@@ -7,7 +7,7 @@ from src.tile_details.ghost_tile_details import GhostTileDetails
 
 
 class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
-    def __init__(self, sprites: list[SpriteCostume], position, groups, details: GhostTileDetails, obstacle_map, moving_obstacle_sprites):
+    def __init__(self, sprites: list[SpriteCostume], position, groups, details: GhostTileDetails, obstacle_map_items, moving_obstacle_sprites):
         super().__init__(*groups)
 
         # Base
@@ -28,7 +28,7 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
         self.speed = details.speed
         self.default_movement_vector = pygame.math.Vector2((1, 0))
         self.movement_vector = pygame.math.Vector2(self.default_movement_vector)
-        self.obstacle_map = obstacle_map
+        self.obstacle_map_items = obstacle_map_items
 
         # Set positions on map
         self.current_position_on_map = [
@@ -130,10 +130,10 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
 
     def check_can_move(self, position):
         # If all neighbours are obstacles - stop the movement
-        tile_top = self.obstacle_map[position[1] - 1][position[0]]
-        tile_bottom = self.obstacle_map[position[1] + 1][position[0]]
-        tile_left = self.obstacle_map[position[1]][position[0] - 1]
-        tile_right = self.obstacle_map[position[1]][position[0] + 1]
+        tile_top = self.obstacle_map_items[position[1] - 1][position[0]]
+        tile_bottom = self.obstacle_map_items[position[1] + 1][position[0]]
+        tile_left = self.obstacle_map_items[position[1]][position[0] - 1]
+        tile_right = self.obstacle_map_items[position[1]][position[0] + 1]
         if tile_top and tile_bottom and tile_left and tile_right:
             return False
         else:
@@ -166,21 +166,21 @@ class GhostEnemy(pygame.sprite.Sprite, ObstacleMapObserver):
                 current_position_top = [next_position[0] + 1, next_position[1] - 1]
                 previous_position_top = [next_position[0] + 1, next_position[1] - 2]
 
-            if self.obstacle_map[previous_position_top[1]][previous_position_top[0]] \
-                    and not self.obstacle_map[current_position_top[1]][current_position_top[0]]:
+            if self.obstacle_map_items[previous_position_top[1]][previous_position_top[0]] \
+                    and not self.obstacle_map_items[current_position_top[1]][current_position_top[0]]:
                 # [ppt]   [   ]
                 # [   ]   [ x ]
                 vector = pygame.math.Vector2(movement_vector)
                 movement_vector = pygame.math.Vector2.rotate(vector, -90)
                 result_vector = movement_vector
                 is_end_of_movement = True
-            elif self.obstacle_map[next_position[1]][next_position[0]]:
+            elif self.obstacle_map_items[next_position[1]][next_position[0]]:
                 # [ x ]   [np ]
                 # Turn 90 degree
                 vector = pygame.math.Vector2(movement_vector)
                 movement_vector = pygame.math.Vector2.rotate(vector, 90)
                 result_vector = movement_vector
-            elif not self.obstacle_map[next_position[1]][next_position[0]]:
+            elif not self.obstacle_map_items[next_position[1]][next_position[0]]:
                 # [ x ]   [   ]
                 result_vector = movement_vector
                 is_end_of_movement = True
