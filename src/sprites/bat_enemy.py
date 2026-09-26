@@ -58,6 +58,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
         self.is_moving = False
         self.start_delay = details.start_delay
         self.start_delay_counter = self.start_delay
+        self.range = 10
 
         # Set positions on map
         self.current_position_on_map = [
@@ -300,7 +301,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
 
         # Get path
         self.path = self.breadth_first_search.search(self.all_tiles, start_position, end_position,
-                                                       obstacle_map=self.obstacle_map)
+                                                       obstacle_map=self.obstacle_map, max_distance=self.range)
 
         if self.breadth_first_search.is_end_reached:
             # Reverse the path (direction: from monster to player)
@@ -329,7 +330,7 @@ class BatEnemy(CustomDrawSprite, DamageableEnemy, ObstacleMapObserver):
                 end_position = item
                 # Check whether the track point is reachable
                 self.breadth_first_search.search(self.all_tiles, start_position, end_position,
-                                                  obstacle_map=self.obstacle_map)
+                                                  obstacle_map=self.obstacle_map, max_distance=self.range)
                 if self.breadth_first_search.is_end_reached:
                     all_blocked = False
                     break

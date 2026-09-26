@@ -68,7 +68,7 @@ class BreadthFirstSearch:
             current_item = items[current_item]
 
     def search(self, all_tiles: set[tuple[int, int]], start_tile: tuple[int, int], end_tile: tuple[int, int],
-               max_distance: int = 10, obstacle_map: ObstacleMap | None = None) -> list[tuple[int, int]]:
+               obstacle_map: ObstacleMap | None = None, max_distance: int | None = None) -> list[tuple[int, int]]:
         """
         Find a path from start_tile to end_tile within the given tile set.
         The result is stored in the path property and returned.
@@ -77,9 +77,10 @@ class BreadthFirstSearch:
         :param all_tiles: set of all walkable tile coordinates
         :param start_tile: starting tile coordinates
         :param end_tile: target tile coordinates
-        :param max_distance: maximum allowed distance (in tiles) from start in each axis
         :param obstacle_map: optional obstacle map used to skip the search entirely when
             start_tile and end_tile are in different, definitely disconnected regions
+        :param max_distance: maximum allowed distance (in tiles) from start in each axis, None means no
+            distance limit is applied
         :return: path as a list of tile coordinates, empty if end_tile is unreachable
         """
         self._is_end_reached = False
@@ -106,7 +107,7 @@ class BreadthFirstSearch:
                     if next_neighbor not in came_from:
                         # square shape max distance
                         distance = abs(start_tile[0] - next_neighbor[0]), abs(start_tile[1] - next_neighbor[1])
-                        if distance[0] <= max_distance and distance[1] <= max_distance:
+                        if max_distance is None or (distance[0] <= max_distance and distance[1] <= max_distance):
                             came_from[next_neighbor] = current_tile
                             frontier.put(next_neighbor)
 

@@ -79,6 +79,20 @@ class TestBreadthFirstSearchWhenNoPathExists:
         assert result == []
 
 
+class TestBreadthFirstSearchWithMaxDistanceNone:
+    def test_none_max_distance_reaches_end_beyond_previous_default(self):
+        bfs = BreadthFirstSearch()
+        result = bfs.search(make_grid(20, 20), (0, 0), (15, 15), max_distance=None)
+        assert bfs.is_end_reached is True
+        assert len(result) > 0
+
+    def test_omitting_max_distance_defaults_to_unlimited(self):
+        bfs = BreadthFirstSearch()
+        result = bfs.search(make_grid(20, 20), (0, 0), (15, 15))
+        assert bfs.is_end_reached is True
+        assert len(result) > 0
+
+
 class TestBreadthFirstSearchStartEqualsEnd:
     def test_is_end_reached_is_true(self):
         bfs = BreadthFirstSearch()

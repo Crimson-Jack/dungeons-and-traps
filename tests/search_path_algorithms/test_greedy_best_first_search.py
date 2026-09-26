@@ -80,6 +80,20 @@ class TestGreedyBestFirstSearchWhenNoPathExists:
         assert result == []
 
 
+class TestGreedyBestFirstSearchWithMaxDistanceNone:
+    def test_none_max_distance_reaches_end_beyond_previous_default(self):
+        gbfs = GreedyBestFirstSearch()
+        result = gbfs.search(make_grid(20, 20), (0, 0), (15, 15), max_distance=None)
+        assert gbfs.is_end_reached is True
+        assert len(result) > 0
+
+    def test_omitting_max_distance_defaults_to_unlimited(self):
+        gbfs = GreedyBestFirstSearch()
+        result = gbfs.search(make_grid(20, 20), (0, 0), (15, 15))
+        assert gbfs.is_end_reached is True
+        assert len(result) > 0
+
+
 class TestGreedyBestFirstSearchStartEqualsEnd:
     def test_is_end_reached_is_true(self):
         gbfs = GreedyBestFirstSearch()
