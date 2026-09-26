@@ -13,13 +13,14 @@ class CameraGroupWithYSort(CameraGroup):
 
     def custom_draw(self, player, additional_offset = None):
         # Calculate map offset
-        super().set_map_offset(player)
+        self._set_map_offset(player)
+
         # Add additional offset
         if additional_offset is not None:
             self.offset += additional_offset
 
-        # Draw each tile with an offset on game_surface keeping Y order
-        for sprite in sorted(self.sprites(), key=lambda item: item.rect.centery):
+        # Draw each visible tile with an offset on game_surface keeping Y order
+        for sprite in sorted(self._get_visible_sprites(), key=lambda item: item.rect.centery):
             if isinstance(sprite, CustomDrawSprite):
                 sprite.custom_draw(self.game_surface, self.offset)
             else:
@@ -28,13 +29,13 @@ class CameraGroupWithYSort(CameraGroup):
 
             # Draw grid
             if self.debugger.enabled:
-                self.draw_grid(sprite)
+                self._draw_grid(sprite)
 
         # Remove additional offset
         if additional_offset is not None:
             self.offset -= additional_offset
 
-    def draw_grid(self, sprite):
+    def _draw_grid(self, sprite):
         # Draw grid for each tile that uses CameraGroupWithYSort class for rendering
         new_rect = pygame.rect.Rect(sprite.rect)
         new_rect.topleft += self.offset

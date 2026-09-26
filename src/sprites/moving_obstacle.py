@@ -134,6 +134,11 @@ class MovingObstacle(CustomDrawSprite):
         if power_value > 0:
             self.power_bar.draw(game_surface, power_value, self.power_needed_to_move_obstacle, offset)
 
+    def get_culling_rect(self):
+        # The power bar is drawn above the obstacle, outside the sprite rectangle
+        power_bar_rect = pygame.rect.Rect(self.power_bar.position, (self.power_bar.width, self.power_bar.height))
+        return self.rect.union(power_bar_rect)
+
     def get_bar_position(self):
         left_offset = GameHelper.multiply_by_tile_size_ratio(10) // 2
         bar_left = self.position[0] + left_offset

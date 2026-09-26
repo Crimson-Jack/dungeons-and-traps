@@ -169,6 +169,11 @@ class SpiderEnemy(CustomDrawSprite, DamageableEnemy):
             # Reset status of collided with weapon
             self.collided_with_weapon = False
 
+    def get_culling_rect(self):
+        # The net starts at min_y_position, which can lie outside the sprite rectangle
+        net_anchor_rect = pygame.rect.Rect(self.rect.centerx, self.min_y_position, 1, 1)
+        return self.rect.union(net_anchor_rect)
+
     def heal_injuries(self):
         # Heal injuries slowly
         if self.energy < self.max_energy:
