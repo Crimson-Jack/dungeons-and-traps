@@ -5,3 +5,4 @@ __pycache__
 .pytest_cache
 .ruff_cache
 .claude/agents/algorithm-reviewer.md
+.claude/agents/design-reviewer.md
