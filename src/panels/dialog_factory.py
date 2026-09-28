@@ -40,34 +40,24 @@ class DialogFactory:
         messages.append(Message('Level completed', Settings.TEXT_COLOR, 20))
         messages.append(Message('', Settings.TEXT_COLOR, 15))
 
-        spider_kills = current_stats.get_enemy_spider_total_kills()
-        spider_count = current_stats.get_enemy_spider_total_count()
-        monster_kills = current_stats.get_enemy_monster_total_kills()
-        monster_count = current_stats.get_enemy_monster_total_count()
-        bat_kills = current_stats.get_enemy_bat_total_kills()
-        bat_count = current_stats.get_enemy_bat_total_count()
+        enemy_groups = (
+            ('Spiders', current_stats.get_enemy_spider_total_kills(),
+             current_stats.get_enemy_spider_total_count(), current_stats.get_enemy_spider_total_score()),
+            ('Goblins', current_stats.get_enemy_monster_total_kills(),
+             current_stats.get_enemy_monster_total_count(), current_stats.get_enemy_monster_total_score()),
+            ('Bats', current_stats.get_enemy_bat_total_kills(),
+             current_stats.get_enemy_bat_total_count(), current_stats.get_enemy_bat_total_score()),
+        )
 
-        kill_lines_count = 0
+        kill_lines = [Message(f'{label}: {kills} / {count} ({score} pts)', Settings.TEXT_COLOR, 16)
+                      for label, kills, count, score in enemy_groups if kills > 0]
 
-        if spider_kills > 0 or monster_kills > 0 or bat_kills > 0:
+        if kill_lines:
             messages.append(Message('Defeated enemies:', Settings.TEXT_COLOR, 16))
-            kill_lines_count += 1
+            messages.extend(kill_lines)
 
-            if spider_kills > 0:
-                spider_score = current_stats.get_enemy_spider_total_score()
-                messages.append(Message(f'Spiders: {spider_kills} / {spider_count} ({spider_score} pts)', Settings.TEXT_COLOR, 16))
-                kill_lines_count += 1
-
-            if monster_kills > 0:
-                monster_score = current_stats.get_enemy_monster_total_score()
-                messages.append(Message(f'Goblins: {monster_kills} / {monster_count} ({monster_score} pts)', Settings.TEXT_COLOR, 16))
-                kill_lines_count += 1
-
-            if bat_kills > 0:
-                bat_score = current_stats.get_enemy_bat_total_score()
-                messages.append(Message(f'Bats: {bat_kills} / {bat_count} ({bat_score} pts)', Settings.TEXT_COLOR, 16))
-                kill_lines_count += 1
-
+        # The 'Defeated enemies:' header counts as a line whenever any kill line is shown.
+        kill_lines_count = len(kill_lines) + 1 if kill_lines else 0
         dialog_height = 196 + kill_lines_count * 20
 
         if current_stats.all_enemies_defeated():

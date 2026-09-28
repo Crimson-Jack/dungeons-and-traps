@@ -104,6 +104,21 @@ class TestCreateLevelCompletedDialog:
         ]
         assert 'EXTRA BONUS +1000 pts' not in [message.text for message in dialog.messages]
 
+    def test_with_two_enemy_groups_killed_skips_group_without_kills(self, screen):
+        spawned_enemies = {EnemyType.SPIDER_SMALL: 2, EnemyType.MONSTER_RED: 1, EnemyType.BAT: 3}
+        killed_enemies = {EnemyType.SPIDER_SMALL: 1, EnemyType.BAT: 3}
+        level_stats = create_level_stats(spawned_enemies, killed_enemies)
+
+        dialog = DialogFactory.create_level_completed_dialog(screen, level_stats)
+
+        assert dialog.height == 196 + 3 * 20
+        assert message_values(dialog.messages)[3:6] == [
+            ('Defeated enemies:', Settings.TEXT_COLOR, 16),
+            ('Spiders: 1 / 2 (100 pts)', Settings.TEXT_COLOR, 16),
+            ('Bats: 3 / 3 (300 pts)', Settings.TEXT_COLOR, 16),
+        ]
+        assert 'EXTRA BONUS +1000 pts' not in [message.text for message in dialog.messages]
+
     def test_with_all_enemy_groups_defeated_shows_every_line_and_bonus(self, screen):
         spawned_enemies = {EnemyType.SPIDER_BIG: 1, EnemyType.MONSTER_RED: 2, EnemyType.BAT: 1}
         level_stats = create_level_stats(spawned_enemies, spawned_enemies)
