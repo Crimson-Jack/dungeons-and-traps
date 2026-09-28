@@ -1,6 +1,6 @@
 import random
 
-from queue import Queue
+from collections import deque
 
 from src.obstacle_map import ObstacleMap
 
@@ -92,13 +92,12 @@ class BreadthFirstSearch:
             if start_region_id != ObstacleMap.BLOCKED_REGION_ID and start_region_id != end_region_id:
                 return self._path
 
-        frontier = Queue()
-        frontier.put(start_tile)
+        frontier = deque([start_tile])
         came_from = dict()
         came_from[start_tile] = None
 
-        while not self._is_end_reached and not frontier.empty():
-            current_tile = frontier.get()
+        while not self._is_end_reached and frontier:
+            current_tile = frontier.popleft()
             if current_tile == end_tile:
                 self._is_end_reached = True
                 self._generate_path(current_tile, came_from)
@@ -109,7 +108,7 @@ class BreadthFirstSearch:
                         distance = abs(start_tile[0] - next_neighbor[0]), abs(start_tile[1] - next_neighbor[1])
                         if max_distance is None or (distance[0] <= max_distance and distance[1] <= max_distance):
                             came_from[next_neighbor] = current_tile
-                            frontier.put(next_neighbor)
+                            frontier.append(next_neighbor)
 
         return self._path
 
