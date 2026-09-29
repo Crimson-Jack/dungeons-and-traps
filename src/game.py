@@ -20,6 +20,17 @@ from src.panels.summary_trophy_page import SummaryTrophyPage
 
 
 class Game:
+    # Statuses whose whole screen is the current message_dialog
+    MESSAGE_DIALOG_STATUSES = frozenset({
+        GameStatus.CREDITS,
+        GameStatus.SECRET_CODE,
+        GameStatus.SECRET_CODE_IS_VALID,
+        GameStatus.NEXT_LEVEL,
+        GameStatus.LEVEL_COMPLETED,
+        GameStatus.GAME_OVER,
+        GameStatus.YOU_WIN,
+    })
+
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
@@ -114,43 +125,26 @@ class Game:
                 # Custom events
                 self.handle_custom_events(event)
 
-            if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
-                # Main game logic
-                self.level.run()
-            elif self.game_manager.game_status == GameStatus.STUDIO_PAGE:
-                self.studio_page.draw()
-            elif self.game_manager.game_status == GameStatus.FIRST_PAGE:
-                self.first_page.draw()
-                self.menu_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.CREDITS:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.SECRET_CODE:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.NEXT_LEVEL:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.GAME_IS_PAUSED:
-                self.menu_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.LEVEL_COMPLETED:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.GAME_OVER:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.YOU_WIN:
-                self.message_dialog.draw()
-            elif self.game_manager.game_status == GameStatus.SUMMARY:
-                self.summary_panel.draw()
-
+            self.run_current_screen()
             pygame.display.update()
-
             self.clock.tick(Settings.FPS)
 
-            # TODO: Remove
-            # print(self.game_manager.player_movement_vector)
-            # print(self.active_movement_keys)
-
-        # TODO: Remove
-        # print(sum(times_elapsed) / len(times_elapsed))
+    def run_current_screen(self) -> None:
+        status = self.game_manager.game_status
+        if status == GameStatus.GAME_IS_RUNNING:
+            # Main game logic
+            self.level.run()
+        elif status == GameStatus.STUDIO_PAGE:
+            self.studio_page.draw()
+        elif status == GameStatus.FIRST_PAGE:
+            self.first_page.draw()
+            self.menu_dialog.draw()
+        elif status == GameStatus.GAME_IS_PAUSED:
+            self.menu_dialog.draw()
+        elif status == GameStatus.SUMMARY:
+            self.summary_panel.draw()
+        elif status in self.MESSAGE_DIALOG_STATUSES:
+            self.message_dialog.draw()
 
     def handle_keyboard_buttons_down(self, event):
         if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
