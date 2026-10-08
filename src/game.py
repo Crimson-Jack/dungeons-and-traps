@@ -212,8 +212,10 @@ class Game:
             # Close pause menu and continue the game
             self.resume_from_pause()
         elif event.key in (pygame.K_UP, pygame.K_w):
+            # Move to the previous menu item
             self.menu_dialog.select_previous()
         elif event.key in (pygame.K_DOWN, pygame.K_s):
+            # Move to the next menu item
             self.menu_dialog.select_next()
         elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
             selected = self.menu_dialog.get_selected_index()
@@ -243,12 +245,15 @@ class Game:
 
     def handle_first_page_keys(self, event: pygame.event.Event) -> bool:
         if event.key == pygame.K_ESCAPE:
+            # Quit
             return False
-        if event.key in (pygame.K_UP, pygame.K_w):
+        elif event.key in (pygame.K_UP, pygame.K_w):
+            # Move to the previous menu item
             self.menu_dialog.select_previous()
-        if event.key in (pygame.K_DOWN, pygame.K_s):
+        elif event.key in (pygame.K_DOWN, pygame.K_s):
+            # Move to the next menu item
             self.menu_dialog.select_next()
-        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
+        elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
             selected = self.menu_dialog.get_selected_index()
             if selected == 0:
                 # New Game
