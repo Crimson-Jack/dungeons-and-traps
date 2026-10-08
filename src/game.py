@@ -202,11 +202,11 @@ class Game:
         if event.key == pygame.K_ESCAPE:
             # Close pause menu and continue the game
             self.resume_from_pause()
-        if event.key == pygame.K_UP or event.key == pygame.K_w:
+        elif event.key == pygame.K_UP or event.key == pygame.K_w:
             self.menu_dialog.select_previous()
-        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
             self.menu_dialog.select_next()
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
             selected = self.menu_dialog.get_selected_index()
             if selected == 0:
                 # Resume
