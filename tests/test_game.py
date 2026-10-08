@@ -346,6 +346,40 @@ def enter_secret_code_is_valid(game: Game) -> None:
     game.load_secret_code_message_dialog(DialogFactory.create_secret_code_valid_messages())
 
 
+class TestKeyboardHandlers:
+    def test_every_status_except_unknown_has_keyboard_handler(self, game):
+        assert set(game.keyboard_handlers) == set(GameStatus) - {GameStatus.UNKNOWN}
+
+    def test_unknown_status_ignores_keys(self, game):
+        game.game_manager.game_status = GameStatus.UNKNOWN
+        first_page = game.first_page
+        menu_dialog = game.menu_dialog
+
+        is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
+
+        assert is_running is True
+        assert game.game_manager.game_status == GameStatus.UNKNOWN
+        assert game.first_page is first_page
+        assert game.menu_dialog is menu_dialog
+        assert game.message_dialog is None
+
+
+class TestAppendSecretCodeCharacter:
+    @pytest.mark.parametrize('secret_code_text, character, expected_secret_code_text', [
+        ('c', '1', 'c1'),
+        ('', 'a', 'a'),
+        ('a' * (SECRET_CODE_MAX_LENGTH - 1), 'b', 'a' * (SECRET_CODE_MAX_LENGTH - 1) + 'b'),
+        ('a' * SECRET_CODE_MAX_LENGTH, 'b', 'a' * SECRET_CODE_MAX_LENGTH),
+        ('c', ' ', 'c'),
+        ('c', '!', 'c'),
+        ('c', 'ą', 'c'),
+        ('c', '', 'c'),
+    ], ids=['digit', 'first_letter', 'last_allowed_character', 'beyond_max_length', 'space', 'punctuation',
+            'non_ascii_letter', 'key_without_character'])
+    def test_append_secret_code_character(self, secret_code_text, character, expected_secret_code_text):
+        assert Game.append_secret_code_character(secret_code_text, character) == expected_secret_code_text
+
+
 class TestKeyboardStudioPage:
     @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_ESCAPE, pygame.K_a])
     def test_any_key_opens_first_page(self, game, key):

@@ -91,6 +91,9 @@ class Game:
         # Custom event type -> handler
         self.custom_event_handlers = self.create_custom_event_handlers()
 
+        # Game status -> keyboard (key down) handler
+        self.keyboard_handlers = self.create_keyboard_handlers()
+
     def clean_screen(self):
         self.screen.fill(Settings.GAME_BACKGROUND_COLOR)
 
@@ -146,156 +149,203 @@ class Game:
         elif status in self.MESSAGE_DIALOG_STATUSES:
             self.message_dialog.draw()
 
-    def handle_keyboard_buttons_down(self, event):
-        if self.game_manager.game_status == GameStatus.GAME_IS_RUNNING:
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                self.active_movement_keys.add(event.key)
-                self.game_manager.set_player_movement(0, 1)
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
-                self.active_movement_keys.add(event.key)
-                self.game_manager.set_player_movement(0, -1)
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                self.active_movement_keys.add(event.key)
-                self.game_manager.set_player_movement(1, 0)
-            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                self.active_movement_keys.add(event.key)
-                self.game_manager.set_player_movement(-1, 0)
-            if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
-                self.game_manager.set_player_is_using_weapon(True)
-            if event.key == pygame.K_x:
-                self.game_manager.set_next_weapon()
-            if event.key == pygame.K_z:
-                self.game_manager.set_previous_weapon()
-            if event.key == pygame.K_ESCAPE:
-                # Open pause dialog and pause the game
-                self.active_movement_keys.clear()
-                self.game_manager.reset_player_movement()
-                self.game_manager.switch_pause_state()
-                self.load_game_paused_menu()
-        elif self.game_manager.game_status == GameStatus.STUDIO_PAGE:
-            self.dispose_studio_page()
-            self.show_first_page()
-        elif self.game_manager.game_status == GameStatus.FIRST_PAGE:
-            if event.key == pygame.K_ESCAPE:
-                return False
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
-                self.menu_dialog.select_previous()
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                self.menu_dialog.select_next()
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                selected = self.menu_dialog.get_selected_index()
-                if selected == 0:
-                    # New Game
-                    self.dispose_first_page()
-                    self.show_next_level_dialog()
-                elif selected == 1:
-                    # Secret Code
-                    self.dispose_first_page()
-                    self.game_manager.set_secret_code()
-                    self.load_secret_code_message_dialog()
-                elif selected == 2:
-                    # Credits
-                    self.dispose_first_page()
-                    self.game_manager.set_credits()
-                    self.load_credits_message_dialog()
-                elif selected == 3:
-                    # Quit
-                    return False
-        elif self.game_manager.game_status == GameStatus.CREDITS:
-            if event.key == pygame.K_ESCAPE:
-                # Close credits dialog and show first page
-                self.dispose_message_dialog()
-                self.show_first_page()
-        elif self.game_manager.game_status == GameStatus.SECRET_CODE:
-            if event.key == pygame.K_ESCAPE:
-                # Close secret code dialog and show first page
-                self.secret_code_text = ''
-                self.dispose_message_dialog()
-                self.show_first_page()
-            elif event.key == pygame.K_RETURN:
-                # Validate secret code
-                secret_code_level_index = self.game_manager.validate_secret_code(self.secret_code_text)
-                if secret_code_level_index is not None:
-                    # Prepare selected level and change game status
-                    self.game_manager.clear_settings_for_first_level(secret_code_level_index)
-                    self.rebuild_level()
-                    self.game_manager.set_secret_code_is_valid()
-                    self.load_secret_code_message_dialog(DialogFactory.create_secret_code_valid_messages())
-                else:
-                    # Show error message
-                    self.load_secret_code_message_dialog(DialogFactory.create_secret_code_invalid_messages())
-            elif event.key == pygame.K_BACKSPACE:
-                # Remove last char
-                self.secret_code_text = self.secret_code_text[:-1]
-                self.load_secret_code_message_dialog()
-            else:
-                if len(self.secret_code_text) < 16 and event.unicode.isascii() and event.unicode.isalnum():
-                    # Add char to secret code text only if it's ASCII alphanumeric
-                    self.secret_code_text += event.unicode
-                self.load_secret_code_message_dialog()
-        elif self.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID:
-            # Close secret code dialog and open next level dialog
-            self.dispose_message_dialog()
-            self.show_next_level_dialog()
-            self.secret_code_text = ''
-        elif self.game_manager.game_status == GameStatus.NEXT_LEVEL:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                # Close next level dialog and continue the game
-                self.dispose_message_dialog()
-                self.game_manager.set_game_is_running()
-                self.clean_screen()
-                self.refresh_header_surface()
-                self.refresh_dashboard_surface()
-        elif self.game_manager.game_status == GameStatus.GAME_IS_PAUSED:
-            if event.key == pygame.K_ESCAPE:
-                # Close pause menu and continue the game
-                self.resume_from_pause()
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
-                self.menu_dialog.select_previous()
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                self.menu_dialog.select_next()
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                selected = self.menu_dialog.get_selected_index()
-                if selected == 0:
-                    # Resume
-                    self.resume_from_pause()
-                elif selected == 1:
-                    # Restart level or trigger game over if no lives left
-                    self.dispose_menu_dialog()
-                    self.game_manager.decrease_number_of_lives()
-                    if self.game_manager.lives > 0:
-                        self.game_manager.clear_settings_for_current_level()
-                        self.start_level_intro()
-                    else:
-                        self.game_manager.set_game_is_running()
-                        pygame.event.post(pygame.event.Event(Events.GAME_OVER_SUMMARY_EVENT))
-                elif selected == 2:
-                    # Quit to main menu and reset all progress
-                    self.dispose_menu_dialog()
-                    self.reset_game_and_show_first_page()
-        elif self.game_manager.game_status == GameStatus.LEVEL_COMPLETED:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                # Close level completed dialog, load next level and open next level dialog
-                self.dispose_message_dialog()
-                self.game_manager.clear_settings_for_next_level()
-                self.start_level_intro()
-        elif self.game_manager.game_status == GameStatus.GAME_OVER:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                self.dispose_message_dialog()
-                self.load_summary_panel(player_won=False)
-        elif self.game_manager.game_status == GameStatus.YOU_WIN:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                self.dispose_message_dialog()
-                self.load_summary_panel(player_won=True)
-        elif self.game_manager.game_status == GameStatus.SUMMARY:
-            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
-                self.summary_panel.next_page()
-            elif event.key == pygame.K_LEFT:
-                self.summary_panel.previous_page()
-            elif event.key == pygame.K_ESCAPE:
-                self.dispose_summary_panel()
-                self.reset_game_and_show_first_page()
+    def create_keyboard_handlers(self) -> dict[GameStatus, Callable[[pygame.event.Event], bool]]:
+        return {
+            GameStatus.GAME_IS_RUNNING: self.handle_game_is_running_keys,
+            GameStatus.STUDIO_PAGE: self.handle_studio_page_keys,
+            GameStatus.FIRST_PAGE: self.handle_first_page_keys,
+            GameStatus.CREDITS: self.handle_credits_keys,
+            GameStatus.SECRET_CODE: self.handle_secret_code_keys,
+            GameStatus.SECRET_CODE_IS_VALID: self.handle_secret_code_is_valid_keys,
+            GameStatus.NEXT_LEVEL: self.handle_next_level_keys,
+            GameStatus.GAME_IS_PAUSED: self.handle_game_is_paused_keys,
+            GameStatus.LEVEL_COMPLETED: self.handle_level_completed_keys,
+            GameStatus.GAME_OVER: self.handle_game_over_keys,
+            GameStatus.YOU_WIN: self.handle_you_win_keys,
+            GameStatus.SUMMARY: self.handle_summary_keys,
+        }
 
+    def handle_keyboard_buttons_down(self, event: pygame.event.Event) -> bool:
+        handler = self.keyboard_handlers.get(self.game_manager.game_status)
+        if handler is None:
+            return True
+        return handler(event)
+
+    def handle_game_is_running_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.active_movement_keys.add(event.key)
+            self.game_manager.set_player_movement(0, 1)
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.active_movement_keys.add(event.key)
+            self.game_manager.set_player_movement(0, -1)
+        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            self.active_movement_keys.add(event.key)
+            self.game_manager.set_player_movement(1, 0)
+        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            self.active_movement_keys.add(event.key)
+            self.game_manager.set_player_movement(-1, 0)
+        if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
+            self.game_manager.set_player_is_using_weapon(True)
+        if event.key == pygame.K_x:
+            self.game_manager.set_next_weapon()
+        if event.key == pygame.K_z:
+            self.game_manager.set_previous_weapon()
+        if event.key == pygame.K_ESCAPE:
+            # Open pause dialog and pause the game
+            self.active_movement_keys.clear()
+            self.game_manager.reset_player_movement()
+            self.game_manager.switch_pause_state()
+            self.load_game_paused_menu()
+        return True
+
+    def handle_game_is_paused_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_ESCAPE:
+            # Close pause menu and continue the game
+            self.resume_from_pause()
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.menu_dialog.select_previous()
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.menu_dialog.select_next()
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            selected = self.menu_dialog.get_selected_index()
+            if selected == 0:
+                # Resume
+                self.resume_from_pause()
+            elif selected == 1:
+                # Restart level or trigger game over if no lives left
+                self.dispose_menu_dialog()
+                self.game_manager.decrease_number_of_lives()
+                if self.game_manager.lives > 0:
+                    self.game_manager.clear_settings_for_current_level()
+                    self.start_level_intro()
+                else:
+                    self.game_manager.set_game_is_running()
+                    pygame.event.post(pygame.event.Event(Events.GAME_OVER_SUMMARY_EVENT))
+            elif selected == 2:
+                # Quit to main menu and reset all progress
+                self.dispose_menu_dialog()
+                self.reset_game_and_show_first_page()
+        return True
+
+    def handle_studio_page_keys(self, event: pygame.event.Event) -> bool:
+        self.dispose_studio_page()
+        self.show_first_page()
+        return True
+
+    def handle_first_page_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_ESCAPE:
+            return False
+        if event.key == pygame.K_UP or event.key == pygame.K_w:
+            self.menu_dialog.select_previous()
+        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            self.menu_dialog.select_next()
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            selected = self.menu_dialog.get_selected_index()
+            if selected == 0:
+                # New Game
+                self.dispose_first_page()
+                self.show_next_level_dialog()
+            elif selected == 1:
+                # Secret Code
+                self.dispose_first_page()
+                self.game_manager.set_secret_code()
+                self.load_secret_code_message_dialog()
+            elif selected == 2:
+                # Credits
+                self.dispose_first_page()
+                self.game_manager.set_credits()
+                self.load_credits_message_dialog()
+            elif selected == 3:
+                # Quit
+                return False
+        return True
+
+    def handle_credits_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_ESCAPE:
+            # Close credits dialog and show first page
+            self.dispose_message_dialog()
+            self.show_first_page()
+        return True
+
+    def handle_secret_code_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_ESCAPE:
+            # Close secret code dialog and show first page
+            self.secret_code_text = ''
+            self.dispose_message_dialog()
+            self.show_first_page()
+        elif event.key == pygame.K_RETURN:
+            # Validate secret code
+            secret_code_level_index = self.game_manager.validate_secret_code(self.secret_code_text)
+            if secret_code_level_index is not None:
+                # Prepare selected level and change game status
+                self.game_manager.clear_settings_for_first_level(secret_code_level_index)
+                self.rebuild_level()
+                self.game_manager.set_secret_code_is_valid()
+                self.load_secret_code_message_dialog(DialogFactory.create_secret_code_valid_messages())
+            else:
+                # Show error message
+                self.load_secret_code_message_dialog(DialogFactory.create_secret_code_invalid_messages())
+        elif event.key == pygame.K_BACKSPACE:
+            # Remove last char
+            self.secret_code_text = self.secret_code_text[:-1]
+            self.load_secret_code_message_dialog()
+        else:
+            self.secret_code_text = self.append_secret_code_character(self.secret_code_text, event.unicode)
+            self.load_secret_code_message_dialog()
+        return True
+
+    @staticmethod
+    def append_secret_code_character(secret_code_text: str, character: str) -> str:
+        # Only ASCII letters and digits are accepted, up to 16 characters
+        if len(secret_code_text) < 16 and character.isascii() and character.isalnum():
+            return secret_code_text + character
+        return secret_code_text
+
+    def handle_secret_code_is_valid_keys(self, event: pygame.event.Event) -> bool:
+        # Close secret code dialog and open next level dialog
+        self.dispose_message_dialog()
+        self.show_next_level_dialog()
+        self.secret_code_text = ''
+        return True
+
+    def handle_next_level_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            # Close next level dialog and continue the game
+            self.dispose_message_dialog()
+            self.game_manager.set_game_is_running()
+            self.clean_screen()
+            self.refresh_header_surface()
+            self.refresh_dashboard_surface()
+        return True
+
+    def handle_level_completed_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            # Close level completed dialog, load next level and open next level dialog
+            self.dispose_message_dialog()
+            self.game_manager.clear_settings_for_next_level()
+            self.start_level_intro()
+        return True
+
+    def handle_game_over_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            self.dispose_message_dialog()
+            self.load_summary_panel(player_won=False)
+        return True
+
+    def handle_you_win_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+            self.dispose_message_dialog()
+            self.load_summary_panel(player_won=True)
+        return True
+
+    def handle_summary_keys(self, event: pygame.event.Event) -> bool:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
+            self.summary_panel.next_page()
+        elif event.key == pygame.K_LEFT:
+            self.summary_panel.previous_page()
+        elif event.key == pygame.K_ESCAPE:
+            self.dispose_summary_panel()
+            self.reset_game_and_show_first_page()
         return True
 
     def handle_keyboard_buttons_up(self, event):
