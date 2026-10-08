@@ -24,6 +24,9 @@ class Settings:
     EXPLOSION_WEAPON_RANGE = 5
     NUMBER_OF_EXPLOSION_STEPS = 12
 
+    # Score awarded at level completion when all enemies are defeated
+    LEVEL_COMPLETION_BONUS = 1000
+
     # Studio page
     STUDIO_PAGE_VISIBILITY = True
 

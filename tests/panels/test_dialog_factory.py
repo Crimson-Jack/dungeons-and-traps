@@ -24,6 +24,9 @@ def screen():
     return pygame.Surface((Settings.WIDTH, Settings.HEIGHT))
 
 
+EXTRA_BONUS_TEXT = f'EXTRA BONUS +{Settings.LEVEL_COMPLETION_BONUS} pts'
+
+
 def message_values(messages: list[Message]) -> list[tuple]:
     return [(message.text, message.color, message.size) for message in messages]
 
@@ -90,7 +93,7 @@ class TestCreateLevelCompletedDialog:
         dialog = DialogFactory.create_level_completed_dialog(screen, LevelStats())
 
         assert dialog.height == 196
-        assert 'EXTRA BONUS +1000 pts' not in [message.text for message in dialog.messages]
+        assert EXTRA_BONUS_TEXT not in [message.text for message in dialog.messages]
 
     def test_with_one_enemy_group_killed_partially_shows_single_line(self, screen):
         level_stats = create_level_stats({EnemyType.SPIDER_SMALL: 3}, {EnemyType.SPIDER_SMALL: 2})
@@ -102,7 +105,7 @@ class TestCreateLevelCompletedDialog:
             ('Defeated enemies:', Settings.TEXT_COLOR, 16),
             ('Spiders: 2 / 3 (200 pts)', Settings.TEXT_COLOR, 16),
         ]
-        assert 'EXTRA BONUS +1000 pts' not in [message.text for message in dialog.messages]
+        assert EXTRA_BONUS_TEXT not in [message.text for message in dialog.messages]
 
     def test_with_two_enemy_groups_killed_skips_group_without_kills(self, screen):
         spawned_enemies = {EnemyType.SPIDER_SMALL: 2, EnemyType.MONSTER_RED: 1, EnemyType.BAT: 3}
@@ -117,7 +120,7 @@ class TestCreateLevelCompletedDialog:
             ('Spiders: 1 / 2 (100 pts)', Settings.TEXT_COLOR, 16),
             ('Bats: 3 / 3 (300 pts)', Settings.TEXT_COLOR, 16),
         ]
-        assert 'EXTRA BONUS +1000 pts' not in [message.text for message in dialog.messages]
+        assert EXTRA_BONUS_TEXT not in [message.text for message in dialog.messages]
 
     def test_with_all_enemy_groups_defeated_shows_every_line_and_bonus(self, screen):
         spawned_enemies = {EnemyType.SPIDER_BIG: 1, EnemyType.MONSTER_RED: 2, EnemyType.BAT: 1}
@@ -134,7 +137,7 @@ class TestCreateLevelCompletedDialog:
             ('Spiders: 1 / 1 (100 pts)', Settings.TEXT_COLOR, 16),
             ('Goblins: 2 / 2 (200 pts)', Settings.TEXT_COLOR, 16),
             ('Bats: 1 / 1 (100 pts)', Settings.TEXT_COLOR, 16),
-            ('EXTRA BONUS +1000 pts', Settings.HIGHLIGHTED_TEXT_COLOR, 20),
+            (EXTRA_BONUS_TEXT, Settings.HIGHLIGHTED_TEXT_COLOR, 20),
             ('', Settings.TEXT_COLOR, 15),
             ('Press the SPACE button to go to the next level', Settings.TEXT_COLOR, 20),
         ]

@@ -61,7 +61,7 @@ class DialogFactory:
         dialog_height = 196 + kill_lines_count * 20
 
         if current_stats.all_enemies_defeated():
-            messages.append(Message('EXTRA BONUS +1000 pts', Settings.HIGHLIGHTED_TEXT_COLOR, 20))
+            messages.append(Message(f'EXTRA BONUS +{Settings.LEVEL_COMPLETION_BONUS} pts', Settings.HIGHLIGHTED_TEXT_COLOR, 20))
             dialog_height += 20
 
         messages.append(Message('', Settings.TEXT_COLOR, 15))

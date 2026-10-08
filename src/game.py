@@ -31,6 +31,15 @@ class Game:
         GameStatus.YOU_WIN,
     })
 
+    # Timer durations (milliseconds)
+    PARTICLE_SPARK_INTERVAL_MS = 40
+    TELEPORT_TO_NEXT_LEVEL_DELAY_MS = 2500
+    RESPAWN_AFTER_LOST_LIFE_DELAY_MS = 2000
+    RESPAWN_AFTER_TELEPORT_DELAY_MS = 1000
+    END_OF_GAME_SUMMARY_DELAY_MS = 2500
+
+    SECRET_CODE_MAX_LENGTH = 16
+
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
@@ -110,7 +119,7 @@ class Game:
         self.refresh_dashboard_surface()
 
     def run(self):
-        pygame.time.set_timer(Events.PARTICLE_EVENT, 40)
+        pygame.time.set_timer(Events.PARTICLE_EVENT, self.PARTICLE_SPARK_INTERVAL_MS)
 
         is_running = True
         while is_running:
@@ -294,10 +303,10 @@ class Game:
             self.load_secret_code_message_dialog()
         return True
 
-    @staticmethod
-    def append_secret_code_character(secret_code_text: str, character: str) -> str:
-        # Only ASCII letters and digits are accepted, up to 16 characters
-        if len(secret_code_text) < 16 and character.isascii() and character.isalnum():
+    @classmethod
+    def append_secret_code_character(cls, secret_code_text: str, character: str) -> str:
+        # Only ASCII letters and digits are accepted, up to SECRET_CODE_MAX_LENGTH characters
+        if len(secret_code_text) < cls.SECRET_CODE_MAX_LENGTH and character.isascii() and character.isalnum():
             return secret_code_text + character
         return secret_code_text
 
@@ -394,7 +403,8 @@ class Game:
             Events.CREATE_EXPLODE_EFFECT_EVENT: lambda event: self.level.show_explode_effect(event.dict.get("position")),
             Events.GAME_OVER_EVENT: self.handle_game_over_event,
             Events.GAME_OVER_SUMMARY_EVENT: self.handle_game_over_summary_event,
-            Events.YOU_WIN_EVENT: lambda event: pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 2500),
+            Events.YOU_WIN_EVENT: lambda event: pygame.time.set_timer(
+                Events.YOU_WIN_SUMMARY_EVENT, self.END_OF_GAME_SUMMARY_DELAY_MS),
             Events.YOU_WIN_SUMMARY_EVENT: self.handle_you_win_summary_event,
             Events.TILT_EFFECT_EVENT: lambda event: self.level.enable_tilt_effect(
                 event.dict.get("tilt_cursor_increment_value")),
@@ -408,7 +418,7 @@ class Game:
     def handle_start_teleport_player_to_next_level_event(self, event: pygame.event.Event) -> None:
         self.level.show_player_vanishing_point()
         pygame.time.set_timer(
-            pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 2500)
+            pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), self.TELEPORT_TO_NEXT_LEVEL_DELAY_MS)
 
     def handle_finish_teleport_player_to_next_level_event(self, event: pygame.event.Event) -> None:
         pygame.time.set_timer(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT, 0)
@@ -417,7 +427,7 @@ class Game:
     def handle_next_level_event(self, event: pygame.event.Event) -> None:
         self.game_manager.set_level_completed()
         if self.game_manager.level_stats[-1].all_enemies_defeated():
-            self.game_manager.award_completion_bonus(1000)
+            self.game_manager.award_completion_bonus(Settings.LEVEL_COMPLETION_BONUS)
         self.load_level_completed_message_dialog()
 
     def handle_create_boss_octopus_event(self, event: pygame.event.Event) -> None:
@@ -426,13 +436,13 @@ class Game:
 
     def handle_player_lost_life_event(self, event: pygame.event.Event) -> None:
         self.level.show_player_tombstone()
-        pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, 2000)
+        pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, self.RESPAWN_AFTER_LOST_LIFE_DELAY_MS)
 
     def handle_teleport_player_event(self, event: pygame.event.Event) -> None:
         self.level.show_player_vanishing_point()
         pygame.time.set_timer(
             pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
-            1000)
+            self.RESPAWN_AFTER_TELEPORT_DELAY_MS)
 
     def handle_respawn_player_event(self, event: pygame.event.Event) -> None:
         player_new_position = event.dict.get("position")
@@ -443,7 +453,7 @@ class Game:
 
     def handle_game_over_event(self, event: pygame.event.Event) -> None:
         self.level.show_player_tombstone()
-        pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 2500)
+        pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, self.END_OF_GAME_SUMMARY_DELAY_MS)
 
     def handle_game_over_summary_event(self, event: pygame.event.Event) -> None:
         pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 0)

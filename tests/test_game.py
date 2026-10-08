@@ -169,7 +169,7 @@ class TestHandleCustomEvents:
 
         assert game.level.method_calls == [call.show_player_vanishing_point()]
         set_timer_mock.assert_called_once_with(
-            pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), 2500)
+            pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), Game.TELEPORT_TO_NEXT_LEVEL_DELAY_MS)
 
     def test_finish_teleport_to_next_level_cancels_timer_and_posts_next_level_event(
             self, game_with_mocked_components, set_timer_mock):
@@ -187,7 +187,7 @@ class TestHandleCustomEvents:
         game.handle_custom_events(pygame.event.Event(Events.PLAYER_LOST_LIFE_EVENT))
 
         assert game.level.method_calls == [call.show_player_tombstone()]
-        set_timer_mock.assert_called_once_with(Events.RESPAWN_PLAYER_EVENT, 2000)
+        set_timer_mock.assert_called_once_with(Events.RESPAWN_PLAYER_EVENT, Game.RESPAWN_AFTER_LOST_LIFE_DELAY_MS)
 
     def test_teleport_player_shows_vanishing_point_and_schedules_respawn_at_position(
             self, game_with_mocked_components, set_timer_mock):
@@ -197,7 +197,8 @@ class TestHandleCustomEvents:
 
         assert game.level.method_calls == [call.show_player_vanishing_point()]
         set_timer_mock.assert_called_once_with(
-            pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {'position': POSITION}), 1000)
+            pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {'position': POSITION}),
+            Game.RESPAWN_AFTER_TELEPORT_DELAY_MS)
 
     def test_respawn_player_cancels_timer_disables_weapon_and_respawns_at_position(
             self, game_with_mocked_components, set_timer_mock):
@@ -225,7 +226,7 @@ class TestHandleCustomEvents:
         game.handle_custom_events(pygame.event.Event(Events.GAME_OVER_EVENT))
 
         assert game.level.method_calls == [call.show_player_tombstone()]
-        set_timer_mock.assert_called_once_with(Events.GAME_OVER_SUMMARY_EVENT, 2500)
+        set_timer_mock.assert_called_once_with(Events.GAME_OVER_SUMMARY_EVENT, Game.END_OF_GAME_SUMMARY_DELAY_MS)
 
     def test_game_over_summary_cancels_timer_and_shows_game_over_dialog(self, game_with_mocked_components,
                                                                         set_timer_mock):
@@ -244,7 +245,7 @@ class TestHandleCustomEvents:
         game.handle_custom_events(pygame.event.Event(Events.YOU_WIN_EVENT))
 
         assert game.level.method_calls == []
-        set_timer_mock.assert_called_once_with(Events.YOU_WIN_SUMMARY_EVENT, 2500)
+        set_timer_mock.assert_called_once_with(Events.YOU_WIN_SUMMARY_EVENT, Game.END_OF_GAME_SUMMARY_DELAY_MS)
 
     def test_you_win_summary_cancels_timer_and_shows_you_win_dialog(self, game_with_mocked_components,
                                                                     set_timer_mock):
@@ -268,9 +269,9 @@ class TestHandleCustomEvents:
         game.handle_custom_events(pygame.event.Event(Events.NEXT_LEVEL_EVENT))
 
         assert game.game_manager.game_status == GameStatus.LEVEL_COMPLETED
-        assert game.game_manager.score == score_before + 1000
+        assert game.game_manager.score == score_before + Settings.LEVEL_COMPLETION_BONUS
         assert level_stats.get_bonus_record().awarded == 1
-        assert level_stats.get_bonus_record().score == 1000
+        assert level_stats.get_bonus_record().score == Settings.LEVEL_COMPLETION_BONUS
         assert isinstance(game.message_dialog, MessageBox)
 
     def test_next_level_with_enemies_left_awards_no_bonus(self, game_with_mocked_components):
@@ -307,7 +308,6 @@ FIRST_PAGE_MENU_NEW_GAME = 0
 FIRST_PAGE_MENU_SECRET_CODE = 1
 FIRST_PAGE_MENU_CREDITS = 2
 FIRST_PAGE_MENU_QUIT = 3
-SECRET_CODE_MAX_LENGTH = 16
 SECRET_CODE_LEVEL_INDEX = 1
 
 
@@ -368,8 +368,8 @@ class TestAppendSecretCodeCharacter:
     @pytest.mark.parametrize('secret_code_text, character, expected_secret_code_text', [
         ('c', '1', 'c1'),
         ('', 'a', 'a'),
-        ('a' * (SECRET_CODE_MAX_LENGTH - 1), 'b', 'a' * (SECRET_CODE_MAX_LENGTH - 1) + 'b'),
-        ('a' * SECRET_CODE_MAX_LENGTH, 'b', 'a' * SECRET_CODE_MAX_LENGTH),
+        ('a' * (Game.SECRET_CODE_MAX_LENGTH - 1), 'b', 'a' * (Game.SECRET_CODE_MAX_LENGTH - 1) + 'b'),
+        ('a' * Game.SECRET_CODE_MAX_LENGTH, 'b', 'a' * Game.SECRET_CODE_MAX_LENGTH),
         ('c', ' ', 'c'),
         ('c', '!', 'c'),
         ('c', 'ą', 'c'),
@@ -509,7 +509,7 @@ class TestKeyboardSecretCode:
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
 
     def test_typing_beyond_max_length_is_ignored(self, game):
-        full_secret_code_text = 'a' * SECRET_CODE_MAX_LENGTH
+        full_secret_code_text = 'a' * Game.SECRET_CODE_MAX_LENGTH
         enter_secret_code(game, full_secret_code_text)
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_b, 'b'))
