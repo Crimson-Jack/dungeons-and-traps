@@ -536,7 +536,7 @@ class TestKeyboardSecretCode:
         invalid_texts = message_texts(DialogFactory.create_secret_code_invalid_messages())
         assert message_texts(game.message_dialog.messages)[-len(invalid_texts):] == invalid_texts
 
-    def test_escape_returns_to_first_page_and_clears_text(self, game):
+    def test_escape_returns_to_first_page_clears_text_and_disposes_dialog(self, game):
         enter_secret_code(game, 'c1')
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
@@ -546,8 +546,7 @@ class TestKeyboardSecretCode:
         assert game.secret_code_text == ''
         assert isinstance(game.first_page, FirstPage)
         assert isinstance(game.menu_dialog, MenuBox)
-        # Current behavior: unlike CREDITS, ESC here keeps the message dialog (see point 2).
-        assert game.message_dialog is not None
+        assert game.message_dialog is None
 
 
 class TestKeyboardSecretCodeIsValid:

@@ -210,6 +210,7 @@ class Game:
             if event.key == pygame.K_ESCAPE:
                 # Close secret code dialog and show first page
                 self.secret_code_text = ''
+                self.dispose_message_dialog()
                 self.show_first_page()
             elif event.key == pygame.K_RETURN:
                 # Validate secret code
