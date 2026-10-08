@@ -40,7 +40,7 @@ class Game:
 
     SECRET_CODE_MAX_LENGTH = 16
 
-    def __init__(self):
+    def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
 
@@ -103,22 +103,22 @@ class Game:
         # Game status -> keyboard (key down) handler
         self.keyboard_handlers = self.create_keyboard_handlers()
 
-    def clean_screen(self):
+    def clean_screen(self) -> None:
         self.screen.fill(Settings.GAME_BACKGROUND_COLOR)
 
-    def refresh_header_surface(self):
+    def refresh_header_surface(self) -> None:
         self.header.clean()
         self.header.draw()
 
-    def refresh_dashboard_surface(self):
+    def refresh_dashboard_surface(self) -> None:
         self.dashboard.clean()
         self.dashboard.draw()
 
-    def refresh_header_and_dashboard_surfaces(self):
+    def refresh_header_and_dashboard_surfaces(self) -> None:
         self.refresh_header_surface()
         self.refresh_dashboard_surface()
 
-    def run(self):
+    def run(self) -> None:
         pygame.time.set_timer(Events.PARTICLE_EVENT, self.PARTICLE_SPARK_INTERVAL_MS)
 
         is_running = True
@@ -357,7 +357,7 @@ class Game:
             self.reset_game_and_show_first_page()
         return True
 
-    def handle_keyboard_buttons_up(self, event):
+    def handle_keyboard_buttons_up(self, event: pygame.event.Event) -> None:
         if event.key in self.active_movement_keys:
             self.active_movement_keys.discard(event.key)
             if event.key in (pygame.K_DOWN, pygame.K_s):
@@ -467,38 +467,38 @@ class Game:
         self.load_you_win_message_dialog()
         self.refresh_dashboard_surface()
 
-    def load_studio_page(self):
+    def load_studio_page(self) -> None:
         self.studio_page = StudioPage(self.screen)
 
-    def dispose_studio_page(self):
+    def dispose_studio_page(self) -> None:
         self.studio_page = None
 
-    def load_first_page(self):
+    def load_first_page(self) -> None:
         self.first_page = FirstPage(self.screen)
         self.menu_dialog = DialogFactory.create_first_page_menu(self.screen)
         self.menu_dialog.selected_index = self.first_page_selected_index
 
-    def dispose_first_page(self):
+    def dispose_first_page(self) -> None:
         if self.menu_dialog is not None:
             self.first_page_selected_index = self.menu_dialog.get_selected_index()
         self.first_page = None
         self.menu_dialog = None
 
-    def load_game_paused_menu(self):
+    def load_game_paused_menu(self) -> None:
         self.menu_dialog = DialogFactory.create_game_paused_menu(self.screen)
 
-    def load_level_completed_message_dialog(self):
+    def load_level_completed_message_dialog(self) -> None:
         self.message_dialog = DialogFactory.create_level_completed_dialog(self.screen,
                                                                           self.game_manager.level_stats[-1])
 
-    def load_next_level_message_dialog(self):
+    def load_next_level_message_dialog(self) -> None:
         self.message_dialog = DialogFactory.create_next_level_dialog(self.screen,
                                                                      self.game_manager.level + 1,
                                                                      self.game_manager.get_level_name(),
                                                                      self.game_manager.get_level_description(),
                                                                      self.game_manager.get_secret_code())
 
-    def load_summary_panel(self, player_won: bool):
+    def load_summary_panel(self, player_won: bool) -> None:
         diamond_record, key_record, bonus_record = self.game_manager.get_aggregate_collectable_stats()
         pages = (
             [SummaryTrophyPage(self.game_manager.score, player_won)]
@@ -508,52 +508,52 @@ class Game:
         self.summary_panel = MultiPagePanel(self.screen, pages)
         self.game_manager.set_summary()
 
-    def load_game_over_message_dialog(self):
+    def load_game_over_message_dialog(self) -> None:
         self.message_dialog = DialogFactory.create_game_over_dialog(self.screen)
 
-    def load_you_win_message_dialog(self):
+    def load_you_win_message_dialog(self) -> None:
         self.message_dialog = DialogFactory.create_you_win_dialog(self.screen)
 
-    def load_secret_code_message_dialog(self, dialog_response_messages: list[Message] = None):
+    def load_secret_code_message_dialog(self, dialog_response_messages: list[Message] | None = None) -> None:
         self.message_dialog = DialogFactory.create_secret_code_dialog(self.screen, self.secret_code_text,
                                                                       dialog_response_messages)
 
-    def load_credits_message_dialog(self):
+    def load_credits_message_dialog(self) -> None:
         self.message_dialog = DialogFactory.create_credits_dialog(self.screen)
 
-    def dispose_menu_dialog(self):
+    def dispose_menu_dialog(self) -> None:
         self.menu_dialog = None
 
-    def dispose_message_dialog(self):
+    def dispose_message_dialog(self) -> None:
         self.message_dialog = None
 
-    def dispose_summary_panel(self):
+    def dispose_summary_panel(self) -> None:
         self.summary_panel = None
 
-    def show_first_page(self):
+    def show_first_page(self) -> None:
         self.game_manager.set_first_page()
         self.clean_screen()
         self.load_first_page()
 
-    def show_next_level_dialog(self):
+    def show_next_level_dialog(self) -> None:
         self.game_manager.set_next_level()
         self.load_next_level_message_dialog()
 
-    def rebuild_level(self):
+    def rebuild_level(self) -> None:
         self.level = Level(self.screen, self.game_surface, self.game_manager)
 
-    def start_level_intro(self):
+    def start_level_intro(self) -> None:
         self.game_manager.set_player_is_using_weapon(False)
         self.rebuild_level()
         self.show_next_level_dialog()
 
-    def resume_from_pause(self):
+    def resume_from_pause(self) -> None:
         self.active_movement_keys.clear()
         self.game_manager.reset_player_movement()
         self.dispose_menu_dialog()
         self.game_manager.switch_pause_state()
 
-    def reset_game_and_show_first_page(self):
+    def reset_game_and_show_first_page(self) -> None:
         self.game_manager.clear_settings_for_first_level()
         self.rebuild_level()
         self.show_first_page()
