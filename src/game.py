@@ -181,19 +181,19 @@ class Game:
         return handler(event)
 
     def handle_game_is_running_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        if event.key in (pygame.K_DOWN, pygame.K_s):
             self.active_movement_keys.add(event.key)
             self.game_manager.set_player_movement(0, 1)
-        if event.key == pygame.K_UP or event.key == pygame.K_w:
+        if event.key in (pygame.K_UP, pygame.K_w):
             self.active_movement_keys.add(event.key)
             self.game_manager.set_player_movement(0, -1)
-        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+        if event.key in (pygame.K_RIGHT, pygame.K_d):
             self.active_movement_keys.add(event.key)
             self.game_manager.set_player_movement(1, 0)
-        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+        if event.key in (pygame.K_LEFT, pygame.K_a):
             self.active_movement_keys.add(event.key)
             self.game_manager.set_player_movement(-1, 0)
-        if event.key == pygame.K_LCTRL or event.key == pygame.K_LSHIFT:
+        if event.key in (pygame.K_LCTRL, pygame.K_LSHIFT):
             self.game_manager.set_player_is_using_weapon(True)
         if event.key == pygame.K_x:
             self.game_manager.set_next_weapon()
@@ -211,11 +211,11 @@ class Game:
         if event.key == pygame.K_ESCAPE:
             # Close pause menu and continue the game
             self.resume_from_pause()
-        elif event.key == pygame.K_UP or event.key == pygame.K_w:
+        elif event.key in (pygame.K_UP, pygame.K_w):
             self.menu_dialog.select_previous()
-        elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        elif event.key in (pygame.K_DOWN, pygame.K_s):
             self.menu_dialog.select_next()
-        elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
             selected = self.menu_dialog.get_selected_index()
             if selected == 0:
                 # Resume
@@ -244,11 +244,11 @@ class Game:
     def handle_first_page_keys(self, event: pygame.event.Event) -> bool:
         if event.key == pygame.K_ESCAPE:
             return False
-        if event.key == pygame.K_UP or event.key == pygame.K_w:
+        if event.key in (pygame.K_UP, pygame.K_w):
             self.menu_dialog.select_previous()
-        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+        if event.key in (pygame.K_DOWN, pygame.K_s):
             self.menu_dialog.select_next()
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
             selected = self.menu_dialog.get_selected_index()
             if selected == 0:
                 # New Game
@@ -318,7 +318,7 @@ class Game:
         return True
 
     def handle_next_level_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
             # Close next level dialog and continue the game
             self.dispose_message_dialog()
             self.game_manager.set_game_is_running()
@@ -328,7 +328,7 @@ class Game:
         return True
 
     def handle_level_completed_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
             # Close level completed dialog, load next level and open next level dialog
             self.dispose_message_dialog()
             self.game_manager.clear_settings_for_next_level()
@@ -336,19 +336,19 @@ class Game:
         return True
 
     def handle_game_over_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
             self.dispose_message_dialog()
             self.load_summary_panel(player_won=False)
         return True
 
     def handle_you_win_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE):
             self.dispose_message_dialog()
             self.load_summary_panel(player_won=True)
         return True
 
     def handle_summary_keys(self, event: pygame.event.Event) -> bool:
-        if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_RIGHT:
+        if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_RIGHT):
             self.summary_panel.next_page()
         elif event.key == pygame.K_LEFT:
             self.summary_panel.previous_page()
@@ -360,13 +360,13 @@ class Game:
     def handle_keyboard_buttons_up(self, event):
         if event.key in self.active_movement_keys:
             self.active_movement_keys.discard(event.key)
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+            if event.key in (pygame.K_DOWN, pygame.K_s):
                 self.game_manager.set_player_movement(0, -1)
-            if event.key == pygame.K_UP or event.key == pygame.K_w:
+            if event.key in (pygame.K_UP, pygame.K_w):
                 self.game_manager.set_player_movement(0, 1)
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+            if event.key in (pygame.K_RIGHT, pygame.K_d):
                 self.game_manager.set_player_movement(-1, 0)
-            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+            if event.key in (pygame.K_LEFT, pygame.K_a):
                 self.game_manager.set_player_movement(1, 0)
 
     def create_custom_event_handlers(self) -> dict[int, Callable[[pygame.event.Event], None]]:
