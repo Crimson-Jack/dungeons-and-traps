@@ -34,7 +34,7 @@ class CustomEventController:
         """
         Run the handler registered for the event type. Events without a handler are ignored.
 
-        :param event: any Pygame event taken from the event queue
+        :param event: any pygame event taken from the event queue
         """
         handler = self.custom_event_handlers.get(event.type)
         if handler is not None:
@@ -187,7 +187,7 @@ class CustomEventController:
 
     def handle_you_win_summary_event(self, event: pygame.event.Event) -> None:
         """
-        Cancel the summary timer, switch to the you win status, show the you win dialog
+        Cancel the summary timer, switch to the 'you win' status, show the 'you win' dialog
         and refresh the dashboard.
 
         :param event: YOU_WIN_SUMMARY_EVENT
