@@ -114,6 +114,7 @@ dungeons-and-traps/
 └── src/
     ├── game.py              # Main game loop and input handling
     ├── game_screens.py      # Current screen: surfaces, level, panels, dialogs
+    ├── custom_event_controller.py  # Reactions to custom game events
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
     ├── events.py            # Custom Pygame event type IDs
     ├── level.py             # Level loading and sprite management

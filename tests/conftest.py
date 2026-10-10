@@ -26,7 +26,7 @@ def game(monkeypatch):
     pygame.quit()
 
 
-# Replaces the level and both panels with mocks so custom events can be checked by the calls Game makes.
+# Replaces the level and both panels with mocks so custom events can be checked by the calls the controllers make.
 @pytest.fixture
 def game_with_mocked_components(game):
     game.screens.level = Mock(spec=Level)
