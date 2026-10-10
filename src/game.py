@@ -9,10 +9,18 @@ from src.screen_manager import ScreenManager
 
 
 class Game:
+    """Main game loop: creates the window and the game components, then dispatches events each frame."""
+
     # Timer durations (milliseconds)
     PARTICLE_SPARK_INTERVAL_MS = 40
 
     def __init__(self) -> None:
+        """
+        Initialize pygame and open the window (full screen or regular, as set in Settings).
+        In full screen mode Settings.WIDTH and Settings.HEIGHT are overwritten with the monitor size.
+        Create the game manager, the screen manager and both controllers,
+        then show the studio page or the first page.
+        """
         pygame.init()
         pygame.display.set_caption('Dungeons and traps')
 
@@ -48,6 +56,11 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def run(self) -> None:
+        """
+        Run the main loop until the window is closed or the player quits from a menu.
+        Each frame passes key events to the keyboard controller and every event to the custom event controller,
+        then runs the current screen and keeps the frame rate at Settings.FPS.
+        """
         pygame.time.set_timer(Events.PARTICLE_EVENT, self.PARTICLE_SPARK_INTERVAL_MS)
 
         is_running = True
