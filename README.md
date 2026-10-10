@@ -113,10 +113,11 @@ dungeons-and-traps/
 │   └── test_geometry_helper.py
 └── src/
     ├── game.py              # Main game loop and input handling
+    ├── game_screens.py      # Current screen: surfaces, level, panels, dialogs
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
     ├── events.py            # Custom Pygame event type IDs
     ├── level.py             # Level loading and sprite management
-    ├── level_kill_stats.py  # Kill statistics tracker per level
+    ├── level_stats.py       # Per-level statistics (kills, diamonds, keys, bonus)
     ├── enemy_kill_record.py # Single enemy type kill record (count, killed, score)
     ├── obstacle_map.py      # 2D grid used by enemy pathfinding
     ├── sound_manager.py     # Sound playback (Singleton)

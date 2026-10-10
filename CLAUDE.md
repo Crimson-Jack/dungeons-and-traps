@@ -87,7 +87,9 @@ venv\Scripts\python.exe -m pytest tests/
 
 - **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, the ordered `LEVELS` list, and `kill_stats: list[LevelKillStats]` (one entry per played level, persists until game over). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
 
-- **`src/game.py:Game`** — the main game loop. Owns the three UI surfaces (header, dashboard, game area), handles all keyboard input via a state-machine driven by `game_manager.game_status`, dispatches custom events to `Level` methods, and manages transitions between screens/dialogs.
+- **`src/game.py:Game`** — the main game loop. Creates the window, `GameManager` and `GameScreens`, handles all keyboard input via a state-machine driven by `game_manager.game_status`, dispatches custom events to `Level` methods (through `screens.level`), and runs gameplay transitions (level intro, pause resume, game reset).
+
+- **`src/game_screens.py:GameScreens`** — what is currently on screen. Owns the three UI surfaces (header, dashboard, game area), the current `Level`, `Header`, `Dashboard`, and the studio page, first page, dialogs and summary panel. Draws the current screen each frame (`run_current_screen()`), loads/disposes pages and dialogs, refreshes panels, and rebuilds the level. Never calls `Game` — controllers always read `screens.level` at call time, because the level object is replaced on restart and level change.
 
 - **`src/level.py:Level`** — loads a `.tmx` map file and constructs all sprites from it. Owns five layered `CameraGroup`s (drawn back-to-front for depth) and multiple functional `pygame.sprite.Group`s used for collision detection. Runs the game loop's update/draw cycle each frame.
 
