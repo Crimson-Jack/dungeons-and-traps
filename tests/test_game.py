@@ -15,12 +15,12 @@ from src.panels.studio_page import StudioPage
 class TestGameConstruction:
     def test_starts_on_first_page_with_menu(self, game):
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
-        assert game.screens.menu_dialog.get_selected_index() == 0
-        assert game.screens.studio_page is None
-        assert game.screens.message_dialog is None
-        assert game.screens.summary_panel is None
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
+        assert game.screen_manager.menu_dialog.get_selected_index() == 0
+        assert game.screen_manager.studio_page is None
+        assert game.screen_manager.message_dialog is None
+        assert game.screen_manager.summary_panel is None
         assert game.secret_code_text == ''
         assert game.active_movement_keys == set()
 
@@ -43,30 +43,30 @@ def message_texts(messages: list) -> list[str]:
 
 
 def enter_studio_page(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_studio_page()
-    game.screens.load_studio_page()
+    game.screen_manager.load_studio_page()
 
 
 def enter_credits(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_credits()
-    game.screens.load_credits_message_dialog()
+    game.screen_manager.load_credits_message_dialog()
 
 
 def enter_secret_code(game: Game, secret_code_text: str = '') -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_secret_code()
     game.secret_code_text = secret_code_text
-    game.screens.load_secret_code_message_dialog(game.secret_code_text)
+    game.screen_manager.load_secret_code_message_dialog(game.secret_code_text)
 
 
 def enter_secret_code_is_valid(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.clear_settings_for_first_level(SECRET_CODE_LEVEL_INDEX)
     game.game_manager.set_secret_code_is_valid()
     game.secret_code_text = game.game_manager.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code
-    game.screens.load_secret_code_message_dialog(game.secret_code_text,
+    game.screen_manager.load_secret_code_message_dialog(game.secret_code_text,
                                                  DialogFactory.create_secret_code_valid_messages())
 
 
@@ -76,16 +76,16 @@ class TestKeyboardHandlers:
 
     def test_unknown_status_ignores_keys(self, game):
         game.game_manager.game_status = GameStatus.UNKNOWN
-        first_page = game.screens.first_page
-        menu_dialog = game.screens.menu_dialog
+        first_page = game.screen_manager.first_page
+        menu_dialog = game.screen_manager.menu_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.UNKNOWN
-        assert game.screens.first_page is first_page
-        assert game.screens.menu_dialog is menu_dialog
-        assert game.screens.message_dialog is None
+        assert game.screen_manager.first_page is first_page
+        assert game.screen_manager.menu_dialog is menu_dialog
+        assert game.screen_manager.message_dialog is None
 
 
 class TestAppendSecretCodeCharacter:
@@ -108,15 +108,15 @@ class TestKeyboardStudioPage:
     @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_ESCAPE, pygame.K_a])
     def test_any_key_opens_first_page(self, game, key):
         enter_studio_page(game)
-        assert isinstance(game.screens.studio_page, StudioPage)
+        assert isinstance(game.screen_manager.studio_page, StudioPage)
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert game.screens.studio_page is None
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
+        assert game.screen_manager.studio_page is None
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
 
 
 class TestKeyboardFirstPage:
@@ -135,52 +135,52 @@ class TestKeyboardFirstPage:
         (pygame.K_UP, FIRST_PAGE_MENU_NEW_GAME, FIRST_PAGE_MENU_QUIT),
     ], ids=['down', 's', 'up', 'w', 'down_wraps_to_top', 'up_wraps_to_bottom'])
     def test_arrows_move_menu_selection(self, game, key, start_index, expected_index):
-        game.screens.menu_dialog.selected_index = start_index
+        game.screen_manager.menu_dialog.selected_index = start_index
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
-        assert game.screens.menu_dialog.get_selected_index() == expected_index
+        assert game.screen_manager.menu_dialog.get_selected_index() == expected_index
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
 
     @pytest.mark.parametrize('key', [pygame.K_RETURN, pygame.K_SPACE])
     def test_new_game_opens_next_level_dialog(self, game, key):
-        game.screens.menu_dialog.selected_index = FIRST_PAGE_MENU_NEW_GAME
+        game.screen_manager.menu_dialog.selected_index = FIRST_PAGE_MENU_NEW_GAME
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
-        assert game.screens.first_page is None
-        assert game.screens.menu_dialog is None
-        assert isinstance(game.screens.message_dialog, MessageBox)
-        assert message_texts(game.screens.message_dialog.messages)[0] == 'LEVEL 1'
+        assert game.screen_manager.first_page is None
+        assert game.screen_manager.menu_dialog is None
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == 'LEVEL 1'
 
     def test_secret_code_opens_secret_code_dialog(self, game):
-        game.screens.menu_dialog.selected_index = FIRST_PAGE_MENU_SECRET_CODE
+        game.screen_manager.menu_dialog.selected_index = FIRST_PAGE_MENU_SECRET_CODE
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
-        assert game.screens.first_page is None
-        assert game.screens.menu_dialog is None
-        assert isinstance(game.screens.message_dialog, MessageBox)
-        assert message_texts(game.screens.message_dialog.messages)[0] == 'SECRET CODE'
+        assert game.screen_manager.first_page is None
+        assert game.screen_manager.menu_dialog is None
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == 'SECRET CODE'
 
     def test_credits_opens_credits_dialog(self, game):
-        game.screens.menu_dialog.selected_index = FIRST_PAGE_MENU_CREDITS
+        game.screen_manager.menu_dialog.selected_index = FIRST_PAGE_MENU_CREDITS
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.CREDITS
-        assert game.screens.first_page is None
-        assert game.screens.menu_dialog is None
-        assert isinstance(game.screens.message_dialog, MessageBox)
+        assert game.screen_manager.first_page is None
+        assert game.screen_manager.menu_dialog is None
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
 
     def test_quit_quits_game(self, game):
-        game.screens.menu_dialog.selected_index = FIRST_PAGE_MENU_QUIT
+        game.screen_manager.menu_dialog.selected_index = FIRST_PAGE_MENU_QUIT
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
@@ -188,13 +188,13 @@ class TestKeyboardFirstPage:
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
 
     def test_selected_menu_item_is_remembered_after_returning_to_first_page(self, game):
-        game.screens.menu_dialog.selected_index = FIRST_PAGE_MENU_CREDITS
+        game.screen_manager.menu_dialog.selected_index = FIRST_PAGE_MENU_CREDITS
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
 
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert game.screens.menu_dialog.get_selected_index() == FIRST_PAGE_MENU_CREDITS
+        assert game.screen_manager.menu_dialog.get_selected_index() == FIRST_PAGE_MENU_CREDITS
 
 
 class TestKeyboardCredits:
@@ -205,31 +205,31 @@ class TestKeyboardCredits:
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert game.screens.message_dialog is None
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
+        assert game.screen_manager.message_dialog is None
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
 
     @pytest.mark.parametrize('key', [pygame.K_RETURN, pygame.K_SPACE, pygame.K_a])
     def test_other_keys_keep_credits(self, game, key):
         enter_credits(game)
-        credits_dialog = game.screens.message_dialog
+        credits_dialog = game.screen_manager.message_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.CREDITS
-        assert game.screens.message_dialog is credits_dialog
+        assert game.screen_manager.message_dialog is credits_dialog
 
 
 class TestKeyboardSecretCode:
     def test_typing_alphanumeric_character_appends_it_and_refreshes_dialog(self, game):
         enter_secret_code(game, 'c')
-        previous_dialog = game.screens.message_dialog
+        previous_dialog = game.screen_manager.message_dialog
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_1, '1'))
 
         assert game.secret_code_text == 'c1'
-        assert game.screens.message_dialog is not previous_dialog
+        assert game.screen_manager.message_dialog is not previous_dialog
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
 
     def test_typing_beyond_max_length_is_ignored(self, game):
@@ -269,30 +269,30 @@ class TestKeyboardSecretCode:
 
     def test_return_with_valid_code_prepares_selected_level(self, game):
         enter_secret_code(game, game.game_manager.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code)
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID
         assert game.game_manager.level == SECRET_CODE_LEVEL_INDEX
-        assert game.screens.level is not previous_level
+        assert game.screen_manager.level is not previous_level
         valid_texts = message_texts(DialogFactory.create_secret_code_valid_messages())
-        assert message_texts(game.screens.message_dialog.messages)[-len(valid_texts):] == valid_texts
+        assert message_texts(game.screen_manager.message_dialog.messages)[-len(valid_texts):] == valid_texts
 
     def test_return_with_invalid_code_shows_error_and_keeps_level(self, game):
         enter_secret_code(game, 'wrongcode')
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
         assert game.game_manager.level == 0
-        assert game.screens.level is previous_level
+        assert game.screen_manager.level is previous_level
         assert game.secret_code_text == 'wrongcode'
         invalid_texts = message_texts(DialogFactory.create_secret_code_invalid_messages())
-        assert message_texts(game.screens.message_dialog.messages)[-len(invalid_texts):] == invalid_texts
+        assert message_texts(game.screen_manager.message_dialog.messages)[-len(invalid_texts):] == invalid_texts
 
     def test_escape_returns_to_first_page_clears_text_and_disposes_dialog(self, game):
         enter_secret_code(game, 'c1')
@@ -302,25 +302,25 @@ class TestKeyboardSecretCode:
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
         assert game.secret_code_text == ''
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
-        assert game.screens.message_dialog is None
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
+        assert game.screen_manager.message_dialog is None
 
 
 class TestKeyboardSecretCodeIsValid:
     @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_RETURN, pygame.K_ESCAPE])
     def test_any_key_opens_next_level_dialog_and_clears_text(self, game, key):
         enter_secret_code_is_valid(game)
-        secret_code_dialog = game.screens.message_dialog
+        secret_code_dialog = game.screen_manager.message_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
         assert game.secret_code_text == ''
-        assert isinstance(game.screens.message_dialog, MessageBox)
-        assert game.screens.message_dialog is not secret_code_dialog
-        assert message_texts(game.screens.message_dialog.messages)[0] == f'LEVEL {SECRET_CODE_LEVEL_INDEX + 1}'
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
+        assert game.screen_manager.message_dialog is not secret_code_dialog
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == f'LEVEL {SECRET_CODE_LEVEL_INDEX + 1}'
 
 
 # --- Keyboard: gameplay (GAME_IS_RUNNING, GAME_IS_PAUSED, key release) ---
@@ -335,14 +335,14 @@ def key_up_event(key: int) -> pygame.event.Event:
 
 
 def enter_game_is_running(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_game_is_running()
 
 
 def enter_game_is_paused(game: Game) -> None:
     enter_game_is_running(game)
     game.game_manager.switch_pause_state()
-    game.screens.load_game_paused_menu()
+    game.screen_manager.load_game_paused_menu()
 
 
 class TestKeyboardGameIsRunning:
@@ -410,8 +410,8 @@ class TestKeyboardGameIsRunning:
         assert game.game_manager.game_status == GameStatus.GAME_IS_PAUSED
         assert game.active_movement_keys == set()
         assert game.game_manager.player_movement_vector == (0, 0)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
-        assert game.screens.menu_dialog.title.text == 'PAUSED'
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
+        assert game.screen_manager.menu_dialog.title.text == 'PAUSED'
 
     def test_other_key_changes_nothing(self, game):
         enter_game_is_running(game)
@@ -467,11 +467,11 @@ class TestKeyboardGameIsPaused:
     ], ids=['down', 's', 'up', 'w', 'up_wraps_to_bottom'])
     def test_arrows_move_menu_selection(self, game, key, start_index, expected_index):
         enter_game_is_paused(game)
-        game.screens.menu_dialog.selected_index = start_index
+        game.screen_manager.menu_dialog.selected_index = start_index
 
         game.handle_keyboard_buttons_down(key_down_event(key))
 
-        assert game.screens.menu_dialog.get_selected_index() == expected_index
+        assert game.screen_manager.menu_dialog.get_selected_index() == expected_index
         assert game.game_manager.game_status == GameStatus.GAME_IS_PAUSED
 
     @pytest.mark.parametrize('key, selected_index', [
@@ -481,7 +481,7 @@ class TestKeyboardGameIsPaused:
     ], ids=['escape', 'resume_with_return', 'resume_with_space'])
     def test_escape_or_resume_continues_game(self, game, key, selected_index):
         enter_game_is_paused(game)
-        game.screens.menu_dialog.selected_index = selected_index
+        game.screen_manager.menu_dialog.selected_index = selected_index
         game.active_movement_keys.add(pygame.K_DOWN)
         game.game_manager.set_player_movement(0, 1)
 
@@ -489,31 +489,31 @@ class TestKeyboardGameIsPaused:
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.GAME_IS_RUNNING
-        assert game.screens.menu_dialog is None
+        assert game.screen_manager.menu_dialog is None
         assert game.active_movement_keys == set()
         assert game.game_manager.player_movement_vector == (0, 0)
 
     def test_restart_level_with_lives_left_takes_life_and_rebuilds_level(self, game):
         enter_game_is_paused(game)
-        game.screens.menu_dialog.selected_index = PAUSE_MENU_RESTART_LEVEL
+        game.screen_manager.menu_dialog.selected_index = PAUSE_MENU_RESTART_LEVEL
         game.game_manager.set_player_is_using_weapon(True)
         lives_before = game.game_manager.lives
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert game.game_manager.lives == lives_before - 1
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
-        assert game.screens.level is not previous_level
+        assert game.screen_manager.level is not previous_level
         assert game.game_manager.player_is_using_weapon is False
-        assert game.screens.menu_dialog is None
-        assert message_texts(game.screens.message_dialog.messages)[0] == 'LEVEL 1'
+        assert game.screen_manager.menu_dialog is None
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == 'LEVEL 1'
 
     def test_restart_level_with_last_life_posts_game_over_summary(self, game):
         enter_game_is_paused(game)
-        game.screens.menu_dialog.selected_index = PAUSE_MENU_RESTART_LEVEL
+        game.screen_manager.menu_dialog.selected_index = PAUSE_MENU_RESTART_LEVEL
         game.game_manager.lives = 1
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
         pygame.event.clear()
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
@@ -522,15 +522,15 @@ class TestKeyboardGameIsPaused:
         # Current behavior: the status goes back to GAME_IS_RUNNING and GAME_OVER_SUMMARY_EVENT sets GAME_OVER later.
         assert game.game_manager.game_status == GameStatus.GAME_IS_RUNNING
         assert len(pygame.event.get(eventtype=Events.GAME_OVER_SUMMARY_EVENT)) == 1
-        assert game.screens.level is previous_level
-        assert game.screens.menu_dialog is None
+        assert game.screen_manager.level is previous_level
+        assert game.screen_manager.menu_dialog is None
 
     def test_quit_game_resets_progress_and_returns_to_first_page(self, game):
         enter_game_is_paused(game)
-        game.screens.menu_dialog.selected_index = PAUSE_MENU_QUIT_GAME
+        game.screen_manager.menu_dialog.selected_index = PAUSE_MENU_QUIT_GAME
         game.game_manager.score = 500
         game.game_manager.lives = 1
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
@@ -539,41 +539,41 @@ class TestKeyboardGameIsPaused:
         assert game.game_manager.score == 0
         assert game.game_manager.lives == 2
         assert game.game_manager.level == 0
-        assert game.screens.level is not previous_level
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
-        assert game.screens.menu_dialog.title is None
+        assert game.screen_manager.level is not previous_level
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
+        assert game.screen_manager.menu_dialog.title is None
 
 
 # --- Keyboard: end of level and game (NEXT_LEVEL, LEVEL_COMPLETED, GAME_OVER, YOU_WIN, SUMMARY) ---
 
 def enter_next_level(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_next_level()
-    game.screens.load_next_level_message_dialog()
+    game.screen_manager.load_next_level_message_dialog()
 
 
 def enter_level_completed(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_level_completed()
-    game.screens.load_level_completed_message_dialog()
+    game.screen_manager.load_level_completed_message_dialog()
 
 
 def enter_game_over(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_game_over()
-    game.screens.load_game_over_message_dialog()
+    game.screen_manager.load_game_over_message_dialog()
 
 
 def enter_you_win(game: Game) -> None:
-    game.screens.dispose_first_page()
+    game.screen_manager.dispose_first_page()
     game.game_manager.set_you_win()
-    game.screens.load_you_win_message_dialog()
+    game.screen_manager.load_you_win_message_dialog()
 
 
 def enter_summary(game: Game) -> None:
-    game.screens.dispose_first_page()
-    game.screens.load_summary_panel(player_won=False)
+    game.screen_manager.dispose_first_page()
+    game.screen_manager.load_summary_panel(player_won=False)
 
 
 class TestKeyboardNextLevel:
@@ -585,18 +585,18 @@ class TestKeyboardNextLevel:
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.GAME_IS_RUNNING
-        assert game.screens.message_dialog is None
+        assert game.screen_manager.message_dialog is None
 
     @pytest.mark.parametrize('key', [pygame.K_ESCAPE, pygame.K_a])
     def test_other_keys_keep_next_level_dialog(self, game, key):
         enter_next_level(game)
-        next_level_dialog = game.screens.message_dialog
+        next_level_dialog = game.screen_manager.message_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
-        assert game.screens.message_dialog is next_level_dialog
+        assert game.screen_manager.message_dialog is next_level_dialog
 
 
 class TestKeyboardLevelCompleted:
@@ -606,7 +606,7 @@ class TestKeyboardLevelCompleted:
         game.game_manager.set_player_is_using_weapon(True)
         level_index_before = game.game_manager.level
         level_stats_count_before = len(game.game_manager.level_stats)
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
@@ -614,20 +614,20 @@ class TestKeyboardLevelCompleted:
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
         assert game.game_manager.level == level_index_before + 1
         assert len(game.game_manager.level_stats) == level_stats_count_before + 1
-        assert game.screens.level is not previous_level
+        assert game.screen_manager.level is not previous_level
         assert game.game_manager.player_is_using_weapon is False
-        assert message_texts(game.screens.message_dialog.messages)[0] == f'LEVEL {level_index_before + 2}'
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == f'LEVEL {level_index_before + 2}'
 
     @pytest.mark.parametrize('key', [pygame.K_ESCAPE, pygame.K_a])
     def test_other_keys_keep_level_completed_dialog(self, game, key):
         enter_level_completed(game)
-        level_completed_dialog = game.screens.message_dialog
+        level_completed_dialog = game.screen_manager.message_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.LEVEL_COMPLETED
-        assert game.screens.message_dialog is level_completed_dialog
+        assert game.screen_manager.message_dialog is level_completed_dialog
 
 
 class TestKeyboardGameOverAndYouWin:
@@ -643,9 +643,9 @@ class TestKeyboardGameOverAndYouWin:
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SUMMARY
-        assert game.screens.message_dialog is None
-        assert game.screens.summary_panel.current_page_index == 0
-        assert game.screens.summary_panel.pages[0].player_won is expected_player_won
+        assert game.screen_manager.message_dialog is None
+        assert game.screen_manager.summary_panel.current_page_index == 0
+        assert game.screen_manager.summary_panel.pages[0].player_won is expected_player_won
 
     @pytest.mark.parametrize('enter_status, expected_status', [
         (enter_game_over, GameStatus.GAME_OVER),
@@ -653,14 +653,14 @@ class TestKeyboardGameOverAndYouWin:
     ], ids=['game_over', 'you_win'])
     def test_other_key_keeps_dialog(self, game, enter_status, expected_status):
         enter_status(game)
-        dialog = game.screens.message_dialog
+        dialog = game.screen_manager.message_dialog
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
 
         assert is_running is True
         assert game.game_manager.game_status == expected_status
-        assert game.screens.message_dialog is dialog
-        assert game.screens.summary_panel is None
+        assert game.screen_manager.message_dialog is dialog
+        assert game.screen_manager.summary_panel is None
 
 
 class TestKeyboardSummary:
@@ -670,49 +670,49 @@ class TestKeyboardSummary:
 
         game.handle_keyboard_buttons_down(key_down_event(key))
 
-        assert game.screens.summary_panel.current_page_index == 1
+        assert game.screen_manager.summary_panel.current_page_index == 1
         assert game.game_manager.game_status == GameStatus.SUMMARY
 
     def test_next_page_after_last_page_wraps_to_first(self, game):
         enter_summary(game)
-        game.screens.summary_panel.current_page_index = len(game.screens.summary_panel.pages) - 1
+        game.screen_manager.summary_panel.current_page_index = len(game.screen_manager.summary_panel.pages) - 1
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_RIGHT))
 
-        assert game.screens.summary_panel.current_page_index == 0
+        assert game.screen_manager.summary_panel.current_page_index == 0
 
     def test_left_goes_to_previous_page(self, game):
         enter_summary(game)
-        game.screens.summary_panel.current_page_index = 1
+        game.screen_manager.summary_panel.current_page_index = 1
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_LEFT))
 
-        assert game.screens.summary_panel.current_page_index == 0
+        assert game.screen_manager.summary_panel.current_page_index == 0
 
     def test_left_on_first_page_wraps_to_last(self, game):
         enter_summary(game)
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_LEFT))
 
-        assert game.screens.summary_panel.current_page_index == len(game.screens.summary_panel.pages) - 1
+        assert game.screen_manager.summary_panel.current_page_index == len(game.screen_manager.summary_panel.pages) - 1
 
     def test_escape_resets_game_and_returns_to_first_page(self, game):
         enter_summary(game)
         game.game_manager.score = 500
         game.game_manager.lives = 0
-        previous_level = game.screens.level
+        previous_level = game.screen_manager.level
 
         is_running = game.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert game.screens.summary_panel is None
+        assert game.screen_manager.summary_panel is None
         assert game.game_manager.score == 0
         assert game.game_manager.lives == 2
         assert game.game_manager.level == 0
-        assert game.screens.level is not previous_level
-        assert isinstance(game.screens.first_page, FirstPage)
-        assert isinstance(game.screens.menu_dialog, MenuBox)
+        assert game.screen_manager.level is not previous_level
+        assert isinstance(game.screen_manager.first_page, FirstPage)
+        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
 
 
 class TestKeyboardPlayerPath:
@@ -721,7 +721,7 @@ class TestKeyboardPlayerPath:
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
-        assert message_texts(game.screens.message_dialog.messages)[0] == 'LEVEL 1'
+        assert message_texts(game.screen_manager.message_dialog.messages)[0] == 'LEVEL 1'
 
         game.handle_keyboard_buttons_down(key_down_event(pygame.K_SPACE))
         assert game.game_manager.game_status == GameStatus.GAME_IS_RUNNING

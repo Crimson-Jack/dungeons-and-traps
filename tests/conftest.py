@@ -29,9 +29,9 @@ def game(monkeypatch):
 # Replaces the level and both panels with mocks so custom events can be checked by the calls the controllers make.
 @pytest.fixture
 def game_with_mocked_components(game):
-    game.screens.level = Mock(spec=Level)
-    game.screens.header = Mock(spec=Header)
-    game.screens.dashboard = Mock(spec=Dashboard)
+    game.screen_manager.level = Mock(spec=Level)
+    game.screen_manager.header = Mock(spec=Header)
+    game.screen_manager.dashboard = Mock(spec=Dashboard)
     pygame.event.clear()
     return game
 

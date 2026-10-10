@@ -3,7 +3,7 @@ from unittest.mock import Mock, call
 import pytest
 
 from src.enums.game_status import GameStatus
-from src.game_screens import GameScreens
+from src.screen_manager import ScreenManager
 
 
 SCREEN_COMPONENT_NAMES = ('level', 'studio_page', 'first_page', 'menu_dialog', 'message_dialog', 'summary_panel')
@@ -31,17 +31,17 @@ class TestRunCurrentScreen:
                              ids=[game_status.name for game_status, expected_component_calls in RUN_CURRENT_SCREEN_CASES])
     def test_runs_only_components_of_current_status(self, game, game_status, expected_component_calls):
         for component_name in SCREEN_COMPONENT_NAMES:
-            setattr(game.screens, component_name, Mock())
+            setattr(game.screen_manager, component_name, Mock())
         game.game_manager.game_status = game_status
 
-        game.screens.run_current_screen()
+        game.screen_manager.run_current_screen()
 
         for component_name in SCREEN_COMPONENT_NAMES:
-            assert getattr(game.screens, component_name).method_calls == \
+            assert getattr(game.screen_manager, component_name).method_calls == \
                 expected_component_calls.get(component_name, []), component_name
 
     def test_message_dialog_statuses(self):
-        assert GameScreens.MESSAGE_DIALOG_STATUSES == {
+        assert ScreenManager.MESSAGE_DIALOG_STATUSES == {
             GameStatus.CREDITS, GameStatus.SECRET_CODE, GameStatus.SECRET_CODE_IS_VALID,
             GameStatus.NEXT_LEVEL, GameStatus.LEVEL_COMPLETED, GameStatus.GAME_OVER, GameStatus.YOU_WIN,
         }

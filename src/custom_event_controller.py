@@ -5,7 +5,7 @@ import pygame
 from settings import Settings
 from src.events import Events
 from src.game_manager import GameManager
-from src.game_screens import GameScreens
+from src.screen_manager import ScreenManager
 
 
 class CustomEventController:
@@ -17,15 +17,15 @@ class CustomEventController:
     RESPAWN_AFTER_TELEPORT_DELAY_MS = 1000
     END_OF_GAME_SUMMARY_DELAY_MS = 2500
 
-    def __init__(self, game_manager: GameManager, screens: GameScreens) -> None:
+    def __init__(self, game_manager: GameManager, screen_manager: ScreenManager) -> None:
         """
         Build the table that maps each custom event type to its handler.
 
         :param game_manager: shared game state
-        :param screens: level, panels, pages and dialogs currently on screen
+        :param screen_manager: level, panels, pages and dialogs currently on screen
         """
         self.game_manager = game_manager
-        self.screens = screens
+        self.screen_manager = screen_manager
 
         # Custom event type -> handler
         self.custom_event_handlers = self.create_custom_event_handlers()
@@ -46,49 +46,51 @@ class CustomEventController:
 
         :return: custom event type -> handler
         """
-        # Handlers read self.screens.level on every call, because the level object is replaced
+        # Handlers read self.screen_manager.level on every call, because the level object is replaced
         # on restart and level change.
         return {
-            Events.CHANGE_SCORE_EVENT: lambda event: self.screens.refresh_header_surface(),
-            Events.COLLECT_DIAMOND_EVENT: lambda event: self.screens.refresh_header_and_dashboard_surfaces(),
-            Events.COLLECT_KEY_EVENT: lambda event: self.screens.refresh_header_and_dashboard_surfaces(),
-            Events.COLLECT_LIFE_EVENT: lambda event: self.screens.refresh_dashboard_surface(),
-            Events.CHANGE_WEAPON_CAPACITY_EVENT: lambda event: self.screens.refresh_header_surface(),
-            Events.CHANGE_ENERGY_EVENT: lambda event: self.screens.refresh_dashboard_surface(),
-            Events.CHANGE_WEAPON_EVENT: lambda event: self.screens.refresh_header_surface(),
-            Events.EXIT_POINT_IS_OPEN_EVENT: lambda event: self.screens.level.show_exit_point(),
+            Events.CHANGE_SCORE_EVENT: lambda event: self.screen_manager.refresh_header_surface(),
+            Events.COLLECT_DIAMOND_EVENT: lambda event: self.screen_manager.refresh_header_and_dashboard_surfaces(),
+            Events.COLLECT_KEY_EVENT: lambda event: self.screen_manager.refresh_header_and_dashboard_surfaces(),
+            Events.COLLECT_LIFE_EVENT: lambda event: self.screen_manager.refresh_dashboard_surface(),
+            Events.CHANGE_WEAPON_CAPACITY_EVENT: lambda event: self.screen_manager.refresh_header_surface(),
+            Events.CHANGE_ENERGY_EVENT: lambda event: self.screen_manager.refresh_dashboard_surface(),
+            Events.CHANGE_WEAPON_EVENT: lambda event: self.screen_manager.refresh_header_surface(),
+            Events.EXIT_POINT_IS_OPEN_EVENT: lambda event: self.screen_manager.level.show_exit_point(),
             Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT: self.handle_start_teleport_player_to_next_level_event,
             Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT: self.handle_finish_teleport_player_to_next_level_event,
             Events.NEXT_LEVEL_EVENT: self.handle_next_level_event,
-            Events.REMOVE_OBSTACLES_EVENT: lambda event: self.screens.level.remove_obstacles(),
-            Events.REFRESH_OBSTACLE_MAP_EVENT: lambda event: self.screens.level.refresh_obstacle_map(),
+            Events.REMOVE_OBSTACLES_EVENT: lambda event: self.screen_manager.level.remove_obstacles(),
+            Events.REFRESH_OBSTACLE_MAP_EVENT: lambda event: self.screen_manager.level.refresh_obstacle_map(),
             Events.PLAYER_TILE_POSITION_CHANGED_EVENT:
-                lambda event: self.screens.level.inform_about_player_tile_position(),
+                lambda event: self.screen_manager.level.inform_about_player_tile_position(),
             Events.PLAYER_IS_NOT_USING_WEAPON_EVENT: lambda event: self.game_manager.set_player_is_using_weapon(False),
-            Events.ADD_PARTICLE_EFFECT_EVENT: lambda event: self.screens.level.add_particle_effect(
+            Events.ADD_PARTICLE_EFFECT_EVENT: lambda event: self.screen_manager.level.add_particle_effect(
                 event.dict.get("position"),
                 event.dict.get("number_of_sparks"),
                 event.dict.get("colors")),
-            Events.PARTICLE_EVENT: lambda event: self.screens.level.add_spark_to_particle_effect(),
-            Events.ADD_TOMBSTONE_EVENT: lambda event: self.screens.level.add_tombstone(event.dict.get("position")),
+            Events.PARTICLE_EVENT: lambda event: self.screen_manager.level.add_spark_to_particle_effect(),
+            Events.ADD_TOMBSTONE_EVENT:
+                lambda event: self.screen_manager.level.add_tombstone(event.dict.get("position")),
             Events.ADD_BOSS_TOMBSTONE_EVENT:
-                lambda event: self.screens.level.add_boss_tombstone(event.dict.get("position")),
+                lambda event: self.screen_manager.level.add_boss_tombstone(event.dict.get("position")),
             Events.ADD_VANISHING_POINT_EVENT:
-                lambda event: self.screens.level.add_vanishing_point(event.dict.get("position")),
-            Events.CREATE_EGG_EVENT: lambda event: self.screens.level.create_egg(event.dict.get("position")),
-            Events.CREATE_MONSTER_EVENT: lambda event: self.screens.level.create_monster(event.dict.get("position")),
+                lambda event: self.screen_manager.level.add_vanishing_point(event.dict.get("position")),
+            Events.CREATE_EGG_EVENT: lambda event: self.screen_manager.level.create_egg(event.dict.get("position")),
+            Events.CREATE_MONSTER_EVENT:
+                lambda event: self.screen_manager.level.create_monster(event.dict.get("position")),
             Events.CREATE_BOSS_OCTOPUS_EVENT: self.handle_create_boss_octopus_event,
             Events.PLAYER_LOST_LIFE_EVENT: self.handle_player_lost_life_event,
             Events.TELEPORT_PLAYER_EVENT: self.handle_teleport_player_event,
             Events.RESPAWN_PLAYER_EVENT: self.handle_respawn_player_event,
             Events.CREATE_EXPLODE_EFFECT_EVENT:
-                lambda event: self.screens.level.show_explode_effect(event.dict.get("position")),
+                lambda event: self.screen_manager.level.show_explode_effect(event.dict.get("position")),
             Events.GAME_OVER_EVENT: self.handle_game_over_event,
             Events.GAME_OVER_SUMMARY_EVENT: self.handle_game_over_summary_event,
             Events.YOU_WIN_EVENT: lambda event: pygame.time.set_timer(
                 Events.YOU_WIN_SUMMARY_EVENT, self.END_OF_GAME_SUMMARY_DELAY_MS),
             Events.YOU_WIN_SUMMARY_EVENT: self.handle_you_win_summary_event,
-            Events.TILT_EFFECT_EVENT: lambda event: self.screens.level.enable_tilt_effect(
+            Events.TILT_EFFECT_EVENT: lambda event: self.screen_manager.level.enable_tilt_effect(
                 event.dict.get("tilt_cursor_increment_value")),
         }
 
@@ -98,7 +100,7 @@ class CustomEventController:
 
         :param event: START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT
         """
-        self.screens.level.show_player_vanishing_point()
+        self.screen_manager.level.show_player_vanishing_point()
         pygame.time.set_timer(
             pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT), self.TELEPORT_TO_NEXT_LEVEL_DELAY_MS)
 
@@ -121,7 +123,7 @@ class CustomEventController:
         self.game_manager.set_level_completed()
         if self.game_manager.level_stats[-1].all_enemies_defeated():
             self.game_manager.award_completion_bonus(Settings.LEVEL_COMPLETION_BONUS)
-        self.screens.load_level_completed_message_dialog()
+        self.screen_manager.load_level_completed_message_dialog()
 
     def handle_create_boss_octopus_event(self, event: pygame.event.Event) -> None:
         """
@@ -129,8 +131,8 @@ class CustomEventController:
 
         :param event: CREATE_BOSS_OCTOPUS_EVENT
         """
-        self.screens.level.create_boss_octopus()
-        self.screens.refresh_dashboard_surface()
+        self.screen_manager.level.create_boss_octopus()
+        self.screen_manager.refresh_dashboard_surface()
 
     def handle_player_lost_life_event(self, event: pygame.event.Event) -> None:
         """
@@ -138,7 +140,7 @@ class CustomEventController:
 
         :param event: PLAYER_LOST_LIFE_EVENT
         """
-        self.screens.level.show_player_tombstone()
+        self.screen_manager.level.show_player_tombstone()
         pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, self.RESPAWN_AFTER_LOST_LIFE_DELAY_MS)
 
     def handle_teleport_player_event(self, event: pygame.event.Event) -> None:
@@ -147,7 +149,7 @@ class CustomEventController:
 
         :param event: TELEPORT_PLAYER_EVENT with the destination "position"
         """
-        self.screens.level.show_player_vanishing_point()
+        self.screen_manager.level.show_player_vanishing_point()
         pygame.time.set_timer(
             pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {"position": event.dict.get("position")}),
             self.RESPAWN_AFTER_TELEPORT_DELAY_MS)
@@ -161,8 +163,8 @@ class CustomEventController:
         player_new_position = event.dict.get("position")
         pygame.time.set_timer(Events.RESPAWN_PLAYER_EVENT, 0)
         self.game_manager.set_player_is_using_weapon(False)
-        self.screens.level.respawn_player(player_new_position)
-        self.screens.refresh_dashboard_surface()
+        self.screen_manager.level.respawn_player(player_new_position)
+        self.screen_manager.refresh_dashboard_surface()
 
     def handle_game_over_event(self, event: pygame.event.Event) -> None:
         """
@@ -170,7 +172,7 @@ class CustomEventController:
 
         :param event: GAME_OVER_EVENT
         """
-        self.screens.level.show_player_tombstone()
+        self.screen_manager.level.show_player_tombstone()
         pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, self.END_OF_GAME_SUMMARY_DELAY_MS)
 
     def handle_game_over_summary_event(self, event: pygame.event.Event) -> None:
@@ -182,8 +184,8 @@ class CustomEventController:
         """
         pygame.time.set_timer(Events.GAME_OVER_SUMMARY_EVENT, 0)
         self.game_manager.set_game_over()
-        self.screens.load_game_over_message_dialog()
-        self.screens.refresh_dashboard_surface()
+        self.screen_manager.load_game_over_message_dialog()
+        self.screen_manager.refresh_dashboard_surface()
 
     def handle_you_win_summary_event(self, event: pygame.event.Event) -> None:
         """
@@ -194,5 +196,5 @@ class CustomEventController:
         """
         pygame.time.set_timer(Events.YOU_WIN_SUMMARY_EVENT, 0)
         self.game_manager.set_you_win()
-        self.screens.load_you_win_message_dialog()
-        self.screens.refresh_dashboard_surface()
+        self.screen_manager.load_you_win_message_dialog()
+        self.screen_manager.refresh_dashboard_surface()

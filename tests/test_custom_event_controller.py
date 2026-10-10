@@ -61,9 +61,9 @@ class TestHandleCustomEvents:
 
         game.custom_events.handle_custom_events(pygame.event.Event(event_type, event_attributes))
 
-        assert game.screens.level.method_calls == expected_level_calls
-        assert game.screens.header.method_calls == (PANEL_REFRESH_CALLS if header_refreshed else [])
-        assert game.screens.dashboard.method_calls == (PANEL_REFRESH_CALLS if dashboard_refreshed else [])
+        assert game.screen_manager.level.method_calls == expected_level_calls
+        assert game.screen_manager.header.method_calls == (PANEL_REFRESH_CALLS if header_refreshed else [])
+        assert game.screen_manager.dashboard.method_calls == (PANEL_REFRESH_CALLS if dashboard_refreshed else [])
         set_timer_mock.assert_not_called()
 
     def test_start_teleport_to_next_level_shows_vanishing_point_and_schedules_finish(
@@ -72,7 +72,7 @@ class TestHandleCustomEvents:
 
         game.custom_events.handle_custom_events(pygame.event.Event(Events.START_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT))
 
-        assert game.screens.level.method_calls == [call.show_player_vanishing_point()]
+        assert game.screen_manager.level.method_calls == [call.show_player_vanishing_point()]
         set_timer_mock.assert_called_once_with(
             pygame.event.Event(Events.FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT),
             CustomEventController.TELEPORT_TO_NEXT_LEVEL_DELAY_MS)
@@ -92,7 +92,7 @@ class TestHandleCustomEvents:
 
         game.custom_events.handle_custom_events(pygame.event.Event(Events.PLAYER_LOST_LIFE_EVENT))
 
-        assert game.screens.level.method_calls == [call.show_player_tombstone()]
+        assert game.screen_manager.level.method_calls == [call.show_player_tombstone()]
         set_timer_mock.assert_called_once_with(Events.RESPAWN_PLAYER_EVENT,
                                                CustomEventController.RESPAWN_AFTER_LOST_LIFE_DELAY_MS)
 
@@ -103,7 +103,7 @@ class TestHandleCustomEvents:
         game.custom_events.handle_custom_events(pygame.event.Event(Events.TELEPORT_PLAYER_EVENT,
                                                                    {'position': POSITION}))
 
-        assert game.screens.level.method_calls == [call.show_player_vanishing_point()]
+        assert game.screen_manager.level.method_calls == [call.show_player_vanishing_point()]
         set_timer_mock.assert_called_once_with(
             pygame.event.Event(Events.RESPAWN_PLAYER_EVENT, {'position': POSITION}),
             CustomEventController.RESPAWN_AFTER_TELEPORT_DELAY_MS)
@@ -118,8 +118,8 @@ class TestHandleCustomEvents:
 
         set_timer_mock.assert_called_once_with(Events.RESPAWN_PLAYER_EVENT, 0)
         assert game.game_manager.player_is_using_weapon is False
-        assert game.screens.level.method_calls == [call.respawn_player(POSITION)]
-        assert game.screens.dashboard.method_calls == PANEL_REFRESH_CALLS
+        assert game.screen_manager.level.method_calls == [call.respawn_player(POSITION)]
+        assert game.screen_manager.dashboard.method_calls == PANEL_REFRESH_CALLS
 
     def test_player_is_not_using_weapon_disables_weapon(self, game_with_mocked_components):
         game = game_with_mocked_components
@@ -134,7 +134,7 @@ class TestHandleCustomEvents:
 
         game.custom_events.handle_custom_events(pygame.event.Event(Events.GAME_OVER_EVENT))
 
-        assert game.screens.level.method_calls == [call.show_player_tombstone()]
+        assert game.screen_manager.level.method_calls == [call.show_player_tombstone()]
         set_timer_mock.assert_called_once_with(Events.GAME_OVER_SUMMARY_EVENT,
                                                CustomEventController.END_OF_GAME_SUMMARY_DELAY_MS)
 
@@ -146,15 +146,15 @@ class TestHandleCustomEvents:
 
         set_timer_mock.assert_called_once_with(Events.GAME_OVER_SUMMARY_EVENT, 0)
         assert game.game_manager.game_status == GameStatus.GAME_OVER
-        assert isinstance(game.screens.message_dialog, MessageBox)
-        assert game.screens.dashboard.method_calls == PANEL_REFRESH_CALLS
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
+        assert game.screen_manager.dashboard.method_calls == PANEL_REFRESH_CALLS
 
     def test_you_win_schedules_summary(self, game_with_mocked_components, set_timer_mock):
         game = game_with_mocked_components
 
         game.custom_events.handle_custom_events(pygame.event.Event(Events.YOU_WIN_EVENT))
 
-        assert game.screens.level.method_calls == []
+        assert game.screen_manager.level.method_calls == []
         set_timer_mock.assert_called_once_with(Events.YOU_WIN_SUMMARY_EVENT,
                                                CustomEventController.END_OF_GAME_SUMMARY_DELAY_MS)
 
@@ -166,8 +166,8 @@ class TestHandleCustomEvents:
 
         set_timer_mock.assert_called_once_with(Events.YOU_WIN_SUMMARY_EVENT, 0)
         assert game.game_manager.game_status == GameStatus.YOU_WIN
-        assert isinstance(game.screens.message_dialog, MessageBox)
-        assert game.screens.dashboard.method_calls == PANEL_REFRESH_CALLS
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
+        assert game.screen_manager.dashboard.method_calls == PANEL_REFRESH_CALLS
 
     def test_next_level_with_all_enemies_defeated_awards_completion_bonus(self, game_with_mocked_components):
         game = game_with_mocked_components
@@ -183,7 +183,7 @@ class TestHandleCustomEvents:
         assert game.game_manager.score == score_before + Settings.LEVEL_COMPLETION_BONUS
         assert level_stats.get_bonus_record().awarded == 1
         assert level_stats.get_bonus_record().score == Settings.LEVEL_COMPLETION_BONUS
-        assert isinstance(game.screens.message_dialog, MessageBox)
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
 
     def test_next_level_with_enemies_left_awards_no_bonus(self, game_with_mocked_components):
         game = game_with_mocked_components
@@ -199,15 +199,15 @@ class TestHandleCustomEvents:
         assert game.game_manager.game_status == GameStatus.LEVEL_COMPLETED
         assert game.game_manager.score == score_before
         assert level_stats.get_bonus_record().awarded == 0
-        assert isinstance(game.screens.message_dialog, MessageBox)
+        assert isinstance(game.screen_manager.message_dialog, MessageBox)
 
     def test_unrelated_event_touches_nothing(self, game_with_mocked_components, set_timer_mock):
         game = game_with_mocked_components
 
         game.custom_events.handle_custom_events(pygame.event.Event(pygame.KEYDOWN, {'key': pygame.K_SPACE}))
 
-        assert game.screens.level.method_calls == []
-        assert game.screens.header.method_calls == []
-        assert game.screens.dashboard.method_calls == []
+        assert game.screen_manager.level.method_calls == []
+        assert game.screen_manager.header.method_calls == []
+        assert game.screen_manager.dashboard.method_calls == []
         set_timer_mock.assert_not_called()
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE

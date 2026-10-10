@@ -16,7 +16,7 @@ from src.panels.summary_enemies_page import SummaryEnemiesPage
 from src.panels.summary_trophy_page import SummaryTrophyPage
 
 
-class GameScreens:
+class ScreenManager:
     """Owns what is currently on screen: surfaces, level, panels, pages and dialogs."""
 
     # Statuses whose whole screen is the current message_dialog
@@ -109,7 +109,7 @@ class GameScreens:
     def rebuild_level(self) -> None:
         """
         Create a new Level object for the level number stored in game_manager and replace the old one.
-        Always access the level through screens.level, never keep a reference to it.
+        Always access the level through screen_manager.level, never keep a reference to it.
         """
         self.level = Level(self.screen, self.game_surface, self.game_manager)
 
