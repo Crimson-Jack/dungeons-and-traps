@@ -32,8 +32,7 @@ def message_texts(messages: list) -> list[str]:
 
 def enter_studio_page(game: Game) -> None:
     game.screen_manager.dispose_first_page()
-    game.game_manager.set_studio_page()
-    game.screen_manager.load_studio_page()
+    game.screen_manager.show_studio_page()
 
 
 def enter_credits(game: Game) -> None:
@@ -540,8 +539,7 @@ class TestKeyboardGameIsPaused:
 
 def enter_next_level(game: Game) -> None:
     game.screen_manager.dispose_first_page()
-    game.game_manager.set_next_level()
-    game.screen_manager.load_next_level_message_dialog()
+    game.screen_manager.show_next_level_dialog()
 
 
 def enter_level_completed(game: Game) -> None:

@@ -89,7 +89,7 @@ class ScreenManager:
         """
         self.game_manager.set_studio_page()
         self.clean_screen()
-        self.load_studio_page()
+        self._load_studio_page()
 
     def show_first_page(self) -> None:
         """
@@ -97,14 +97,14 @@ class ScreenManager:
         """
         self.game_manager.set_first_page()
         self.clean_screen()
-        self.load_first_page()
+        self._load_first_page()
 
     def show_next_level_dialog(self) -> None:
         """
         Switch to the next level status and load the dialog introducing the current level.
         """
         self.game_manager.set_next_level()
-        self.load_next_level_message_dialog()
+        self._load_next_level_message_dialog()
 
     def rebuild_level(self) -> None:
         """
@@ -113,16 +113,12 @@ class ScreenManager:
         """
         self.level = Level(self.screen, self.game_surface, self.game_manager)
 
-    def load_studio_page(self) -> None:
-        """
-        Create the studio page.
-        """
+    def _load_studio_page(self) -> None:
+        # Create the studio page
         self.studio_page = StudioPage(self.screen)
 
-    def load_first_page(self) -> None:
-        """
-        Create the first page and its menu, restoring the menu item selected on the previous visit.
-        """
+    def _load_first_page(self) -> None:
+        # Create the first page and its menu, restoring the menu item selected on the previous visit
         self.first_page = FirstPage(self.screen)
         self.menu_dialog = DialogFactory.create_first_page_menu(self.screen)
         self.menu_dialog.selected_index = self.first_page_selected_index
@@ -144,10 +140,8 @@ class ScreenManager:
         self.message_dialog = DialogFactory.create_secret_code_dialog(self.screen, secret_code_text,
                                                                       dialog_response_messages)
 
-    def load_next_level_message_dialog(self) -> None:
-        """
-        Create the dialog introducing the current level: number, name, description and secret code.
-        """
+    def _load_next_level_message_dialog(self) -> None:
+        # Create the dialog introducing the current level: number, name, description and secret code
         self.message_dialog = DialogFactory.create_next_level_dialog(self.screen,
                                                                      self.game_manager.level + 1,
                                                                      self.game_manager.get_level_name(),
