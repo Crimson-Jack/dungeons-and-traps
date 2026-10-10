@@ -129,7 +129,7 @@ class GameScreens:
 
     def load_credits_message_dialog(self) -> None:
         """
-        Create the credits dialog.
+        Create the 'credits' dialog.
         """
         self.message_dialog = DialogFactory.create_credits_dialog(self.screen)
 
@@ -175,7 +175,7 @@ class GameScreens:
 
     def load_you_win_message_dialog(self) -> None:
         """
-        Create the you win dialog.
+        Create the 'you win' dialog.
         """
         self.message_dialog = DialogFactory.create_you_win_dialog(self.screen)
 
