@@ -22,7 +22,7 @@ class Game:
         then show the studio page or the first page.
         """
         pygame.init()
-        pygame.display.set_caption('Dungeons and traps')
+        pygame.display.set_caption("Dungeons and Traps: Willy's First Adventure")
 
         if Settings.FULL_SCREEN_MODE:
             # Full screen mode
