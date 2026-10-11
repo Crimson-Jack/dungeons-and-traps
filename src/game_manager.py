@@ -176,6 +176,9 @@ class GameManager:
     def set_studio_page(self):
         self.game_status = GameStatus.STUDIO_PAGE
 
+    def set_loading_page(self):
+        self.game_status = GameStatus.LOADING_PAGE
+
     def set_first_page(self):
         self.game_status = GameStatus.FIRST_PAGE
 

@@ -69,6 +69,7 @@ class KeyboardController:
         return {
             GameStatus.GAME_IS_RUNNING: self._handle_game_is_running_keys,
             GameStatus.STUDIO_PAGE: self._handle_studio_page_keys,
+            GameStatus.LOADING_PAGE: self._handle_loading_page_keys,
             GameStatus.FIRST_PAGE: self._handle_first_page_keys,
             GameStatus.CREDITS: self._handle_credits_keys,
             GameStatus.SECRET_CODE: self._handle_secret_code_keys,
@@ -110,8 +111,14 @@ class KeyboardController:
         return True
 
     def _handle_studio_page_keys(self, event: pygame.event.Event) -> bool:
-        # Close the studio page and show the first page on any key
+        # Close the studio page and show the loading page on any key
         self.screen_manager.dispose_studio_page()
+        self.screen_manager.show_loading_page()
+        return True
+
+    def _handle_loading_page_keys(self, event: pygame.event.Event) -> bool:
+        # Close the loading page and show the first page on any key
+        self.screen_manager.dispose_loading_page()
         self.screen_manager.show_first_page()
         return True
 

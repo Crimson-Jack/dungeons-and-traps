@@ -7,6 +7,7 @@ from src.level import Level
 from src.panels.dashboard import Dashboard
 from src.panels.dialog_factory import DialogFactory
 from src.panels.first_page import FirstPage
+from src.panels.loading_page import LoadingPage
 from src.panels.studio_page import StudioPage
 from src.panels.header import Header
 from src.panels.message import Message
@@ -54,8 +55,9 @@ class ScreenManager:
         self.header = Header(self.screen, self.header_surface, self.game_manager)
         self.dashboard = Dashboard(self.screen, self.dashboard_surface, self.game_manager)
 
-        # Studio page, first page, dialogs and summary panel
+        # Studio page, loading page, first page, dialogs and summary panel
         self.studio_page = None
+        self.loading_page = None
         self.first_page = None
         self.menu_dialog = None
         self.message_dialog = None
@@ -73,6 +75,8 @@ class ScreenManager:
             self.level.run()
         elif status == GameStatus.STUDIO_PAGE:
             self.studio_page.draw()
+        elif status == GameStatus.LOADING_PAGE:
+            self.loading_page.draw()
         elif status == GameStatus.FIRST_PAGE:
             self.first_page.draw()
             self.menu_dialog.draw()
@@ -90,6 +94,14 @@ class ScreenManager:
         self.game_manager.set_studio_page()
         self.clean_screen()
         self._load_studio_page()
+
+    def show_loading_page(self) -> None:
+        """
+        Switch to the loading page status, clear the screen and load the loading page.
+        """
+        self.game_manager.set_loading_page()
+        self.clean_screen()
+        self._load_loading_page()
 
     def show_first_page(self) -> None:
         """
@@ -116,6 +128,10 @@ class ScreenManager:
     def _load_studio_page(self) -> None:
         # Create the studio page
         self.studio_page = StudioPage(self.screen)
+
+    def _load_loading_page(self) -> None:
+        # Create the loading page
+        self.loading_page = LoadingPage(self.screen)
 
     def _load_first_page(self) -> None:
         # Create the first page and its menu, restoring the menu item selected on the previous visit
@@ -194,6 +210,12 @@ class ScreenManager:
         Remove the studio page.
         """
         self.studio_page = None
+
+    def dispose_loading_page(self) -> None:
+        """
+        Remove the loading page.
+        """
+        self.loading_page = None
 
     def dispose_first_page(self) -> None:
         """

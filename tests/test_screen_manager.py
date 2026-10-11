@@ -6,13 +6,14 @@ from src.enums.game_status import GameStatus
 from src.screen_manager import ScreenManager
 
 
-SCREEN_COMPONENT_NAMES = ('level', 'studio_page', 'first_page', 'menu_dialog', 'message_dialog', 'summary_panel')
+SCREEN_COMPONENT_NAMES = ('level', 'studio_page', 'loading_page', 'first_page','menu_dialog', 'message_dialog', 'summary_panel')
 
 
 RUN_CURRENT_SCREEN_CASES = [
     (GameStatus.UNKNOWN, {}),
     (GameStatus.GAME_IS_RUNNING, {'level': [call.run()]}),
     (GameStatus.STUDIO_PAGE, {'studio_page': [call.draw()]}),
+    (GameStatus.LOADING_PAGE, {'loading_page': [call.draw()]}),
     (GameStatus.FIRST_PAGE, {'first_page': [call.draw()], 'menu_dialog': [call.draw()]}),
     (GameStatus.GAME_IS_PAUSED, {'menu_dialog': [call.draw()]}),
     (GameStatus.SUMMARY, {'summary_panel': [call.draw()]}),

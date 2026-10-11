@@ -361,6 +361,19 @@ class SpriteHelper:
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
+    def get_loading_page_image(size: tuple[int, int]) -> pygame.Surface:
+        loading_page_image_source_width = 320
+        loading_page_image_source_height = 192
+        sprite_sheet = SpriteSheet(
+            pygame.image.load('img/loading-page.png').convert_alpha(),
+            loading_page_image_source_width,
+            loading_page_image_source_height,
+            size,
+            None
+        )
+        return sprite_sheet.get_image(0, 0)
+
+    @staticmethod
     def get_all_egg_sprites():
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/egg.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE, SpriteHelper.KEY_COLOR)
 

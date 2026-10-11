@@ -8,12 +8,13 @@ from src.game import Game
 from src.keyboard_controller import KeyboardController
 from src.panels.dialog_factory import DialogFactory
 from src.panels.first_page import FirstPage
+from src.panels.loading_page import LoadingPage
 from src.panels.menu_box import MenuBox
 from src.panels.message_box import MessageBox
 from src.panels.studio_page import StudioPage
 
 
-# --- Keyboard: menu screens (STUDIO_PAGE, FIRST_PAGE, CREDITS, SECRET_CODE, SECRET_CODE_IS_VALID) ---
+# --- Keyboard: menu screens (STUDIO_PAGE, LOADING_PAGE, FIRST_PAGE,CREDITS, SECRET_CODE, SECRET_CODE_IS_VALID) ---
 
 FIRST_PAGE_MENU_NEW_GAME = 0
 FIRST_PAGE_MENU_SECRET_CODE = 1
@@ -33,6 +34,11 @@ def message_texts(messages: list) -> list[str]:
 def enter_studio_page(game: Game) -> None:
     game.screen_manager.dispose_first_page()
     game.screen_manager.show_studio_page()
+
+
+def enter_loading_page(game: Game) -> None:
+    game.screen_manager.dispose_first_page()
+    game.screen_manager.show_loading_page()
 
 
 def enter_credits(game: Game) -> None:
@@ -95,15 +101,30 @@ class TestAppendSecretCodeCharacter:
 
 class TestKeyboardStudioPage:
     @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_ESCAPE, pygame.K_a])
-    def test_any_key_opens_first_page(self, game, key):
+    def test_any_key_opens_loading_page(self, game, key):
         enter_studio_page(game)
         assert isinstance(game.screen_manager.studio_page, StudioPage)
 
         is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
-        assert game.game_manager.game_status == GameStatus.FIRST_PAGE
+        assert game.game_manager.game_status == GameStatus.LOADING_PAGE
         assert game.screen_manager.studio_page is None
+        assert isinstance(game.screen_manager.loading_page, LoadingPage)
+        assert game.screen_manager.first_page is None
+
+
+class TestKeyboardLoadingPage:
+    @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_ESCAPE, pygame.K_a])
+    def test_any_key_opens_first_page(self, game, key):
+        enter_loading_page(game)
+        assert isinstance(game.screen_manager.loading_page, LoadingPage)
+
+        is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(key))
+
+        assert is_running is True
+        assert game.game_manager.game_status == GameStatus.FIRST_PAGE
+        assert game.screen_manager.loading_page is None
         assert isinstance(game.screen_manager.first_page, FirstPage)
         assert isinstance(game.screen_manager.menu_dialog, MenuBox)
 
