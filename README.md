@@ -9,6 +9,12 @@ The goal: teaching how to create a simple game, Pygame exploratory, checking fea
 ### Screenshots
 
 <p align="center">
+  <img src="screenshots/studio-page.png" width="30%" />
+  <img src="screenshots/loading-page.png" width="30%" />
+  <img src="screenshots/start-page.png" width="30%" />
+</p>
+
+<p align="center">
   <img src="screenshots/gameplay-01.png" width="45%" />
   <img src="screenshots/gameplay-02.png" width="45%" />
   <img src="screenshots/gameplay-03.png" width="45%" />
