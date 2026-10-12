@@ -1,7 +1,11 @@
-from unittest.mock import Mock
+from collections import Counter
+from unittest.mock import MagicMock, Mock, call
 
 import pygame
+import pytest
 
+from settings import Settings
+from src.enums.enemy_type import EnemyType
 from src.level import Level
 from src.sprites.tombstone import Tombstone
 
@@ -13,6 +17,30 @@ def create_level_with_effects(tombstones=None, vanishing_points=None, particle_e
     level.vanishing_points = vanishing_points or []
     level.particle_effects = particle_effects or []
     return level
+
+
+def create_level_with_tmx_data(tmx_data):
+    # Full constructor loads a TMX map, so the map is replaced by a mock
+    level = object.__new__(Level)
+    level.tmx_data = tmx_data
+    return level
+
+
+def create_tmx_data(get_object_by_name=None, get_layer_by_name=None):
+    tmx_data = Mock()
+    tmx_data.tilewidth = 16
+    tmx_data.tileheight = 16
+    tmx_data.get_object_by_name.side_effect = get_object_by_name
+    tmx_data.get_layer_by_name.side_effect = get_layer_by_name
+    return tmx_data
+
+
+def raise_value_error(name):
+    raise ValueError(name)
+
+
+def raise_key_error(name):
+    raise KeyError(name)
 
 
 def create_tombstone(group, is_expired):
@@ -76,3 +104,159 @@ class TestRemoveUnnecessaryEffects:
         level.remove_unnecessary_effects()
 
         assert level.particle_effects == [active_particle_effect]
+
+
+class TestGetVisibleObject:
+    def test_returns_visible_object(self):
+        tiled_object = Mock(visible=True)
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=lambda name: tiled_object))
+        assert level._get_visible_object('check-point') is tiled_object
+
+    def test_returns_none_for_invisible_object(self):
+        tiled_object = Mock(visible=False)
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=lambda name: tiled_object))
+        assert level._get_visible_object('check-point') is None
+
+    def test_returns_none_when_object_raises_value_error(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=raise_value_error))
+        assert level._get_visible_object('check-point') is None
+
+    def test_returns_none_when_object_raises_key_error(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=raise_key_error))
+        assert level._get_visible_object('check-point') is None
+
+
+class TestGetVisibleLayer:
+    def test_returns_visible_layer(self):
+        layer = Mock(visible=True)
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=lambda name: layer))
+        assert level._get_visible_layer('ground') is layer
+
+    def test_returns_none_for_invisible_layer(self):
+        layer = Mock(visible=False)
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=lambda name: layer))
+        assert level._get_visible_layer('ground') is None
+
+    def test_returns_none_when_layer_raises_value_error(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=raise_value_error))
+        assert level._get_visible_layer('ground') is None
+
+    def test_returns_none_when_layer_raises_key_error(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=raise_key_error))
+        assert level._get_visible_layer('ground') is None
+
+
+class TestGetBossPointPosition:
+    def test_returns_none_without_boss_point(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=raise_value_error))
+        assert level.get_boss_point_position() is None
+
+    def test_returns_position_in_pixels(self, monkeypatch):
+        monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
+        boss_object = Mock(visible=True, x=48, y=80)
+        level = create_level_with_tmx_data(create_tmx_data(get_object_by_name=lambda name: boss_object))
+        assert level.get_boss_point_position() == (3 * 64, 5 * 64)
+
+
+def count_sprite_classes(group):
+    return dict(Counter(type(sprite).__name__ for sprite in group))
+
+
+# basic.tmx is the only map that contains all sprite layers
+@pytest.fixture
+def basic_level(game):
+    level_filenames = [level_details.source_file for level_details in game.game_manager.LEVELS]
+    game.game_manager.clear_settings_for_first_level(level_filenames.index('basic.tmx'))
+    game.screen_manager.rebuild_level()
+    return game.screen_manager.level
+
+
+class TestCreateSpritesFromBasicMap:
+    def test_bottom_background_layer(self, basic_level):
+        assert count_sprite_classes(basic_level.bottom_background_layer) == {
+            'CheckPoint': 1, 'ExitPoint': 1, 'Ground': 600}
+
+    def test_bottom_sprites_layer(self, basic_level):
+        assert count_sprite_classes(basic_level.bottom_sprites_layer) == {
+            'BowPowerup': 5, 'Diamond': 1, 'EnergyPowerup': 3, 'ExplosionPowerup': 1, 'FireFlameEnemyLeft': 1,
+            'FireFlameEnemyRight': 2, 'Key': 2, 'LifePowerup': 1, 'LightingSpell': 3, 'SwordPowerup': 2,
+            'Teleport': 3}
+
+    def test_middle_sprites_layer(self, basic_level):
+        assert count_sprite_classes(basic_level.middle_sprites_layer) == {
+            'BowWeapon': 1, 'DemolishedWall': 18, 'Door': 2, 'ExplosionWeapon': 1, 'Player': 1, 'Stone': 39,
+            'SwordWeapon': 1, 'Wall': 206}
+
+    def test_top_sprites_layer(self, basic_level):
+        assert count_sprite_classes(basic_level.top_sprites_layer) == {
+            'BatEnemy': 1, 'GhostEnemy': 3, 'MonsterEnemy': 3, 'SpiderEnemy': 3}
+
+    def test_the_highest_sprites_layer(self, basic_level):
+        assert count_sprite_classes(basic_level.the_highest_sprites_layer) == {'OctopusEnemy': 1}
+
+    def test_functional_groups(self, basic_level):
+        assert {group_name: len(getattr(basic_level, group_name)) for group_name in (
+            'exit_points', 'obstacle_sprites', 'moving_obstacle_sprites', 'removable_obstacle_sprites',
+            'passage_sprites', 'teleport_sprites', 'collectable_sprites', 'enemy_sprites',
+            'hostile_force_sprites')} == {
+            'exit_points': 1, 'obstacle_sprites': 226, 'moving_obstacle_sprites': 39,
+            'removable_obstacle_sprites': 18, 'passage_sprites': 2, 'teleport_sprites': 3,
+            'collectable_sprites': 19, 'enemy_sprites': 11, 'hostile_force_sprites': 3}
+
+    def test_registers_diamonds_and_keys_in_game_manager(self, game, basic_level):
+        assert len(game.game_manager.diamonds) == 1
+        assert len(game.game_manager.keys) == 2
+
+    def test_records_enemy_spawns(self, game, basic_level):
+        level_stats = game.game_manager.level_stats[-1]
+        assert {enemy_type: level_stats.get_enemy_record(enemy_type).count for enemy_type in EnemyType
+                if level_stats.get_enemy_record(enemy_type).count} == {
+            EnemyType.SPIDER_SMALL: 1, EnemyType.SPIDER_MEDIUM: 1, EnemyType.SPIDER_BIG: 1,
+            EnemyType.MONSTER_BLUE: 1, EnemyType.MONSTER_GREEN: 1, EnemyType.MONSTER_RED: 1, EnemyType.BAT: 1}
+
+
+class TestCreateSpritesFromLayer:
+    def test_passes_each_tile_with_position_in_pixels(self, monkeypatch):
+        monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
+        first_image = Mock()
+        second_image = Mock()
+        layer = Mock(visible=True)
+        layer.tiles.return_value = [(0, 0, first_image), (3, 5, second_image)]
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=lambda name: layer))
+        create_sprite = Mock()
+
+        level.create_sprites_from_layer('ground', create_sprite)
+
+        assert create_sprite.call_args_list == [call(first_image, layer, (0, 0)),
+                                                call(second_image, layer, (3 * 64, 5 * 64))]
+
+    def test_skips_missing_layer(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=raise_value_error))
+        create_sprite = Mock()
+
+        level.create_sprites_from_layer('ground', create_sprite)
+
+        create_sprite.assert_not_called()
+
+
+class TestCreateSpritesFromObjectLayer:
+    def test_passes_only_visible_objects_with_tile_position(self, monkeypatch):
+        monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
+        visible_item = Mock(visible=True, x=48, y=80, rotation=0)
+        invisible_item = Mock(visible=False, x=0, y=0, rotation=0)
+        layer = MagicMock(visible=True)
+        layer.__iter__.return_value = [visible_item, invisible_item]
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=lambda name: layer))
+        create_sprite = Mock()
+
+        level.create_sprites_from_object_layer('teleport', create_sprite)
+
+        create_sprite.assert_called_once_with(visible_item, layer, (3 * 64, 5 * 64))
+
+    def test_skips_missing_layer(self):
+        level = create_level_with_tmx_data(create_tmx_data(get_layer_by_name=raise_value_error))
+        create_sprite = Mock()
+
+        level.create_sprites_from_object_layer('teleport', create_sprite)
+
+        create_sprite.assert_not_called()

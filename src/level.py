@@ -234,149 +234,38 @@ class Level:
                                            self.tmx_data.tilewidth, self.tmx_data.tileheight)
 
     def create_sprites(self):
-        self.create_sprites_from_layer('ground')
-        self.create_sprites_from_layer('diamond')
-        self.create_sprites_from_layer('obstacle')
-        self.create_sprites_from_layer('moving-obstacle')
-        self.create_sprites_from_layer('removable-obstacle')
-        self.create_sprites_from_object_layer('spell')
-        self.create_sprites_from_object_layer('powerup')
-        self.create_sprites_from_object_layer('key')
-        self.create_sprites_from_object_layer('fire-flame-enemy')
-        self.create_sprites_from_object_layer('door')
-        self.create_sprites_from_object_layer('teleport')
-        self.create_sprites_from_object_layer('monster-enemy')
-        self.create_sprites_from_object_layer('spider-enemy')
-        self.create_sprites_from_object_layer('ghost-enemy')
-        self.create_sprites_from_object_layer('bat-enemy')
-        self.create_sprites_from_object_layer('octopus-enemy')
+        self.create_sprites_from_layer('ground', self._create_ground)
+        self.create_sprites_from_layer('diamond', self._create_diamond)
+        self.create_sprites_from_layer('obstacle', self._create_wall)
+        self.create_sprites_from_layer('moving-obstacle', self._create_stone)
+        self.create_sprites_from_layer('removable-obstacle', self._create_demolished_wall)
+        self.create_sprites_from_object_layer('spell', self._create_lighting_spell)
+        self.create_sprites_from_object_layer('powerup', self._create_powerup)
+        self.create_sprites_from_object_layer('key', self._create_key)
+        self.create_sprites_from_object_layer('fire-flame-enemy', self._create_fire_flame_enemy)
+        self.create_sprites_from_object_layer('door', self._create_door)
+        self.create_sprites_from_object_layer('teleport', self._create_teleport)
+        self.create_sprites_from_object_layer('monster-enemy', self._create_monster_enemy)
+        self.create_sprites_from_object_layer('spider-enemy', self._create_spider_enemy)
+        self.create_sprites_from_object_layer('ghost-enemy', self._create_ghost_enemy)
+        self.create_sprites_from_object_layer('bat-enemy', self._create_bat_enemy)
+        self.create_sprites_from_object_layer('octopus-enemy', self._create_octopus_enemy)
 
-    def create_sprites_from_layer(self, layer_name):
+    def create_sprites_from_layer(self, layer_name, create_sprite):
         layer = self._get_visible_layer(layer_name)
         if layer is not None:
             for tile_x, tile_y, image in layer.tiles():
-                x = tile_x * Settings.TILE_SIZE
-                y = tile_y * Settings.TILE_SIZE
+                position = (tile_x * Settings.TILE_SIZE, tile_y * Settings.TILE_SIZE)
+                create_sprite(image, layer, position)
 
-                if layer_name == 'ground':
-                    groups = (self.bottom_background_layer,)
-                    Ground(image, (x, y), groups)
-
-                elif layer_name == 'diamond':
-                    groups = self.bottom_sprites_layer, self.collectable_sprites
-                    tile_details = DiamondTileDetails(None, layer)
-                    self.game_manager.add_diamond(Diamond(image, (x, y), groups, self.game_manager, tile_details))
-
-                elif layer_name == 'obstacle':
-                    groups = self.middle_sprites_layer, self.obstacle_sprites
-                    Wall(image, (x, y), groups)
-
-                elif layer_name == 'moving-obstacle':
-                    groups = self.middle_sprites_layer, self.moving_obstacle_sprites
-                    collision_sprites = [self.enemy_sprites,
-                                         self.obstacle_sprites,
-                                         self.moving_obstacle_sprites,
-                                         self.collectable_sprites]
-                    # Note: stone can be moved, so the list instead of tuple for position is used
-                    Stone(image, [x, y], groups, self.game_manager, self.obstacle_map.items, collision_sprites)
-
-                elif layer_name == 'removable-obstacle':
-                    groups = self.middle_sprites_layer, self.obstacle_sprites, self.removable_obstacle_sprites
-                    DemolishedWall(image, (x, y), groups, self.obstacle_map.items)
-
-    def create_sprites_from_object_layer(self, layer_name):
+    def create_sprites_from_object_layer(self, layer_name, create_sprite):
         layer = self._get_visible_layer(layer_name)
         if layer is not None:
             for item in layer:
                 if item.visible:
-                    x, y = TmxHelper.get_tile_position(item.x, item.y,
-                                                        self.tmx_data.tilewidth, self.tmx_data.tileheight, item.rotation)
-
-                    if layer_name == 'spell':
-                        groups = self.bottom_sprites_layer, self.collectable_sprites
-                        tile_details = SpellTileDetails(item, layer)
-                        LightingSpell(item.image, (x, y), groups, self.game_manager, tile_details)
-
-                    if layer_name == 'powerup':
-                        groups = self.bottom_sprites_layer, self.collectable_sprites
-                        tile_details = PowerupTileDetails(item, layer)
-                        self.powerup_factory.create(tile_details,
-                                                    image=item.image,
-                                                    position=(x, y),
-                                                    groups=groups,
-                                                    game_manager=self.game_manager)
-
-                    if layer_name == 'key':
-                        groups = self.bottom_sprites_layer, self.collectable_sprites
-                        tile_details = KeyAndDoorTileDetails(item, layer)
-                        self.game_manager.add_key(Key(item.image, (x, y), groups, self.game_manager, tile_details))
-
-                    elif layer_name == 'fire-flame-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-                        groups = self.bottom_sprites_layer, self.hostile_force_sprites
-                        tile_details = FireFlameTileDetails(item, layer)
-                        if tile_details.direction == 'left':
-                            FireFlameEnemyLeft(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
-                        elif tile_details.direction == 'right':
-                            FireFlameEnemyRight(sprites, (x, y), groups, tile_details, self.moving_obstacle_sprites)
-
-                    elif layer_name == 'door':
-                        groups = self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites
-                        tile_details = KeyAndDoorTileDetails(item, layer)
-                        Door(item.image, (x, y), groups, tile_details, self.obstacle_map.items)
-
-                    elif layer_name == 'teleport':
-                        groups = self.bottom_sprites_layer, self.teleport_sprites
-                        tile_details = TeleportTileDetails(item, layer)
-                        Teleport(item.image, (x, y), groups, tile_details)
-
-                    elif layer_name == 'monster-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-                        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
-                        groups = self.top_sprites_layer, self.enemy_sprites
-                        tile_details = MonsterTileDetails(item, layer)
-                        enemy_type = EnemyType.from_name(item.name)
-                        MonsterEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     enemy_type, tile_details, self.obstacle_map,
-                                     self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
-                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-                    elif layer_name == 'spider-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-                        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
-                        groups = self.top_sprites_layer, self.enemy_sprites
-                        tile_details = SpiderTileDetails(item, layer)
-                        enemy_type = EnemyType.from_name(item.name)
-                        SpiderEnemy(sprite_costumes_matrix, (x, y), groups, self.game_manager,
-                                    enemy_type, tile_details, self.moving_obstacle_sprites)
-                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-                    elif layer_name == 'ghost-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-                        groups = self.top_sprites_layer, self.enemy_sprites
-                        tile_details = GhostTileDetails(item, layer)
-                        GhostEnemy(sprites, (x, y), groups, tile_details, self.obstacle_map.items,
-                                   self.moving_obstacle_sprites)
-
-                    elif layer_name == 'bat-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-                        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
-                        groups = self.top_sprites_layer, self.enemy_sprites
-                        tile_details = BatTileDetails(item, layer)
-                        enemy_type = EnemyType.from_name(item.name)
-                        BatEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                 enemy_type, tile_details, self.obstacle_map,
-                                 self.moving_obstacle_sprites, self.hostile_force_sprites)
-                        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-                    elif layer_name == 'octopus-enemy':
-                        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
-                        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
-                        groups = self.the_highest_sprites_layer, self.enemy_sprites
-                        tile_details = OctopusTileDetails(item, layer)
-                        OctopusEnemy(sprites, sprite_image_in_damage_state, (x, y), groups, self.game_manager,
-                                     tile_details, self.obstacle_map, self.obstacle_sprites,
-                                     self.moving_obstacle_sprites)
+                    position = TmxHelper.get_tile_position(item.x, item.y, self.tmx_data.tilewidth,
+                                                           self.tmx_data.tileheight, item.rotation)
+                    create_sprite(item, layer, position)
 
     def run(self):
         self.remove_unnecessary_effects()
@@ -612,3 +501,116 @@ class Level:
         except (KeyError, ValueError):
             return None
         return layer if layer.visible else None
+
+    def _create_ground(self, image, layer, position):
+        groups = (self.bottom_background_layer,)
+        Ground(image, position, groups)
+
+    def _create_diamond(self, image, layer, position):
+        groups = self.bottom_sprites_layer, self.collectable_sprites
+        tile_details = DiamondTileDetails(None, layer)
+        self.game_manager.add_diamond(Diamond(image, position, groups, self.game_manager, tile_details))
+
+    def _create_wall(self, image, layer, position):
+        groups = self.middle_sprites_layer, self.obstacle_sprites
+        Wall(image, position, groups)
+
+    def _create_stone(self, image, layer, position):
+        groups = self.middle_sprites_layer, self.moving_obstacle_sprites
+        collision_sprites = [self.enemy_sprites,
+                             self.obstacle_sprites,
+                             self.moving_obstacle_sprites,
+                             self.collectable_sprites]
+        # Note: stone can be moved, so the list instead of tuple for position is used
+        Stone(image, list(position), groups, self.game_manager, self.obstacle_map.items, collision_sprites)
+
+    def _create_demolished_wall(self, image, layer, position):
+        groups = self.middle_sprites_layer, self.obstacle_sprites, self.removable_obstacle_sprites
+        DemolishedWall(image, position, groups, self.obstacle_map.items)
+
+    def _create_lighting_spell(self, item, layer, position):
+        groups = self.bottom_sprites_layer, self.collectable_sprites
+        tile_details = SpellTileDetails(item, layer)
+        LightingSpell(item.image, position, groups, self.game_manager, tile_details)
+
+    def _create_powerup(self, item, layer, position):
+        groups = self.bottom_sprites_layer, self.collectable_sprites
+        tile_details = PowerupTileDetails(item, layer)
+        self.powerup_factory.create(tile_details,
+                                    image=item.image,
+                                    position=position,
+                                    groups=groups,
+                                    game_manager=self.game_manager)
+
+    def _create_key(self, item, layer, position):
+        groups = self.bottom_sprites_layer, self.collectable_sprites
+        tile_details = KeyAndDoorTileDetails(item, layer)
+        self.game_manager.add_key(Key(item.image, position, groups, self.game_manager, tile_details))
+
+    def _create_fire_flame_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
+        groups = self.bottom_sprites_layer, self.hostile_force_sprites
+        tile_details = FireFlameTileDetails(item, layer)
+        if tile_details.direction == 'left':
+            FireFlameEnemyLeft(sprites, position, groups, tile_details, self.moving_obstacle_sprites)
+        elif tile_details.direction == 'right':
+            FireFlameEnemyRight(sprites, position, groups, tile_details, self.moving_obstacle_sprites)
+
+    def _create_door(self, item, layer, position):
+        groups = self.middle_sprites_layer, self.obstacle_sprites, self.passage_sprites
+        tile_details = KeyAndDoorTileDetails(item, layer)
+        Door(item.image, position, groups, tile_details, self.obstacle_map.items)
+
+    def _create_teleport(self, item, layer, position):
+        groups = self.bottom_sprites_layer, self.teleport_sprites
+        tile_details = TeleportTileDetails(item, layer)
+        Teleport(item.image, position, groups, tile_details)
+
+    def _create_monster_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
+        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = MonsterTileDetails(item, layer)
+        enemy_type = EnemyType.from_name(item.name)
+        MonsterEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
+                     enemy_type, tile_details, self.obstacle_map,
+                     self.obstacle_sprites, self.moving_obstacle_sprites, self.hostile_force_sprites)
+        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+
+    def _create_spider_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
+        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = SpiderTileDetails(item, layer)
+        enemy_type = EnemyType.from_name(item.name)
+        SpiderEnemy(sprite_costumes_matrix, position, groups, self.game_manager,
+                    enemy_type, tile_details, self.moving_obstacle_sprites)
+        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+
+    def _create_ghost_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = GhostTileDetails(item, layer)
+        GhostEnemy(sprites, position, groups, tile_details, self.obstacle_map.items,
+                   self.moving_obstacle_sprites)
+
+    def _create_bat_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
+        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
+        groups = self.top_sprites_layer, self.enemy_sprites
+        tile_details = BatTileDetails(item, layer)
+        enemy_type = EnemyType.from_name(item.name)
+        BatEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
+                 enemy_type, tile_details, self.obstacle_map,
+                 self.moving_obstacle_sprites, self.hostile_force_sprites)
+        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+
+    def _create_octopus_enemy(self, item, layer, position):
+        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item,
+                                                       (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
+        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
+        groups = self.the_highest_sprites_layer, self.enemy_sprites
+        tile_details = OctopusTileDetails(item, layer)
+        OctopusEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
+                     tile_details, self.obstacle_map, self.obstacle_sprites,
+                     self.moving_obstacle_sprites)
