@@ -183,81 +183,55 @@ class Level:
         ])
 
     def create_player(self):
-        try:
-            player_object = self.tmx_data.get_object_by_name('player')
-        except (KeyError, ValueError):
-            player_object = None
-
-        if player_object is not None and player_object.visible:
-            x, y = TmxHelper.get_tile_position(player_object.x, player_object.y,
-                                                self.tmx_data.tilewidth, self.tmx_data.tileheight)
-            speed = GameHelper.multiply_by_tile_size_ratio(
-                TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
-            return Player((x, y),
-                          (self.middle_sprites_layer,),
-                          [self.middle_sprites_layer],
-                          speed,
-                          self.exit_points,
-                          self.obstacle_sprites,
-                          self.moving_obstacle_sprites,
-                          self.passage_sprites,
-                          self.teleport_sprites,
-                          self.collectable_sprites,
-                          self.enemy_sprites,
-                          self.hostile_force_sprites,
-                          self.game_manager)
-        else:
+        player_object = self._get_visible_object('player')
+        if player_object is None:
             return None
+
+        position = TmxHelper.get_tile_position(player_object.x, player_object.y,
+                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
+        speed = GameHelper.multiply_by_tile_size_ratio(
+            TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
+        return Player(position,
+                      (self.middle_sprites_layer,),
+                      [self.middle_sprites_layer],
+                      speed,
+                      self.exit_points,
+                      self.obstacle_sprites,
+                      self.moving_obstacle_sprites,
+                      self.passage_sprites,
+                      self.teleport_sprites,
+                      self.collectable_sprites,
+                      self.enemy_sprites,
+                      self.hostile_force_sprites,
+                      self.game_manager)
 
     def create_check_point(self):
-        try:
-            check_point = self.tmx_data.get_object_by_name('check-point')
-        except (KeyError, ValueError):
-            check_point = None
-
-        if check_point is not None and check_point.visible:
-            tile_x = int(check_point.x // self.tmx_data.tilewidth)
-            tile_y = int(check_point.y // self.tmx_data.tileheight)
-            x = tile_x * Settings.TILE_SIZE
-            y = tile_y * Settings.TILE_SIZE
-            groups = self.bottom_background_layer, self.collectable_sprites
-
-            return CheckPoint(check_point.image, (x, y), groups, self.game_manager)
-        else:
+        check_point = self._get_visible_object('check-point')
+        if check_point is None:
             return None
+
+        position = TmxHelper.get_tile_position(check_point.x, check_point.y,
+                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
+        groups = self.bottom_background_layer, self.collectable_sprites
+        return CheckPoint(check_point.image, position, groups, self.game_manager)
 
     def create_exit_point(self):
-        try:
-            exit_object = self.tmx_data.get_object_by_name('exit-point')
-        except (KeyError, ValueError):
-            exit_object = None
-
-        if exit_object is not None and exit_object.visible:
-            tile_x = int(exit_object.x // self.tmx_data.tilewidth)
-            tile_y = int(exit_object.y // self.tmx_data.tileheight)
-            x = tile_x * Settings.TILE_SIZE
-            y = tile_y * Settings.TILE_SIZE
-            groups = self.bottom_background_layer, self.exit_points
-
-            return ExitPoint(exit_object.image, (x, y), groups, False)
-        else:
+        exit_object = self._get_visible_object('exit-point')
+        if exit_object is None:
             return None
+
+        position = TmxHelper.get_tile_position(exit_object.x, exit_object.y,
+                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
+        groups = self.bottom_background_layer, self.exit_points
+        return ExitPoint(exit_object.image, position, groups, False)
 
     def get_boss_point_position(self):
-        try:
-            boss_object = self.tmx_data.get_object_by_name('boss-point')
-        except (KeyError, ValueError):
-            boss_object = None
-
-        if boss_object is not None and boss_object.visible:
-            tile_x = int(boss_object.x // self.tmx_data.tilewidth)
-            tile_y = int(boss_object.y // self.tmx_data.tileheight)
-            x = tile_x * Settings.TILE_SIZE
-            y = tile_y * Settings.TILE_SIZE
-
-            return x, y
-        else:
+        boss_object = self._get_visible_object('boss-point')
+        if boss_object is None:
             return None
+
+        return TmxHelper.get_tile_position(boss_object.x, boss_object.y,
+                                           self.tmx_data.tilewidth, self.tmx_data.tileheight)
 
     def create_sprites(self):
         self.create_sprites_from_layer('ground')
@@ -278,12 +252,8 @@ class Level:
         self.create_sprites_from_object_layer('octopus-enemy')
 
     def create_sprites_from_layer(self, layer_name):
-        try:
-            layer = self.tmx_data.get_layer_by_name(layer_name)
-        except (KeyError, ValueError):
-            layer = None
-
-        if layer is not None and layer.visible:
+        layer = self._get_visible_layer(layer_name)
+        if layer is not None:
             for tile_x, tile_y, image in layer.tiles():
                 x = tile_x * Settings.TILE_SIZE
                 y = tile_y * Settings.TILE_SIZE
@@ -315,12 +285,8 @@ class Level:
                     DemolishedWall(image, (x, y), groups, self.obstacle_map.items)
 
     def create_sprites_from_object_layer(self, layer_name):
-        try:
-            layer = self.tmx_data.get_layer_by_name(layer_name)
-        except (KeyError, ValueError):
-            layer = None
-
-        if layer is not None and layer.visible:
+        layer = self._get_visible_layer(layer_name)
+        if layer is not None:
             for item in layer:
                 if item.visible:
                     x, y = TmxHelper.get_tile_position(item.x, item.y,
@@ -632,3 +598,17 @@ class Level:
             self.tilt_cursor_increment_value = tilt_cursor_increment_value
         else:
             self.tilt_cursor_increment_value = self.tilt_cursor_increment_base_value
+
+    def _get_visible_object(self, name):
+        try:
+            tiled_object = self.tmx_data.get_object_by_name(name)
+        except (KeyError, ValueError):
+            return None
+        return tiled_object if tiled_object.visible else None
+
+    def _get_visible_layer(self, name):
+        try:
+            layer = self.tmx_data.get_layer_by_name(name)
+        except (KeyError, ValueError):
+            return None
+        return layer if layer.visible else None
