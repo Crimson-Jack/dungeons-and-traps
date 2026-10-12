@@ -589,17 +589,24 @@ class Level:
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
     def remove_unnecessary_effects(self):
+        remaining_tombstones = []
         for tombstone in self.tombstones:
             if tombstone.is_expired():
-                self.tombstones.remove(tombstone)
                 tombstone.kill()
+            else:
+                remaining_tombstones.append(tombstone)
+        self.tombstones = remaining_tombstones
+
+        remaining_vanishing_points = []
         for vanishing_point in self.vanishing_points:
             if vanishing_point.is_expired():
-                self.vanishing_points.remove(vanishing_point)
                 vanishing_point.kill()
-        for particle_effect in self.particle_effects:
-            if particle_effect.is_expired():
-                self.particle_effects.remove(particle_effect)
+            else:
+                remaining_vanishing_points.append(vanishing_point)
+        self.vanishing_points = remaining_vanishing_points
+
+        self.particle_effects = [particle_effect for particle_effect in self.particle_effects
+                                 if not particle_effect.is_expired()]
 
     def get_tilt_effect_offset(self):
         tilt_offset = None
