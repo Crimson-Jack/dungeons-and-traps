@@ -605,8 +605,11 @@ class Level:
                 remaining_vanishing_points.append(vanishing_point)
         self.vanishing_points = remaining_vanishing_points
 
-        self.particle_effects = [particle_effect for particle_effect in self.particle_effects
-                                 if not particle_effect.is_expired()]
+        remaining_particle_effects = []
+        for particle_effect in self.particle_effects:
+            if not particle_effect.is_expired():
+                remaining_particle_effects.append(particle_effect)
+        self.particle_effects = remaining_particle_effects
 
     def get_tilt_effect_offset(self):
         tilt_offset = None
