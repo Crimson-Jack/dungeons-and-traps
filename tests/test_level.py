@@ -104,6 +104,17 @@ class TestShowExitPoint:
         level.exit_point.show.assert_called_once()
 
 
+class TestEnableTiltEffect:
+    def test_passes_speed_to_tilt_effect(self):
+        # Full constructor loads a TMX map, which is irrelevant for enabling the tilt effect
+        level = object.__new__(Level)
+        level.tilt_effect = Mock()
+
+        level.enable_tilt_effect(0.5)
+
+        level.tilt_effect.enable.assert_called_once_with(0.5)
+
+
 def count_sprite_classes(group):
     return dict(Counter(type(sprite).__name__ for sprite in group))
 
