@@ -13,54 +13,23 @@ from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
+from src.level_sprite_builder import LevelSpriteBuilder
 from src.level_sprite_groups import LevelSpriteGroups
+from src.obstacle_map_factory import ObstacleMapFactory
 from src.factories.monster_tile_details_factory import MonsterTileDetailsFactory
-from src.obstacle_map import ObstacleMap
-from src.factories.powerup_factory import PowerupFactory
-from src.sprites.bat_enemy import BatEnemy
-from src.sprites.check_point import CheckPoint
-from src.sprites.demolished_wall import DemolishedWall
-from src.sprites.diamond import Diamond
-from src.sprites.door import Door
 from src.sprites.egg import Egg
-from src.sprites.exit_point import ExitPoint
-from src.sprites.fire_flame_enemy_left import FireFlameEnemyLeft
-from src.sprites.fire_flame_enemy_right import FireFlameEnemyRight
-from src.sprites.ghost_enemy import GhostEnemy
-from src.sprites.ground import Ground
-from src.sprites.key import Key
-from src.sprites.lighting_spell import LightingSpell
 from src.sprites.monster_enemy import MonsterEnemy
 from src.sprites.octopus_enemy import OctopusEnemy
-from src.sprites.player import Player
-from src.sprites.spider_enemy import SpiderEnemy
-from src.sprites.stone import Stone
-from src.sprites.teleport import Teleport
 from src.sprites.tombstone import Tombstone
 from src.sprites.vanishing_point import VanishingPoint
-from src.sprites.wall import Wall
 from src.sprite_costume import SpriteCostume
 from src.sprite_helper import SpriteHelper
-from src.tile_details.bat_tile_details import BatTileDetails
-from src.tile_details.diamond_tile_details import DiamondTileDetails
-from src.tile_details.fire_flame_tile_details import FireFlameTileDetails
-from src.tile_details.ghost_tile_details import GhostTileDetails
-from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
-from src.tile_details.monster_tile_details import MonsterTileDetails
 from src.tile_details.octopus_tile_details import OctopusTileDetails
-from src.tile_details.powerup_tile_details import PowerupTileDetails
-from src.tile_details.spell_tile_details import SpellTileDetails
-from src.tile_details.spider_tile_details import SpiderTileDetails
-from src.tile_details.teleport_tile_details import TeleportTileDetails
-from src.tmx_helper import TmxHelper
 from src.utilities.debug import Debug
 
 
 class Level:
     def __init__(self, screen, game_surface, game_manager):
-        # Factories
-        self.powerup_factory = PowerupFactory()
-
         # Set screen and game_surface
         self.screen = screen
         self.game_surface = game_surface
@@ -69,8 +38,8 @@ class Level:
         self.game_manager = game_manager
 
         # Load tmx data - world map
-        self.tmx_data = load_pygame(f'data/tmx/{self.game_manager.get_level_filename()}')
-        size_of_map = (self.tmx_data.width, self.tmx_data.height)
+        tmx_data = load_pygame(f'data/tmx/{self.game_manager.get_level_filename()}')
+        size_of_map = (tmx_data.width, tmx_data.height)
 
         # Calculate game surface position
         map_rect = pygame.Rect(0, 0, size_of_map[0] * Settings.TILE_SIZE, size_of_map[1] * Settings.TILE_SIZE)
@@ -95,18 +64,15 @@ class Level:
         self.level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
 
         # Create obstacle map
-        self.obstacle_map = self.create_obstacle_map(size_of_map)
+        self.obstacle_map = ObstacleMapFactory.create(tmx_data)
 
-        # Create sprites
-        self.create_sprites()
-        # Create player
-        self.player = self.create_player()
-        # Create check point
-        self.check_point = self.create_check_point()
-        # Create exit point
-        self.exit_point = self.create_exit_point()
-        # Get boss point position
-        self.boss_point_position = self.get_boss_point_position()
+        # Build the world from the map
+        level_sprite_builder = LevelSpriteBuilder(tmx_data, self.game_manager, self.level_sprite_groups,
+                                                  self.obstacle_map)
+        self.player = level_sprite_builder.player
+        self.check_point = level_sprite_builder.check_point
+        self.exit_point = level_sprite_builder.exit_point
+        self.boss_point_position = level_sprite_builder.boss_point_position
 
         # Set blast effect details
         self.blast_effect = BlastEffect(self.game_surface,
@@ -138,118 +104,6 @@ class Level:
 
         # Create debugger
         self.debugger = Debug()
-
-    def create_obstacle_map(self, size_of_map):
-        # Create obstacle map and combine all layers with obstacles
-        obstacle_layer_data = None
-        moving_obstacle_layer_data = None
-        removable_obstacle_layer_data = None
-        door_layer_data = None
-
-        for layer in self.tmx_data.visible_layers:
-            if layer.name == 'obstacle':
-                obstacle_layer_data = self.tmx_data.get_layer_by_name('obstacle').data
-            if layer.name == 'moving-obstacle':
-                moving_obstacle_layer_data = self.tmx_data.get_layer_by_name('moving-obstacle').data
-            if layer.name == 'removable-obstacle':
-                removable_obstacle_layer_data = self.tmx_data.get_layer_by_name('removable-obstacle').data
-            if layer.name == 'door':
-                door_layer_data = TmxHelper.get_data_map_by_layer(self.tmx_data.get_layer_by_name('door'),
-                                                                   size_of_map,
-                                                                   self.tmx_data.tilewidth,
-                                                                   self.tmx_data.tileheight)
-
-        return ObstacleMap([
-            obstacle_layer_data,
-            moving_obstacle_layer_data,
-            removable_obstacle_layer_data,
-            door_layer_data
-        ])
-
-    def create_player(self):
-        player_object = self._get_visible_object('player')
-        if player_object is None:
-            return None
-
-        position = TmxHelper.get_tile_position(player_object.x, player_object.y,
-                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
-        speed = GameHelper.multiply_by_tile_size_ratio(
-            TmxHelper.get_tiled_object_value('speed', 7, player_object, None))
-        return Player(position,
-                      (self.level_sprite_groups.middle_sprites_layer,),
-                      [self.level_sprite_groups.middle_sprites_layer],
-                      speed,
-                      self.level_sprite_groups.exit_points,
-                      self.level_sprite_groups.obstacle_sprites,
-                      self.level_sprite_groups.moving_obstacle_sprites,
-                      self.level_sprite_groups.passage_sprites,
-                      self.level_sprite_groups.teleport_sprites,
-                      self.level_sprite_groups.collectable_sprites,
-                      self.level_sprite_groups.enemy_sprites,
-                      self.level_sprite_groups.hostile_force_sprites,
-                      self.game_manager)
-
-    def create_check_point(self):
-        check_point = self._get_visible_object('check-point')
-        if check_point is None:
-            return None
-
-        position = TmxHelper.get_tile_position(check_point.x, check_point.y,
-                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
-        groups = self.level_sprite_groups.bottom_background_layer, self.level_sprite_groups.collectable_sprites
-        return CheckPoint(check_point.image, position, groups, self.game_manager)
-
-    def create_exit_point(self):
-        exit_object = self._get_visible_object('exit-point')
-        if exit_object is None:
-            return None
-
-        position = TmxHelper.get_tile_position(exit_object.x, exit_object.y,
-                                               self.tmx_data.tilewidth, self.tmx_data.tileheight)
-        groups = self.level_sprite_groups.bottom_background_layer, self.level_sprite_groups.exit_points
-        return ExitPoint(exit_object.image, position, groups, False)
-
-    def get_boss_point_position(self):
-        boss_object = self._get_visible_object('boss-point')
-        if boss_object is None:
-            return None
-
-        return TmxHelper.get_tile_position(boss_object.x, boss_object.y,
-                                           self.tmx_data.tilewidth, self.tmx_data.tileheight)
-
-    def create_sprites(self):
-        self.create_sprites_from_layer('ground', self._create_ground)
-        self.create_sprites_from_layer('diamond', self._create_diamond)
-        self.create_sprites_from_layer('obstacle', self._create_wall)
-        self.create_sprites_from_layer('moving-obstacle', self._create_stone)
-        self.create_sprites_from_layer('removable-obstacle', self._create_demolished_wall)
-        self.create_sprites_from_object_layer('spell', self._create_lighting_spell)
-        self.create_sprites_from_object_layer('powerup', self._create_powerup)
-        self.create_sprites_from_object_layer('key', self._create_key)
-        self.create_sprites_from_object_layer('fire-flame-enemy', self._create_fire_flame_enemy)
-        self.create_sprites_from_object_layer('door', self._create_door)
-        self.create_sprites_from_object_layer('teleport', self._create_teleport)
-        self.create_sprites_from_object_layer('monster-enemy', self._create_monster_enemy)
-        self.create_sprites_from_object_layer('spider-enemy', self._create_spider_enemy)
-        self.create_sprites_from_object_layer('ghost-enemy', self._create_ghost_enemy)
-        self.create_sprites_from_object_layer('bat-enemy', self._create_bat_enemy)
-        self.create_sprites_from_object_layer('octopus-enemy', self._create_octopus_enemy)
-
-    def create_sprites_from_layer(self, layer_name, create_sprite):
-        layer = self._get_visible_layer(layer_name)
-        if layer is not None:
-            for tile_x, tile_y, image in layer.tiles():
-                position = (tile_x * Settings.TILE_SIZE, tile_y * Settings.TILE_SIZE)
-                create_sprite(image, layer, position)
-
-    def create_sprites_from_object_layer(self, layer_name, create_sprite):
-        layer = self._get_visible_layer(layer_name)
-        if layer is not None:
-            for item in layer:
-                if item.visible:
-                    position = TmxHelper.get_tile_position(item.x, item.y, self.tmx_data.tilewidth,
-                                                           self.tmx_data.tileheight, item.rotation)
-                    create_sprite(item, layer, position)
 
     def run(self):
         self.remove_unnecessary_effects()
@@ -298,8 +152,10 @@ class Level:
             dark_surface.fill((0, 0, 0))
             # Calculate circle position
             offset = self.level_sprite_groups.middle_sprites_layer.get_map_offset()
-            circle_x = self.player.rect.centerx + offset.x
-            circle_y = self.player.rect.centery + offset.y
+            player_rect = self.player.rect
+            assert player_rect is not None, 'The player has no rect'
+            circle_x = player_rect.centerx + offset.x
+            circle_y = player_rect.centery + offset.y
 
             if self.game_manager.lighting_status == LightingStatus.TWILIGHT:
                 pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 100)
@@ -329,6 +185,8 @@ class Level:
                 sprite.set_player_tile_position()
 
     def show_exit_point(self):
+        if self.exit_point is None:
+            raise ValueError('The exit point is missing. Add a visible "exit-point" object to the map.')
         self.blast_effect.run()
         self.exit_point.show()
 
@@ -467,142 +325,10 @@ class Level:
 
         return tilt_offset
 
-    def enable_tilt_effect(self, tilt_cursor_increment_value: float = None):
+    def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None):
         self.tilt_effect_enabled = True
 
         if tilt_cursor_increment_value is not None:
             self.tilt_cursor_increment_value = tilt_cursor_increment_value
         else:
             self.tilt_cursor_increment_value = self.tilt_cursor_increment_base_value
-
-    def _get_visible_object(self, name):
-        try:
-            tiled_object = self.tmx_data.get_object_by_name(name)
-        except (KeyError, ValueError):
-            return None
-        return tiled_object if tiled_object.visible else None
-
-    def _get_visible_layer(self, name):
-        try:
-            layer = self.tmx_data.get_layer_by_name(name)
-        except (KeyError, ValueError):
-            return None
-        return layer if layer.visible else None
-
-    def _create_ground(self, image, layer, position):
-        groups = (self.level_sprite_groups.bottom_background_layer,)
-        Ground(image, position, groups)
-
-    def _create_diamond(self, image, layer, position):
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites
-        tile_details = DiamondTileDetails(None, layer)
-        self.game_manager.add_diamond(Diamond(image, position, groups, self.game_manager, tile_details))
-
-    def _create_wall(self, image, layer, position):
-        groups = self.level_sprite_groups.middle_sprites_layer, self.level_sprite_groups.obstacle_sprites
-        Wall(image, position, groups)
-
-    def _create_stone(self, image, layer, position):
-        groups = self.level_sprite_groups.middle_sprites_layer, self.level_sprite_groups.moving_obstacle_sprites
-        collision_sprites = [self.level_sprite_groups.enemy_sprites,
-                             self.level_sprite_groups.obstacle_sprites,
-                             self.level_sprite_groups.moving_obstacle_sprites,
-                             self.level_sprite_groups.collectable_sprites]
-        # Note: stone can be moved, so the list instead of tuple for position is used
-        Stone(image, list(position), groups, self.game_manager, self.obstacle_map.items, collision_sprites)
-
-    def _create_demolished_wall(self, image, layer, position):
-        groups = (self.level_sprite_groups.middle_sprites_layer, self.level_sprite_groups.obstacle_sprites,
-                  self.level_sprite_groups.removable_obstacle_sprites)
-        DemolishedWall(image, position, groups, self.obstacle_map.items)
-
-    def _create_lighting_spell(self, item, layer, position):
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites
-        tile_details = SpellTileDetails(item, layer)
-        LightingSpell(item.image, position, groups, self.game_manager, tile_details)
-
-    def _create_powerup(self, item, layer, position):
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites
-        tile_details = PowerupTileDetails(item, layer)
-        self.powerup_factory.create(tile_details,
-                                    image=item.image,
-                                    position=position,
-                                    groups=groups,
-                                    game_manager=self.game_manager)
-
-    def _create_key(self, item, layer, position):
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites
-        tile_details = KeyAndDoorTileDetails(item, layer)
-        self.game_manager.add_key(Key(item.image, position, groups, self.game_manager, tile_details))
-
-    def _create_fire_flame_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.hostile_force_sprites
-        tile_details = FireFlameTileDetails(item, layer)
-        if tile_details.direction == 'left':
-            FireFlameEnemyLeft(sprites, position, groups, tile_details,
-                               self.level_sprite_groups.moving_obstacle_sprites)
-        elif tile_details.direction == 'right':
-            FireFlameEnemyRight(sprites, position, groups, tile_details,
-                                self.level_sprite_groups.moving_obstacle_sprites)
-
-    def _create_door(self, item, layer, position):
-        groups = (self.level_sprite_groups.middle_sprites_layer, self.level_sprite_groups.obstacle_sprites,
-                  self.level_sprite_groups.passage_sprites)
-        tile_details = KeyAndDoorTileDetails(item, layer)
-        Door(item.image, position, groups, tile_details, self.obstacle_map.items)
-
-    def _create_teleport(self, item, layer, position):
-        groups = self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.teleport_sprites
-        tile_details = TeleportTileDetails(item, layer)
-        Teleport(item.image, position, groups, tile_details)
-
-    def _create_monster_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
-        groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
-        tile_details = MonsterTileDetails(item, layer)
-        enemy_type = EnemyType.from_name(item.name)
-        MonsterEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
-                     enemy_type, tile_details, self.obstacle_map,
-                     self.level_sprite_groups.obstacle_sprites, self.level_sprite_groups.moving_obstacle_sprites,
-                     self.level_sprite_groups.hostile_force_sprites)
-        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-    def _create_spider_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
-        groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
-        tile_details = SpiderTileDetails(item, layer)
-        enemy_type = EnemyType.from_name(item.name)
-        SpiderEnemy(sprite_costumes_matrix, position, groups, self.game_manager,
-                    enemy_type, tile_details, self.level_sprite_groups.moving_obstacle_sprites)
-        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-    def _create_ghost_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
-        tile_details = GhostTileDetails(item, layer)
-        GhostEnemy(sprites, position, groups, tile_details, self.obstacle_map.items,
-                   self.level_sprite_groups.moving_obstacle_sprites)
-
-    def _create_bat_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(item.name, 1, 0)
-        groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
-        tile_details = BatTileDetails(item, layer)
-        enemy_type = EnemyType.from_name(item.name)
-        BatEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
-                 enemy_type, tile_details, self.obstacle_map,
-                 self.level_sprite_groups.moving_obstacle_sprites, self.level_sprite_groups.hostile_force_sprites)
-        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
-
-    def _create_octopus_enemy(self, item, layer, position):
-        sprites = TmxHelper.convert_to_sprite_costumes(self.tmx_data, item,
-                                                       (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3))
-        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(item.name, 1, 0, 3)
-        groups = self.level_sprite_groups.the_highest_sprites_layer, self.level_sprite_groups.enemy_sprites
-        tile_details = OctopusTileDetails(item, layer)
-        OctopusEnemy(sprites, sprite_image_in_damage_state, position, groups, self.game_manager,
-                     tile_details, self.obstacle_map, self.level_sprite_groups.obstacle_sprites,
-                     self.level_sprite_groups.moving_obstacle_sprites)

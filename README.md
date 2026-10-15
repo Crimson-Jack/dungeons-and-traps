@@ -125,10 +125,12 @@ dungeons-and-traps/
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
     ├── events.py            # Custom Pygame event type IDs
     ├── level.py             # Level loading and sprite management
+    ├── level_sprite_builder.py  # Builds the world of a level from a TMX map
     ├── level_sprite_groups.py  # Visible layers and functional sprite groups of a level
     ├── level_stats.py       # Per-level statistics (kills, diamonds, keys, bonus)
     ├── enemy_kill_record.py # Single enemy type kill record (count, killed, score)
     ├── obstacle_map.py      # 2D grid used by enemy pathfinding
+    ├── obstacle_map_factory.py  # Creates the obstacle map from the blocking layers of a TMX map
     ├── sound_manager.py     # Sound playback (Singleton)
     ├── sprites/             # All game objects (player, enemies, items, weapons…)
     ├── effects/             # Visual effects (blast, explosion, particles…)

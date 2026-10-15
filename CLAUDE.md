@@ -95,7 +95,9 @@ venv\Scripts\python.exe -m pytest tests/
 
 - **`src/keyboard_controller.py:KeyboardController`** — keyboard input via a state-machine driven by `game_manager.game_status` (`keyboard_handlers`: one key down handler per status). Owns the secret code text and the movement keys pressed while the game is running, and runs gameplay transitions (level intro, pause resume, game reset). Uses only `GameManager` and `ScreenManager`; ends the game from the pause menu by posting `GAME_OVER_SUMMARY_EVENT`, never by calling `CustomEventController`.
 
-- **`src/level.py:Level`** — loads a `.tmx` map file and constructs all sprites from it. Owns `LevelSpriteGroups` (`level.level_sprite_groups`). Runs the game loop's update/draw cycle each frame.
+- **`src/level.py:Level`** — loads a `.tmx` map file and builds the world from it through `LevelSpriteBuilder`. Owns `LevelSpriteGroups` (`level.level_sprite_groups`). Runs the game loop's update/draw cycle each frame.
+
+- **`src/level_sprite_builder.py:LevelSpriteBuilder`** — builds the world of a level from a TMX map in its constructor: sprites from the tile and object layers, `Player`, `CheckPoint`, `ExitPoint` and the boss point position. Receives the `ObstacleMap` created by `Level` in its constructor. `Level` only reads the results from its read-only properties (`player`, `check_point`, `exit_point`, `boss_point_position`); all builder fields and methods are private. Used only while `Level` is constructed; sprites created during play (eggs, monsters, the boss) stay in `Level`.
 
 - **`src/level_sprite_groups.py:LevelSpriteGroups`** — the sprite groups of a level: five layered `CameraGroup`s (drawn back-to-front for depth) and multiple functional `pygame.sprite.Group`s used for collision detection.
 
@@ -124,7 +126,7 @@ Sprites communicate back to the game loop via Pygame custom events defined in `E
 
 Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tmx` filename, a flag for whether an exit point opens on diamond collection (`exit_point_enabled`), and an optional secret code for level-select. Maps live in `data/tmx/`, tilesets in `data/tsx/`.
 
-`Level.create_sprites()` iterates named TMX layers. Tile layers (`ground`, `obstacle`, `moving-obstacle`, etc.) and object layers (`spider-enemy`, `ghost-enemy`, etc.) are handled separately. Enemy behavior parameters (speed, motion schedule, etc.) are read from TMX object custom properties via `TmxHelper`.
+`LevelSpriteBuilder` (in its constructor) iterates named TMX layers. Tile layers (`ground`, `obstacle`, `moving-obstacle`, etc.) and object layers (`spider-enemy`, `ghost-enemy`, etc.) are handled separately. Enemy behavior parameters (speed, motion schedule, etc.) are read from TMX object custom properties via `TmxHelper`.
 
 ### Sprite Hierarchy
 
@@ -134,7 +136,7 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Obstacle Map
 
-`ObstacleMap` (`src/obstacle_map.py`) is a 2D grid that merges all blocking layers (walls, moving obstacles, removable walls, doors). Enemies with pathfinding (BFS / Greedy Best-First Search in `src/search_path_algorithms/`) use this map. When stones are pushed or walls demolished, `REFRESH_OBSTACLE_MAP_EVENT` triggers `Level.refresh_obstacle_map()`.
+`ObstacleMap` (`src/obstacle_map.py`) is a 2D grid that merges all blocking layers (walls, moving obstacles, removable walls, doors). `Level` creates it with `ObstacleMapFactory.create(tmx_data)` (`src/obstacle_map_factory.py`) and passes it to `LevelSpriteBuilder`. Enemies with pathfinding (BFS / Greedy Best-First Search in `src/search_path_algorithms/`) use this map. When stones are pushed or walls demolished, `REFRESH_OBSTACLE_MAP_EVENT` triggers `Level.refresh_obstacle_map()`.
 
 ### Sound
 
