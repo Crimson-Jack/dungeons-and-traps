@@ -128,6 +128,18 @@ def basic_level(game):
     return game.screen_manager.level
 
 
+class TestGameSurfaceArea:
+    def test_map_larger_than_game_surface_fills_it(self, basic_level):
+        assert basic_level.game_surface_position == [0, 80]
+        assert basic_level.game_surface_rect == pygame.Rect(0, 0, 1200, 496)
+
+    def test_map_narrower_than_game_surface_is_centered_horizontally(self, game):
+        # The game starts on the first level, s01_level_01.tmx, which is 20 tiles wide
+        level = game.screen_manager.level
+        assert level.game_surface_position == [120, 80]
+        assert level.game_surface_rect == pygame.Rect(0, 0, 960, 496)
+
+
 class TestCreateSpritesFromBasicMap:
     def test_bottom_background_layer(self, basic_level):
         assert count_sprite_classes(basic_level.level_sprite_groups.bottom_background_layer) == {

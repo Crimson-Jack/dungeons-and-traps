@@ -121,3 +121,42 @@ class GameHelper:
         height = min(rectangle_one.bottom, rectangle_two.bottom) - top
 
         return pygame.Rect(left, top, width, height)
+
+    @staticmethod
+    def calculate_game_surface_area(size_of_map: tuple[int, int],
+                                    game_surface_size: tuple[int, int]) -> tuple[list[int], pygame.Rect]:
+        """
+        Calculate the position of the game surface on the screen and its visible part.
+
+        Width and height are calculated separately:
+        - map smaller than the game surface: centered, visible part cut to the map size,
+        - map larger or equal: starts at the edge, visible part is the whole game surface.
+        The header height is added to the vertical position.
+
+        Example (48 px tiles, 80 px header):
+            size_of_map   map (px)      game_surface_size   game_surface_position   game_surface_rect
+            20 x 30       960 x 1440    1200 x 496          [120, 80]               (0, 0, 960, 496)
+            30 x 20       1440 x 960    1200 x 496          [0, 80]                 (0, 0, 1200, 496)
+
+        :param size_of_map: map size in tiles (width, height)
+        :param game_surface_size: game surface size in pixels (width, height)
+        :return: position [x, y] on the screen and the visible part as a rectangle at (0, 0)
+        """
+        map_rect = pygame.Rect(0, 0, size_of_map[0] * Settings.TILE_SIZE, size_of_map[1] * Settings.TILE_SIZE)
+        game_surface_rect = pygame.Rect((0, 0), game_surface_size)
+
+        # Calculate game surface position
+        game_surface_position = [0, 0]
+        if map_rect.width < game_surface_rect.width:
+            game_surface_position[0] = (game_surface_rect.width - map_rect.width) // 2
+        if map_rect.height < game_surface_rect.height:
+            game_surface_position[1] = (game_surface_rect.height - map_rect.height) // 2
+        game_surface_position[1] += Settings.HEADER_HEIGHT
+
+        # Calculate game surface rectangle
+        if game_surface_rect.width > map_rect.width:
+            game_surface_rect.width = map_rect.width
+        if game_surface_rect.height > map_rect.height:
+            game_surface_rect.height = map_rect.height
+
+        return game_surface_position, game_surface_rect

@@ -42,24 +42,9 @@ class Level:
         tmx_data = load_pygame(f'data/tmx/{self.game_manager.get_level_filename()}')
         size_of_map = (tmx_data.width, tmx_data.height)
 
-        # Calculate game surface position
-        map_rect = pygame.Rect(0, 0, size_of_map[0] * Settings.TILE_SIZE, size_of_map[1] * Settings.TILE_SIZE)
-        self.game_surface_position = [0, 0]
-
-        if map_rect.width < self.game_surface.get_width():
-            self.game_surface_position[0] = (self.game_surface.get_width() - map_rect.width) // 2
-        if map_rect.height < self.game_surface.get_height():
-            self.game_surface_position[1] = (self.game_surface.get_height() - map_rect.height) // 2
-
-        self.game_surface_position[1] += Settings.HEADER_HEIGHT
-
-        # Calculate game surface rectangle
-        self.game_surface_rect = self.game_surface.get_rect()
-
-        if self.game_surface_rect.width > map_rect.width:
-            self.game_surface_rect.width = map_rect.width
-        if self.game_surface_rect.height > map_rect.height:
-            self.game_surface_rect.height = map_rect.height
+        # Calculate where the game surface is drawn and which part of it is shown
+        self.game_surface_position, self.game_surface_rect = GameHelper.calculate_game_surface_area(
+            size_of_map, self.game_surface.get_size())
 
         # Set up sprite groups
         self.level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
