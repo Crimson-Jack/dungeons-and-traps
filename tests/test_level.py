@@ -173,29 +173,29 @@ def basic_level(game):
 
 class TestCreateSpritesFromBasicMap:
     def test_bottom_background_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.bottom_background_layer) == {
+        assert count_sprite_classes(basic_level.level_sprite_groups.bottom_background_layer) == {
             'CheckPoint': 1, 'ExitPoint': 1, 'Ground': 600}
 
     def test_bottom_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.bottom_sprites_layer) == {
+        assert count_sprite_classes(basic_level.level_sprite_groups.bottom_sprites_layer) == {
             'BowPowerup': 5, 'Diamond': 1, 'EnergyPowerup': 3, 'ExplosionPowerup': 1, 'FireFlameEnemyLeft': 1,
             'FireFlameEnemyRight': 2, 'Key': 2, 'LifePowerup': 1, 'LightingSpell': 3, 'SwordPowerup': 2,
             'Teleport': 3}
 
     def test_middle_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.middle_sprites_layer) == {
+        assert count_sprite_classes(basic_level.level_sprite_groups.middle_sprites_layer) == {
             'BowWeapon': 1, 'DemolishedWall': 18, 'Door': 2, 'ExplosionWeapon': 1, 'Player': 1, 'Stone': 39,
             'SwordWeapon': 1, 'Wall': 206}
 
     def test_top_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.top_sprites_layer) == {
+        assert count_sprite_classes(basic_level.level_sprite_groups.top_sprites_layer) == {
             'BatEnemy': 1, 'GhostEnemy': 3, 'MonsterEnemy': 3, 'SpiderEnemy': 3}
 
     def test_the_highest_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.the_highest_sprites_layer) == {'OctopusEnemy': 1}
+        assert count_sprite_classes(basic_level.level_sprite_groups.the_highest_sprites_layer) == {'OctopusEnemy': 1}
 
     def test_functional_groups(self, basic_level):
-        assert {group_name: len(getattr(basic_level, group_name)) for group_name in (
+        assert {group_name: len(getattr(basic_level.level_sprite_groups, group_name)) for group_name in (
             'exit_points', 'obstacle_sprites', 'moving_obstacle_sprites', 'removable_obstacle_sprites',
             'passage_sprites', 'teleport_sprites', 'collectable_sprites', 'enemy_sprites',
             'hostile_force_sprites')} == {

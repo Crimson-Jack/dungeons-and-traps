@@ -95,7 +95,9 @@ venv\Scripts\python.exe -m pytest tests/
 
 - **`src/keyboard_controller.py:KeyboardController`** — keyboard input via a state-machine driven by `game_manager.game_status` (`keyboard_handlers`: one key down handler per status). Owns the secret code text and the movement keys pressed while the game is running, and runs gameplay transitions (level intro, pause resume, game reset). Uses only `GameManager` and `ScreenManager`; ends the game from the pause menu by posting `GAME_OVER_SUMMARY_EVENT`, never by calling `CustomEventController`.
 
-- **`src/level.py:Level`** — loads a `.tmx` map file and constructs all sprites from it. Owns five layered `CameraGroup`s (drawn back-to-front for depth) and multiple functional `pygame.sprite.Group`s used for collision detection. Runs the game loop's update/draw cycle each frame.
+- **`src/level.py:Level`** — loads a `.tmx` map file and constructs all sprites from it. Owns `LevelSpriteGroups` (`level.level_sprite_groups`). Runs the game loop's update/draw cycle each frame.
+
+- **`src/level_sprite_groups.py:LevelSpriteGroups`** — the sprite groups of a level: five layered `CameraGroup`s (drawn back-to-front for depth) and multiple functional `pygame.sprite.Group`s used for collision detection.
 
 ### Rendering Layers (drawn in order)
 
