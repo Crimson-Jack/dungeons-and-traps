@@ -104,14 +104,14 @@ class LevelSpriteBuilder:
         self._create_sprites_from_object_layer('octopus-enemy', self._create_octopus_enemy)
 
     def _create_sprites_from_layer(self, layer_name, create_sprite):
-        layer = self._get_visible_layer(layer_name)
+        layer: pytmx.TiledTileLayer | None = self._get_visible_layer(layer_name)
         if layer is not None:
             for tile_x, tile_y, image in layer.tiles():
                 position = (tile_x * Settings.TILE_SIZE, tile_y * Settings.TILE_SIZE)
                 create_sprite(image, layer, position)
 
     def _create_sprites_from_object_layer(self, layer_name, create_sprite):
-        layer = self._get_visible_layer(layer_name)
+        layer: pytmx.TiledObjectGroup | None = self._get_visible_layer(layer_name)
         if layer is not None:
             for item in layer:
                 if item.visible:
@@ -183,7 +183,7 @@ class LevelSpriteBuilder:
                 return layer
         return None
 
-    def _create_ground(self, image, layer, position):
+    def _create_ground(self, image, _layer, position):
         groups = (self._level_sprite_groups.bottom_background_layer,)
         Ground(image, position, groups)
 
@@ -192,11 +192,11 @@ class LevelSpriteBuilder:
         tile_details = DiamondTileDetails(None, layer)
         self._game_manager.add_diamond(Diamond(image, position, groups, self._game_manager, tile_details))
 
-    def _create_wall(self, image, layer, position):
+    def _create_wall(self, image, _layer, position):
         groups = self._level_sprite_groups.middle_sprites_layer, self._level_sprite_groups.obstacle_sprites
         Wall(image, position, groups)
 
-    def _create_stone(self, image, layer, position):
+    def _create_stone(self, image, _layer, position):
         groups = self._level_sprite_groups.middle_sprites_layer, self._level_sprite_groups.moving_obstacle_sprites
         collision_sprites = [self._level_sprite_groups.enemy_sprites,
                              self._level_sprite_groups.obstacle_sprites,
@@ -205,7 +205,7 @@ class LevelSpriteBuilder:
         # Note: stone can be moved, so the list instead of tuple for position is used
         Stone(image, list(position), groups, self._game_manager, self._obstacle_map.items, collision_sprites)
 
-    def _create_demolished_wall(self, image, layer, position):
+    def _create_demolished_wall(self, image, _layer, position):
         groups = (self._level_sprite_groups.middle_sprites_layer, self._level_sprite_groups.obstacle_sprites,
                   self._level_sprite_groups.removable_obstacle_sprites)
         DemolishedWall(image, position, groups, self._obstacle_map.items)
