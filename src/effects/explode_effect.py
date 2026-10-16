@@ -1,17 +1,20 @@
 import math
 import pygame
 
+from src.game_helper import GameHelper
+
 
 class ExplodeEffect:
     """Rings of an explosion that grow from a position until they reach the maximum size, then disappear."""
 
-    # Rings drawn inside the explosion rectangle: (inflate_x, inflate_y, line_width)
-    RINGS = ((-5, -25, 1), (-25, -5, 1), (-30, -65, 3), (-65, -30, 3), (-70, -100, 5), (-100, -70, 5))
+    # Rings drawn inside the explosion rectangle: (inflate_x, inflate_y, line_width),
+    # given for the base tile size and scaled to the current tile size
+    RINGS = ((-7, -33, 1), (-33, -7, 1), (-40, -87, 4), (-87, -40, 4), (-93, -133, 7), (-133, -93, 7))
 
     def __init__(self, game_surface: pygame.Surface, steps: int, color: tuple[int, int, int],
                  max_size: tuple[int, int]) -> None:
         """
-        Create a hidden explode effect; it is started with run().
+        Create a hidden explosion effect; it is started with run().
 
         :param game_surface: game surface the rings are drawn on
         :param steps: number of updates the rings need to reach the maximum size
@@ -24,6 +27,10 @@ class ExplodeEffect:
         self._step_x = self._width / steps
         self._step_y = self._height / steps
         self._color = color
+        self._rings = [(round(GameHelper.multiply_by_tile_size_ratio(inflate_x)),
+                        round(GameHelper.multiply_by_tile_size_ratio(inflate_y)),
+                        round(GameHelper.multiply_by_tile_size_ratio(line_width, 1)))
+                       for inflate_x, inflate_y, line_width in self.RINGS]
         self._visible = False
         self._base_rectangle = pygame.rect.Rect(0, 0, 0, 0)
         self._rectangle = pygame.rect.Rect(0, 0, 0, 0)
@@ -51,7 +58,7 @@ class ExplodeEffect:
     def draw(self) -> None:
         """Draw the rings while the effect is visible."""
         if self._visible:
-            for inflate_x, inflate_y, line_width in self.RINGS:
+            for inflate_x, inflate_y, line_width in self._rings:
                 pygame.draw.arc(self._game_surface, self._color, self._rectangle.inflate(inflate_x, inflate_y),
                                 0, 2 * math.pi, line_width)
 

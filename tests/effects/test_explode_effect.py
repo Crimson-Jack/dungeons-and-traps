@@ -5,10 +5,11 @@ import pygame
 import pytest
 
 from src.effects.explode_effect import ExplodeEffect
+from src.game_helper import GameHelper
 
 COLOR = (255, 210, 0)
-# Step of 100 x 100 keeps every ring of the smallest rectangle larger than zero
-MAX_SIZE = (1200, 1200)
+# Step of 150 x 150 keeps every ring of the smallest rectangle larger than zero
+MAX_SIZE = (1800, 1800)
 STEPS = 12
 POSITION = (300, 200)
 OTHER_POSITION = (500, 400)
@@ -37,12 +38,19 @@ def get_drawn_rings(explode_effect, draw_arc):
     return [pygame.Rect(arc_call.args[2]) for arc_call in draw_arc.call_args_list]
 
 
+def get_scaled_rings():
+    return [(round(GameHelper.multiply_by_tile_size_ratio(inflate_x)),
+             round(GameHelper.multiply_by_tile_size_ratio(inflate_y)),
+             round(GameHelper.multiply_by_tile_size_ratio(line_width, 1)))
+            for inflate_x, inflate_y, line_width in ExplodeEffect.RINGS]
+
+
 def get_expected_rings(center, size):
     # Odd inflate values shift a ring center by one pixel, so rings are compared with the inflated rectangle
     explosion_rectangle = pygame.Rect((0, 0), size)
     explosion_rectangle.center = center
     return [explosion_rectangle.inflate(inflate_x, inflate_y)
-            for inflate_x, inflate_y, line_width in ExplodeEffect.RINGS]
+            for inflate_x, inflate_y, line_width in get_scaled_rings()]
 
 
 class TestDraw:
@@ -64,12 +72,12 @@ class TestRun:
             assert color_argument == COLOR
             assert (start_angle, stop_angle) == (0, 2 * math.pi)
         line_widths = [arc_call.args[5] for arc_call in draw_arc.call_args_list]
-        assert line_widths == [1, 1, 3, 3, 5, 5]
+        assert line_widths == [line_width for inflate_x, inflate_y, line_width in get_scaled_rings()]
 
     def test_rings_of_smallest_rectangle_are_centered_at_position(self, explode_effect, draw_arc):
         explode_effect.run(POSITION)
 
-        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(POSITION, (100, 100))
+        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(POSITION, (150, 150))
 
     def test_restarts_from_smallest_rings_at_new_position(self, explode_effect, draw_arc):
         explode_effect.run(POSITION)
@@ -78,7 +86,7 @@ class TestRun:
 
         explode_effect.run(OTHER_POSITION)
 
-        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(OTHER_POSITION, (100, 100))
+        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(OTHER_POSITION, (150, 150))
 
 
 class TestUpdate:
@@ -90,8 +98,8 @@ class TestUpdate:
         explode_effect.update()
         second_rings = get_drawn_rings(explode_effect, draw_arc)
 
-        assert first_rings == get_expected_rings(POSITION, (200, 200))
-        assert second_rings == get_expected_rings(POSITION, (300, 300))
+        assert first_rings == get_expected_rings(POSITION, (300, 300))
+        assert second_rings == get_expected_rings(POSITION, (450, 450))
 
     def test_hides_effect_after_reaching_maximum_size(self, explode_effect, draw_arc):
         explode_effect.run(POSITION)
