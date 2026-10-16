@@ -77,11 +77,11 @@ class Level:
                                            Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
                                           )
         # Tombstones
-        self.tombstones = list()
+        self.tombstones = []
         # Vanishing points
-        self.vanishing_points = list()
+        self.vanishing_points = []
         # Particle effects
-        self.particle_effects = list()
+        self.particle_effects = []
 
         # Tilt effect
         self.tilt_effect = TiltEffect()
@@ -92,8 +92,8 @@ class Level:
     def run(self):
         self.remove_unnecessary_effects()
 
-        # Run an update method foreach sprite from the group
-        # NOTE: bottom_layer_background_sprites is static
+        # Run an update method for each sprite from the group
+        # Note: bottom_background_layer is skipped, because its sprites are static
         self.level_sprite_groups.bottom_sprites_layer.update()
         self.level_sprite_groups.middle_sprites_layer.update()
         self.level_sprite_groups.top_sprites_layer.update()
@@ -211,7 +211,7 @@ class Level:
 
     def create_boss_octopus(self):
         if self.boss_point_position is None:
-            raise ValueError(f'The boss point position is none. Add "boss-point" to "major-game-item" layer.')
+            raise ValueError('The boss point is missing. Add a visible "boss-point" object to the map.')
 
         name = 'octopus-enemy'
         tile_details = OctopusTileDetails(None, None)

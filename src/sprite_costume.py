@@ -33,10 +33,6 @@ class SpriteCostume:
         """Image shown by the sprite."""
         return self._image
 
-    @image.setter
-    def image(self, value: pygame.Surface):
-        self._image = value
-
     @property
     def number_of_frames(self) -> int:
         """Number of game frames the image is shown before the next costume."""
