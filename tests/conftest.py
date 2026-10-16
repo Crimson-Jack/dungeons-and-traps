@@ -10,6 +10,11 @@ from src.panels.dashboard import Dashboard
 from src.panels.header import Header
 
 
+def pytest_configure(config):
+    # Tests that reach into private members while a refactoring is in progress; review and remove them afterwards
+    config.addinivalue_line('markers', 'refactoring: scaffolding test for a refactoring; review and remove afterwards')
+
+
 # Game() calls pygame.init() and loads level 1 in its constructor, so the SDL drivers must be
 # switched to dummy before construction and Pygame must be shut down after every test.
 @pytest.fixture

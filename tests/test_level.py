@@ -30,6 +30,7 @@ def create_effect(is_expired):
     return effect
 
 
+@pytest.mark.refactoring
 class TestRemoveUnnecessaryEffects:
     def test_removes_adjacent_expired_tombstones_in_one_call(self):
         group = pygame.sprite.Group()
@@ -82,6 +83,7 @@ class TestRemoveUnnecessaryEffects:
         assert level.particle_effects == [active_particle_effect]
 
 
+@pytest.mark.refactoring
 class TestShowExitPoint:
     def test_missing_exit_point_raises_value_error(self):
         # Full constructor loads a TMX map, which is irrelevant for showing the exit point
@@ -105,6 +107,7 @@ class TestShowExitPoint:
         level.exit_point.show.assert_called_once()
 
 
+@pytest.mark.refactoring
 class TestEnableTiltEffect:
     def test_passes_speed_to_tilt_effect(self):
         # Full constructor loads a TMX map, which is irrelevant for enabling the tilt effect

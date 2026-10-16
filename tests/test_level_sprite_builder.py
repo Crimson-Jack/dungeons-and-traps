@@ -36,6 +36,7 @@ def raise_key_error(name):
     raise KeyError(name)
 
 
+@pytest.mark.refactoring
 class TestGetVisibleObject:
     def test_returns_visible_object(self):
         tiled_object = Mock(visible=True)
@@ -60,6 +61,7 @@ class TestGetVisibleObject:
         assert level_sprite_builder._get_visible_object('check-point') is None
 
 
+@pytest.mark.refactoring
 class TestGetVisibleLayer:
     def test_returns_visible_layer_with_given_name(self):
         ground_layer = create_layer('ground')
@@ -78,6 +80,7 @@ class TestGetVisibleLayer:
         assert level_sprite_builder._get_visible_layer('ground') is None
 
 
+@pytest.mark.refactoring
 class TestGetBossPointPosition:
     def test_returns_none_without_boss_point(self):
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(
@@ -92,6 +95,7 @@ class TestGetBossPointPosition:
         assert level_sprite_builder._get_boss_point_position() == (3 * 64, 5 * 64)
 
 
+@pytest.mark.refactoring
 class TestCreatePlayer:
     def test_missing_player_raises_value_error(self):
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(
@@ -107,6 +111,7 @@ class TestCreatePlayer:
             level_sprite_builder._create_player()
 
 
+@pytest.mark.refactoring
 class TestCreateSpritesFromLayer:
     def test_passes_each_tile_with_position_in_pixels(self, monkeypatch):
         monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
@@ -131,6 +136,7 @@ class TestCreateSpritesFromLayer:
         create_sprite.assert_not_called()
 
 
+@pytest.mark.refactoring
 class TestCreateSpritesFromObjectLayer:
     def test_passes_only_visible_objects_with_tile_position(self, monkeypatch):
         monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
