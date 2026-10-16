@@ -1,6 +1,7 @@
 import pygame
 
 from src.enums.lighting_status import LightingStatus
+from src.game_helper import GameHelper
 
 
 class DarknessEffect:
@@ -9,8 +10,8 @@ class DarknessEffect:
     # Circles of light for each darkness status: (radius, alpha), from the largest circle to the smallest,
     # so each smaller circle is drawn on top
     LIGHT_CIRCLES = {
-        LightingStatus.TWILIGHT: ((100, 150),),
-        LightingStatus.TORCHLIGHT: ((280, 200), (260, 150), (240, 100), (220, 50), (200, 0)),
+        LightingStatus.TWILIGHT: ((135, 150),),
+        LightingStatus.TORCHLIGHT: ((370, 200), (345, 150), (320, 100), (295, 50), (270, 0)),
     }
 
     def __init__(self, size: tuple[int, int]) -> None:
@@ -36,6 +37,7 @@ class DarknessEffect:
 
         self._dark_surface.fill((0, 0, 0))
         for radius, alpha in self.LIGHT_CIRCLES[lighting_status]:
-            pygame.draw.circle(self._dark_surface, (0, 0, 0, alpha), light_center, radius)
+            pygame.draw.circle(self._dark_surface, (0, 0, 0, alpha), light_center,
+                               GameHelper.multiply_by_tile_size_ratio(radius))
 
         screen.blit(self._dark_surface, position)
