@@ -13,9 +13,9 @@ from src.sprites.tombstone import Tombstone
 def create_level_with_effects(tombstones=None, vanishing_points=None, particle_effects=None):
     # Full constructor loads a TMX map, which is irrelevant for removing expired effects
     level = object.__new__(Level)
-    level.tombstones = tombstones or []
-    level.vanishing_points = vanishing_points or []
-    level.particle_effects = particle_effects or []
+    level._tombstones = tombstones or []
+    level._vanishing_points = vanishing_points or []
+    level._particle_effects = particle_effects or []
     return level
 
 
@@ -42,7 +42,7 @@ class TestRemoveUnnecessaryEffects:
 
         level.remove_unnecessary_effects()
 
-        assert level.tombstones == [active_tombstone]
+        assert level._tombstones == [active_tombstone]
         assert group.sprites() == [active_tombstone]
 
     def test_keeps_active_tombstones_in_order(self):
@@ -55,7 +55,7 @@ class TestRemoveUnnecessaryEffects:
 
         level.remove_unnecessary_effects()
 
-        assert level.tombstones == [first_active_tombstone, second_active_tombstone]
+        assert level._tombstones == [first_active_tombstone, second_active_tombstone]
 
     def test_removes_and_kills_adjacent_expired_vanishing_points(self):
         first_expired_vanishing_point = create_effect(is_expired=True)
@@ -66,7 +66,7 @@ class TestRemoveUnnecessaryEffects:
 
         level.remove_unnecessary_effects()
 
-        assert level.vanishing_points == [active_vanishing_point]
+        assert level._vanishing_points == [active_vanishing_point]
         first_expired_vanishing_point.kill.assert_called_once()
         second_expired_vanishing_point.kill.assert_called_once()
         active_vanishing_point.kill.assert_not_called()
@@ -80,7 +80,7 @@ class TestRemoveUnnecessaryEffects:
 
         level.remove_unnecessary_effects()
 
-        assert level.particle_effects == [active_particle_effect]
+        assert level._particle_effects == [active_particle_effect]
 
 
 @pytest.mark.refactoring
@@ -88,23 +88,23 @@ class TestShowExitPoint:
     def test_missing_exit_point_raises_value_error(self):
         # Full constructor loads a TMX map, which is irrelevant for showing the exit point
         level = object.__new__(Level)
-        level.exit_point = None
-        level.blast_effect = Mock()
+        level._exit_point = None
+        level._blast_effect = Mock()
 
         with pytest.raises(ValueError, match='exit-point'):
             level.show_exit_point()
 
-        level.blast_effect.run.assert_not_called()
+        level._blast_effect.run.assert_not_called()
 
     def test_shows_exit_point_with_blast_effect(self):
         level = object.__new__(Level)
-        level.exit_point = Mock()
-        level.blast_effect = Mock()
+        level._exit_point = Mock()
+        level._blast_effect = Mock()
 
         level.show_exit_point()
 
-        level.blast_effect.run.assert_called_once()
-        level.exit_point.show.assert_called_once()
+        level._blast_effect.run.assert_called_once()
+        level._exit_point.show.assert_called_once()
 
 
 @pytest.mark.refactoring
@@ -112,11 +112,11 @@ class TestEnableTiltEffect:
     def test_passes_speed_to_tilt_effect(self):
         # Full constructor loads a TMX map, which is irrelevant for enabling the tilt effect
         level = object.__new__(Level)
-        level.tilt_effect = Mock()
+        level._tilt_effect = Mock()
 
         level.enable_tilt_effect(0.5)
 
-        level.tilt_effect.enable.assert_called_once_with(0.5)
+        level._tilt_effect.enable.assert_called_once_with(0.5)
 
 
 def count_sprite_classes(group):
@@ -132,27 +132,29 @@ def basic_level(game):
     return game.screen_manager.level
 
 
+@pytest.mark.refactoring
 class TestGameSurfaceArea:
     def test_map_larger_than_game_surface_fills_it(self, basic_level):
-        assert basic_level.game_surface_position == [0, 80]
-        assert basic_level.game_surface_rect == pygame.Rect(0, 0, 1200, 496)
+        assert basic_level._game_surface_position == [0, 80]
+        assert basic_level._game_surface_rect == pygame.Rect(0, 0, 1200, 496)
 
     def test_map_narrower_than_game_surface_is_centered_horizontally(self, game):
         # The game starts on the first level, s01_level_01.tmx, which is 20 tiles wide
         level = game.screen_manager.level
-        assert level.game_surface_position == [120, 80]
-        assert level.game_surface_rect == pygame.Rect(0, 0, 960, 496)
+        assert level._game_surface_position == [120, 80]
+        assert level._game_surface_rect == pygame.Rect(0, 0, 960, 496)
 
 
 def find_new_enemy(level, existing_enemies):
-    new_enemies = [sprite for sprite in level.level_sprite_groups.enemy_sprites if sprite not in existing_enemies]
+    new_enemies = [sprite for sprite in level._level_sprite_groups.enemy_sprites if sprite not in existing_enemies]
     assert len(new_enemies) == 1
     return new_enemies[0]
 
 
+@pytest.mark.refactoring
 class TestCreateSpawnedEnemies:
     def test_monster_has_four_costumes_of_six_frames(self, basic_level):
-        existing_enemies = set(basic_level.level_sprite_groups.enemy_sprites)
+        existing_enemies = set(basic_level._level_sprite_groups.enemy_sprites)
 
         basic_level.create_monster((0, 0))
 
@@ -161,7 +163,7 @@ class TestCreateSpawnedEnemies:
         assert [costume.number_of_frames for costume in monster.sprites] == [6] * 4
 
     def test_boss_octopus_has_sixteen_costumes_of_six_frames(self, basic_level):
-        existing_enemies = set(basic_level.level_sprite_groups.enemy_sprites)
+        existing_enemies = set(basic_level._level_sprite_groups.enemy_sprites)
 
         basic_level.create_boss_octopus()
 
@@ -170,6 +172,7 @@ class TestCreateSpawnedEnemies:
         assert [costume.number_of_frames for costume in boss_octopus.sprites] == [6] * 16
 
 
+@pytest.mark.refactoring
 class TestBlitDarkSurface:
     @pytest.fixture
     def lit_level(self, basic_level):
@@ -179,10 +182,10 @@ class TestBlitDarkSurface:
 
     @staticmethod
     def get_player_and_corner_points(level):
-        offset = level.level_sprite_groups.middle_sprites_layer.get_map_offset()
-        player_point = (int(level.game_surface_position[0] + level.player.rect.centerx + offset.x),
-                        int(level.game_surface_position[1] + level.player.rect.centery + offset.y))
-        corner_point = (level.game_surface_position[0] + 2, level.game_surface_position[1] + 2)
+        offset = level._level_sprite_groups.middle_sprites_layer.get_map_offset()
+        player_point = (int(level._game_surface_position[0] + level._player.rect.centerx + offset.x),
+                        int(level._game_surface_position[1] + level._player.rect.centery + offset.y))
+        corner_point = (level._game_surface_position[0] + 2, level._game_surface_position[1] + 2)
         return player_point, corner_point
 
     @pytest.mark.parametrize('lighting_status, player_color, corner_color', [
@@ -193,39 +196,40 @@ class TestBlitDarkSurface:
     def test_darkness_around_player(self, game, lit_level, lighting_status, player_color, corner_color):
         player_point, corner_point = self.get_player_and_corner_points(lit_level)
         game.game_manager.lighting_status = lighting_status
-        lit_level.screen.fill((255, 255, 255))
+        lit_level._screen.fill((255, 255, 255))
 
         lit_level.blit_dark_surface()
 
-        assert tuple(lit_level.screen.get_at(player_point))[:3] == player_color
-        assert tuple(lit_level.screen.get_at(corner_point))[:3] == corner_color
+        assert tuple(lit_level._screen.get_at(player_point))[:3] == player_color
+        assert tuple(lit_level._screen.get_at(corner_point))[:3] == corner_color
 
 
+@pytest.mark.refactoring
 class TestCreateSpritesFromBasicMap:
     def test_bottom_background_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.level_sprite_groups.bottom_background_layer) == {
+        assert count_sprite_classes(basic_level._level_sprite_groups.bottom_background_layer) == {
             'CheckPoint': 1, 'ExitPoint': 1, 'Ground': 600}
 
     def test_bottom_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.level_sprite_groups.bottom_sprites_layer) == {
+        assert count_sprite_classes(basic_level._level_sprite_groups.bottom_sprites_layer) == {
             'BowPowerup': 5, 'Diamond': 1, 'EnergyPowerup': 3, 'ExplosionPowerup': 1, 'FireFlameEnemyLeft': 1,
             'FireFlameEnemyRight': 2, 'Key': 2, 'LifePowerup': 1, 'LightingSpell': 3, 'SwordPowerup': 2,
             'Teleport': 3}
 
     def test_middle_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.level_sprite_groups.middle_sprites_layer) == {
+        assert count_sprite_classes(basic_level._level_sprite_groups.middle_sprites_layer) == {
             'BowWeapon': 1, 'DemolishedWall': 18, 'Door': 2, 'ExplosionWeapon': 1, 'Player': 1, 'Stone': 39,
             'SwordWeapon': 1, 'Wall': 206}
 
     def test_top_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.level_sprite_groups.top_sprites_layer) == {
+        assert count_sprite_classes(basic_level._level_sprite_groups.top_sprites_layer) == {
             'BatEnemy': 1, 'GhostEnemy': 3, 'MonsterEnemy': 3, 'SpiderEnemy': 3}
 
     def test_the_highest_sprites_layer(self, basic_level):
-        assert count_sprite_classes(basic_level.level_sprite_groups.the_highest_sprites_layer) == {'OctopusEnemy': 1}
+        assert count_sprite_classes(basic_level._level_sprite_groups.the_highest_sprites_layer) == {'OctopusEnemy': 1}
 
     def test_functional_groups(self, basic_level):
-        assert {group_name: len(getattr(basic_level.level_sprite_groups, group_name)) for group_name in (
+        assert {group_name: len(getattr(basic_level._level_sprite_groups, group_name)) for group_name in (
             'exit_points', 'obstacle_sprites', 'moving_obstacle_sprites', 'removable_obstacle_sprites',
             'passage_sprites', 'teleport_sprites', 'collectable_sprites', 'enemy_sprites',
             'hostile_force_sprites')} == {
@@ -234,7 +238,7 @@ class TestCreateSpritesFromBasicMap:
             'collectable_sprites': 19, 'enemy_sprites': 11, 'hostile_force_sprites': 3}
 
     def test_obstacle_map_merges_walls_stones_demolished_walls_and_doors(self, basic_level):
-        obstacle_map_items = basic_level.obstacle_map.items
+        obstacle_map_items = basic_level._obstacle_map.items
         assert (len(obstacle_map_items), len(obstacle_map_items[0])) == (20, 30)
         # 206 walls, 39 stones, 18 demolished walls and 2 doors
         assert sum(sum(row) for row in obstacle_map_items) == 265

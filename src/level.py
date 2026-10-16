@@ -36,163 +36,164 @@ class Level:
 
     def __init__(self, screen: pygame.Surface, game_surface: pygame.Surface, game_manager: GameManager) -> None:
         # Set screen and game_surface
-        self.screen = screen
-        self.game_surface = game_surface
+        self._screen = screen
+        self._game_surface = game_surface
 
         # Set game manager
-        self.game_manager = game_manager
+        self._game_manager = game_manager
 
         # Load tmx data - world map
-        tmx_data = load_pygame(f'data/tmx/{self.game_manager.get_level_filename()}')
+        tmx_data = load_pygame(f'data/tmx/{self._game_manager.get_level_filename()}')
         size_of_map = (tmx_data.width, tmx_data.height)
 
         # Calculate where the game surface is drawn and which part of it is shown
-        self.game_surface_position, self.game_surface_rect = GameHelper.calculate_game_surface_area(
+        self._game_surface_position, self._game_surface_rect = GameHelper.calculate_game_surface_area(
             size_of_map,
-            self.game_surface.get_size()
+            self._game_surface.get_size()
         )
 
         # Set up sprite groups
-        self.level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
+        self._level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
 
         # Create obstacle map
-        self.obstacle_map = ObstacleMapFactory.create(tmx_data)
+        self._obstacle_map = ObstacleMapFactory.create(tmx_data)
 
         # Build the world from the map
         level_sprite_builder = LevelSpriteBuilder(
             tmx_data,
-            self.game_manager,
-            self.level_sprite_groups,
-            self.obstacle_map
+            self._game_manager,
+            self._level_sprite_groups,
+            self._obstacle_map
         )
-        self.player = level_sprite_builder.player
-        self.check_point = level_sprite_builder.check_point
-        self.exit_point = level_sprite_builder.exit_point
-        self.boss_point_position = level_sprite_builder.boss_point_position
+        self._player = level_sprite_builder.player
+        self._check_point = level_sprite_builder.check_point
+        self._exit_point = level_sprite_builder.exit_point
+        self._boss_point_position = level_sprite_builder.boss_point_position
 
         # Set blast effect details
-        self.blast_effect = BlastEffect(
-            self.game_surface,
+        self._blast_effect = BlastEffect(
+            self._game_surface,
             8,
             Settings.BLAST_EFFECT_COLOR,
-            (self.game_surface_rect.width, self.game_surface_rect.height)
+            (self._game_surface_rect.width, self._game_surface_rect.height)
         )
 
         # Set explode effect details
-        self.explode_effect = ExplodeEffect(
-            self.game_surface,
+        self._explode_effect = ExplodeEffect(
+            self._game_surface,
             Settings.NUMBER_OF_EXPLOSION_STEPS,
             Settings.EXPLODE_EFFECT_COLOR,
-            (Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2, Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
+            (Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2,
+             Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
         )
 
         # Darkness effect
-        self.darkness_effect = DarknessEffect(self.game_surface_rect.size)
+        self._darkness_effect = DarknessEffect(self._game_surface_rect.size)
 
         # Tombstones
-        self.tombstones = []
+        self._tombstones = []
 
         # Vanishing points
-        self.vanishing_points = []
+        self._vanishing_points = []
         
         # Particle effects
-        self.particle_effects = []
+        self._particle_effects = []
 
         # Tilt effect
-        self.tilt_effect = TiltEffect()
+        self._tilt_effect = TiltEffect()
 
         # Create debugger
-        self.debugger = Debug()
+        self._debugger = Debug()
 
     def run(self) -> None:
         self.remove_unnecessary_effects()
 
         # Run an update method for each sprite from the group
         # Note: bottom_background_layer is skipped, because its sprites are static
-        self.level_sprite_groups.bottom_sprites_layer.update()
-        self.level_sprite_groups.middle_sprites_layer.update()
-        self.level_sprite_groups.top_sprites_layer.update()
-        self.level_sprite_groups.the_highest_sprites_layer.update()
+        self._level_sprite_groups.bottom_sprites_layer.update()
+        self._level_sprite_groups.middle_sprites_layer.update()
+        self._level_sprite_groups.top_sprites_layer.update()
+        self._level_sprite_groups.the_highest_sprites_layer.update()
 
         # Run an update method for effects
         self.update_particle_effects()
-        self.blast_effect.update()
-        self.explode_effect.update()
+        self._blast_effect.update()
+        self._explode_effect.update()
 
         # Clean game surface - fill with background color
-        self.game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
+        self._game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
 
         # Draw all visible sprites
-        tilt_offset = self.tilt_effect.next_offset()
-        self.level_sprite_groups.bottom_background_layer.custom_draw(self.player, tilt_offset)
-        self.level_sprite_groups.bottom_sprites_layer.custom_draw(self.player, tilt_offset)
-        self.level_sprite_groups.middle_sprites_layer.custom_draw(self.player, tilt_offset)
-        self.level_sprite_groups.top_sprites_layer.custom_draw(self.player, tilt_offset)
-        self.level_sprite_groups.the_highest_sprites_layer.custom_draw(self.player, tilt_offset)
+        tilt_offset = self._tilt_effect.next_offset()
+        self._level_sprite_groups.bottom_background_layer.custom_draw(self._player, tilt_offset)
+        self._level_sprite_groups.bottom_sprites_layer.custom_draw(self._player, tilt_offset)
+        self._level_sprite_groups.middle_sprites_layer.custom_draw(self._player, tilt_offset)
+        self._level_sprite_groups.top_sprites_layer.custom_draw(self._player, tilt_offset)
+        self._level_sprite_groups.the_highest_sprites_layer.custom_draw(self._player, tilt_offset)
 
         # Draw effects
         self.draw_particle_effects()
-        self.blast_effect.draw()
-        self.explode_effect.draw()
+        self._blast_effect.draw()
+        self._explode_effect.draw()
 
         # Blit game_surface on the main screen
-        self.screen.blit(self.game_surface, self.game_surface_position, self.game_surface_rect)
+        self._screen.blit(self._game_surface, self._game_surface_position, self._game_surface_rect)
         # Blit dark_surface on the main screen
         self.blit_dark_surface()
 
         # Read inputs and display variables if debugger is enabled
-        self.debugger.input()
-        self.debugger.show()
+        self._debugger.input()
+        self._debugger.show()
 
     def blit_dark_surface(self) -> None:
         # Calculate the position of the player on the game surface
-        offset = self.level_sprite_groups.middle_sprites_layer.get_map_offset()
-        player_rect = self.player.rect
+        offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
+        player_rect = self._player.rect
         assert player_rect is not None, 'The player has no rect'
         light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
 
-        self.darkness_effect.draw(self.screen, self.game_surface_position, self.game_manager.lighting_status,
+        self._darkness_effect.draw(self._screen, self._game_surface_position, self._game_manager.lighting_status,
                                   light_center)
 
     def refresh_obstacle_map(self) -> None:
         # Refresh obstacle map if is required
-        self.obstacle_map.calculate_regions()
+        self._obstacle_map.calculate_regions()
 
-        for sprite in self.level_sprite_groups.enemy_sprites.sprites():
+        for sprite in self._level_sprite_groups.enemy_sprites.sprites():
             if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
-        for sprite in self.level_sprite_groups.hostile_force_sprites.sprites():
+        for sprite in self._level_sprite_groups.hostile_force_sprites.sprites():
             if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
 
     def inform_about_player_tile_position(self) -> None:
-        for sprite in self.level_sprite_groups.enemy_sprites.sprites():
+        for sprite in self._level_sprite_groups.enemy_sprites.sprites():
             if isinstance(sprite, PathfindingEnemy):
                 sprite.set_player_tile_position()
 
     def show_exit_point(self) -> None:
-        if self.exit_point is None:
+        if self._exit_point is None:
             raise ValueError('The exit point is missing. Add a visible "exit-point" object to the map.')
-        self.blast_effect.run()
-        self.exit_point.show()
+        self._blast_effect.run()
+        self._exit_point.show()
 
     def show_explode_effect(self, position: tuple[int, int]) -> None:
-        self.explode_effect.run(position)
+        self._explode_effect.run(position)
 
     def add_tombstone(self, position: tuple[int, int]) -> None:
         sprites = SpriteHelper.get_all_tombstone_sprites()
-        self.tombstones.append(Tombstone(sprites, position, (self.level_sprite_groups.bottom_sprites_layer,)))
+        self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,)))
 
     def add_boss_tombstone(self, position: tuple[int, int]) -> None:
         sprites = SpriteHelper.get_all_boss_tombstone_sprites()
-        self.tombstones.append(Tombstone(sprites, position, (self.level_sprite_groups.bottom_sprites_layer,), 0))
+        self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,), 0))
 
     def add_vanishing_point(self, position: tuple[int, int]) -> None:
-        self.vanishing_points.append(VanishingPoint(position, (self.level_sprite_groups.bottom_sprites_layer,)))
+        self._vanishing_points.append(VanishingPoint(position, (self._level_sprite_groups.bottom_sprites_layer,)))
 
     def create_egg(self, position: tuple[int, int]) -> None:
-        Egg(position, (self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites),
-            self.game_manager)
+        Egg(position, (self._level_sprite_groups.bottom_sprites_layer, self._level_sprite_groups.collectable_sprites),
+            self._game_manager)
 
     def create_monster(self, position: tuple[int, int]) -> None:
         name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
@@ -202,17 +203,17 @@ class Level:
                                                     self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
 
-        groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
+        groups = self._level_sprite_groups.top_sprites_layer, self._level_sprite_groups.enemy_sprites
 
         enemy_type = EnemyType.from_name(name)
-        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self.game_manager,
-                     enemy_type, tile_details, self.obstacle_map,
-                     self.level_sprite_groups.obstacle_sprites, self.level_sprite_groups.moving_obstacle_sprites,
-                     self.level_sprite_groups.hostile_force_sprites)
-        self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+        MonsterEnemy(sprite_costumes, sprite_image_in_damage_state, position, groups, self._game_manager,
+                     enemy_type, tile_details, self._obstacle_map,
+                     self._level_sprite_groups.obstacle_sprites, self._level_sprite_groups.moving_obstacle_sprites,
+                     self._level_sprite_groups.hostile_force_sprites)
+        self._game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
     def create_boss_octopus(self) -> None:
-        if self.boss_point_position is None:
+        if self._boss_point_position is None:
             raise ValueError('The boss point is missing. Add a visible "boss-point" object to the map.')
 
         name = 'octopus-enemy'
@@ -222,79 +223,80 @@ class Level:
                                                     self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
 
-        groups = self.level_sprite_groups.the_highest_sprites_layer, self.level_sprite_groups.enemy_sprites
+        groups = self._level_sprite_groups.the_highest_sprites_layer, self._level_sprite_groups.enemy_sprites
 
-        OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self.boss_point_position, groups, self.game_manager,
-                     tile_details, self.obstacle_map, self.level_sprite_groups.obstacle_sprites,
-                     self.level_sprite_groups.moving_obstacle_sprites)
+        OctopusEnemy(sprite_costumes, sprite_image_in_damage_state, self._boss_point_position, groups,
+                     self._game_manager,
+                     tile_details, self._obstacle_map, self._level_sprite_groups.obstacle_sprites,
+                     self._level_sprite_groups.moving_obstacle_sprites)
 
-        self.game_manager.boss_max_energy = tile_details.energy
-        self.game_manager.boss_energy = tile_details.energy
-        self.game_manager.is_boss_visible = True
+        self._game_manager.boss_max_energy = tile_details.energy
+        self._game_manager.boss_energy = tile_details.energy
+        self._game_manager.is_boss_visible = True
 
     def add_particle_effect(self, position: tuple[int, int], number_of_sparks: int,
                             colors: list[tuple[int, int, int]]) -> None:
-        self.particle_effects.append(
-            ParticleEffect(self.game_surface, position, colors, number_of_sparks,
+        self._particle_effects.append(
+            ParticleEffect(self._game_surface, position, colors, number_of_sparks,
                            GameHelper.get_tile_size_ratio()))
 
     def update_particle_effects(self) -> None:
-        map_offset = self.level_sprite_groups.top_sprites_layer.get_map_offset()
-        for particle_effect in self.particle_effects:
+        map_offset = self._level_sprite_groups.top_sprites_layer.get_map_offset()
+        for particle_effect in self._particle_effects:
             if not particle_effect.is_expired():
                 particle_effect.update(map_offset)
 
     def draw_particle_effects(self) -> None:
-        for particle_effect in self.particle_effects:
+        for particle_effect in self._particle_effects:
             particle_effect.draw()
 
     def add_spark_to_particle_effect(self) -> None:
-        for particle_effect in self.particle_effects:
+        for particle_effect in self._particle_effects:
             particle_effect.add_spark()
 
     def show_player_tombstone(self) -> None:
-        self.player.disable()
-        self.player.trigger_tombstone_creation()
+        self._player.disable()
+        self._player.trigger_tombstone_creation()
 
     def show_player_vanishing_point(self) -> None:
-        self.player.disable()
-        self.player.trigger_vanishing_point_creation()
+        self._player.disable()
+        self._player.trigger_vanishing_point_creation()
 
     def respawn_player(self, position: tuple[int, int] | None = None) -> None:
         if position is None:
-            position = self.game_manager.get_check_point_position()
-        self.player.respawn(position)
-        self.player.enable()
+            position = self._game_manager.get_check_point_position()
+        self._player.respawn(position)
+        self._player.enable()
 
     def remove_obstacles(self) -> None:
-        if len(self.level_sprite_groups.removable_obstacle_sprites) > 0:
-            for sprite in self.level_sprite_groups.removable_obstacle_sprites:
+        if len(self._level_sprite_groups.removable_obstacle_sprites) > 0:
+            for sprite in self._level_sprite_groups.removable_obstacle_sprites:
                 sprite.kill()
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
     def remove_unnecessary_effects(self) -> None:
         remaining_tombstones = []
-        for tombstone in self.tombstones:
+        for tombstone in self._tombstones:
             if tombstone.is_expired():
                 tombstone.kill()
             else:
                 remaining_tombstones.append(tombstone)
-        self.tombstones = remaining_tombstones
+        self._tombstones = remaining_tombstones
 
         remaining_vanishing_points = []
-        for vanishing_point in self.vanishing_points:
+        for vanishing_point in self._vanishing_points:
             if vanishing_point.is_expired():
                 vanishing_point.kill()
             else:
                 remaining_vanishing_points.append(vanishing_point)
-        self.vanishing_points = remaining_vanishing_points
+        self._vanishing_points = remaining_vanishing_points
 
         remaining_particle_effects = []
-        for particle_effect in self.particle_effects:
+        for particle_effect in self._particle_effects:
             if not particle_effect.is_expired():
                 remaining_particle_effects.append(particle_effect)
-        self.particle_effects = remaining_particle_effects
+        self._particle_effects = remaining_particle_effects
 
     def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None) -> None:
-        self.tilt_effect.enable(tilt_cursor_increment_value)
+        self._tilt_effect.enable(tilt_cursor_increment_value)
