@@ -30,6 +30,9 @@ from src.utilities.debug import Debug
 
 
 class Level:
+    # Number of game frames each costume of the enemies created during play (monster from an egg, boss) is shown
+    SPAWNED_ENEMY_NUMBER_OF_FRAMES = 6
+
     def __init__(self, screen, game_surface, game_manager):
         # Set screen and game_surface
         self.screen = screen
@@ -193,9 +196,8 @@ class Level:
         name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
         tile_details = MonsterTileDetailsFactory.create(name)
 
-        sprite_costumes = list()
-        for image in SpriteHelper.get_all_monster_sprites(name):
-            sprite_costumes.append(SpriteCostume(image, 6))
+        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_all_monster_sprites(name),
+                                                    self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
         sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
 
         groups = self.level_sprite_groups.top_sprites_layer, self.level_sprite_groups.enemy_sprites
@@ -214,9 +216,8 @@ class Level:
         name = 'octopus-enemy'
         tile_details = OctopusTileDetails(None, None)
 
-        sprite_costumes = list()
-        for image in SpriteHelper.get_all_octopus_sprites(name):
-            sprite_costumes.append(SpriteCostume(image, 6))
+        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_all_octopus_sprites(name),
+                                                    self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
         sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
 
         groups = self.level_sprite_groups.the_highest_sprites_layer, self.level_sprite_groups.enemy_sprites

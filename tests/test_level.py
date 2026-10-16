@@ -140,6 +140,32 @@ class TestGameSurfaceArea:
         assert level.game_surface_rect == pygame.Rect(0, 0, 960, 496)
 
 
+def find_new_enemy(level, existing_enemies):
+    new_enemies = [sprite for sprite in level.level_sprite_groups.enemy_sprites if sprite not in existing_enemies]
+    assert len(new_enemies) == 1
+    return new_enemies[0]
+
+
+class TestCreateSpawnedEnemies:
+    def test_monster_has_four_costumes_of_six_frames(self, basic_level):
+        existing_enemies = set(basic_level.level_sprite_groups.enemy_sprites)
+
+        basic_level.create_monster((0, 0))
+
+        monster = find_new_enemy(basic_level, existing_enemies)
+        assert type(monster).__name__ == 'MonsterEnemy'
+        assert [costume.number_of_frames for costume in monster.sprites] == [6] * 4
+
+    def test_boss_octopus_has_sixteen_costumes_of_six_frames(self, basic_level):
+        existing_enemies = set(basic_level.level_sprite_groups.enemy_sprites)
+
+        basic_level.create_boss_octopus()
+
+        boss_octopus = find_new_enemy(basic_level, existing_enemies)
+        assert type(boss_octopus).__name__ == 'OctopusEnemy'
+        assert [costume.number_of_frames for costume in boss_octopus.sprites] == [6] * 16
+
+
 class TestCreateSpritesFromBasicMap:
     def test_bottom_background_layer(self, basic_level):
         assert count_sprite_classes(basic_level.level_sprite_groups.bottom_background_layer) == {
