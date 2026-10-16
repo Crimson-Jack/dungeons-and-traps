@@ -14,6 +14,7 @@ from src.effects.particle_effect import ParticleEffect
 from src.effects.tilt_effect import TiltEffect
 from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
+from src.game_manager import GameManager
 from src.level_sprite_builder import LevelSpriteBuilder
 from src.level_sprite_groups import LevelSpriteGroups
 from src.obstacle_map_factory import ObstacleMapFactory
@@ -33,7 +34,7 @@ class Level:
     # Number of game frames each costume of the enemies created during play (monster from an egg, boss) is shown
     SPAWNED_ENEMY_NUMBER_OF_FRAMES = 6
 
-    def __init__(self, screen, game_surface, game_manager):
+    def __init__(self, screen: pygame.Surface, game_surface: pygame.Surface, game_manager: GameManager) -> None:
         # Set screen and game_surface
         self.screen = screen
         self.game_surface = game_surface
@@ -70,6 +71,8 @@ class Level:
                                         (self.game_surface_rect.width,
                                          self.game_surface_rect.height)
                                         )
+
+        # Set explode effect details
         self.explode_effect = ExplodeEffect(self.game_surface,
                                           Settings.NUMBER_OF_EXPLOSION_STEPS,
                                           Settings.EXPLODE_EFFECT_COLOR,
@@ -78,8 +81,10 @@ class Level:
                                           )
         # Tombstones
         self.tombstones = []
+
         # Vanishing points
         self.vanishing_points = []
+        
         # Particle effects
         self.particle_effects = []
 
@@ -89,7 +94,7 @@ class Level:
         # Create debugger
         self.debugger = Debug()
 
-    def run(self):
+    def run(self) -> None:
         self.remove_unnecessary_effects()
 
         # Run an update method for each sprite from the group
@@ -129,7 +134,7 @@ class Level:
         self.debugger.input()
         self.debugger.show()
 
-    def blit_dark_surface(self):
+    def blit_dark_surface(self) -> None:
         if self.game_manager.lighting_status != LightingStatus.LIGHT_ON:
             # Create surface with transparent color (alpha) with the same size as game surface
             dark_surface = pygame.Surface(pygame.Rect(self.game_surface_rect).size, pygame.SRCALPHA)
@@ -152,7 +157,7 @@ class Level:
 
             self.screen.blit(dark_surface, self.game_surface_position)
 
-    def refresh_obstacle_map(self):
+    def refresh_obstacle_map(self) -> None:
         # Refresh obstacle map if is required
         self.obstacle_map.calculate_regions()
 
@@ -163,36 +168,36 @@ class Level:
             if isinstance(sprite, ObstacleMapObserver):
                 sprite.refresh_obstacle_map()
 
-    def inform_about_player_tile_position(self):
+    def inform_about_player_tile_position(self) -> None:
         for sprite in self.level_sprite_groups.enemy_sprites.sprites():
             if isinstance(sprite, PathfindingEnemy):
                 sprite.set_player_tile_position()
 
-    def show_exit_point(self):
+    def show_exit_point(self) -> None:
         if self.exit_point is None:
             raise ValueError('The exit point is missing. Add a visible "exit-point" object to the map.')
         self.blast_effect.run()
         self.exit_point.show()
 
-    def show_explode_effect(self, position: tuple[int, int]):
+    def show_explode_effect(self, position: tuple[int, int]) -> None:
         self.explode_effect.run(position)
 
-    def add_tombstone(self, position):
+    def add_tombstone(self, position: tuple[int, int]) -> None:
         sprites = SpriteHelper.get_all_tombstone_sprites()
         self.tombstones.append(Tombstone(sprites, position, (self.level_sprite_groups.bottom_sprites_layer,)))
 
-    def add_boss_tombstone(self, position):
+    def add_boss_tombstone(self, position: tuple[int, int]) -> None:
         sprites = SpriteHelper.get_all_boss_tombstone_sprites()
         self.tombstones.append(Tombstone(sprites, position, (self.level_sprite_groups.bottom_sprites_layer,), 0))
 
-    def add_vanishing_point(self, position):
+    def add_vanishing_point(self, position: tuple[int, int]) -> None:
         self.vanishing_points.append(VanishingPoint(position, (self.level_sprite_groups.bottom_sprites_layer,)))
 
-    def create_egg(self, position):
+    def create_egg(self, position: tuple[int, int]) -> None:
         Egg(position, (self.level_sprite_groups.bottom_sprites_layer, self.level_sprite_groups.collectable_sprites),
             self.game_manager)
 
-    def create_monster(self, position):
+    def create_monster(self, position: tuple[int, int]) -> None:
         name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
         tile_details = MonsterTileDetailsFactory.create(name)
 
@@ -209,7 +214,7 @@ class Level:
                      self.level_sprite_groups.hostile_force_sprites)
         self.game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
 
-    def create_boss_octopus(self):
+    def create_boss_octopus(self) -> None:
         if self.boss_point_position is None:
             raise ValueError('The boss point is missing. Add a visible "boss-point" object to the map.')
 
@@ -230,47 +235,48 @@ class Level:
         self.game_manager.boss_energy = tile_details.energy
         self.game_manager.is_boss_visible = True
 
-    def add_particle_effect(self, position, number_of_sparks, colors):
+    def add_particle_effect(self, position: tuple[int, int], number_of_sparks: int,
+                            colors: list[tuple[int, int, int]]) -> None:
         self.particle_effects.append(
             ParticleEffect(self.game_surface, position, colors, number_of_sparks,
                            GameHelper.get_tile_size_ratio()))
 
-    def update_particle_effects(self):
+    def update_particle_effects(self) -> None:
         map_offset = self.level_sprite_groups.top_sprites_layer.get_map_offset()
         for particle_effect in self.particle_effects:
             if not particle_effect.is_expired():
                 particle_effect.update(map_offset)
 
-    def draw_particle_effects(self):
+    def draw_particle_effects(self) -> None:
         for particle_effect in self.particle_effects:
             particle_effect.draw()
 
-    def add_spark_to_particle_effect(self):
+    def add_spark_to_particle_effect(self) -> None:
         for particle_effect in self.particle_effects:
             particle_effect.add_spark()
 
-    def show_player_tombstone(self):
+    def show_player_tombstone(self) -> None:
         self.player.disable()
         self.player.trigger_tombstone_creation()
 
-    def show_player_vanishing_point(self):
+    def show_player_vanishing_point(self) -> None:
         self.player.disable()
         self.player.trigger_vanishing_point_creation()
 
-    def respawn_player(self, position=None):
+    def respawn_player(self, position: tuple[int, int] | None = None) -> None:
         if position is None:
             position = self.game_manager.get_check_point_position()
         self.player.respawn(position)
         self.player.enable()
 
-    def remove_obstacles(self):
+    def remove_obstacles(self) -> None:
         if len(self.level_sprite_groups.removable_obstacle_sprites) > 0:
             for sprite in self.level_sprite_groups.removable_obstacle_sprites:
                 sprite.kill()
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
-    def remove_unnecessary_effects(self):
+    def remove_unnecessary_effects(self) -> None:
         remaining_tombstones = []
         for tombstone in self.tombstones:
             if tombstone.is_expired():
@@ -293,5 +299,5 @@ class Level:
                 remaining_particle_effects.append(particle_effect)
         self.particle_effects = remaining_particle_effects
 
-    def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None):
+    def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None) -> None:
         self.tilt_effect.enable(tilt_cursor_increment_value)
