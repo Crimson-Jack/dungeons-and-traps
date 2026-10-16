@@ -11,7 +11,7 @@ from src.enums.enemy_type import EnemyType
 from src.effects.blast_effect import BlastEffect
 from src.effects.darkness_effect import DarknessEffect
 from src.effects.explode_effect import ExplodeEffect
-from src.effects.particle_effect import ParticleEffect
+from src.effects.particle_effect_group import ParticleEffectGroup
 from src.effects.tilt_effect import TiltEffect
 from src.game_helper import GameHelper
 from src.game_manager import GameManager
@@ -70,7 +70,13 @@ class Level:
         self._exit_point = level_sprite_builder.exit_point
         self._boss_point_position = level_sprite_builder.boss_point_position
 
-        # Set blast effect details
+        # Tombstones
+        self._tombstones = []
+
+        # Vanishing points
+        self._vanishing_points = []
+
+        # Blast effect
         self._blast_effect = BlastEffect(
             self._game_surface,
             8,
@@ -78,7 +84,7 @@ class Level:
             (self._game_surface_rect.width, self._game_surface_rect.height)
         )
 
-        # Set explode effect details
+        # Explode effect
         self._explode_effect = ExplodeEffect(
             self._game_surface,
             Settings.NUMBER_OF_EXPLOSION_STEPS,
@@ -90,14 +96,8 @@ class Level:
         # Darkness effect
         self._darkness_effect = DarknessEffect(self._game_surface_rect.size)
 
-        # Tombstones
-        self._tombstones = []
-
-        # Vanishing points
-        self._vanishing_points = []
-        
         # Particle effects
-        self._particle_effects = []
+        self._particle_effect_group = ParticleEffectGroup(self._game_surface)
 
         # Tilt effect
         self._tilt_effect = TiltEffect()
@@ -116,7 +116,7 @@ class Level:
         self._level_sprite_groups.the_highest_sprites_layer.update()
 
         # Run an update method for effects
-        self._update_particle_effects()
+        self._particle_effect_group.update(self._level_sprite_groups.top_sprites_layer.get_map_offset())
         self._blast_effect.update()
         self._explode_effect.update()
 
@@ -132,7 +132,7 @@ class Level:
         self._level_sprite_groups.the_highest_sprites_layer.custom_draw(self._player, tilt_offset)
 
         # Draw effects
-        self._draw_particle_effects()
+        self._particle_effect_group.draw()
         self._blast_effect.draw()
         self._explode_effect.draw()
 
@@ -226,13 +226,10 @@ class Level:
 
     def add_particle_effect(self, position: tuple[int, int], number_of_sparks: int,
                             colors: list[tuple[int, int, int]]) -> None:
-        self._particle_effects.append(
-            ParticleEffect(self._game_surface, position, colors, number_of_sparks,
-                           GameHelper.get_tile_size_ratio()))
+        self._particle_effect_group.add(position, number_of_sparks, colors)
 
     def add_spark_to_particle_effect(self) -> None:
-        for particle_effect in self._particle_effects:
-            particle_effect.add_spark()
+        self._particle_effect_group.add_spark()
 
     def show_player_tombstone(self) -> None:
         self._player.disable()
@@ -275,21 +272,7 @@ class Level:
                 remaining_vanishing_points.append(vanishing_point)
         self._vanishing_points = remaining_vanishing_points
 
-        remaining_particle_effects = []
-        for particle_effect in self._particle_effects:
-            if not particle_effect.is_expired():
-                remaining_particle_effects.append(particle_effect)
-        self._particle_effects = remaining_particle_effects
-
-    def _update_particle_effects(self) -> None:
-        map_offset = self._level_sprite_groups.top_sprites_layer.get_map_offset()
-        for particle_effect in self._particle_effects:
-            if not particle_effect.is_expired():
-                particle_effect.update(map_offset)
-
-    def _draw_particle_effects(self) -> None:
-        for particle_effect in self._particle_effects:
-            particle_effect.draw()
+        self._particle_effect_group.remove_expired()
 
     def _blit_dark_surface(self) -> None:
         # Calculate the position of the player on the game surface

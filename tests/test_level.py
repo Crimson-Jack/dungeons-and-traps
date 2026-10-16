@@ -10,12 +10,12 @@ from src.level import Level
 from src.sprites.tombstone import Tombstone
 
 
-def create_level_with_effects(tombstones=None, vanishing_points=None, particle_effects=None):
+def create_level_with_effects(tombstones=None, vanishing_points=None):
     # Full constructor loads a TMX map, which is irrelevant for removing expired effects
     level = object.__new__(Level)
     level._tombstones = tombstones or []
     level._vanishing_points = vanishing_points or []
-    level._particle_effects = particle_effects or []
+    level._particle_effect_group = Mock()
     return level
 
 
@@ -71,16 +71,12 @@ class TestRemoveUnnecessaryEffects:
         second_expired_vanishing_point.kill.assert_called_once()
         active_vanishing_point.kill.assert_not_called()
 
-    def test_removes_adjacent_expired_particle_effects(self):
-        first_expired_particle_effect = create_effect(is_expired=True)
-        second_expired_particle_effect = create_effect(is_expired=True)
-        active_particle_effect = create_effect(is_expired=False)
-        level = create_level_with_effects(
-            particle_effects=[first_expired_particle_effect, second_expired_particle_effect, active_particle_effect])
+    def test_removes_expired_particle_effects(self):
+        level = create_level_with_effects()
 
         level._remove_unnecessary_effects()
 
-        assert level._particle_effects == [active_particle_effect]
+        level._particle_effect_group.remove_expired.assert_called_once()
 
 
 @pytest.mark.refactoring
