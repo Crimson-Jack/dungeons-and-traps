@@ -9,10 +9,10 @@ from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
 from src.enums.enemy_type import EnemyType
 from src.effects.blast_effect import BlastEffect
+from src.effects.darkness_effect import DarknessEffect
 from src.effects.explode_effect import ExplodeEffect
 from src.effects.particle_effect import ParticleEffect
 from src.effects.tilt_effect import TiltEffect
-from src.enums.lighting_status import LightingStatus
 from src.game_helper import GameHelper
 from src.game_manager import GameManager
 from src.level_sprite_builder import LevelSpriteBuilder
@@ -48,7 +48,9 @@ class Level:
 
         # Calculate where the game surface is drawn and which part of it is shown
         self.game_surface_position, self.game_surface_rect = GameHelper.calculate_game_surface_area(
-            size_of_map, self.game_surface.get_size())
+            size_of_map,
+            self.game_surface.get_size()
+        )
 
         # Set up sprite groups
         self.level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
@@ -57,28 +59,36 @@ class Level:
         self.obstacle_map = ObstacleMapFactory.create(tmx_data)
 
         # Build the world from the map
-        level_sprite_builder = LevelSpriteBuilder(tmx_data, self.game_manager, self.level_sprite_groups,
-                                                  self.obstacle_map)
+        level_sprite_builder = LevelSpriteBuilder(
+            tmx_data,
+            self.game_manager,
+            self.level_sprite_groups,
+            self.obstacle_map
+        )
         self.player = level_sprite_builder.player
         self.check_point = level_sprite_builder.check_point
         self.exit_point = level_sprite_builder.exit_point
         self.boss_point_position = level_sprite_builder.boss_point_position
 
         # Set blast effect details
-        self.blast_effect = BlastEffect(self.game_surface,
-                                        8,
-                                        Settings.BLAST_EFFECT_COLOR,
-                                        (self.game_surface_rect.width,
-                                         self.game_surface_rect.height)
-                                        )
+        self.blast_effect = BlastEffect(
+            self.game_surface,
+            8,
+            Settings.BLAST_EFFECT_COLOR,
+            (self.game_surface_rect.width, self.game_surface_rect.height)
+        )
 
         # Set explode effect details
-        self.explode_effect = ExplodeEffect(self.game_surface,
-                                          Settings.NUMBER_OF_EXPLOSION_STEPS,
-                                          Settings.EXPLODE_EFFECT_COLOR,
-                                          (Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2,
-                                           Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
-                                          )
+        self.explode_effect = ExplodeEffect(
+            self.game_surface,
+            Settings.NUMBER_OF_EXPLOSION_STEPS,
+            Settings.EXPLODE_EFFECT_COLOR,
+            (Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2, Settings.TILE_SIZE * Settings.EXPLOSION_WEAPON_RANGE * 2)
+        )
+
+        # Darkness effect
+        self.darkness_effect = DarknessEffect(self.game_surface_rect.size)
+
         # Tombstones
         self.tombstones = []
 
@@ -135,27 +145,14 @@ class Level:
         self.debugger.show()
 
     def blit_dark_surface(self) -> None:
-        if self.game_manager.lighting_status != LightingStatus.LIGHT_ON:
-            # Create surface with transparent color (alpha) with the same size as game surface
-            dark_surface = pygame.Surface(pygame.Rect(self.game_surface_rect).size, pygame.SRCALPHA)
-            dark_surface.fill((0, 0, 0))
-            # Calculate circle position
-            offset = self.level_sprite_groups.middle_sprites_layer.get_map_offset()
-            player_rect = self.player.rect
-            assert player_rect is not None, 'The player has no rect'
-            circle_x = player_rect.centerx + offset.x
-            circle_y = player_rect.centery + offset.y
+        # Calculate the position of the player on the game surface
+        offset = self.level_sprite_groups.middle_sprites_layer.get_map_offset()
+        player_rect = self.player.rect
+        assert player_rect is not None, 'The player has no rect'
+        light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
 
-            if self.game_manager.lighting_status == LightingStatus.TWILIGHT:
-                pygame.draw.circle(dark_surface, (0, 0, 0, 150), (circle_x, circle_y), 100)
-            elif self.game_manager.lighting_status == LightingStatus.TORCHLIGHT:
-                circle_radius = 200, 220, 240, 260, 280
-                circle_alpha = 0, 50, 100, 150, 200
-                for index in range(4, -1, -1):
-                    pygame.draw.circle(dark_surface, (0, 0, 0, circle_alpha[index]), (circle_x, circle_y),
-                                       circle_radius[index])
-
-            self.screen.blit(dark_surface, self.game_surface_position)
+        self.darkness_effect.draw(self.screen, self.game_surface_position, self.game_manager.lighting_status,
+                                  light_center)
 
     def refresh_obstacle_map(self) -> None:
         # Refresh obstacle map if is required

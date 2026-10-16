@@ -5,6 +5,7 @@ import pygame
 import pytest
 
 from src.enums.enemy_type import EnemyType
+from src.enums.lighting_status import LightingStatus
 from src.level import Level
 from src.sprites.tombstone import Tombstone
 
@@ -164,6 +165,37 @@ class TestCreateSpawnedEnemies:
         boss_octopus = find_new_enemy(basic_level, existing_enemies)
         assert type(boss_octopus).__name__ == 'OctopusEnemy'
         assert [costume.number_of_frames for costume in boss_octopus.sprites] == [6] * 16
+
+
+class TestBlitDarkSurface:
+    @pytest.fixture
+    def lit_level(self, basic_level):
+        # One frame sets the camera offset around the player
+        basic_level.run()
+        return basic_level
+
+    @staticmethod
+    def get_player_and_corner_points(level):
+        offset = level.level_sprite_groups.middle_sprites_layer.get_map_offset()
+        player_point = (int(level.game_surface_position[0] + level.player.rect.centerx + offset.x),
+                        int(level.game_surface_position[1] + level.player.rect.centery + offset.y))
+        corner_point = (level.game_surface_position[0] + 2, level.game_surface_position[1] + 2)
+        return player_point, corner_point
+
+    @pytest.mark.parametrize('lighting_status, player_color, corner_color', [
+        (LightingStatus.LIGHT_ON, (255, 255, 255), (255, 255, 255)),
+        (LightingStatus.TWILIGHT, (105, 105, 105), (0, 0, 0)),
+        (LightingStatus.TORCHLIGHT, (255, 255, 255), (0, 0, 0)),
+    ])
+    def test_darkness_around_player(self, game, lit_level, lighting_status, player_color, corner_color):
+        player_point, corner_point = self.get_player_and_corner_points(lit_level)
+        game.game_manager.lighting_status = lighting_status
+        lit_level.screen.fill((255, 255, 255))
+
+        lit_level.blit_dark_surface()
+
+        assert tuple(lit_level.screen.get_at(player_point))[:3] == player_color
+        assert tuple(lit_level.screen.get_at(corner_point))[:3] == corner_color
 
 
 class TestCreateSpritesFromBasicMap:
