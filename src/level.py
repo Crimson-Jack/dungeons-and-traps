@@ -79,7 +79,7 @@ class Level:
         # Blast effect
         self._blast_effect = BlastEffect(
             self._game_surface,
-            8,
+            Settings.NUMBER_OF_BLAST_EFFECT_STEPS,
             Settings.BLAST_EFFECT_COLOR,
             (self._game_surface_rect.width, self._game_surface_rect.height)
         )

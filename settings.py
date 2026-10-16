@@ -24,6 +24,9 @@ class Settings:
     EXPLOSION_WEAPON_RANGE = 5
     NUMBER_OF_EXPLOSION_STEPS = 12
 
+    # Blast effect: number of updates it needs to grow to the size of the game surface
+    NUMBER_OF_BLAST_EFFECT_STEPS = 8
+
     # Score awarded at level completion when all enemies are defeated
     LEVEL_COMPLETION_BONUS = 1000
 
