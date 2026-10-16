@@ -40,7 +40,7 @@ class TestRemoveUnnecessaryEffects:
         level = create_level_with_effects(
             tombstones=[first_expired_tombstone, second_expired_tombstone, active_tombstone])
 
-        level.remove_unnecessary_effects()
+        level._remove_unnecessary_effects()
 
         assert level._tombstones == [active_tombstone]
         assert group.sprites() == [active_tombstone]
@@ -53,7 +53,7 @@ class TestRemoveUnnecessaryEffects:
         level = create_level_with_effects(
             tombstones=[first_active_tombstone, expired_tombstone, second_active_tombstone])
 
-        level.remove_unnecessary_effects()
+        level._remove_unnecessary_effects()
 
         assert level._tombstones == [first_active_tombstone, second_active_tombstone]
 
@@ -64,7 +64,7 @@ class TestRemoveUnnecessaryEffects:
         level = create_level_with_effects(
             vanishing_points=[first_expired_vanishing_point, second_expired_vanishing_point, active_vanishing_point])
 
-        level.remove_unnecessary_effects()
+        level._remove_unnecessary_effects()
 
         assert level._vanishing_points == [active_vanishing_point]
         first_expired_vanishing_point.kill.assert_called_once()
@@ -78,7 +78,7 @@ class TestRemoveUnnecessaryEffects:
         level = create_level_with_effects(
             particle_effects=[first_expired_particle_effect, second_expired_particle_effect, active_particle_effect])
 
-        level.remove_unnecessary_effects()
+        level._remove_unnecessary_effects()
 
         assert level._particle_effects == [active_particle_effect]
 
@@ -198,7 +198,7 @@ class TestBlitDarkSurface:
         game.game_manager.lighting_status = lighting_status
         lit_level._screen.fill((255, 255, 255))
 
-        lit_level.blit_dark_surface()
+        lit_level._blit_dark_surface()
 
         assert tuple(lit_level._screen.get_at(player_point))[:3] == player_color
         assert tuple(lit_level._screen.get_at(corner_point))[:3] == corner_color

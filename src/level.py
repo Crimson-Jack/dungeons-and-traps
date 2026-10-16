@@ -106,7 +106,7 @@ class Level:
         self._debugger = Debug()
 
     def run(self) -> None:
-        self.remove_unnecessary_effects()
+        self._remove_unnecessary_effects()
 
         # Run an update method for each sprite from the group
         # Note: bottom_background_layer is skipped, because its sprites are static
@@ -116,7 +116,7 @@ class Level:
         self._level_sprite_groups.the_highest_sprites_layer.update()
 
         # Run an update method for effects
-        self.update_particle_effects()
+        self._update_particle_effects()
         self._blast_effect.update()
         self._explode_effect.update()
 
@@ -132,28 +132,18 @@ class Level:
         self._level_sprite_groups.the_highest_sprites_layer.custom_draw(self._player, tilt_offset)
 
         # Draw effects
-        self.draw_particle_effects()
+        self._draw_particle_effects()
         self._blast_effect.draw()
         self._explode_effect.draw()
 
         # Blit game_surface on the main screen
         self._screen.blit(self._game_surface, self._game_surface_position, self._game_surface_rect)
         # Blit dark_surface on the main screen
-        self.blit_dark_surface()
+        self._blit_dark_surface()
 
         # Read inputs and display variables if debugger is enabled
         self._debugger.input()
         self._debugger.show()
-
-    def blit_dark_surface(self) -> None:
-        # Calculate the position of the player on the game surface
-        offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
-        player_rect = self._player.rect
-        assert player_rect is not None, 'The player has no rect'
-        light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
-
-        self._darkness_effect.draw(self._screen, self._game_surface_position, self._game_manager.lighting_status,
-                                  light_center)
 
     def refresh_obstacle_map(self) -> None:
         # Refresh obstacle map if is required
@@ -240,16 +230,6 @@ class Level:
             ParticleEffect(self._game_surface, position, colors, number_of_sparks,
                            GameHelper.get_tile_size_ratio()))
 
-    def update_particle_effects(self) -> None:
-        map_offset = self._level_sprite_groups.top_sprites_layer.get_map_offset()
-        for particle_effect in self._particle_effects:
-            if not particle_effect.is_expired():
-                particle_effect.update(map_offset)
-
-    def draw_particle_effects(self) -> None:
-        for particle_effect in self._particle_effects:
-            particle_effect.draw()
-
     def add_spark_to_particle_effect(self) -> None:
         for particle_effect in self._particle_effects:
             particle_effect.add_spark()
@@ -275,7 +255,10 @@ class Level:
             # Raise event to refresh obstacle map
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
-    def remove_unnecessary_effects(self) -> None:
+    def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None) -> None:
+        self._tilt_effect.enable(tilt_cursor_increment_value)
+
+    def _remove_unnecessary_effects(self) -> None:
         remaining_tombstones = []
         for tombstone in self._tombstones:
             if tombstone.is_expired():
@@ -298,5 +281,22 @@ class Level:
                 remaining_particle_effects.append(particle_effect)
         self._particle_effects = remaining_particle_effects
 
-    def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None) -> None:
-        self._tilt_effect.enable(tilt_cursor_increment_value)
+    def _update_particle_effects(self) -> None:
+        map_offset = self._level_sprite_groups.top_sprites_layer.get_map_offset()
+        for particle_effect in self._particle_effects:
+            if not particle_effect.is_expired():
+                particle_effect.update(map_offset)
+
+    def _draw_particle_effects(self) -> None:
+        for particle_effect in self._particle_effects:
+            particle_effect.draw()
+
+    def _blit_dark_surface(self) -> None:
+        # Calculate the position of the player on the game surface
+        offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
+        player_rect = self._player.rect
+        assert player_rect is not None, 'The player has no rect'
+        light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
+
+        self._darkness_effect.draw(self._screen, self._game_surface_position, self._game_manager.lighting_status,
+                                  light_center)
