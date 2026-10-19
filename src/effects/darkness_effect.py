@@ -21,7 +21,7 @@ class DarknessEffect:
         """
         Create the darkness surface once; it is reused in every frame.
 
-        :param screen: main display surface the darkness is drawn on (over the already blitted game surface)
+        :param screen: the whole game window the darkness is drawn on (over the already blitted game surface)
         :param visible_area_screen_position: position of the visible area of the game surface on the screen
         :param visible_area_size: size of the visible area of the game surface
         """

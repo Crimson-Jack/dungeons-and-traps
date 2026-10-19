@@ -36,7 +36,7 @@ class ScreenManager:
         Create the game surfaces, the level, the header and the dashboard.
         Pages, dialogs and the summary panel start empty.
 
-        :param screen: main display surface
+        :param screen: the whole game window
         :param game_manager: shared game state
         """
         self.screen = screen

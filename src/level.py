@@ -137,7 +137,7 @@ class Level:
         self._blast_effect.draw()
         self._explode_effect.draw()
 
-        # Blit game_surface on the main screen
+        # Blit the visible area of game_surface on the screen
         self._screen.blit(self._game_surface, self._visible_area_screen_position, self._visible_area_rect)
         # Draw darkness on the screen
         self._draw_darkness()
