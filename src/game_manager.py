@@ -415,28 +415,13 @@ class GameManager:
     def set_player_max_energy(self):
         self.player_energy = self.player_max_energy
 
-    def set_player_movement(self, x, y):
-        # Set vector
-        self.player_movement_vector.x += x
-        self.player_movement_vector.y += y
+    def set_player_movement(self, delta_x, delta_y):
+        self.player_movement_vector.x += delta_x
+        self.player_movement_vector.y += delta_y
 
-        # Set direction
-        if self.player_movement_vector.y == 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = Direction.RIGHT
-        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = Direction.RIGHT_DOWN
-        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x == 0:
-            self.player_movement_direction = Direction.DOWN
-        elif self.player_movement_vector.y > 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = Direction.LEFT_DOWN
-        elif self.player_movement_vector.y == 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = Direction.LEFT
-        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x < 0:
-            self.player_movement_direction = Direction.LEFT_UP
-        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x == 0:
-            self.player_movement_direction = Direction.UP
-        elif self.player_movement_vector.y < 0 and self.player_movement_vector.x > 0:
-            self.player_movement_direction = Direction.RIGHT_UP
+        # A stopped player keeps facing the last direction
+        if self.player_movement_vector != (0, 0):
+            self.player_movement_direction = Direction.from_vector(self.player_movement_vector)
 
     def reset_player_movement(self):
         self.player_movement_vector.x = 0
