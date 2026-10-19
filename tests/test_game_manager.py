@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 import src.game_manager
+from src import level_catalog
 from src.enums.direction import Direction
 from src.game_manager import GameManager
 
@@ -16,6 +17,11 @@ def game_manager(monkeypatch):
 
 def create_key(key_name):
     return Mock(key_name=key_name)
+
+
+class TestLevels:
+    def test_uses_level_catalog(self, game_manager):
+        assert game_manager.LEVELS is level_catalog.LEVELS
 
 
 class TestIsKeyCollected:
