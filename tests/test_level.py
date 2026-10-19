@@ -169,7 +169,7 @@ class TestCreateSpawnedEnemies:
 
 
 @pytest.mark.refactoring
-class TestBlitDarkSurface:
+class TestDrawDarkness:
     @pytest.fixture
     def lit_level(self, basic_level):
         # One frame sets the camera offset around the player
@@ -194,7 +194,7 @@ class TestBlitDarkSurface:
         game.game_manager.lighting_status = lighting_status
         lit_level._screen.fill((255, 255, 255))
 
-        lit_level._blit_dark_surface()
+        lit_level._draw_darkness()
 
         assert tuple(lit_level._screen.get_at(player_point))[:3] == player_color
         assert tuple(lit_level._screen.get_at(corner_point))[:3] == corner_color

@@ -139,8 +139,8 @@ class Level:
 
         # Blit game_surface on the main screen
         self._screen.blit(self._game_surface, self._visible_area_screen_position, self._visible_area_rect)
-        # Blit dark_surface on the main screen
-        self._blit_dark_surface()
+        # Draw darkness on the screen
+        self._draw_darkness()
 
         # Read inputs and display variables if debugger is enabled
         self._debugger.input()
@@ -275,7 +275,7 @@ class Level:
 
         self._particle_effect_group.remove_expired()
 
-    def _blit_dark_surface(self) -> None:
+    def _draw_darkness(self) -> None:
         # Calculate the position of the player on the game surface
         offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
         player_rect = self._player.rect
