@@ -263,7 +263,7 @@ class Player(CustomDrawSprite):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_manager.check_is_key_collected(sprite.key_name):
+                if sprite in self.passage_sprites and self.game_manager.is_key_collected(sprite.key_name):
                     # Remove if key_name matches
                     sprite.kill()
                 if self.movement_vector.x > 0:
@@ -291,7 +291,7 @@ class Player(CustomDrawSprite):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_manager.check_is_key_collected(sprite.key_name):
+                if sprite in self.passage_sprites and self.game_manager.is_key_collected(sprite.key_name):
                     # Remove if key_name matches
                     sprite.kill()
                 if self.movement_vector.y > 0:

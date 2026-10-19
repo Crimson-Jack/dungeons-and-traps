@@ -388,9 +388,8 @@ class GameManager:
         self.increase_score(score)
         self.level_stats[-1].record_bonus_awarded(score)
 
-    def check_is_key_collected(self, key_name):
-        count = sum(map(lambda item: item.key_name == key_name, self.collected_keys))
-        return count
+    def is_key_collected(self, key_name: str) -> bool:
+        return any(key.key_name == key_name for key in self.collected_keys)
 
     def collect_life_powerup(self):
         self.lives += 1
