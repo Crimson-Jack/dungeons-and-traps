@@ -46,8 +46,8 @@ class Level:
         tmx_data = load_pygame(f'data/tmx/{self._game_manager.get_level_filename()}')
         size_of_map = (tmx_data.width, tmx_data.height)
 
-        # Calculate where the game surface is drawn and which part of it is shown
-        self._game_surface_position, self._game_surface_rect = GameHelper.calculate_game_surface_area(
+        # Calculate the visible area of the game surface and its position on the screen
+        self._visible_area_screen_position, self._visible_area_rect = GameHelper.calculate_visible_area(
             size_of_map,
             self._game_surface.get_size()
         )
@@ -81,7 +81,7 @@ class Level:
             self._game_surface,
             Settings.NUMBER_OF_BLAST_EFFECT_STEPS,
             Settings.BLAST_EFFECT_COLOR,
-            (self._game_surface_rect.width, self._game_surface_rect.height)
+            self._visible_area_rect.size
         )
 
         # Explode effect
@@ -94,7 +94,8 @@ class Level:
         )
 
         # Darkness effect
-        self._darkness_effect = DarknessEffect(self._game_surface_rect.size)
+        self._darkness_effect = DarknessEffect(self._screen, self._visible_area_screen_position,
+                                               self._visible_area_rect.size)
 
         # Particle effects
         self._particle_effect_group = ParticleEffectGroup(self._game_surface)
@@ -137,7 +138,7 @@ class Level:
         self._explode_effect.draw()
 
         # Blit game_surface on the main screen
-        self._screen.blit(self._game_surface, self._game_surface_position, self._game_surface_rect)
+        self._screen.blit(self._game_surface, self._visible_area_screen_position, self._visible_area_rect)
         # Blit dark_surface on the main screen
         self._blit_dark_surface()
 
@@ -281,5 +282,4 @@ class Level:
         assert player_rect is not None, 'The player has no rect'
         light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
 
-        self._darkness_effect.draw(self._screen, self._game_surface_position, self._game_manager.lighting_status,
-                                  light_center)
+        self._darkness_effect.draw(self._game_manager.lighting_status, light_center)

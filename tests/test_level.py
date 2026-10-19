@@ -129,16 +129,16 @@ def basic_level(game):
 
 
 @pytest.mark.refactoring
-class TestGameSurfaceArea:
+class TestVisibleArea:
     def test_map_larger_than_game_surface_fills_it(self, basic_level):
-        assert basic_level._game_surface_position == [0, 80]
-        assert basic_level._game_surface_rect == pygame.Rect(0, 0, 1200, 496)
+        assert basic_level._visible_area_screen_position == [0, 80]
+        assert basic_level._visible_area_rect == pygame.Rect(0, 0, 1200, 496)
 
     def test_map_narrower_than_game_surface_is_centered_horizontally(self, game):
         # The game starts on the first level, s01_level_01.tmx, which is 20 tiles wide
         level = game.screen_manager.level
-        assert level._game_surface_position == [120, 80]
-        assert level._game_surface_rect == pygame.Rect(0, 0, 960, 496)
+        assert level._visible_area_screen_position == [120, 80]
+        assert level._visible_area_rect == pygame.Rect(0, 0, 960, 496)
 
 
 def find_new_enemy(level, existing_enemies):
@@ -179,9 +179,9 @@ class TestBlitDarkSurface:
     @staticmethod
     def get_player_and_corner_points(level):
         offset = level._level_sprite_groups.middle_sprites_layer.get_map_offset()
-        player_point = (int(level._game_surface_position[0] + level._player.rect.centerx + offset.x),
-                        int(level._game_surface_position[1] + level._player.rect.centery + offset.y))
-        corner_point = (level._game_surface_position[0] + 2, level._game_surface_position[1] + 2)
+        player_point = (int(level._visible_area_screen_position[0] + level._player.rect.centerx + offset.x),
+                        int(level._visible_area_screen_position[1] + level._player.rect.centery + offset.y))
+        corner_point = (level._visible_area_screen_position[0] + 2, level._visible_area_screen_position[1] + 2)
         return player_point, corner_point
 
     @pytest.mark.parametrize('lighting_status, player_color, corner_color', [

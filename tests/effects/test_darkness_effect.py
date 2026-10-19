@@ -9,11 +9,12 @@ CENTER = (300, 300)
 WHITE = (255, 255, 255)
 
 
-def draw_darkness(lighting_status, light_center=CENTER, darkness_effect=None, screen=None):
-    darkness_effect = darkness_effect or DarknessEffect(SCREEN_SIZE)
+def draw_darkness(lighting_status, light_center=CENTER, screen=None, darkness_effect=None):
+    # A given darkness_effect must be created with the given screen
     screen = screen or pygame.Surface(SCREEN_SIZE)
+    darkness_effect = darkness_effect or DarknessEffect(screen, [0, 0], SCREEN_SIZE)
     screen.fill(WHITE)
-    darkness_effect.draw(screen, [0, 0], lighting_status, light_center)
+    darkness_effect.draw(lighting_status, light_center)
     return screen
 
 
@@ -52,12 +53,13 @@ class TestDarknessEffect:
         assert get_brightness(screen, (CENTER[0] + 290, CENTER[1])) == 0
 
     def test_next_frame_clears_previous_light_circle(self):
-        darkness_effect = DarknessEffect(SCREEN_SIZE)
+        screen = pygame.Surface(SCREEN_SIZE)
+        darkness_effect = DarknessEffect(screen, [0, 0], SCREEN_SIZE)
         first_center = (150, 300)
         second_center = (450, 300)
-        draw_darkness(LightingStatus.TWILIGHT, first_center, darkness_effect)
+        draw_darkness(LightingStatus.TWILIGHT, first_center, screen, darkness_effect)
 
-        screen = draw_darkness(LightingStatus.TWILIGHT, second_center, darkness_effect)
+        draw_darkness(LightingStatus.TWILIGHT, second_center, screen, darkness_effect)
 
         assert get_brightness(screen, first_center) == 0
         assert get_brightness(screen, second_center) > 0

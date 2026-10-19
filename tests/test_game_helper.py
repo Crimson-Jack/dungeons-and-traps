@@ -138,33 +138,33 @@ class TestGetCollidedRectangle:
         assert result == rect
 
 
-class TestCalculateGameSurfaceArea:
+class TestCalculateVisibleArea:
     @pytest.fixture(autouse=True)
     def tile_and_header_size(self, monkeypatch):
         monkeypatch.setattr(Settings, 'TILE_SIZE', 10)
         monkeypatch.setattr(Settings, 'HEADER_HEIGHT', 50)
 
     def test_map_smaller_than_game_surface_is_centered_and_cut(self):
-        game_surface_position, game_surface_rect = GameHelper.calculate_game_surface_area((20, 10), (400, 300))
+        visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((20, 10), (400, 300))
 
         # Map is 200 x 100 pixels: margins are (400 - 200) / 2 and (300 - 100) / 2
-        assert game_surface_position == [100, 100 + 50]
-        assert game_surface_rect == pygame.Rect(0, 0, 200, 100)
+        assert visible_area_screen_position == [100, 100 + 50]
+        assert visible_area_rect == pygame.Rect(0, 0, 200, 100)
 
     def test_map_larger_than_game_surface_fills_it(self):
-        game_surface_position, game_surface_rect = GameHelper.calculate_game_surface_area((60, 40), (400, 300))
+        visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((60, 40), (400, 300))
 
-        assert game_surface_position == [0, 50]
-        assert game_surface_rect == pygame.Rect(0, 0, 400, 300)
+        assert visible_area_screen_position == [0, 50]
+        assert visible_area_rect == pygame.Rect(0, 0, 400, 300)
 
     def test_map_wider_but_lower_is_centered_and_cut_only_vertically(self):
-        game_surface_position, game_surface_rect = GameHelper.calculate_game_surface_area((60, 10), (400, 300))
+        visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((60, 10), (400, 300))
 
-        assert game_surface_position == [0, 100 + 50]
-        assert game_surface_rect == pygame.Rect(0, 0, 400, 100)
+        assert visible_area_screen_position == [0, 100 + 50]
+        assert visible_area_rect == pygame.Rect(0, 0, 400, 100)
 
     def test_map_of_game_surface_size_is_neither_moved_nor_cut(self):
-        game_surface_position, game_surface_rect = GameHelper.calculate_game_surface_area((40, 30), (400, 300))
+        visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((40, 30), (400, 300))
 
-        assert game_surface_position == [0, 50]
-        assert game_surface_rect == pygame.Rect(0, 0, 400, 300)
+        assert visible_area_screen_position == [0, 50]
+        assert visible_area_rect == pygame.Rect(0, 0, 400, 300)
