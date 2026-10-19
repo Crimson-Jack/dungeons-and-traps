@@ -6,18 +6,18 @@ from src.effects.particle_spark import ParticleSpark
 class ParticleEffect:
     """Sparks flying out of one position, created one by one, with colors used in turn."""
 
-    def __init__(self, surface: pygame.Surface, position: tuple[int, int], colors: list[tuple[int, int, int]],
+    def __init__(self, game_surface: pygame.Surface, position: tuple[int, int], colors: list[tuple[int, int, int]],
                  number_of_sparks: int, ratio: float) -> None:
         """
         Create a particle effect without sparks; they are added with add_spark().
 
-        :param surface: game surface the sparks are drawn on
+        :param game_surface: game surface the sparks are drawn on
         :param position: position on the map the sparks start from
         :param colors: colors of the sparks, used in turn
         :param number_of_sparks: number of sparks the effect creates in total
         :param ratio: ratio of the current tile size to the base tile size, used to scale the sparks
         """
-        self._surface = surface
+        self._game_surface = game_surface
         self._position = position
         self._colors = colors
         self._sparks: list[ParticleSpark] = []
@@ -37,10 +37,10 @@ class ParticleEffect:
                 spark.move()
 
     def draw(self) -> None:
-        """Draw the sparks on the surface."""
+        """Draw the sparks on the game surface."""
         if self._sparks:
             for spark in self._sparks:
-                spark.draw(self._surface)
+                spark.draw(self._game_surface)
 
     def add_spark(self) -> None:
         """Add the next spark, unless the effect has already created all its sparks."""

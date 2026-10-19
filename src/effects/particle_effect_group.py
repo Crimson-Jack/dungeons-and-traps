@@ -7,13 +7,13 @@ from src.game_helper import GameHelper
 class ParticleEffectGroup:
     """Holds the particle effects of a level and updates, draws and removes them together."""
 
-    def __init__(self, surface: pygame.Surface) -> None:
+    def __init__(self, game_surface: pygame.Surface) -> None:
         """
         Create an empty group of particle effects.
 
-        :param surface: game surface the sparks are drawn on
+        :param game_surface: game surface the sparks are drawn on
         """
-        self._surface = surface
+        self._game_surface = game_surface
         self._particle_effects = []
 
     def add(self, position: tuple[int, int], number_of_sparks: int, colors: list[tuple[int, int, int]]) -> None:
@@ -25,7 +25,7 @@ class ParticleEffectGroup:
         :param colors: colors of the sparks, used in turn
         """
         self._particle_effects.append(
-            ParticleEffect(self._surface, position, colors, number_of_sparks, GameHelper.get_tile_size_ratio()))
+            ParticleEffect(self._game_surface, position, colors, number_of_sparks, GameHelper.get_tile_size_ratio()))
 
     def add_spark(self) -> None:
         """Add the next spark to every particle effect that has not created all its sparks yet."""
