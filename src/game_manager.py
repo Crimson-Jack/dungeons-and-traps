@@ -11,6 +11,7 @@ from src.collectable_record import CollectableRecord
 from src.level_stats import LevelStats
 from src.enums.sound_effect import SoundEffect
 from src.level_catalog import LEVELS
+from src.level_details import LevelDetails
 from src.enums.lighting_status import LightingStatus
 from src.enums.weapon_type import WeaponType
 from src.sound_manager import SoundManager
@@ -60,6 +61,17 @@ class GameManager:
 
         # Sound
         self.sound_manager = SoundManager()
+
+    @property
+    def current_level_details(self) -> LevelDetails:
+        """Details of the level currently being played."""
+        return self.LEVELS[self.level]
+
+    @property
+    def sword_capacity(self) -> int:
+        """Number of used sword thresholds, from 0 (full energy) to number_of_sword_thresholds - 1."""
+        threshold = self.sword_max_energy // self.number_of_sword_thresholds
+        return max(0, self.number_of_sword_thresholds - (self.sword_energy // threshold) - 1)
 
     def clear_settings_for_first_level(self, level_number:int = 0):
         self.lighting_status = LightingStatus.LIGHT_ON
@@ -190,11 +202,8 @@ class GameManager:
         else:
             self.game_status = GameStatus.GAME_IS_PAUSED
 
-    def get_level_filename(self):
-        return self.LEVELS[self.level].source_file
-
     def load_next_level(self):
-        if self.LEVELS[self.level].is_final_level or self.level == len(self.LEVELS) - 1:
+        if self.current_level_details.is_final_level or self.level == len(self.LEVELS) - 1:
             pygame.event.post(pygame.event.Event(Events.YOU_WIN_EVENT))
         else:
             pygame.event.post(pygame.event.Event(Events.NEXT_LEVEL_EVENT))
@@ -274,13 +283,6 @@ class GameManager:
         else:
             pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
 
-    def get_sword_capacity(self):
-        threshold = self.sword_max_energy // self.number_of_sword_thresholds
-        capacity = self.number_of_sword_thresholds - (self.sword_energy // threshold) - 1
-        if capacity < 0:
-            capacity = 0
-        return capacity
-
     def decrease_number_of_arrows(self):
         if self.number_of_arrows > 0:
             self.number_of_arrows -= 1
@@ -315,7 +317,7 @@ class GameManager:
         self.level_stats[-1].record_diamond_collected(diamond.score)
         pygame.event.post(pygame.event.Event(Events.COLLECT_DIAMOND_EVENT))
         if len(self.collected_diamonds) == len(self.diamonds):
-            if self.LEVELS[self.level].exit_point_enabled:
+            if self.current_level_details.exit_point_enabled:
                 pygame.event.post(pygame.event.Event(Events.EXIT_POINT_IS_OPEN_EVENT))
             else:
                 pygame.event.post(pygame.event.Event(Events.REMOVE_OBSTACLES_EVENT))
@@ -386,9 +388,6 @@ class GameManager:
     def collect_check_point(self, position):
         self.check_point_position = position
 
-    def get_check_point_position(self):
-        return self.check_point_position
-
     def set_lighting_spell(self, lighting_status: LightingStatus):
         self.lighting_status = lighting_status
 
@@ -398,12 +397,3 @@ class GameManager:
                 return self.LEVELS.index(item)
 
         return None
-
-    def get_secret_code(self):
-        return self.LEVELS[self.level].secret_code
-
-    def get_level_name(self):
-        return self.LEVELS[self.level].name
-
-    def get_level_description(self):
-        return self.LEVELS[self.level].description

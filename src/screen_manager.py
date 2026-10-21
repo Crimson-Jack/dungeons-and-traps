@@ -160,9 +160,9 @@ class ScreenManager:
         # Create the dialog introducing the current level: number, name, description and secret code
         self.message_dialog = DialogFactory.create_next_level_dialog(self.screen,
                                                                      self.game_manager.level + 1,
-                                                                     self.game_manager.get_level_name(),
-                                                                     self.game_manager.get_level_description(),
-                                                                     self.game_manager.get_secret_code())
+                                                                     self.game_manager.current_level_details.name,
+                                                                     self.game_manager.current_level_details.description,
+                                                                     self.game_manager.current_level_details.secret_code)
 
     def load_game_paused_menu(self) -> None:
         """

@@ -24,6 +24,37 @@ class TestLevels:
         assert game_manager.LEVELS is level_catalog.LEVELS
 
 
+class TestCurrentLevelDetails:
+    def test_returns_first_level_at_start(self, game_manager):
+        assert game_manager.current_level_details is level_catalog.LEVELS[0]
+
+    def test_returns_last_level_for_last_index(self, game_manager):
+        game_manager.level = len(level_catalog.LEVELS) - 1
+
+        assert game_manager.current_level_details is level_catalog.LEVELS[-1]
+
+    def test_follows_level_change(self, game_manager):
+        game_manager.level = 2
+
+        assert game_manager.current_level_details is level_catalog.LEVELS[2]
+
+
+class TestSwordCapacity:
+    @pytest.mark.parametrize('sword_energy, expected_capacity', [
+        (100, 0),
+        (80, 0),
+        (79, 1),
+        (40, 2),
+        (20, 3),
+        (19, 4),
+        (0, 4),
+    ])
+    def test_returns_used_thresholds_for_sword_energy(self, game_manager, sword_energy, expected_capacity):
+        game_manager.sword_energy = sword_energy
+
+        assert game_manager.sword_capacity == expected_capacity
+
+
 class TestIsKeyCollected:
     def test_returns_false_when_no_key_is_collected(self, game_manager):
         assert game_manager.is_key_collected('red') is False

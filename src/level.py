@@ -43,7 +43,7 @@ class Level:
         self._game_manager = game_manager
 
         # Load tmx data - world map
-        tmx_data = load_pygame(f'data/tmx/{self._game_manager.get_level_filename()}')
+        tmx_data = load_pygame(f'data/tmx/{self._game_manager.current_level_details.source_file}')
         size_of_map = (tmx_data.width, tmx_data.height)
 
         # Calculate the visible area of the game surface and its position on the screen
@@ -242,7 +242,7 @@ class Level:
 
     def respawn_player(self, position: tuple[int, int] | None = None) -> None:
         if position is None:
-            position = self._game_manager.get_check_point_position()
+            position = self._game_manager.check_point_position
         self._player.respawn(position)
         self._player.enable()
 
