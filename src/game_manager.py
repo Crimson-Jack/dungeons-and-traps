@@ -68,10 +68,10 @@ class GameManager:
         return self.LEVELS[self.level]
 
     @property
-    def sword_capacity(self) -> int:
-        """Number of used sword thresholds, from 0 (full energy) to number_of_sword_thresholds - 1."""
+    def number_of_used_sword_thresholds(self) -> int:
+        """Number of used sword thresholds, from 0 (full energy) to (number_of_sword_thresholds - 1)."""
         threshold = self.sword_max_energy // self.number_of_sword_thresholds
-        return max(0, self.number_of_sword_thresholds - (self.sword_energy // threshold) - 1)
+        return (self.sword_max_energy - self.sword_energy) // threshold
 
     def clear_settings_for_first_level(self, level_number:int = 0):
         self.lighting_status = LightingStatus.LIGHT_ON

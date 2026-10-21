@@ -39,20 +39,22 @@ class TestCurrentLevelDetails:
         assert game_manager.current_level_details is level_catalog.LEVELS[2]
 
 
-class TestSwordCapacity:
-    @pytest.mark.parametrize('sword_energy, expected_capacity', [
+class TestNumberOfUsedSwordThresholds:
+    @pytest.mark.parametrize('sword_energy, expected_number_of_used_thresholds', [
         (100, 0),
-        (80, 0),
-        (79, 1),
-        (40, 2),
-        (20, 3),
-        (19, 4),
-        (0, 4),
+        (81, 0),
+        (80, 1),
+        (61, 1),
+        (60, 2),
+        (40, 3),
+        (21, 3),
+        (20, 4),
+        (1, 4),
     ])
-    def test_returns_used_thresholds_for_sword_energy(self, game_manager, sword_energy, expected_capacity):
+    def test_returns_used_thresholds_for_sword_energy(self, game_manager, sword_energy, expected_number_of_used_thresholds):
         game_manager.sword_energy = sword_energy
 
-        assert game_manager.sword_capacity == expected_capacity
+        assert game_manager.number_of_used_sword_thresholds == expected_number_of_used_thresholds
 
 
 class TestIsKeyCollected:

@@ -145,8 +145,8 @@ class Header:
         surface.blit(score_number, (self.margin * 2 + score_text.get_rect().width, surface.get_height() // 2 - score_text.get_rect().height // 2 - self.text_adjustment))
 
     def set_sword_image(self):
-        sword_capacity = self.game_manager.sword_capacity
-        if 0 <= sword_capacity < len(self.sword_images):
-            self.sword_image = self.sword_images[sword_capacity]
+        number_of_used_sword_thresholds = self.game_manager.number_of_used_sword_thresholds
+        if 0 <= number_of_used_sword_thresholds < len(self.sword_images):
+            self.sword_image = self.sword_images[number_of_used_sword_thresholds]
         else:
             self.sword_image = self.sword_images[-1]
