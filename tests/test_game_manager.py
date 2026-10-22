@@ -5,7 +5,9 @@ import pytest
 import src.game_manager
 from src import level_catalog
 from src.enums.direction import Direction
+from src.enums.enemy_type import EnemyType
 from src.game_manager import GameManager
+from src.level_stats import LevelStats
 
 
 # SoundManager loads sound files through pygame.mixer, which is irrelevant for the game state
@@ -115,3 +117,60 @@ class TestSetPlayerMovement:
 
         assert game_manager.player_movement_vector == (1, 1)
         assert game_manager.player_movement_direction == Direction.RIGHT_DOWN
+
+
+class TestGetAggregateCollectableStats:
+    def test_sums_records_of_all_levels(self, game_manager):
+        first_level_stats = LevelStats()
+        for _ in range(5):
+            first_level_stats.record_diamond_placed()
+            first_level_stats.record_diamond_collected(10)
+        first_level_stats.record_key_placed()
+        first_level_stats.record_key_collected(30)
+        first_level_stats.record_bonus_awarded(500)
+
+        second_level_stats = LevelStats()
+        for _ in range(3):
+            second_level_stats.record_diamond_placed()
+        second_level_stats.record_diamond_collected(10)
+        second_level_stats.record_diamond_collected(10)
+        second_level_stats.record_key_placed()
+
+        game_manager.level_stats = [first_level_stats, second_level_stats]
+
+        diamond_totals, key_totals, bonus_totals = game_manager.get_aggregate_collectable_stats()
+
+        assert (diamond_totals.count, diamond_totals.collected, diamond_totals.score) == (8, 7, 70)
+        assert (key_totals.count, key_totals.collected, key_totals.score) == (2, 1, 30)
+        assert (bonus_totals.awarded, bonus_totals.score) == (1, 500)
+
+
+class TestGetAggregateKillStats:
+    def test_sums_records_of_all_levels(self, game_manager):
+        first_level_stats = LevelStats()
+        first_level_stats.record_enemy_spawn(EnemyType.BAT)
+        first_level_stats.record_enemy_spawn(EnemyType.BAT)
+        first_level_stats.record_enemy_kill(EnemyType.BAT, 20)
+
+        second_level_stats = LevelStats()
+        second_level_stats.record_enemy_spawn(EnemyType.BAT)
+        second_level_stats.record_enemy_kill(EnemyType.BAT, 20)
+        second_level_stats.record_enemy_spawn(EnemyType.SPIDER_SMALL)
+        second_level_stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
+
+        game_manager.level_stats = [first_level_stats, second_level_stats]
+
+        totals = game_manager.get_aggregate_kill_stats()
+
+        bat_totals = totals[EnemyType.BAT]
+        spider_small_totals = totals[EnemyType.SPIDER_SMALL]
+        assert (bat_totals.count, bat_totals.killed, bat_totals.score) == (3, 2, 40)
+        assert (spider_small_totals.count, spider_small_totals.killed, spider_small_totals.score) == (1, 1, 50)
+
+    def test_returns_zero_records_for_enemy_types_absent_in_all_levels(self, game_manager):
+        game_manager.level_stats = [LevelStats(), LevelStats()]
+
+        totals = game_manager.get_aggregate_kill_stats()
+
+        assert set(totals) == set(EnemyType)
+        assert all((record.count, record.killed, record.score) == (0, 0, 0) for record in totals.values())

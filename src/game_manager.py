@@ -173,27 +173,16 @@ class GameManager:
         key_totals = CollectableRecord()
         bonus_totals = BonusRecord()
         for stats in self.level_stats:
-            diamond_record = stats.get_diamond_record()
-            diamond_totals.count += diamond_record.count
-            diamond_totals.collected += diamond_record.collected
-            diamond_totals.score += diamond_record.score
-            key_record = stats.get_key_record()
-            key_totals.count += key_record.count
-            key_totals.collected += key_record.collected
-            key_totals.score += key_record.score
-            bonus_record = stats.get_bonus_record()
-            bonus_totals.awarded += bonus_record.awarded
-            bonus_totals.score += bonus_record.score
+            diamond_totals.add(stats.get_diamond_record())
+            key_totals.add(stats.get_key_record())
+            bonus_totals.add(stats.get_bonus_record())
         return diamond_totals, key_totals, bonus_totals
 
     def get_aggregate_kill_stats(self) -> dict:
         totals = {enemy_type: EnemyKillRecord() for enemy_type in EnemyType}
         for stats in self.level_stats:
             for enemy_type in EnemyType:
-                level_record = stats.get_enemy_record(enemy_type)
-                totals[enemy_type].count += level_record.count
-                totals[enemy_type].killed += level_record.killed
-                totals[enemy_type].score += level_record.score
+                totals[enemy_type].add(stats.get_enemy_record(enemy_type))
         return totals
 
     def switch_pause_state(self):
