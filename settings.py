@@ -4,13 +4,12 @@ class Settings:
 
     # Screen size
     FULL_SCREEN_MODE = False
-    # WIDTH/HEIGHT below are ignored when FULL_SCREEN_MODE is True — they get overwritten at
-    # startup with the monitor resolution (see game.py).
+    # Window size in windowed mode; full screen mode uses the monitor resolution
     WIDTH = 1200
     HEIGHT = 720
 
-    # HEADER_HEIGHT + DASHBOARD_HEIGHT must be smaller than HEIGHT — the remaining space becomes
-    # the game surface height (see game.py).
+    # HEADER_HEIGHT + DASHBOARD_HEIGHT must be smaller than the screen height — the remaining space becomes
+    # the game surface height (see screen_manager.py).
     # Header size
     HEADER_HEIGHT = 80
     # Dashboard size

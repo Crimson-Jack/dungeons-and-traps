@@ -40,11 +40,11 @@ class Header:
 
         # Surfaces
         self.left_surface = pygame.Surface(
-            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
+            (self.header_surface.get_width() // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
         self.center_surface = pygame.Surface(
-            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
+            (self.header_surface.get_width() // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
         self.right_surface = pygame.Surface(
-            (Settings.WIDTH // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
+            (self.header_surface.get_width() // 3 - self.margin, Settings.HEADER_HEIGHT - self.margin))
 
     def clean(self):
         self.left_surface.fill(self.inner_background_color)
@@ -61,8 +61,8 @@ class Header:
 
         # Blit each surface to the dashboard
         self.header_surface.blit(self.left_surface, (self.margin // 2, self.margin // 2))
-        self.header_surface.blit(self.center_surface, (Settings.WIDTH // 3 + self.margin // 2, self.margin // 2))
-        self.header_surface.blit(self.right_surface, (Settings.WIDTH * 2 // 3 + self.margin // 2, self.margin // 2))
+        self.header_surface.blit(self.center_surface, (self.header_surface.get_width() // 3 + self.margin // 2, self.margin // 2))
+        self.header_surface.blit(self.right_surface, (self.header_surface.get_width() * 2 // 3 + self.margin // 2, self.margin // 2))
 
         # Blit dashboard to the main screen
         self.screen.blit(self.header_surface, (0, 0))

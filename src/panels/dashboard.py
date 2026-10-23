@@ -39,13 +39,13 @@ class Dashboard:
 
         # Surfaces
         self.left_top_surface = pygame.Surface(
-            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (self.dashboard_surface.get_width() // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.right_top_surface = pygame.Surface(
-            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (self.dashboard_surface.get_width() // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.left_bottom_surface = pygame.Surface(
-            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (self.dashboard_surface.get_width() // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
         self.right_bottom_surface = pygame.Surface(
-            (Settings.WIDTH // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
+            (self.dashboard_surface.get_width() // 2 - self.margin, Settings.DASHBOARD_HEIGHT // 2 - self.margin // 2))
 
         # Energy bars
         self.energy_bar_margin = 20
@@ -88,12 +88,12 @@ class Dashboard:
 
         # Blit each surface to the dashboard
         self.dashboard_surface.blit(self.left_top_surface, (self.margin // 2, self.margin // 2))
-        self.dashboard_surface.blit(self.right_top_surface, (Settings.WIDTH // 2 + self.margin // 2, self.margin // 2))
+        self.dashboard_surface.blit(self.right_top_surface, (self.dashboard_surface.get_width() // 2 + self.margin // 2, self.margin // 2))
         self.dashboard_surface.blit(self.left_bottom_surface, (self.margin // 2, Settings.DASHBOARD_HEIGHT // 2))
-        self.dashboard_surface.blit(self.right_bottom_surface, (Settings.WIDTH // 2 + self.margin // 2, Settings.DASHBOARD_HEIGHT // 2))
+        self.dashboard_surface.blit(self.right_bottom_surface, (self.dashboard_surface.get_width() // 2 + self.margin // 2, Settings.DASHBOARD_HEIGHT // 2))
 
         # Blit dashboard to the main screen
-        self.screen.blit(self.dashboard_surface, (0, Settings.HEIGHT - Settings.DASHBOARD_HEIGHT))
+        self.screen.blit(self.dashboard_surface, (0, self.screen.get_height() - Settings.DASHBOARD_HEIGHT))
 
     def draw_lives(self, surface):
         lives_counter_text = self.basic_font.render(f'Lives', True, self.text_color)

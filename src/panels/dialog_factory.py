@@ -102,7 +102,7 @@ class DialogFactory:
         if level_description is None:
             top_margin += 36
 
-        return MessageBox(screen, Settings.WIDTH, Settings.HEIGHT, top_margin,
+        return MessageBox(screen, screen.get_width(), screen.get_height(), top_margin,
                           Settings.MESSAGE_BACKGROUND_COLOR, Settings.MESSAGE_BORDER_COLOR, messages)
 
     @staticmethod

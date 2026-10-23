@@ -43,9 +43,10 @@ class ScreenManager:
         self.game_manager = game_manager
 
         # Game surfaces
-        game_surface_size = Settings.WIDTH, Settings.HEIGHT - Settings.HEADER_HEIGHT - Settings.DASHBOARD_HEIGHT
-        header_surface_size = Settings.WIDTH, Settings.HEADER_HEIGHT
-        dashboard_surface_size = Settings.WIDTH, Settings.DASHBOARD_HEIGHT
+        screen_width, screen_height = self.screen.get_size()
+        game_surface_size = screen_width, screen_height - Settings.HEADER_HEIGHT - Settings.DASHBOARD_HEIGHT
+        header_surface_size = screen_width, Settings.HEADER_HEIGHT
+        dashboard_surface_size = screen_width, Settings.DASHBOARD_HEIGHT
         self.game_surface = pygame.Surface(game_surface_size)
         self.header_surface = pygame.Surface(header_surface_size)
         self.dashboard_surface = pygame.Surface(dashboard_surface_size)

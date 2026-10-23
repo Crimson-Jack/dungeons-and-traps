@@ -17,7 +17,6 @@ class Game:
     def __init__(self) -> None:
         """
         Initialize pygame and open the window (full screen or regular, as set in Settings).
-        In full screen mode Settings.WIDTH and Settings.HEIGHT are overwritten with the monitor size.
         Create the game manager, the screen manager and both controllers,
         then show the studio page.
         """
@@ -25,11 +24,8 @@ class Game:
         pygame.display.set_caption("Dungeons and Traps: Willy's First Adventure")
 
         if Settings.FULL_SCREEN_MODE:
-            # Full screen mode
-            monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
-            Settings.WIDTH = pygame.display.Info().current_w
-            Settings.HEIGHT = pygame.display.Info().current_h
-            self._screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+            # Size (0, 0) opens the window in the current resolution of the monitor
+            self._screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         else:
             # Regular window
             self._screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
