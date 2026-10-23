@@ -11,8 +11,49 @@ from src.game_manager import GameManager
 from src.keyboard_controller import KeyboardController
 from src.level import Level
 from src.panels.dashboard import Dashboard
+from src.panels.first_page import FirstPage
 from src.panels.header import Header
+from src.panels.loading_page import LoadingPage
+from src.panels.message_box import MessageBox
+from src.panels.studio_page import StudioPage
 from src.screen_manager import ScreenManager
+
+
+class ScreenManagerUnderTest:
+    """
+    Real screen manager for integration tests; exposes its private pages, dialogs and panels under public names
+    and passes everything else to the screen manager.
+    """
+
+    def __init__(self, screen_manager: ScreenManager) -> None:
+        self.wrapped_screen_manager = screen_manager
+
+    def __getattr__(self, name: str):
+        return getattr(self.wrapped_screen_manager, name)
+
+    @property
+    def header(self) -> Header:
+        return self.wrapped_screen_manager._header
+
+    @property
+    def dashboard(self) -> Dashboard:
+        return self.wrapped_screen_manager._dashboard
+
+    @property
+    def studio_page(self) -> StudioPage | None:
+        return self.wrapped_screen_manager._studio_page
+
+    @property
+    def loading_page(self) -> LoadingPage | None:
+        return self.wrapped_screen_manager._loading_page
+
+    @property
+    def first_page(self) -> FirstPage | None:
+        return self.wrapped_screen_manager._first_page
+
+    @property
+    def message_dialog(self) -> MessageBox | None:
+        return self.wrapped_screen_manager._message_dialog
 
 
 class GameUnderTest:
@@ -26,8 +67,8 @@ class GameUnderTest:
         return self.game._game_manager
 
     @property
-    def screen_manager(self) -> ScreenManager:
-        return self.game._screen_manager
+    def screen_manager(self) -> ScreenManagerUnderTest:
+        return ScreenManagerUnderTest(self.game._screen_manager)
 
     @property
     def keyboard_controller(self) -> KeyboardController:
@@ -69,9 +110,10 @@ def game(new_game):
 # Replaces the level and both panels with mocks so custom events can be checked by the calls the controllers make.
 @pytest.fixture
 def game_with_mocked_components(game):
-    game.screen_manager.level = Mock(spec=Level)
-    game.screen_manager.header = Mock(spec=Header)
-    game.screen_manager.dashboard = Mock(spec=Dashboard)
+    screen_manager = game.screen_manager.wrapped_screen_manager
+    screen_manager._level = Mock(spec=Level)
+    screen_manager._header = Mock(spec=Header)
+    screen_manager._dashboard = Mock(spec=Dashboard)
     pygame.event.clear()
     return game
 
