@@ -8,7 +8,6 @@ from src.panels.dashboard import Dashboard
 from src.panels.dialog_factory import DialogFactory
 from src.panels.first_page import FirstPage
 from src.panels.loading_page import LoadingPage
-from src.panels.menu_box import MenuBox
 from src.panels.studio_page import StudioPage
 from src.panels.header import Header
 from src.panels.message import Message
@@ -70,16 +69,6 @@ class ScreenManager:
     def level(self) -> Level:
         """Level being played; replaced on restart and level change, so never keep a reference to it."""
         return self._level
-
-    @property
-    def menu_dialog(self) -> MenuBox | None:
-        """Menu of the first page or the pause menu, or None when no menu is shown."""
-        return self._menu_dialog
-
-    @property
-    def summary_panel(self) -> MultiPagePanel | None:
-        """End of game summary panel, or None when it is not shown."""
-        return self._summary_panel
 
     def run_current_screen(self) -> None:
         """
@@ -265,6 +254,38 @@ class ScreenManager:
         """
         self.refresh_header_surface()
         self.refresh_dashboard_surface()
+
+    def select_previous_menu_item(self) -> None:
+        """
+        Move the selection of the menu on screen to the previous item.
+        """
+        self._menu_dialog.select_previous()
+
+    def select_next_menu_item(self) -> None:
+        """
+        Move the selection of the menu on screen to the next item.
+        """
+        self._menu_dialog.select_next()
+
+    def get_selected_menu_item_index(self) -> int:
+        """
+        Return the index of the item selected in the menu on screen.
+
+        :return: index of the selected menu item
+        """
+        return self._menu_dialog.get_selected_index()
+
+    def show_next_summary_page(self) -> None:
+        """
+        Turn the summary panel to the next page.
+        """
+        self._summary_panel.next_page()
+
+    def show_previous_summary_page(self) -> None:
+        """
+        Turn the summary panel to the previous page.
+        """
+        self._summary_panel.previous_page()
 
     def _load_studio_page(self) -> None:
         # Create the studio page

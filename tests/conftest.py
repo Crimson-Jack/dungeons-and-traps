@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from unittest.mock import Mock
 
 import pygame
@@ -6,6 +7,7 @@ import pytest
 import src.game_manager
 from settings import Settings
 from src.custom_event_controller import CustomEventController
+from src.enums.game_status import GameStatus
 from src.game import Game
 from src.game_manager import GameManager
 from src.keyboard_controller import KeyboardController
@@ -14,7 +16,9 @@ from src.panels.dashboard import Dashboard
 from src.panels.first_page import FirstPage
 from src.panels.header import Header
 from src.panels.loading_page import LoadingPage
+from src.panels.menu_box import MenuBox
 from src.panels.message_box import MessageBox
+from src.panels.multi_page_panel import MultiPagePanel
 from src.panels.studio_page import StudioPage
 from src.screen_manager import ScreenManager
 
@@ -55,6 +59,47 @@ class ScreenManagerUnderTest:
     def message_dialog(self) -> MessageBox | None:
         return self.wrapped_screen_manager._message_dialog
 
+    @property
+    def menu_dialog(self) -> MenuBox | None:
+        return self.wrapped_screen_manager._menu_dialog
+
+    @property
+    def summary_panel(self) -> MultiPagePanel | None:
+        return self.wrapped_screen_manager._summary_panel
+
+
+class KeyboardControllerUnderTest:
+    """
+    Real keyboard controller for integration tests; exposes its private state and secret code helper under public
+    names and passes everything else to the keyboard controller.
+    """
+
+    def __init__(self, keyboard_controller: KeyboardController) -> None:
+        self.wrapped_keyboard_controller = keyboard_controller
+
+    def __getattr__(self, name: str):
+        return getattr(self.wrapped_keyboard_controller, name)
+
+    @property
+    def secret_code_text(self) -> str:
+        return self.wrapped_keyboard_controller._secret_code_text
+
+    @secret_code_text.setter
+    def secret_code_text(self, secret_code_text: str) -> None:
+        self.wrapped_keyboard_controller._secret_code_text = secret_code_text
+
+    @property
+    def active_movement_keys(self) -> set[int]:
+        return self.wrapped_keyboard_controller._active_movement_keys
+
+    @property
+    def keyboard_handlers(self) -> dict[GameStatus, Callable[[pygame.event.Event], bool]]:
+        return self.wrapped_keyboard_controller._keyboard_handlers
+
+    @staticmethod
+    def append_secret_code_character(secret_code_text: str, character: str) -> str:
+        return KeyboardController._append_secret_code_character(secret_code_text, character)
+
 
 class GameUnderTest:
     """Real game for integration tests; the only place that reads the private components of Game."""
@@ -71,8 +116,8 @@ class GameUnderTest:
         return ScreenManagerUnderTest(self.game._screen_manager)
 
     @property
-    def keyboard_controller(self) -> KeyboardController:
-        return self.game._keyboard_controller
+    def keyboard_controller(self) -> KeyboardControllerUnderTest:
+        return KeyboardControllerUnderTest(self.game._keyboard_controller)
 
     @property
     def custom_event_controller(self) -> CustomEventController:

@@ -12,7 +12,7 @@ from src.panels.loading_page import LoadingPage
 from src.panels.menu_box import MenuBox
 from src.panels.message_box import MessageBox
 from src.panels.studio_page import StudioPage
-from tests.conftest import GameUnderTest
+from tests.conftest import GameUnderTest, KeyboardControllerUnderTest
 
 
 # --- Keyboard: menu screens (STUDIO_PAGE, LOADING_PAGE, FIRST_PAGE,CREDITS, SECRET_CODE, SECRET_CODE_IS_VALID) ---
@@ -97,7 +97,7 @@ class TestAppendSecretCodeCharacter:
     ], ids=['digit', 'first_letter', 'last_allowed_character', 'beyond_max_length', 'space', 'punctuation',
             'non_ascii_letter', 'key_without_character'])
     def test_append_secret_code_character(self, secret_code_text, character, expected_secret_code_text):
-        assert KeyboardController.append_secret_code_character(secret_code_text, character) == \
+        assert KeyboardControllerUnderTest.append_secret_code_character(secret_code_text, character) == \
             expected_secret_code_text
 
 
