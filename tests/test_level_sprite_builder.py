@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, Mock, call
 
 import pytest
+import pytmx
 
 from settings import Settings
 from src.level_sprite_builder import LevelSpriteBuilder
@@ -22,8 +23,9 @@ def create_tmx_data(get_object_by_name=None, visible_layers=()):
     return tmx_data
 
 
-def create_layer(name, layer_class=Mock):
-    layer = layer_class()
+def create_layer(name, layer_type=pytmx.TiledTileLayer, layer_class=Mock):
+    # The spec makes isinstance() recognise the mock as the given kind of TMX layer
+    layer = layer_class(spec=layer_type)
     layer.name = name
     return layer
 
@@ -67,17 +69,22 @@ class TestGetVisibleLayer:
         ground_layer = create_layer('ground')
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(
             create_tmx_data(visible_layers=[create_layer('obstacle'), ground_layer]))
-        assert level_sprite_builder._get_visible_layer('ground') is ground_layer
+        assert level_sprite_builder._get_visible_layer('ground', pytmx.TiledTileLayer) is ground_layer
+
+    def test_returns_none_for_layer_of_other_type(self):
+        level_sprite_builder = create_level_sprite_builder_with_tmx_data(
+            create_tmx_data(visible_layers=[create_layer('ground', pytmx.TiledObjectGroup)]))
+        assert level_sprite_builder._get_visible_layer('ground', pytmx.TiledTileLayer) is None
 
     def test_returns_none_for_invisible_layer(self):
         # Invisible layers are absent from visible_layers
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(
             create_tmx_data(visible_layers=[create_layer('obstacle')]))
-        assert level_sprite_builder._get_visible_layer('ground') is None
+        assert level_sprite_builder._get_visible_layer('ground', pytmx.TiledTileLayer) is None
 
     def test_returns_none_for_map_without_layers(self):
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(create_tmx_data())
-        assert level_sprite_builder._get_visible_layer('ground') is None
+        assert level_sprite_builder._get_visible_layer('ground', pytmx.TiledTileLayer) is None
 
 
 @pytest.mark.refactoring
@@ -142,7 +149,7 @@ class TestCreateSpritesFromObjectLayer:
         monkeypatch.setattr(Settings, 'TILE_SIZE', 64)
         visible_item = Mock(visible=True, x=48, y=80, rotation=0)
         invisible_item = Mock(visible=False, x=0, y=0, rotation=0)
-        layer = create_layer('teleport', MagicMock)
+        layer = create_layer('teleport', pytmx.TiledObjectGroup, MagicMock)
         layer.__iter__.return_value = [visible_item, invisible_item]
         level_sprite_builder = create_level_sprite_builder_with_tmx_data(create_tmx_data(visible_layers=[layer]))
         create_sprite = Mock()
