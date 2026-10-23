@@ -59,6 +59,15 @@ class TestNumberOfUsedSwordThresholds:
         assert game_manager.number_of_used_sword_thresholds == expected_number_of_used_thresholds
 
 
+class TestClearSettingsForFirstLevel:
+    def test_resets_number_of_explosions(self, game_manager):
+        game_manager.number_of_explosions = 3
+
+        game_manager.clear_settings_for_first_level()
+
+        assert game_manager.number_of_explosions == 0
+
+
 class TestIsKeyCollected:
     def test_returns_false_when_no_key_is_collected(self, game_manager):
         assert game_manager.is_key_collected('red') is False

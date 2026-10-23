@@ -83,6 +83,7 @@ class GameManager:
         self.weapon_type = WeaponType.NONE
         self.collected_weapons = [self.weapon_type]
         self.number_of_arrows = 0
+        self.number_of_explosions = 0
         self.sword_energy = self.sword_max_energy
 
         self.diamonds.clear()
