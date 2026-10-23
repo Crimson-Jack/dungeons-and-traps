@@ -34,8 +34,13 @@ class MovingObstacle(CustomDrawSprite):
             ((50, 75), (114, 0, 20)),
             ((75, 100), (0, 0, 0))
         ])
-        self.power_bar = Bar((bar_left, bar_top), bar_width, bar_height, bar_colors,
-                             True, (64, 78, 107), True, (254, 240, 202), False, None, None)
+        self.power_bar = Bar(
+            position=(bar_left, bar_top),
+            width=bar_width,
+            height=bar_height,
+            bar_colors=bar_colors,
+            outline_color=(64, 78, 107),
+            background_color=(254, 240, 202))
 
     def calculate_new_position(self, movement_direction):
         new_position_x = self.position[0]

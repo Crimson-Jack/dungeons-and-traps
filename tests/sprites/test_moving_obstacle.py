@@ -8,8 +8,7 @@ def create_moving_obstacle(rect, bar_position, bar_width, bar_height):
     # Full constructor requires game objects, which are irrelevant for the culling rectangle
     moving_obstacle = object.__new__(MovingObstacle)
     moving_obstacle.rect = rect
-    moving_obstacle.power_bar = Bar(bar_position, bar_width, bar_height, None,
-                                    False, None, False, None, False, None, None)
+    moving_obstacle.power_bar = Bar(position=bar_position, width=bar_width, height=bar_height, bar_colors=None)
     return moving_obstacle
 
 

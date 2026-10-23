@@ -62,17 +62,35 @@ class Dashboard:
                 ((81, 100), (122, 231, 104))    # Dark green
             ])
 
-        self.player_energy_bar = Bar((bar_left, bar_top), bar_width, bar_height, bar_colors, True,
-                                     Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'Energy',
-                                     Settings.BAR_TEXT_COLOR)
+        self.player_energy_bar = Bar(
+            position=(bar_left, bar_top),
+            width=bar_width,
+            height=bar_height,
+            bar_colors=bar_colors,
+            outline_color=Settings.BORDER_COLOR,
+            background_color=Settings.SURFACE_COLOR,
+            text='Energy',
+            text_color=Settings.BAR_TEXT_COLOR)
 
-        self.player_small_energy_bar = Bar((bar_left, bar_top), bar_half_width, bar_height, bar_colors, True,
-                                           Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'You',
-                                           Settings.BAR_TEXT_COLOR)
+        self.player_small_energy_bar = Bar(
+            position=(bar_left, bar_top),
+            width=bar_half_width,
+            height=bar_height,
+            bar_colors=bar_colors,
+            outline_color=Settings.BORDER_COLOR,
+            background_color=Settings.SURFACE_COLOR,
+            text='You',
+            text_color=Settings.BAR_TEXT_COLOR)
 
-        self.boss_small_energy_bar = Bar((bar_left + bar_half_width + 10, bar_top), bar_half_width, bar_height, bar_colors,
-                                         True, Settings.BORDER_COLOR, True, Settings.SURFACE_COLOR, True, 'Boss',
-                                         Settings.BAR_TEXT_COLOR)
+        self.boss_small_energy_bar = Bar(
+            position=(bar_left + bar_half_width + 10, bar_top),
+            width=bar_half_width,
+            height=bar_height,
+            bar_colors=bar_colors,
+            outline_color=Settings.BORDER_COLOR,
+            background_color=Settings.SURFACE_COLOR,
+            text='Boss',
+            text_color=Settings.BAR_TEXT_COLOR)
 
     def clean(self):
         self.left_top_surface.fill(self.inner_background_color)
