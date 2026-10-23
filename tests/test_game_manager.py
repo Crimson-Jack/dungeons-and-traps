@@ -304,3 +304,24 @@ class TestSwitchWeapon:
         assert game_manager.weapon_type == WeaponType.SWORD
         game_manager.sound_manager.play_sfx.assert_not_called()
         assert get_posted_event_types(post_event_mock) == []
+
+
+class TestShowBoss:
+    def test_sets_full_energy_and_visibility(self, game_manager):
+        game_manager.show_boss(300)
+
+        assert game_manager.boss_max_energy == 300
+        assert game_manager.boss_energy == 300
+        assert game_manager.is_boss_visible is True
+
+
+class TestRecordEnemySpawn:
+    def test_records_spawn_in_current_level_stats(self, game_manager):
+        previous_level_stats = LevelStats()
+        current_level_stats = LevelStats()
+        game_manager.level_stats = [previous_level_stats, current_level_stats]
+
+        game_manager.record_enemy_spawn(EnemyType.BAT)
+
+        assert current_level_stats.get_enemy_record(EnemyType.BAT).count == 1
+        assert previous_level_stats.get_enemy_record(EnemyType.BAT).count == 0

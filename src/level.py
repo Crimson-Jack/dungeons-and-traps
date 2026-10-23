@@ -201,7 +201,7 @@ class Level:
                      enemy_type, tile_details, self._obstacle_map,
                      self._level_sprite_groups.obstacle_sprites, self._level_sprite_groups.moving_obstacle_sprites,
                      self._level_sprite_groups.hostile_force_sprites)
-        self._game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+        self._game_manager.record_enemy_spawn(enemy_type)
 
     def create_boss_octopus(self) -> None:
         if self._boss_point_position is None:
@@ -221,9 +221,7 @@ class Level:
                      tile_details, self._obstacle_map, self._level_sprite_groups.obstacle_sprites,
                      self._level_sprite_groups.moving_obstacle_sprites)
 
-        self._game_manager.boss_max_energy = tile_details.energy
-        self._game_manager.boss_energy = tile_details.energy
-        self._game_manager.is_boss_visible = True
+        self._game_manager.show_boss(tile_details.energy)
 
     def add_particle_effect(self, position: tuple[int, int], number_of_sparks: int,
                             colors: list[tuple[int, int, int]]) -> None:

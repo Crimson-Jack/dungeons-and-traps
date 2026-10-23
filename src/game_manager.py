@@ -296,6 +296,24 @@ class GameManager:
         self.increase_score(score)
         self.level_stats[-1].record_bonus_awarded(score)
 
+    def record_enemy_spawn(self, enemy_type: EnemyType):
+        """
+        Record an enemy that appeared on the current level.
+
+        :param enemy_type: type of the enemy
+        """
+        self.level_stats[-1].record_enemy_spawn(enemy_type)
+
+    def show_boss(self, energy: int):
+        """
+        Show the boss with full energy.
+
+        :param energy: maximum and starting energy of the boss
+        """
+        self.boss_max_energy = energy
+        self.boss_energy = energy
+        self.is_boss_visible = True
+
     def is_key_collected(self, key_name: str) -> bool:
         return any(key.key_name == key_name for key in self.collected_keys)
 

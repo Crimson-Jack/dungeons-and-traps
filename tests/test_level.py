@@ -8,6 +8,7 @@ from src.enums.enemy_type import EnemyType
 from src.enums.lighting_status import LightingStatus
 from src.level import Level
 from src.sprites.tombstone import Tombstone
+from src.tile_details.octopus_tile_details import OctopusTileDetails
 
 
 def create_level_with_effects(tombstones=None, vanishing_points=None):
@@ -249,3 +250,25 @@ class TestCreateSpritesFromBasicMap:
                 if level_stats.get_enemy_record(enemy_type).count} == {
             EnemyType.SPIDER_SMALL: 1, EnemyType.SPIDER_MEDIUM: 1, EnemyType.SPIDER_BIG: 1,
             EnemyType.MONSTER_BLUE: 1, EnemyType.MONSTER_GREEN: 1, EnemyType.MONSTER_RED: 1, EnemyType.BAT: 1}
+
+
+class TestCreateBossOctopus:
+    def test_shows_boss_with_full_energy(self, game, basic_level):
+        boss_energy = OctopusTileDetails(None, None).energy
+
+        basic_level.create_boss_octopus()
+
+        assert game.game_manager.is_boss_visible is True
+        assert game.game_manager.boss_energy == boss_energy
+        assert game.game_manager.boss_max_energy == boss_energy
+
+
+class TestCreateMonster:
+    def test_records_spawn_of_deaf_monster(self, game, basic_level):
+        deaf_monster_types = (EnemyType.MONSTER_BLUE_DEAF, EnemyType.MONSTER_GREEN_DEAF, EnemyType.MONSTER_RED_DEAF)
+        level_stats = game.game_manager.level_stats[-1]
+        count_before = sum(level_stats.get_enemy_record(enemy_type).count for enemy_type in deaf_monster_types)
+
+        basic_level.create_monster((0, 0))
+
+        assert sum(level_stats.get_enemy_record(enemy_type).count for enemy_type in deaf_monster_types) == count_before + 1

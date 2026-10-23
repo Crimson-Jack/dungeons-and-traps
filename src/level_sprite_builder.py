@@ -261,7 +261,7 @@ class LevelSpriteBuilder:
                      enemy_type, tile_details, self._obstacle_map,
                      self._level_sprite_groups.obstacle_sprites, self._level_sprite_groups.moving_obstacle_sprites,
                      self._level_sprite_groups.hostile_force_sprites)
-        self._game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+        self._game_manager.record_enemy_spawn(enemy_type)
 
     def _create_spider_enemy(self, item, layer, position):
         sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -271,7 +271,7 @@ class LevelSpriteBuilder:
         enemy_type = EnemyType.from_name(item.name)
         SpiderEnemy(sprite_costumes_matrix, position, groups, self._game_manager,
                     enemy_type, tile_details, self._level_sprite_groups.moving_obstacle_sprites)
-        self._game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+        self._game_manager.record_enemy_spawn(enemy_type)
 
     def _create_ghost_enemy(self, item, layer, position):
         sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
@@ -289,7 +289,7 @@ class LevelSpriteBuilder:
         BatEnemy(sprites, sprite_image_in_damage_state, position, groups, self._game_manager,
                  enemy_type, tile_details, self._obstacle_map,
                  self._level_sprite_groups.moving_obstacle_sprites, self._level_sprite_groups.hostile_force_sprites)
-        self._game_manager.level_stats[-1].record_enemy_spawn(enemy_type)
+        self._game_manager.record_enemy_spawn(enemy_type)
 
     def _create_octopus_enemy(self, item, layer, position):
         sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item,
