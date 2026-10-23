@@ -30,9 +30,6 @@ class Settings:
     # Score awarded at level completion when all enemies are defeated
     LEVEL_COMPLETION_BONUS = 1000
 
-    # Studio page
-    STUDIO_PAGE_VISIBILITY = True
-
     # Colors
     GAME_BACKGROUND_COLOR = 39, 39, 39
     ENEMY_PARTICLE_COLORS = [(240, 89, 65), (190, 49, 68), (135, 35, 65), (34, 9, 44)]

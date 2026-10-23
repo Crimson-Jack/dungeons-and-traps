@@ -1,22 +1,20 @@
 import pygame
 
 from src.enums.game_status import GameStatus
-from src.panels.first_page import FirstPage
-from src.panels.menu_box import MenuBox
+from src.panels.studio_page import StudioPage
 from tests.test_keyboard_controller import key_down_event, message_texts
 
 
 class TestGameConstruction:
-    def test_starts_on_first_page_with_menu(self, game):
-        assert game.game_manager.game_status == GameStatus.FIRST_PAGE
-        assert isinstance(game.screen_manager.first_page, FirstPage)
-        assert isinstance(game.screen_manager.menu_dialog, MenuBox)
-        assert game.screen_manager.menu_dialog.get_selected_index() == 0
-        assert game.screen_manager.studio_page is None
-        assert game.screen_manager.message_dialog is None
-        assert game.screen_manager.summary_panel is None
-        assert game.keyboard_controller.secret_code_text == ''
-        assert game.keyboard_controller.active_movement_keys == set()
+    def test_starts_on_studio_page(self, new_game):
+        assert new_game.game_manager.game_status == GameStatus.STUDIO_PAGE
+        assert isinstance(new_game.screen_manager.studio_page, StudioPage)
+        assert new_game.screen_manager.first_page is None
+        assert new_game.screen_manager.menu_dialog is None
+        assert new_game.screen_manager.message_dialog is None
+        assert new_game.screen_manager.summary_panel is None
+        assert new_game.keyboard_controller.secret_code_text == ''
+        assert new_game.keyboard_controller.active_movement_keys == set()
 
 
 class TestKeyboardPlayerPath:

@@ -46,17 +46,24 @@ def pytest_configure(config):
 # Game() calls pygame.init() and loads level 1 in its constructor, so the SDL drivers must be
 # switched to dummy before construction and Pygame must be shut down after every test.
 @pytest.fixture
-def game(monkeypatch):
+def new_game(monkeypatch):
     monkeypatch.setenv('SDL_VIDEODRIVER', 'dummy')
     monkeypatch.setenv('SDL_AUDIODRIVER', 'dummy')
     monkeypatch.setattr(Settings, 'FULL_SCREEN_MODE', False)
-    monkeypatch.setattr(Settings, 'STUDIO_PAGE_VISIBILITY', False)
 
     game = GameUnderTest(Game())
     yield game
 
     pygame.event.clear()
     pygame.quit()
+
+
+# Most integration tests start from the first page, as the player does after the studio and loading pages
+@pytest.fixture
+def game(new_game):
+    new_game.screen_manager.dispose_studio_page()
+    new_game.screen_manager.show_first_page()
+    return new_game
 
 
 # Replaces the level and both panels with mocks so custom events can be checked by the calls the controllers make.

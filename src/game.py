@@ -19,7 +19,7 @@ class Game:
         Initialize pygame and open the window (full screen or regular, as set in Settings).
         In full screen mode Settings.WIDTH and Settings.HEIGHT are overwritten with the monitor size.
         Create the game manager, the screen manager and both controllers,
-        then show the studio page or the first page.
+        then show the studio page.
         """
         pygame.init()
         pygame.display.set_caption("Dungeons and Traps: Willy's First Adventure")
@@ -46,11 +46,8 @@ class Game:
         # Reactions to custom game events
         self._custom_event_controller = CustomEventController(self._game_manager, self._screen_manager)
 
-        # Select startup mode
-        if Settings.STUDIO_PAGE_VISIBILITY:
-            self._screen_manager.show_studio_page()
-        else:
-            self._screen_manager.show_first_page()
+        # Start with the studio page
+        self._screen_manager.show_studio_page()
 
         # Clock
         self._clock = pygame.time.Clock()
