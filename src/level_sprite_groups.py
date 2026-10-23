@@ -15,19 +15,89 @@ class LevelSpriteGroups:
         :param size_of_map: map size in tiles
         """
         # Set up visible groups
-        self.bottom_background_layer = CameraGroup(game_surface, size_of_map)
-        self.bottom_sprites_layer = CameraGroup(game_surface, size_of_map)
-        self.middle_sprites_layer = CameraGroupWithYSort(game_surface, size_of_map)
-        self.top_sprites_layer = CameraGroup(game_surface, size_of_map)
-        self.the_highest_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self._bottom_background_layer = CameraGroup(game_surface, size_of_map)
+        self._bottom_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self._middle_sprites_layer = CameraGroupWithYSort(game_surface, size_of_map)
+        self._top_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self._the_highest_sprites_layer = CameraGroup(game_surface, size_of_map)
 
         # Set up functional groups
-        self.exit_points = pygame.sprite.Group()
-        self.obstacle_sprites = pygame.sprite.Group()
-        self.moving_obstacle_sprites = pygame.sprite.Group()
-        self.removable_obstacle_sprites = pygame.sprite.Group()
-        self.passage_sprites = pygame.sprite.Group()
-        self.teleport_sprites = pygame.sprite.Group()
-        self.collectable_sprites = pygame.sprite.Group()
-        self.enemy_sprites = pygame.sprite.Group()
-        self.hostile_force_sprites = pygame.sprite.Group()
+        self._exit_points = pygame.sprite.Group()
+        self._obstacle_sprites = pygame.sprite.Group()
+        self._moving_obstacle_sprites = pygame.sprite.Group()
+        self._removable_obstacle_sprites = pygame.sprite.Group()
+        self._passage_sprites = pygame.sprite.Group()
+        self._teleport_sprites = pygame.sprite.Group()
+        self._collectable_sprites = pygame.sprite.Group()
+        self._enemy_sprites = pygame.sprite.Group()
+        self._hostile_force_sprites = pygame.sprite.Group()
+
+    @property
+    def bottom_background_layer(self) -> CameraGroup:
+        """Visible layer drawn first: ground tiles, exit point and check point."""
+        return self._bottom_background_layer
+
+    @property
+    def bottom_sprites_layer(self) -> CameraGroup:
+        """Visible layer above the background: collectables, fire flames, teleports, tombstones and eggs."""
+        return self._bottom_sprites_layer
+
+    @property
+    def middle_sprites_layer(self) -> CameraGroupWithYSort:
+        """Visible layer sorted by the y position for the depth effect: player, walls, stones and doors."""
+        return self._middle_sprites_layer
+
+    @property
+    def top_sprites_layer(self) -> CameraGroup:
+        """Visible layer above the player: most enemies."""
+        return self._top_sprites_layer
+
+    @property
+    def the_highest_sprites_layer(self) -> CameraGroup:
+        """Visible layer drawn last: the boss."""
+        return self._the_highest_sprites_layer
+
+    @property
+    def exit_points(self) -> pygame.sprite.Group:
+        """Exit points of the level."""
+        return self._exit_points
+
+    @property
+    def obstacle_sprites(self) -> pygame.sprite.Group:
+        """Sprites that block movement: walls, demolished walls and doors."""
+        return self._obstacle_sprites
+
+    @property
+    def moving_obstacle_sprites(self) -> pygame.sprite.Group:
+        """Stones the player can push."""
+        return self._moving_obstacle_sprites
+
+    @property
+    def removable_obstacle_sprites(self) -> pygame.sprite.Group:
+        """Demolished walls removed when all diamonds are collected on a level without an exit point."""
+        return self._removable_obstacle_sprites
+
+    @property
+    def passage_sprites(self) -> pygame.sprite.Group:
+        """Doors opened with keys."""
+        return self._passage_sprites
+
+    @property
+    def teleport_sprites(self) -> pygame.sprite.Group:
+        """Teleports of the level."""
+        return self._teleport_sprites
+
+    @property
+    def collectable_sprites(self) -> pygame.sprite.Group:
+        """Sprites the player collects: diamonds, keys, powerups, lighting spells, eggs and the check point."""
+        return self._collectable_sprites
+
+    @property
+    def enemy_sprites(self) -> pygame.sprite.Group:
+        """Enemies of the level."""
+        return self._enemy_sprites
+
+    @property
+    def hostile_force_sprites(self) -> pygame.sprite.Group:
+        """Sprites that hurt the player but are not enemies, such as fire flames."""
+        return self._hostile_force_sprites
