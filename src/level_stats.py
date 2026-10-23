@@ -16,11 +16,10 @@ class LevelStats:
     # Enemy
 
     def record_enemy_spawn(self, enemy_type: EnemyType) -> None:
-        self._enemy_stats[enemy_type].count += 1
+        self._enemy_stats[enemy_type].record_spawn()
 
     def record_enemy_kill(self, enemy_type: EnemyType, score: int) -> None:
-        self._enemy_stats[enemy_type].killed += 1
-        self._enemy_stats[enemy_type].score += score
+        self._enemy_stats[enemy_type].record_kill(score)
 
     def get_enemy_record(self, enemy_type: EnemyType) -> EnemyKillRecord:
         return self._enemy_stats[enemy_type]
@@ -76,11 +75,10 @@ class LevelStats:
     # Diamonds
 
     def record_diamond_placed(self) -> None:
-        self._diamond_record.count += 1
+        self._diamond_record.record_placed()
 
     def record_diamond_collected(self, score: int) -> None:
-        self._diamond_record.collected += 1
-        self._diamond_record.score += score
+        self._diamond_record.record_collected(score)
 
     def get_diamond_record(self) -> CollectableRecord:
         return self._diamond_record
@@ -88,11 +86,10 @@ class LevelStats:
     # Keys
 
     def record_key_placed(self) -> None:
-        self._key_record.count += 1
+        self._key_record.record_placed()
 
     def record_key_collected(self, score: int) -> None:
-        self._key_record.collected += 1
-        self._key_record.score += score
+        self._key_record.record_collected(score)
 
     def get_key_record(self) -> CollectableRecord:
         return self._key_record
@@ -100,8 +97,7 @@ class LevelStats:
     # Bonus
 
     def record_bonus_awarded(self, score: int) -> None:
-        self._bonus_record.awarded += 1
-        self._bonus_record.score += score
+        self._bonus_record.record_award(score)
 
     def get_bonus_record(self) -> BonusRecord:
         return self._bonus_record
@@ -110,14 +106,7 @@ class LevelStats:
 
     def reset(self) -> None:
         for record in self._enemy_stats.values():
-            record.count = 0
-            record.killed = 0
-            record.score = 0
-        self._diamond_record.count = 0
-        self._diamond_record.collected = 0
-        self._diamond_record.score = 0
-        self._key_record.count = 0
-        self._key_record.collected = 0
-        self._key_record.score = 0
-        self._bonus_record.awarded = 0
-        self._bonus_record.score = 0
+            record.reset()
+        self._diamond_record.reset()
+        self._key_record.reset()
+        self._bonus_record.reset()

@@ -14,13 +14,40 @@ class TestEnemyKillRecord:
         record = EnemyKillRecord()
         assert record.score == 0
 
+    def test_record_spawn_counts_only_appeared_enemy(self):
+        record = EnemyKillRecord()
+
+        record.record_spawn()
+
+        assert (record.count, record.killed, record.score) == (1, 0, 0)
+
+    def test_record_kill_counts_killed_enemy_and_adds_score(self):
+        record = EnemyKillRecord()
+
+        record.record_kill(20)
+        record.record_kill(40)
+
+        assert (record.count, record.killed, record.score) == (0, 2, 60)
+
+    def test_reset_clears_record(self):
+        record = EnemyKillRecord()
+        record.record_spawn()
+        record.record_kill(20)
+
+        record.reset()
+
+        assert (record.count, record.killed, record.score) == (0, 0, 0)
+
     def test_add_sums_values_of_other_record(self):
         record = EnemyKillRecord()
-        record.count, record.killed, record.score = 4, 3, 60
+        record.record_spawn()
+        record.record_spawn()
+        record.record_kill(20)
         other_record = EnemyKillRecord()
-        other_record.count, other_record.killed, other_record.score = 2, 1, 20
+        other_record.record_spawn()
+        other_record.record_kill(30)
 
         record.add(other_record)
 
-        assert (record.count, record.killed, record.score) == (6, 4, 80)
-        assert (other_record.count, other_record.killed, other_record.score) == (2, 1, 20)
+        assert (record.count, record.killed, record.score) == (3, 2, 50)
+        assert (other_record.count, other_record.killed, other_record.score) == (1, 1, 30)
