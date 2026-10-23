@@ -29,31 +29,31 @@ class Game:
             monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
             Settings.WIDTH = pygame.display.Info().current_w
             Settings.HEIGHT = pygame.display.Info().current_h
-            self.screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
+            self._screen = pygame.display.set_mode(monitor_size, pygame.FULLSCREEN)
         else:
             # Regular window
-            self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+            self._screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
 
         # Game manager
-        self.game_manager = GameManager()
+        self._game_manager = GameManager()
 
         # Game surfaces, level, panels, pages and dialogs
-        self.screen_manager = ScreenManager(self.screen, self.game_manager)
+        self._screen_manager = ScreenManager(self._screen, self._game_manager)
 
         # Keyboard input per game status
-        self.keyboard_controller = KeyboardController(self.game_manager, self.screen_manager)
+        self._keyboard_controller = KeyboardController(self._game_manager, self._screen_manager)
 
         # Reactions to custom game events
-        self.custom_event_controller = CustomEventController(self.game_manager, self.screen_manager)
+        self._custom_event_controller = CustomEventController(self._game_manager, self._screen_manager)
 
         # Select startup mode
         if Settings.STUDIO_PAGE_VISIBILITY:
-            self.screen_manager.show_studio_page()
+            self._screen_manager.show_studio_page()
         else:
-            self.screen_manager.show_first_page()
+            self._screen_manager.show_first_page()
 
         # Clock
-        self.clock = pygame.time.Clock()
+        self._clock = pygame.time.Clock()
 
     def run(self) -> None:
         """
@@ -72,13 +72,13 @@ class Game:
                     is_running = False
                 # Input events: keyboard (down)
                 if event.type == pygame.KEYDOWN:
-                    is_running = self.keyboard_controller.handle_keyboard_buttons_down(event)
+                    is_running = self._keyboard_controller.handle_keyboard_buttons_down(event)
                 # Input events: keyboard (up)
                 if event.type == pygame.KEYUP:
-                    self.keyboard_controller.handle_keyboard_buttons_up(event)
+                    self._keyboard_controller.handle_keyboard_buttons_up(event)
                 # Custom events
-                self.custom_event_controller.handle_custom_events(event)
+                self._custom_event_controller.handle_custom_events(event)
 
-            self.screen_manager.run_current_screen()
+            self._screen_manager.run_current_screen()
             pygame.display.update()
-            self.clock.tick(Settings.FPS)
+            self._clock.tick(Settings.FPS)

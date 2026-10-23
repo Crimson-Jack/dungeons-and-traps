@@ -5,11 +5,37 @@ import pytest
 
 import src.game_manager
 from settings import Settings
+from src.custom_event_controller import CustomEventController
 from src.game import Game
 from src.game_manager import GameManager
+from src.keyboard_controller import KeyboardController
 from src.level import Level
 from src.panels.dashboard import Dashboard
 from src.panels.header import Header
+from src.screen_manager import ScreenManager
+
+
+class GameUnderTest:
+    """Real game for integration tests; the only place that reads the private components of Game."""
+
+    def __init__(self, game: Game) -> None:
+        self.game = game
+
+    @property
+    def game_manager(self) -> GameManager:
+        return self.game._game_manager
+
+    @property
+    def screen_manager(self) -> ScreenManager:
+        return self.game._screen_manager
+
+    @property
+    def keyboard_controller(self) -> KeyboardController:
+        return self.game._keyboard_controller
+
+    @property
+    def custom_event_controller(self) -> CustomEventController:
+        return self.game._custom_event_controller
 
 
 def pytest_configure(config):
@@ -26,7 +52,7 @@ def game(monkeypatch):
     monkeypatch.setattr(Settings, 'FULL_SCREEN_MODE', False)
     monkeypatch.setattr(Settings, 'STUDIO_PAGE_VISIBILITY', False)
 
-    game = Game()
+    game = GameUnderTest(Game())
     yield game
 
     pygame.event.clear()

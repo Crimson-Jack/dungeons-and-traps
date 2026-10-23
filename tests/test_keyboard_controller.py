@@ -5,7 +5,6 @@ from src import level_catalog
 from src.enums.game_status import GameStatus
 from src.enums.weapon_type import WeaponType
 from src.events import Events
-from src.game import Game
 from src.keyboard_controller import KeyboardController
 from src.panels.dialog_factory import DialogFactory
 from src.panels.first_page import FirstPage
@@ -13,6 +12,7 @@ from src.panels.loading_page import LoadingPage
 from src.panels.menu_box import MenuBox
 from src.panels.message_box import MessageBox
 from src.panels.studio_page import StudioPage
+from tests.conftest import GameUnderTest
 
 
 # --- Keyboard: menu screens (STUDIO_PAGE, LOADING_PAGE, FIRST_PAGE,CREDITS, SECRET_CODE, SECRET_CODE_IS_VALID) ---
@@ -32,30 +32,30 @@ def message_texts(messages: list) -> list[str]:
     return [message.text for message in messages]
 
 
-def enter_studio_page(game: Game) -> None:
+def enter_studio_page(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.screen_manager.show_studio_page()
 
 
-def enter_loading_page(game: Game) -> None:
+def enter_loading_page(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.screen_manager.show_loading_page()
 
 
-def enter_credits(game: Game) -> None:
+def enter_credits(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_credits()
     game.screen_manager.load_credits_message_dialog()
 
 
-def enter_secret_code(game: Game, secret_code_text: str = '') -> None:
+def enter_secret_code(game: GameUnderTest, secret_code_text: str = '') -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_secret_code()
     game.keyboard_controller.secret_code_text = secret_code_text
     game.screen_manager.load_secret_code_message_dialog(game.keyboard_controller.secret_code_text)
 
 
-def enter_secret_code_is_valid(game: Game) -> None:
+def enter_secret_code_is_valid(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.clear_settings_for_first_level(SECRET_CODE_LEVEL_INDEX)
     game.game_manager.set_secret_code_is_valid()
@@ -347,12 +347,12 @@ def key_up_event(key: int) -> pygame.event.Event:
     return pygame.event.Event(pygame.KEYUP, key=key)
 
 
-def enter_game_is_running(game: Game) -> None:
+def enter_game_is_running(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_game_is_running()
 
 
-def enter_game_is_paused(game: Game) -> None:
+def enter_game_is_paused(game: GameUnderTest) -> None:
     enter_game_is_running(game)
     game.game_manager.switch_pause_state()
     game.screen_manager.load_game_paused_menu()
@@ -563,30 +563,30 @@ class TestKeyboardGameIsPaused:
 
 # --- Keyboard: end of level and game (NEXT_LEVEL, LEVEL_COMPLETED, GAME_OVER, YOU_WIN, SUMMARY) ---
 
-def enter_next_level(game: Game) -> None:
+def enter_next_level(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.screen_manager.show_next_level_dialog()
 
 
-def enter_level_completed(game: Game) -> None:
+def enter_level_completed(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_level_completed()
     game.screen_manager.load_level_completed_message_dialog()
 
 
-def enter_game_over(game: Game) -> None:
+def enter_game_over(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_game_over()
     game.screen_manager.load_game_over_message_dialog()
 
 
-def enter_you_win(game: Game) -> None:
+def enter_you_win(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.set_you_win()
     game.screen_manager.load_you_win_message_dialog()
 
 
-def enter_summary(game: Game) -> None:
+def enter_summary(game: GameUnderTest) -> None:
     game.screen_manager.dispose_first_page()
     game.screen_manager.load_summary_panel(player_won=False)
 
