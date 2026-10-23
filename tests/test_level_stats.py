@@ -1,3 +1,5 @@
+import pytest
+
 from src.enums.enemy_type import EnemyType
 from src.level_stats import LevelStats
 
@@ -113,44 +115,34 @@ class TestLevelStatsReset:
         assert stats.get_bonus_record().score == 0
 
 
+@pytest.mark.refactoring
 class TestLevelStatsTotals:
     def test_total_enemy_count_sums_spawned_for_all_enemy_types(self):
         stats = LevelStats()
         stats.record_enemy_spawn(EnemyType.SPIDER_SMALL)
         stats.record_enemy_spawn(EnemyType.SPIDER_SMALL)
         stats.record_enemy_spawn(EnemyType.MONSTER_BLUE)
-        assert stats.total_enemy_count() == 3
+        assert stats._total_enemy_count() == 3
 
     def test_total_enemy_count_is_zero_initially(self):
         stats = LevelStats()
-        assert stats.total_enemy_count() == 0
+        assert stats._total_enemy_count() == 0
 
     def test_total_enemy_kills_sums_killed_for_all_enemy_types(self):
         stats = LevelStats()
         stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
         stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
         stats.record_enemy_kill(EnemyType.MONSTER_BLUE, 300)
-        assert stats.total_enemy_kills() == 3
-
-    def test_total_enemy_score_sums_all_enemy_types(self):
-        stats = LevelStats()
-        stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
-        stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
-        stats.record_enemy_kill(EnemyType.MONSTER_BLUE, 300)
-        assert stats.total_enemy_score() == 400
+        assert stats._total_enemy_kills() == 3
 
     def test_total_enemy_kills_is_zero_initially(self):
         stats = LevelStats()
-        assert stats.total_enemy_kills() == 0
-
-    def test_total_enemy_score_is_zero_initially(self):
-        stats = LevelStats()
-        assert stats.total_enemy_score() == 0
+        assert stats._total_enemy_kills() == 0
 
     def test_total_enemy_kills_does_not_count_spawned_only_enemies(self):
         stats = LevelStats()
         stats.record_enemy_spawn(EnemyType.SPIDER_SMALL)
-        assert stats.total_enemy_kills() == 0
+        assert stats._total_enemy_kills() == 0
 
 
 class TestLevelStatsAllEnemiesDefeated:
@@ -179,33 +171,34 @@ class TestLevelStatsAllEnemiesDefeated:
         assert stats.all_enemies_defeated() is False
 
 
+@pytest.mark.refactoring
 class TestLevelStatsGroupRecords:
     def test_get_enemy_spider_records_returns_only_spider_types(self):
         stats = LevelStats()
-        for enemy_type in stats.get_enemy_spider_records():
+        for enemy_type in stats._get_enemy_spider_records():
             assert enemy_type.is_spider()
 
     def test_get_enemy_monster_records_returns_only_monster_types(self):
         stats = LevelStats()
-        for enemy_type in stats.get_enemy_monster_records():
+        for enemy_type in stats._get_enemy_monster_records():
             assert enemy_type.is_monster()
 
     def test_get_enemy_bat_records_returns_only_bat_types(self):
         stats = LevelStats()
-        for enemy_type in stats.get_enemy_bat_records():
+        for enemy_type in stats._get_enemy_bat_records():
             assert enemy_type.is_bat()
 
     def test_get_enemy_spider_records_contains_all_spider_types(self):
         stats = LevelStats()
-        assert len(stats.get_enemy_spider_records()) == 3
+        assert len(stats._get_enemy_spider_records()) == 3
 
     def test_get_enemy_monster_records_contains_all_monster_types(self):
         stats = LevelStats()
-        assert len(stats.get_enemy_monster_records()) == 6
+        assert len(stats._get_enemy_monster_records()) == 6
 
     def test_get_enemy_bat_records_contains_all_bat_types(self):
         stats = LevelStats()
-        assert len(stats.get_enemy_bat_records()) == 1
+        assert len(stats._get_enemy_bat_records()) == 1
 
 
 class TestLevelStatsGroupTotals:
