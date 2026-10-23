@@ -1,6 +1,12 @@
 from src.obstacle_map import ObstacleMap
 
 
+def get_region_ids(obstacle_map):
+    # Region id grid built with the public get_region_id, in the same (row, column) layout as items
+    return [[obstacle_map.get_region_id((column, row)) for column in range(len(row_items))]
+            for row, row_items in enumerate(obstacle_map.items)]
+
+
 class TestObstacleMapWithNoLayers:
     def test_none_argument_produces_empty_items(self):
         obstacle_map = ObstacleMap(None)
@@ -67,18 +73,18 @@ class TestObstacleMapWithMultipleLayers:
 class TestObstacleMapRegionsWithNoLayers:
     def test_none_argument_produces_empty_region_ids(self):
         obstacle_map = ObstacleMap(None)
-        assert obstacle_map.region_ids == []
+        assert get_region_ids(obstacle_map) == []
 
     def test_empty_list_produces_empty_region_ids(self):
         obstacle_map = ObstacleMap([])
-        assert obstacle_map.region_ids == []
+        assert get_region_ids(obstacle_map) == []
 
 
 class TestObstacleMapRegionsWithSingleConnectedRegion:
     def test_all_free_tiles_share_one_region_id(self):
         layer = [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
         obstacle_map = ObstacleMap([layer])
-        region_ids = obstacle_map.region_ids
+        region_ids = get_region_ids(obstacle_map)
 
         free_region_ids = set()
         for row_index in range(3):
@@ -97,7 +103,7 @@ class TestObstacleMapRegionsWithSingleConnectedRegion:
             [0, 0, 0],
         ]
         obstacle_map = ObstacleMap([layer])
-        region_ids = obstacle_map.region_ids
+        region_ids = get_region_ids(obstacle_map)
 
         assert region_ids[0][0] == region_ids[1][0]
         assert region_ids[1][0] == region_ids[2][0]
@@ -113,7 +119,7 @@ class TestObstacleMapRegionsWithDisconnectedRegions:
             [0, 1, 0],
         ]
         obstacle_map = ObstacleMap([layer])
-        region_ids = obstacle_map.region_ids
+        region_ids = get_region_ids(obstacle_map)
 
         left_region_id = region_ids[0][0]
         right_region_id = region_ids[0][2]
@@ -129,7 +135,7 @@ class TestObstacleMapRegionsWithDisconnectedRegions:
             [1, 0],
         ]
         obstacle_map = ObstacleMap([layer])
-        region_ids = obstacle_map.region_ids
+        region_ids = get_region_ids(obstacle_map)
 
         assert region_ids[0][0] != region_ids[1][1]
 
@@ -138,7 +144,7 @@ class TestObstacleMapRegionsWithAllBlockedGrid:
     def test_all_ones_grid_has_no_assigned_regions(self):
         layer = [[1, 1], [1, 1]]
         obstacle_map = ObstacleMap([layer])
-        region_ids = obstacle_map.region_ids
+        region_ids = get_region_ids(obstacle_map)
 
         for row in region_ids:
             for value in row:
@@ -152,12 +158,12 @@ class TestObstacleMapRegionsAfterRefresh:
             [0, 1, 0],
         ]
         obstacle_map = ObstacleMap([layer])
-        assert obstacle_map.region_ids[0][0] != obstacle_map.region_ids[0][2]
+        assert get_region_ids(obstacle_map)[0][0] != get_region_ids(obstacle_map)[0][2]
 
         obstacle_map.items[0][1] = 0
         obstacle_map.calculate_regions()
 
-        assert obstacle_map.region_ids[0][0] == obstacle_map.region_ids[0][2]
+        assert get_region_ids(obstacle_map)[0][0] == get_region_ids(obstacle_map)[0][2]
 
     def test_calculate_regions_splits_previously_merged_region_after_mutation(self):
         layer = [
@@ -165,13 +171,13 @@ class TestObstacleMapRegionsAfterRefresh:
             [0, 0, 0],
         ]
         obstacle_map = ObstacleMap([layer])
-        assert obstacle_map.region_ids[0][0] == obstacle_map.region_ids[0][2]
+        assert get_region_ids(obstacle_map)[0][0] == get_region_ids(obstacle_map)[0][2]
 
         obstacle_map.items[0][1] = 1
         obstacle_map.items[1][1] = 1
         obstacle_map.calculate_regions()
 
-        assert obstacle_map.region_ids[0][0] != obstacle_map.region_ids[0][2]
+        assert get_region_ids(obstacle_map)[0][0] != get_region_ids(obstacle_map)[0][2]
 
     def test_calculate_regions_does_not_duplicate_items_rows(self):
         layer = [[0, 0], [0, 0]]

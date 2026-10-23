@@ -14,24 +14,24 @@ class ObstacleMap:
         :param layers: list of 2D tile grids to merge; each grid cell is 0 (free) or 1 (blocked)
         """
         self._items = list()
-        self._layers = list()
         self._region_ids = list()
 
+        blocking_layers = list()
         if layers is not None:
             for layer in layers:
                 if layer is not None:
-                    self._layers.append(layer)
+                    blocking_layers.append(layer)
 
-        if len(self._layers) > 0:
+        if len(blocking_layers) > 0:
             # Get size: layers, rows and columns
-            number_of_layers = len(self._layers)
+            number_of_layers = len(blocking_layers)
             number_of_rows = 0
             number_of_columns = 0
 
             if number_of_layers > 0:
-                number_of_rows = len(self._layers[0])
+                number_of_rows = len(blocking_layers[0])
                 if number_of_rows > 0:
-                    number_of_columns = len(self._layers[0][0])
+                    number_of_columns = len(blocking_layers[0][0])
 
             # Combine layers into one layer
             for row in range(0, number_of_rows):
@@ -39,18 +39,23 @@ class ObstacleMap:
 
                 for column in range(0, number_of_columns):
                     new_value = False
-                    for layer in range(0, number_of_layers):
-                        new_value = new_value or bool(self._layers[layer][row][column])
+                    for layer_index in range(0, number_of_layers):
+                        new_value = new_value or bool(blocking_layers[layer_index][row][column])
 
                     self._items[row].append(int(new_value))
 
         self.calculate_regions()
 
+    @property
+    def items(self) -> list[list[int]]:
+        """Merged grid of the map; each cell is 0 (free) or 1 (blocked)."""
+        return self._items
+
     def calculate_regions(self) -> None:
         """
         Recompute connected-component region ids for every free tile in self._items.
-        Always re-scans the current self._items (never self._layers), so it stays
-        correct both on initial build and after in-place runtime mutations.
+        Always re-scans the current self._items, so it stays correct both on initial build
+        and after in-place runtime mutations.
         """
         number_of_rows = len(self._items)
         number_of_columns = len(self._items[0]) if number_of_rows > 0 else 0
@@ -76,9 +81,19 @@ class ObstacleMap:
                 self._assign_region(row_index, column_index, next_region_id, number_of_rows, number_of_columns)
                 next_region_id += 1
 
+    def get_region_id(self, tile_position: tuple[int, int]) -> int:
+        """
+        Return the region id for a tile.
+
+        :param tile_position: tile coordinates as (x, y), i.e. (column, row)
+        :return: id of the free region the tile belongs to, or BLOCKED_REGION_ID for a blocked tile
+        """
+        column, row = tile_position
+        return self._region_ids[row][column]
+
     def _assign_region(self, start_row: int, start_column: int, region_id: int,
-                        number_of_rows: int, number_of_columns: int) -> None:
-        """Flood-fill (BFS) from a free tile, assigning region_id to every reachable free tile."""
+                       number_of_rows: int, number_of_columns: int) -> None:
+        # Flood-fill (BFS) from a free tile, assigning region_id to every reachable free tile
         neighbor_offsets = ((-1, 0), (1, 0), (0, -1), (0, 1))
         tiles_to_visit = deque()
         tiles_to_visit.append((start_row, start_column))
@@ -100,20 +115,3 @@ class ObstacleMap:
 
                 self._region_ids[neighbor_row][neighbor_column] = region_id
                 tiles_to_visit.append((neighbor_row, neighbor_column))
-
-    def get_region_id(self, tile_position: tuple[int, int]) -> int:
-        """
-        Return the region id for a tile.
-
-        :param tile_position: tile coordinates as (x, y), i.e. (column, row)
-        """
-        column, row = tile_position
-        return self._region_ids[row][column]
-
-    @property
-    def items(self) -> list[list[int]]:
-        return self._items
-
-    @property
-    def region_ids(self) -> list[list[int]]:
-        return self._region_ids
