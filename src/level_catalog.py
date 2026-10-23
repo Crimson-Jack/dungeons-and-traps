@@ -1,6 +1,8 @@
 from src.level_details import LevelDetails
 
 
+# Levels in play order: the campaign first, then the test maps.
+# The position of a level in this tuple is its level_index in GameManager.
 LEVELS: tuple[LevelDetails, ...] = (
     LevelDetails(
         's01_level_01.tmx',
@@ -47,10 +49,10 @@ LEVELS: tuple[LevelDetails, ...] = (
         'c9',
         "The Count's Infernal Keep",
         "Collect all diamonds — the walls will crack. Claim the weapons and face the fire-breathing octopus. Beware its goblin spawn — each fireball hatches a new foe.",
-        False,
-        True),
+        exit_point_enabled=False,
+        is_final_level=True),
 
-    # Tests
+    # Test maps, reachable only with their secret codes
     LevelDetails('basic.tmx', 'a1'),
     LevelDetails('basic_arena.tmx', 'a2', exit_point_enabled=False),
     LevelDetails('basic_open_arena.tmx', 'a3'),
