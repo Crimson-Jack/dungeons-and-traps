@@ -93,8 +93,8 @@ class GameManager:
         self.keys.clear()
         self.collected_keys.clear()
 
-        self.set_player_max_energy()
-        self.reset_player_direction()
+        self._restore_player_energy()
+        self._reset_player_direction()
 
         self.is_boss_visible = False
 
@@ -110,7 +110,7 @@ class GameManager:
         self.keys.clear()
         self.collected_keys.clear()
 
-        self.reset_player_direction()
+        self._reset_player_direction()
 
         self.is_boss_visible = False
 
@@ -126,8 +126,8 @@ class GameManager:
         self.keys.clear()
         self.collected_keys.clear()
 
-        self.set_player_max_energy()
-        self.reset_player_direction()
+        self._restore_player_energy()
+        self._reset_player_direction()
 
         self.is_boss_visible = False
 
@@ -200,15 +200,6 @@ class GameManager:
         else:
             pygame.event.post(pygame.event.Event(Events.NEXT_LEVEL_EVENT))
 
-    def life_lost(self):
-        self.lives -= 1
-        if self.lives > 0:
-            self.set_player_max_energy()
-            self.reset_player_direction()
-            pygame.event.post(pygame.event.Event(Events.PLAYER_LOST_LIFE_EVENT))
-        else:
-            pygame.event.post(pygame.event.Event(Events.GAME_OVER_EVENT))
-
     def decrease_number_of_lives(self):
         self.lives -= 1
 
@@ -217,33 +208,25 @@ class GameManager:
         pygame.event.post(pygame.event.Event(Events.CHANGE_SCORE_EVENT))
 
     def collect_sword_powerup(self):
-        self.add_weapon(WeaponType.SWORD)
+        self._add_weapon(WeaponType.SWORD)
         self.sword_energy = self.sword_max_energy
-        self.remove_weapon(WeaponType.NONE)
+        self._remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.SWORD
         pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def collect_bow_powerup(self, number_of_arrows):
-        self.add_weapon(WeaponType.BOW)
+        self._add_weapon(WeaponType.BOW)
         self.number_of_arrows += number_of_arrows
-        self.remove_weapon(WeaponType.NONE)
+        self._remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.BOW
         pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
 
     def collect_explosion_powerup(self, number_of_explosions):
-        self.add_weapon(WeaponType.EXPLOSION)
+        self._add_weapon(WeaponType.EXPLOSION)
         self.number_of_explosions += number_of_explosions
-        self.remove_weapon(WeaponType.NONE)
+        self._remove_weapon(WeaponType.NONE)
         self.weapon_type = WeaponType.EXPLOSION
         pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
-
-    def add_weapon(self, weapon):
-        if weapon not in self.collected_weapons:
-            self.collected_weapons.append(weapon)
-
-    def remove_weapon(self, weapon):
-        if weapon in self.collected_weapons:
-            self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
         self._switch_weapon(WeaponType.next)
@@ -343,7 +326,7 @@ class GameManager:
         if self.player_energy > 0:
             self.player_energy -= damage_power
             if self.player_energy <= 0:
-                self.life_lost()
+                self._lose_life()
             else:
                 pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
@@ -356,9 +339,6 @@ class GameManager:
             self.player_energy = self.player_max_energy
         pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
-    def set_player_max_energy(self):
-        self.player_energy = self.player_max_energy
-
     def set_player_movement(self, delta_x, delta_y):
         self.player_movement_vector.x += delta_x
         self.player_movement_vector.y += delta_y
@@ -370,9 +350,6 @@ class GameManager:
     def reset_player_movement(self):
         self.player_movement_vector.x = 0
         self.player_movement_vector.y = 0
-
-    def reset_player_direction(self):
-        self.player_movement_direction = Direction.RIGHT
 
     def set_player_is_using_weapon(self, status):
         self.player_is_using_weapon = status
@@ -396,9 +373,9 @@ class GameManager:
     def _update_weapon_after_use(self, weapon_type: WeaponType, remaining_amount: int):
         # A depleted weapon is removed and the next collected weapon is selected
         if remaining_amount <= 0:
-            self.remove_weapon(weapon_type)
+            self._remove_weapon(weapon_type)
             if len(self.collected_weapons) == 0:
-                self.add_weapon(WeaponType.NONE)
+                self._add_weapon(WeaponType.NONE)
             self.set_next_weapon()
         else:
             pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
@@ -412,3 +389,31 @@ class GameManager:
         if current_weapon_type != self.weapon_type:
             self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
             pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
+
+    def _lose_life(self):
+        # Take a life; with lives left the player gets full energy back, otherwise the game is over
+        self.lives -= 1
+        if self.lives > 0:
+            self._restore_player_energy()
+            self._reset_player_direction()
+            pygame.event.post(pygame.event.Event(Events.PLAYER_LOST_LIFE_EVENT))
+        else:
+            pygame.event.post(pygame.event.Event(Events.GAME_OVER_EVENT))
+
+    def _add_weapon(self, weapon):
+        # Each weapon type is collected at most once
+        if weapon not in self.collected_weapons:
+            self.collected_weapons.append(weapon)
+
+    def _remove_weapon(self, weapon):
+        # Removing a weapon that is not collected does nothing
+        if weapon in self.collected_weapons:
+            self.collected_weapons.remove(weapon)
+
+    def _restore_player_energy(self):
+        # Fill the player energy up to the maximum
+        self.player_energy = self.player_max_energy
+
+    def _reset_player_direction(self):
+        # The player faces right at the start of a level and after losing a life
+        self.player_movement_direction = Direction.RIGHT
