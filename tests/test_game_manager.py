@@ -1,32 +1,14 @@
 from unittest.mock import Mock
 
-import pygame
 import pytest
 
-import src.game_manager
 from src import level_catalog
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
 from src.enums.weapon_type import WeaponType
 from src.events import Events
-from src.game_manager import GameManager
 from src.level_stats import LevelStats
-
-
-# SoundManager loads sound files through pygame.mixer, which is irrelevant for the game state
-@pytest.fixture
-def game_manager(monkeypatch):
-    monkeypatch.setattr(src.game_manager, 'SoundManager', Mock())
-    return GameManager()
-
-
-# pygame.event.post needs an initialized pygame; the mock records the posted events instead
-@pytest.fixture
-def post_event_mock(monkeypatch):
-    post_event_mock = Mock()
-    monkeypatch.setattr(pygame.event, 'post', post_event_mock)
-    return post_event_mock
 
 
 def create_key(key_name):
@@ -325,3 +307,28 @@ class TestRecordEnemySpawn:
 
         assert current_level_stats.get_enemy_record(EnemyType.BAT).count == 1
         assert previous_level_stats.get_enemy_record(EnemyType.BAT).count == 0
+
+
+class TestAwardEnemyKill:
+    def test_adds_score_and_records_kill_in_current_level_stats(self, game_manager, post_event_mock):
+        previous_level_stats = LevelStats()
+        current_level_stats = LevelStats()
+        game_manager.level_stats = [previous_level_stats, current_level_stats]
+
+        game_manager.award_enemy_kill(EnemyType.BAT, 300)
+
+        current_record = current_level_stats.get_enemy_record(EnemyType.BAT)
+        assert game_manager.score == 300
+        assert (current_record.killed, current_record.score) == (1, 300)
+        assert previous_level_stats.get_enemy_record(EnemyType.BAT).killed == 0
+        assert get_posted_event_types(post_event_mock) == [Events.CHANGE_SCORE_EVENT]
+
+
+class TestSetBossEnergy:
+    def test_sets_current_energy_only(self, game_manager):
+        game_manager.show_boss(300)
+
+        game_manager.set_boss_energy(120)
+
+        assert game_manager.boss_energy == 120
+        assert game_manager.boss_max_energy == 300

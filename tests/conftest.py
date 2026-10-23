@@ -3,8 +3,10 @@ from unittest.mock import Mock
 import pygame
 import pytest
 
+import src.game_manager
 from settings import Settings
 from src.game import Game
+from src.game_manager import GameManager
 from src.level import Level
 from src.panels.dashboard import Dashboard
 from src.panels.header import Header
@@ -46,3 +48,18 @@ def set_timer_mock(monkeypatch):
     set_timer_mock = Mock()
     monkeypatch.setattr(pygame.time, 'set_timer', set_timer_mock)
     return set_timer_mock
+
+
+# SoundManager loads sound files through pygame.mixer, which is irrelevant for the game state
+@pytest.fixture
+def game_manager(monkeypatch):
+    monkeypatch.setattr(src.game_manager, 'SoundManager', Mock())
+    return GameManager()
+
+
+# pygame.event.post needs an initialized pygame; the mock records the posted events instead
+@pytest.fixture
+def post_event_mock(monkeypatch):
+    post_event_mock = Mock()
+    monkeypatch.setattr(pygame.event, 'post', post_event_mock)
+    return post_event_mock

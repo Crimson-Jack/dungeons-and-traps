@@ -331,7 +331,7 @@ class OctopusEnemy(CustomDrawSprite, PathfindingEnemy, DamageableEnemy, Obstacle
         if self.energy == 0:
             self.kill()
 
-        self.game_manager.boss_energy = self.energy
+        self.game_manager.set_boss_energy(self.energy)
         pygame.event.post(pygame.event.Event(Events.CHANGE_ENERGY_EVENT))
 
     def custom_draw(self, game_surface, offset):
