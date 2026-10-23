@@ -101,6 +101,23 @@ class KeyboardControllerUnderTest:
         return KeyboardController._append_secret_code_character(secret_code_text, character)
 
 
+class CustomEventControllerUnderTest:
+    """
+    Real custom event controller for integration tests; exposes its private handler table under a public name
+    and passes everything else to the custom event controller.
+    """
+
+    def __init__(self, custom_event_controller: CustomEventController) -> None:
+        self.wrapped_custom_event_controller = custom_event_controller
+
+    def __getattr__(self, name: str):
+        return getattr(self.wrapped_custom_event_controller, name)
+
+    @property
+    def custom_event_handlers(self) -> dict[int, Callable[[pygame.event.Event], None]]:
+        return self.wrapped_custom_event_controller._custom_event_handlers
+
+
 class GameUnderTest:
     """Real game for integration tests; the only place that reads the private components of Game."""
 
@@ -120,8 +137,8 @@ class GameUnderTest:
         return KeyboardControllerUnderTest(self.game._keyboard_controller)
 
     @property
-    def custom_event_controller(self) -> CustomEventController:
-        return self.game._custom_event_controller
+    def custom_event_controller(self) -> CustomEventControllerUnderTest:
+        return CustomEventControllerUnderTest(self.game._custom_event_controller)
 
 
 def pytest_configure(config):
