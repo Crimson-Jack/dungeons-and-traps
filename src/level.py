@@ -31,10 +31,20 @@ from src.utilities.debug import Debug
 
 
 class Level:
+    """One level of the game: builds the world from a TMX map and runs its update and draw cycle each frame."""
+
     # Number of game frames each costume of the enemies created during play (monster from an egg, boss) is shown
     SPAWNED_ENEMY_NUMBER_OF_FRAMES = 6
 
     def __init__(self, screen: pygame.Surface, game_surface: pygame.Surface, game_manager: GameManager) -> None:
+        """
+        Load the TMX map of the current level and build its world: sprite groups, obstacle map, sprites,
+        the player, the check point, the exit point and the boss point. Create the visual effects.
+
+        :param screen: the whole game window
+        :param game_surface: surface the level is drawn on before it is blitted on the screen
+        :param game_manager: shared game state
+        """
         # Set screen and game_surface
         self._screen = screen
         self._game_surface = game_surface
@@ -107,6 +117,10 @@ class Level:
         self._debugger = Debug()
 
     def run(self) -> None:
+        """
+        Update the sprites and effects, draw them and blit the visible area on the screen.
+        Called once per frame.
+        """
         self._remove_unnecessary_effects()
 
         # Run an update method for each sprite from the group
@@ -147,6 +161,10 @@ class Level:
         self._debugger.show()
 
     def refresh_obstacle_map(self) -> None:
+        """
+        Recompute the regions of the obstacle map and let the enemies and hostile forces
+        that observe it refresh.
+        """
         # Refresh obstacle map if is required
         self._obstacle_map.calculate_regions()
 
@@ -158,35 +176,71 @@ class Level:
                 sprite.refresh_obstacle_map()
 
     def inform_about_player_tile_position(self) -> None:
+        """Let the pathfinding enemies know that the player moved to a new tile."""
         for sprite in self._level_sprite_groups.enemy_sprites.sprites():
             if isinstance(sprite, PathfindingEnemy):
                 sprite.set_player_tile_position()
 
     def show_exit_point(self) -> None:
+        """
+        Run the blast effect and show the exit point.
+
+        :raises ValueError: when the map has no exit point
+        """
         if self._exit_point is None:
             raise ValueError('The exit point is missing. Add a visible "exit-point" object to the map.')
         self._blast_effect.run()
         self._exit_point.show()
 
     def show_explode_effect(self, position: tuple[int, int]) -> None:
+        """
+        Show the explosion effect.
+
+        :param position: position of the explosion
+        """
         self._explode_effect.run(position)
 
     def add_tombstone(self, position: tuple[int, int]) -> None:
+        """
+        Add the tombstone of a killed enemy.
+
+        :param position: position of the tombstone
+        """
         sprites = SpriteHelper.get_all_tombstone_sprites()
         self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,)))
 
     def add_boss_tombstone(self, position: tuple[int, int]) -> None:
+        """
+        Add a piece of the boss tombstone.
+
+        :param position: position of the tombstone
+        """
         sprites = SpriteHelper.get_all_boss_tombstone_sprites()
         self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,), 0))
 
     def add_vanishing_point(self, position: tuple[int, int]) -> None:
+        """
+        Add the vanishing point animation of a teleported player or a removed wall.
+
+        :param position: position of the animation
+        """
         self._vanishing_points.append(VanishingPoint(position, (self._level_sprite_groups.bottom_sprites_layer,)))
 
     def create_egg(self, position: tuple[int, int]) -> None:
+        """
+        Create an egg, from which a monster hatches.
+
+        :param position: position of the egg
+        """
         Egg(position, (self._level_sprite_groups.bottom_sprites_layer, self._level_sprite_groups.collectable_sprites),
             self._game_manager)
 
     def create_monster(self, position: tuple[int, int]) -> None:
+        """
+        Create a deaf monster of a random color and record its spawn.
+
+        :param position: position of the monster
+        """
         name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
         tile_details = MonsterTileDetailsFactory.create(name)
 
@@ -204,6 +258,11 @@ class Level:
         self._game_manager.record_enemy_spawn(enemy_type)
 
     def create_boss_octopus(self) -> None:
+        """
+        Create the boss octopus at the boss point and show its energy.
+
+        :raises ValueError: when the map has no boss point
+        """
         if self._boss_point_position is None:
             raise ValueError('The boss point is missing. Add a visible "boss-point" object to the map.')
 
@@ -225,26 +284,42 @@ class Level:
 
     def add_particle_effect(self, position: tuple[int, int], number_of_sparks: int,
                             colors: list[tuple[int, int, int]]) -> None:
+        """
+        Add a particle effect.
+
+        :param position: position the sparks fly from
+        :param number_of_sparks: number of sparks of the effect
+        :param colors: colors of the sparks
+        """
         self._particle_effect_group.add(position, number_of_sparks, colors)
 
     def add_spark_to_particle_effect(self) -> None:
+        """Add the next spark to the particle effects; called on every PARTICLE_EVENT."""
         self._particle_effect_group.add_spark()
 
     def show_player_tombstone(self) -> None:
+        """Disable the player and show its tombstone after it lost a life."""
         self._player.disable()
         self._player.trigger_tombstone_creation()
 
     def show_player_vanishing_point(self) -> None:
+        """Disable the player and show its vanishing point when it is teleported."""
         self._player.disable()
         self._player.trigger_vanishing_point_creation()
 
     def respawn_player(self, position: tuple[int, int] | None = None) -> None:
+        """
+        Put the player at the given position, or at the check point, and enable it.
+
+        :param position: position to respawn at; the check point when None
+        """
         if position is None:
             position = self._game_manager.check_point_position
         self._player.respawn(position)
         self._player.enable()
 
     def remove_obstacles(self) -> None:
+        """Remove the demolished walls and post REFRESH_OBSTACLE_MAP_EVENT when there were any."""
         if len(self._level_sprite_groups.removable_obstacle_sprites) > 0:
             for sprite in self._level_sprite_groups.removable_obstacle_sprites:
                 sprite.kill()
@@ -252,9 +327,15 @@ class Level:
             pygame.event.post(pygame.event.Event(Events.REFRESH_OBSTACLE_MAP_EVENT))
 
     def enable_tilt_effect(self, tilt_cursor_increment_value: float | None = None) -> None:
+        """
+        Start shaking the view.
+
+        :param tilt_cursor_increment_value: speed of the shake; the base speed when None
+        """
         self._tilt_effect.enable(tilt_cursor_increment_value)
 
     def _remove_unnecessary_effects(self) -> None:
+        # Kill and forget the expired tombstones, vanishing points and particle effects
         remaining_tombstones = []
         for tombstone in self._tombstones:
             if tombstone.is_expired():
