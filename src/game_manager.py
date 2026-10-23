@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import pygame
 
 
@@ -244,22 +246,10 @@ class GameManager:
             self.collected_weapons.remove(weapon)
 
     def set_next_weapon(self):
-        current_weapon_type = self.weapon_type
-        self.weapon_type = self.weapon_type.next()
-        while self.weapon_type not in self.collected_weapons:
-            self.weapon_type = self.weapon_type.next()
-        if current_weapon_type != self.weapon_type:
-            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
-            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
+        self._switch_weapon(WeaponType.next)
 
     def set_previous_weapon(self):
-        current_weapon_type = self.weapon_type
-        self.weapon_type = self.weapon_type.previous()
-        while self.weapon_type not in self.collected_weapons:
-            self.weapon_type = self.weapon_type.previous()
-        if current_weapon_type != self.weapon_type:
-            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
-            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))
+        self._switch_weapon(WeaponType.previous)
 
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
@@ -376,3 +366,13 @@ class GameManager:
             self.set_next_weapon()
         else:
             pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
+
+    def _switch_weapon(self, get_next_or_previous: Callable[[WeaponType], WeaponType]):
+        # Step through the weapon types until a collected one is found; play a sound only when the weapon changes
+        current_weapon_type = self.weapon_type
+        self.weapon_type = get_next_or_previous(self.weapon_type)
+        while self.weapon_type not in self.collected_weapons:
+            self.weapon_type = get_next_or_previous(self.weapon_type)
+        if current_weapon_type != self.weapon_type:
+            self.sound_manager.play_sfx(SoundEffect.CHANGE_WEAPON)
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_EVENT))

@@ -7,6 +7,7 @@ import src.game_manager
 from src import level_catalog
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
+from src.enums.sound_effect import SoundEffect
 from src.enums.weapon_type import WeaponType
 from src.events import Events
 from src.game_manager import GameManager
@@ -256,3 +257,50 @@ class TestDecreaseWeaponAmount:
         getattr(game_manager, decrease_method_name)()
 
         assert getattr(game_manager, amount_field_name) == 0
+
+
+class TestSwitchWeapon:
+    def test_next_weapon_skips_weapons_not_collected(self, game_manager, post_event_mock):
+        game_manager.collected_weapons = [WeaponType.NONE, WeaponType.BOW]
+        game_manager.weapon_type = WeaponType.NONE
+
+        game_manager.set_next_weapon()
+
+        assert game_manager.weapon_type == WeaponType.BOW
+
+    def test_next_weapon_wraps_around_from_last_weapon(self, game_manager, post_event_mock):
+        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager.weapon_type = WeaponType.EXPLOSION
+
+        game_manager.set_next_weapon()
+
+        assert game_manager.weapon_type == WeaponType.SWORD
+
+    def test_previous_weapon_skips_weapons_not_collected_and_wraps_around(self, game_manager, post_event_mock):
+        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager.weapon_type = WeaponType.SWORD
+
+        game_manager.set_previous_weapon()
+
+        assert game_manager.weapon_type == WeaponType.EXPLOSION
+
+    @pytest.mark.parametrize('switch_method_name', ['set_next_weapon', 'set_previous_weapon'])
+    def test_weapon_change_plays_sound_and_posts_event(self, game_manager, post_event_mock, switch_method_name):
+        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager.weapon_type = WeaponType.SWORD
+
+        getattr(game_manager, switch_method_name)()
+
+        game_manager.sound_manager.play_sfx.assert_called_once_with(SoundEffect.CHANGE_WEAPON)
+        assert get_posted_event_types(post_event_mock) == [Events.CHANGE_WEAPON_EVENT]
+
+    @pytest.mark.parametrize('switch_method_name', ['set_next_weapon', 'set_previous_weapon'])
+    def test_single_weapon_stays_without_sound_and_event(self, game_manager, post_event_mock, switch_method_name):
+        game_manager.collected_weapons = [WeaponType.SWORD]
+        game_manager.weapon_type = WeaponType.SWORD
+
+        getattr(game_manager, switch_method_name)()
+
+        assert game_manager.weapon_type == WeaponType.SWORD
+        game_manager.sound_manager.play_sfx.assert_not_called()
+        assert get_posted_event_types(post_event_mock) == []
