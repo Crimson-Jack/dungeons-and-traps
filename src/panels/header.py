@@ -104,7 +104,7 @@ class Header:
     def draw_level(self, surface):
         level_text = self.basic_font.render('Level ', True, self.text_color)
         surface.blit(level_text, (self.margin * 2, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
-        level_number = self.basic_font.render(f'{self.game_manager.level + 1}', True, self.highlighted_text_color)
+        level_number = self.basic_font.render(f'{self.game_manager.level_index + 1}', True, self.highlighted_text_color)
         surface.blit(level_number, (self.margin * 2 + level_text.get_rect().width, surface.get_height() // 2 - level_text.get_rect().height // 2 - self.text_adjustment))
 
     def draw_weapon(self, surface):

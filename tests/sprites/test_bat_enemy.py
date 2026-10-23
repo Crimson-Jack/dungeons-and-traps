@@ -25,7 +25,7 @@ class TestKill:
 
         bat_enemy.kill()
 
-        enemy_record = game_manager.level_stats[-1].get_enemy_record(EnemyType.BAT)
+        enemy_record = game_manager.current_level_stats.get_enemy_record(EnemyType.BAT)
         assert game_manager.score == 300
         assert (enemy_record.killed, enemy_record.score) == (1, 300)
         assert Events.ADD_TOMBSTONE_EVENT in [call.args[0].type for call in post_event_mock.call_args_list]

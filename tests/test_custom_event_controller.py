@@ -171,12 +171,13 @@ class TestHandleCustomEvents:
         assert isinstance(game.screen_manager.message_dialog, MessageBox)
         assert game.screen_manager.dashboard.method_calls == PANEL_REFRESH_CALLS
 
+    @pytest.mark.refactoring
     def test_next_level_with_all_enemies_defeated_awards_completion_bonus(self, game_with_mocked_components):
         game = game_with_mocked_components
         level_stats = LevelStats()
         level_stats.record_enemy_spawn(EnemyType.BAT)
         level_stats.record_enemy_kill(EnemyType.BAT, 100)
-        game.game_manager.level_stats[-1] = level_stats
+        game.game_manager._level_stats[-1] = level_stats
         score_before = game.game_manager.score
 
         game.custom_event_controller.handle_custom_events(pygame.event.Event(Events.NEXT_LEVEL_EVENT))
@@ -187,13 +188,14 @@ class TestHandleCustomEvents:
         assert level_stats.get_bonus_record().score == Settings.LEVEL_COMPLETION_BONUS
         assert isinstance(game.screen_manager.message_dialog, MessageBox)
 
+    @pytest.mark.refactoring
     def test_next_level_with_enemies_left_awards_no_bonus(self, game_with_mocked_components):
         game = game_with_mocked_components
         level_stats = LevelStats()
         level_stats.record_enemy_spawn(EnemyType.BAT)
         level_stats.record_enemy_spawn(EnemyType.BAT)
         level_stats.record_enemy_kill(EnemyType.BAT, 100)
-        game.game_manager.level_stats[-1] = level_stats
+        game.game_manager._level_stats[-1] = level_stats
         score_before = game.game_manager.score
 
         game.custom_event_controller.handle_custom_events(pygame.event.Event(Events.NEXT_LEVEL_EVENT))

@@ -8,6 +8,7 @@ from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
 from src.enums.weapon_type import WeaponType
 from src.events import Events
+from src.game_manager import GameManager
 from src.level_stats import LevelStats
 
 
@@ -19,26 +20,23 @@ def get_posted_event_types(post_event_mock):
     return [call.args[0].type for call in post_event_mock.call_args_list]
 
 
-class TestLevels:
-    def test_uses_level_catalog(self, game_manager):
-        assert game_manager.LEVELS is level_catalog.LEVELS
-
-
+@pytest.mark.refactoring
 class TestCurrentLevelDetails:
     def test_returns_first_level_at_start(self, game_manager):
         assert game_manager.current_level_details is level_catalog.LEVELS[0]
 
     def test_returns_last_level_for_last_index(self, game_manager):
-        game_manager.level = len(level_catalog.LEVELS) - 1
+        game_manager._level_index = len(level_catalog.LEVELS) - 1
 
         assert game_manager.current_level_details is level_catalog.LEVELS[-1]
 
     def test_follows_level_change(self, game_manager):
-        game_manager.level = 2
+        game_manager._level_index = 2
 
         assert game_manager.current_level_details is level_catalog.LEVELS[2]
 
 
+@pytest.mark.refactoring
 class TestNumberOfUsedSwordThresholds:
     @pytest.mark.parametrize('sword_energy, expected_number_of_used_thresholds', [
         (100, 0),
@@ -52,31 +50,33 @@ class TestNumberOfUsedSwordThresholds:
         (1, 4),
     ])
     def test_returns_used_thresholds_for_sword_energy(self, game_manager, sword_energy, expected_number_of_used_thresholds):
-        game_manager.sword_energy = sword_energy
+        game_manager._sword_energy = sword_energy
 
         assert game_manager.number_of_used_sword_thresholds == expected_number_of_used_thresholds
 
 
+@pytest.mark.refactoring
 class TestClearSettingsForFirstLevel:
     def test_resets_number_of_explosions(self, game_manager):
-        game_manager.number_of_explosions = 3
+        game_manager._number_of_explosions = 3
 
         game_manager.clear_settings_for_first_level()
 
         assert game_manager.number_of_explosions == 0
 
 
+@pytest.mark.refactoring
 class TestIsKeyCollected:
     def test_returns_false_when_no_key_is_collected(self, game_manager):
         assert game_manager.is_key_collected('red') is False
 
     def test_returns_true_when_key_with_given_name_is_collected(self, game_manager):
-        game_manager.collected_keys = [create_key('blue'), create_key('red')]
+        game_manager._collected_keys = [create_key('blue'), create_key('red')]
 
         assert game_manager.is_key_collected('red') is True
 
     def test_returns_false_when_only_keys_with_other_names_are_collected(self, game_manager):
-        game_manager.collected_keys = [create_key('blue'), create_key('green')]
+        game_manager._collected_keys = [create_key('blue'), create_key('green')]
 
         assert game_manager.is_key_collected('red') is False
 
@@ -97,8 +97,9 @@ class TestSetPlayerMovement:
 
         assert game_manager.player_movement_direction == expected_direction
 
+    @pytest.mark.refactoring
     def test_zero_movement_keeps_previous_direction(self, game_manager):
-        game_manager.player_movement_direction = Direction.LEFT_UP
+        game_manager._player_movement_direction = Direction.LEFT_UP
 
         game_manager.set_player_movement(0, 0)
 
@@ -126,6 +127,7 @@ class TestSetPlayerMovement:
         assert game_manager.player_movement_direction == Direction.RIGHT_DOWN
 
 
+@pytest.mark.refactoring
 class TestGetAggregateCollectableStats:
     def test_sums_records_of_all_levels(self, game_manager):
         first_level_stats = LevelStats()
@@ -143,7 +145,7 @@ class TestGetAggregateCollectableStats:
         second_level_stats.record_diamond_collected(10)
         second_level_stats.record_key_placed()
 
-        game_manager.level_stats = [first_level_stats, second_level_stats]
+        game_manager._level_stats = [first_level_stats, second_level_stats]
 
         diamond_totals, key_totals, bonus_totals = game_manager.get_aggregate_collectable_stats()
 
@@ -152,6 +154,7 @@ class TestGetAggregateCollectableStats:
         assert (bonus_totals.awarded, bonus_totals.score) == (1, 500)
 
 
+@pytest.mark.refactoring
 class TestGetAggregateKillStats:
     def test_sums_records_of_all_levels(self, game_manager):
         first_level_stats = LevelStats()
@@ -165,7 +168,7 @@ class TestGetAggregateKillStats:
         second_level_stats.record_enemy_spawn(EnemyType.SPIDER_SMALL)
         second_level_stats.record_enemy_kill(EnemyType.SPIDER_SMALL, 50)
 
-        game_manager.level_stats = [first_level_stats, second_level_stats]
+        game_manager._level_stats = [first_level_stats, second_level_stats]
 
         totals = game_manager.get_aggregate_kill_stats()
 
@@ -175,7 +178,7 @@ class TestGetAggregateKillStats:
         assert (spider_small_totals.count, spider_small_totals.killed, spider_small_totals.score) == (1, 1, 50)
 
     def test_returns_zero_records_for_enemy_types_absent_in_all_levels(self, game_manager):
-        game_manager.level_stats = [LevelStats(), LevelStats()]
+        game_manager._level_stats = [LevelStats(), LevelStats()]
 
         totals = game_manager.get_aggregate_kill_stats()
 
@@ -185,19 +188,20 @@ class TestGetAggregateKillStats:
 
 # Decrease method, amount field, weapon type and another weapon selected after the weapon is depleted
 WEAPON_AMOUNTS = [
-    ('decrease_sword_energy', 'sword_energy', WeaponType.SWORD, WeaponType.BOW),
-    ('decrease_number_of_arrows', 'number_of_arrows', WeaponType.BOW, WeaponType.SWORD),
-    ('decrease_number_of_explosions', 'number_of_explosions', WeaponType.EXPLOSION, WeaponType.SWORD),
+    ('decrease_sword_energy', '_sword_energy', WeaponType.SWORD, WeaponType.BOW),
+    ('decrease_number_of_arrows', '_number_of_arrows', WeaponType.BOW, WeaponType.SWORD),
+    ('decrease_number_of_explosions', '_number_of_explosions', WeaponType.EXPLOSION, WeaponType.SWORD),
 ]
 
 
+@pytest.mark.refactoring
 @pytest.mark.parametrize('decrease_method_name, amount_field_name, weapon_type, other_weapon_type', WEAPON_AMOUNTS)
 class TestDecreaseWeaponAmount:
     def test_decreases_amount_and_keeps_weapon(self, game_manager, post_event_mock, decrease_method_name,
                                                amount_field_name, weapon_type, other_weapon_type):
         setattr(game_manager, amount_field_name, 3)
-        game_manager.collected_weapons = [weapon_type]
-        game_manager.weapon_type = weapon_type
+        game_manager._collected_weapons = [weapon_type]
+        game_manager._weapon_type = weapon_type
 
         getattr(game_manager, decrease_method_name)()
 
@@ -209,8 +213,8 @@ class TestDecreaseWeaponAmount:
     def test_depleting_only_weapon_selects_no_weapon(self, game_manager, post_event_mock, decrease_method_name,
                                                      amount_field_name, weapon_type, other_weapon_type):
         setattr(game_manager, amount_field_name, 1)
-        game_manager.collected_weapons = [weapon_type]
-        game_manager.weapon_type = weapon_type
+        game_manager._collected_weapons = [weapon_type]
+        game_manager._weapon_type = weapon_type
 
         getattr(game_manager, decrease_method_name)()
 
@@ -221,8 +225,8 @@ class TestDecreaseWeaponAmount:
     def test_depleting_weapon_selects_other_collected_weapon(self, game_manager, post_event_mock, decrease_method_name,
                                                              amount_field_name, weapon_type, other_weapon_type):
         setattr(game_manager, amount_field_name, 1)
-        game_manager.collected_weapons = [weapon_type, other_weapon_type]
-        game_manager.weapon_type = weapon_type
+        game_manager._collected_weapons = [weapon_type, other_weapon_type]
+        game_manager._weapon_type = weapon_type
 
         getattr(game_manager, decrease_method_name)()
 
@@ -233,34 +237,35 @@ class TestDecreaseWeaponAmount:
     def test_amount_does_not_go_below_zero(self, game_manager, post_event_mock, decrease_method_name,
                                            amount_field_name, weapon_type, other_weapon_type):
         setattr(game_manager, amount_field_name, 0)
-        game_manager.collected_weapons = [weapon_type]
-        game_manager.weapon_type = weapon_type
+        game_manager._collected_weapons = [weapon_type]
+        game_manager._weapon_type = weapon_type
 
         getattr(game_manager, decrease_method_name)()
 
         assert getattr(game_manager, amount_field_name) == 0
 
 
+@pytest.mark.refactoring
 class TestSwitchWeapon:
     def test_next_weapon_skips_weapons_not_collected(self, game_manager, post_event_mock):
-        game_manager.collected_weapons = [WeaponType.NONE, WeaponType.BOW]
-        game_manager.weapon_type = WeaponType.NONE
+        game_manager._collected_weapons = [WeaponType.NONE, WeaponType.BOW]
+        game_manager._weapon_type = WeaponType.NONE
 
         game_manager.set_next_weapon()
 
         assert game_manager.weapon_type == WeaponType.BOW
 
     def test_next_weapon_wraps_around_from_last_weapon(self, game_manager, post_event_mock):
-        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
-        game_manager.weapon_type = WeaponType.EXPLOSION
+        game_manager._collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager._weapon_type = WeaponType.EXPLOSION
 
         game_manager.set_next_weapon()
 
         assert game_manager.weapon_type == WeaponType.SWORD
 
     def test_previous_weapon_skips_weapons_not_collected_and_wraps_around(self, game_manager, post_event_mock):
-        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
-        game_manager.weapon_type = WeaponType.SWORD
+        game_manager._collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager._weapon_type = WeaponType.SWORD
 
         game_manager.set_previous_weapon()
 
@@ -268,23 +273,23 @@ class TestSwitchWeapon:
 
     @pytest.mark.parametrize('switch_method_name', ['set_next_weapon', 'set_previous_weapon'])
     def test_weapon_change_plays_sound_and_posts_event(self, game_manager, post_event_mock, switch_method_name):
-        game_manager.collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
-        game_manager.weapon_type = WeaponType.SWORD
+        game_manager._collected_weapons = [WeaponType.SWORD, WeaponType.EXPLOSION]
+        game_manager._weapon_type = WeaponType.SWORD
 
         getattr(game_manager, switch_method_name)()
 
-        game_manager.sound_manager.play_sfx.assert_called_once_with(SoundEffect.CHANGE_WEAPON)
+        game_manager._sound_manager.play_sfx.assert_called_once_with(SoundEffect.CHANGE_WEAPON)
         assert get_posted_event_types(post_event_mock) == [Events.CHANGE_WEAPON_EVENT]
 
     @pytest.mark.parametrize('switch_method_name', ['set_next_weapon', 'set_previous_weapon'])
     def test_single_weapon_stays_without_sound_and_event(self, game_manager, post_event_mock, switch_method_name):
-        game_manager.collected_weapons = [WeaponType.SWORD]
-        game_manager.weapon_type = WeaponType.SWORD
+        game_manager._collected_weapons = [WeaponType.SWORD]
+        game_manager._weapon_type = WeaponType.SWORD
 
         getattr(game_manager, switch_method_name)()
 
         assert game_manager.weapon_type == WeaponType.SWORD
-        game_manager.sound_manager.play_sfx.assert_not_called()
+        game_manager._sound_manager.play_sfx.assert_not_called()
         assert get_posted_event_types(post_event_mock) == []
 
 
@@ -297,11 +302,12 @@ class TestShowBoss:
         assert game_manager.is_boss_visible is True
 
 
+@pytest.mark.refactoring
 class TestRecordEnemySpawn:
     def test_records_spawn_in_current_level_stats(self, game_manager):
         previous_level_stats = LevelStats()
         current_level_stats = LevelStats()
-        game_manager.level_stats = [previous_level_stats, current_level_stats]
+        game_manager._level_stats = [previous_level_stats, current_level_stats]
 
         game_manager.record_enemy_spawn(EnemyType.BAT)
 
@@ -309,11 +315,12 @@ class TestRecordEnemySpawn:
         assert previous_level_stats.get_enemy_record(EnemyType.BAT).count == 0
 
 
+@pytest.mark.refactoring
 class TestAwardEnemyKill:
     def test_adds_score_and_records_kill_in_current_level_stats(self, game_manager, post_event_mock):
         previous_level_stats = LevelStats()
         current_level_stats = LevelStats()
-        game_manager.level_stats = [previous_level_stats, current_level_stats]
+        game_manager._level_stats = [previous_level_stats, current_level_stats]
 
         game_manager.award_enemy_kill(EnemyType.BAT, 300)
 
@@ -332,3 +339,20 @@ class TestSetBossEnergy:
 
         assert game_manager.boss_energy == 120
         assert game_manager.boss_max_energy == 300
+
+
+class TestValidateSecretCode:
+    def test_returns_index_of_first_campaign_level(self, game_manager):
+        assert game_manager.validate_secret_code('c1') == 0
+
+    def test_returns_index_of_test_map(self, game_manager):
+        level_filenames = [level_details.source_file for level_details in level_catalog.LEVELS]
+
+        assert game_manager.validate_secret_code('a2') == level_filenames.index('basic_arena.tmx')
+
+    @pytest.mark.parametrize('code', ['unknown', ''])
+    def test_returns_none_for_code_of_no_level(self, game_manager, code):
+        assert game_manager.validate_secret_code(code) is None
+
+    def test_can_be_called_without_instance(self):
+        assert GameManager.validate_secret_code('c1') == 0

@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import pygame
 import pytest
 
+from src import level_catalog
 from src.enums.enemy_type import EnemyType
 from src.enums.lighting_status import LightingStatus
 from src.level import Level
@@ -123,7 +124,7 @@ def count_sprite_classes(group):
 # basic.tmx is the only map that contains all sprite layers
 @pytest.fixture
 def basic_level(game):
-    level_filenames = [level_details.source_file for level_details in game.game_manager.LEVELS]
+    level_filenames = [level_details.source_file for level_details in level_catalog.LEVELS]
     game.game_manager.clear_settings_for_first_level(level_filenames.index('basic.tmx'))
     game.screen_manager.rebuild_level()
     return game.screen_manager.level
@@ -192,7 +193,7 @@ class TestDrawDarkness:
     ])
     def test_darkness_around_player(self, game, lit_level, lighting_status, player_color, corner_color):
         player_point, corner_point = self.get_player_and_corner_points(lit_level)
-        game.game_manager.lighting_status = lighting_status
+        game.game_manager._lighting_status = lighting_status
         lit_level._screen.fill((255, 255, 255))
 
         lit_level._draw_darkness()
@@ -245,7 +246,7 @@ class TestCreateSpritesFromBasicMap:
         assert len(game.game_manager.keys) == 2
 
     def test_records_enemy_spawns(self, game, basic_level):
-        level_stats = game.game_manager.level_stats[-1]
+        level_stats = game.game_manager.current_level_stats
         assert {enemy_type: level_stats.get_enemy_record(enemy_type).count for enemy_type in EnemyType
                 if level_stats.get_enemy_record(enemy_type).count} == {
             EnemyType.SPIDER_SMALL: 1, EnemyType.SPIDER_MEDIUM: 1, EnemyType.SPIDER_BIG: 1,
@@ -266,7 +267,7 @@ class TestCreateBossOctopus:
 class TestCreateMonster:
     def test_records_spawn_of_deaf_monster(self, game, basic_level):
         deaf_monster_types = (EnemyType.MONSTER_BLUE_DEAF, EnemyType.MONSTER_GREEN_DEAF, EnemyType.MONSTER_RED_DEAF)
-        level_stats = game.game_manager.level_stats[-1]
+        level_stats = game.game_manager.current_level_stats
         count_before = sum(level_stats.get_enemy_record(enemy_type).count for enemy_type in deaf_monster_types)
 
         basic_level.create_monster((0, 0))

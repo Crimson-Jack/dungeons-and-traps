@@ -159,7 +159,7 @@ class ScreenManager:
     def _load_next_level_message_dialog(self) -> None:
         # Create the dialog introducing the current level: number, name, description and secret code
         self.message_dialog = DialogFactory.create_next_level_dialog(self.screen,
-                                                                     self.game_manager.level + 1,
+                                                                     self.game_manager.level_index + 1,
                                                                      self.game_manager.current_level_details.name,
                                                                      self.game_manager.current_level_details.description,
                                                                      self.game_manager.current_level_details.secret_code)
@@ -175,7 +175,7 @@ class ScreenManager:
         Create the level completed dialog with the statistics of the current level.
         """
         self.message_dialog = DialogFactory.create_level_completed_dialog(self.screen,
-                                                                          self.game_manager.level_stats[-1])
+                                                                          self.game_manager.current_level_stats)
 
     def load_game_over_message_dialog(self) -> None:
         """

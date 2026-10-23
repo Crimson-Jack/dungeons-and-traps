@@ -1,6 +1,7 @@
 import pygame
 import pytest
 
+from src import level_catalog
 from src.enums.game_status import GameStatus
 from src.enums.weapon_type import WeaponType
 from src.events import Events
@@ -58,7 +59,7 @@ def enter_secret_code_is_valid(game: Game) -> None:
     game.screen_manager.dispose_first_page()
     game.game_manager.clear_settings_for_first_level(SECRET_CODE_LEVEL_INDEX)
     game.game_manager.set_secret_code_is_valid()
-    game.keyboard_controller.secret_code_text = game.game_manager.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code
+    game.keyboard_controller.secret_code_text = level_catalog.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code
     game.screen_manager.load_secret_code_message_dialog(game.keyboard_controller.secret_code_text,
                                                         DialogFactory.create_secret_code_valid_messages())
 
@@ -67,8 +68,9 @@ class TestKeyboardHandlers:
     def test_every_status_except_unknown_has_keyboard_handler(self, game):
         assert set(game.keyboard_controller.keyboard_handlers) == set(GameStatus) - {GameStatus.UNKNOWN}
 
+    @pytest.mark.refactoring
     def test_unknown_status_ignores_keys(self, game):
-        game.game_manager.game_status = GameStatus.UNKNOWN
+        game.game_manager._game_status = GameStatus.UNKNOWN
         first_page = game.screen_manager.first_page
         menu_dialog = game.screen_manager.menu_dialog
 
@@ -278,14 +280,14 @@ class TestKeyboardSecretCode:
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
 
     def test_return_with_valid_code_prepares_selected_level(self, game):
-        enter_secret_code(game, game.game_manager.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code)
+        enter_secret_code(game, level_catalog.LEVELS[SECRET_CODE_LEVEL_INDEX].secret_code)
         previous_level = game.screen_manager.level
 
         is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SECRET_CODE_IS_VALID
-        assert game.game_manager.level == SECRET_CODE_LEVEL_INDEX
+        assert game.game_manager.level_index == SECRET_CODE_LEVEL_INDEX
         assert game.screen_manager.level is not previous_level
         valid_texts = message_texts(DialogFactory.create_secret_code_valid_messages())
         assert message_texts(game.screen_manager.message_dialog.messages)[-len(valid_texts):] == valid_texts
@@ -298,7 +300,7 @@ class TestKeyboardSecretCode:
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.SECRET_CODE
-        assert game.game_manager.level == 0
+        assert game.game_manager.level_index == 0
         assert game.screen_manager.level is previous_level
         assert game.keyboard_controller.secret_code_text == 'wrongcode'
         invalid_texts = message_texts(DialogFactory.create_secret_code_invalid_messages())
@@ -393,6 +395,7 @@ class TestKeyboardGameIsRunning:
 
         assert game.game_manager.player_is_using_weapon is True
 
+    @pytest.mark.refactoring
     @pytest.mark.parametrize('key, collected_weapons, start_weapon, expected_weapon', [
         (pygame.K_x, [WeaponType.NONE, WeaponType.SWORD, WeaponType.BOW], WeaponType.NONE, WeaponType.SWORD),
         (pygame.K_x, [WeaponType.NONE, WeaponType.BOW], WeaponType.NONE, WeaponType.BOW),
@@ -404,8 +407,8 @@ class TestKeyboardGameIsRunning:
     def test_weapon_change_keys_switch_among_collected_weapons(self, game, key, collected_weapons, start_weapon,
                                                                expected_weapon):
         enter_game_is_running(game)
-        game.game_manager.collected_weapons = collected_weapons
-        game.game_manager.weapon_type = start_weapon
+        game.game_manager._collected_weapons = collected_weapons
+        game.game_manager._weapon_type = start_weapon
 
         game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(key))
 
@@ -520,10 +523,11 @@ class TestKeyboardGameIsPaused:
         assert game.screen_manager.menu_dialog is None
         assert message_texts(game.screen_manager.message_dialog.messages)[0] == 'LEVEL 1'
 
+    @pytest.mark.refactoring
     def test_restart_level_with_last_life_posts_game_over_summary(self, game):
         enter_game_is_paused(game)
         game.screen_manager.menu_dialog.selected_index = PAUSE_MENU_RESTART_LEVEL
-        game.game_manager.lives = 1
+        game.game_manager._lives = 1
         previous_level = game.screen_manager.level
         pygame.event.clear()
 
@@ -536,11 +540,12 @@ class TestKeyboardGameIsPaused:
         assert game.screen_manager.level is previous_level
         assert game.screen_manager.menu_dialog is None
 
+    @pytest.mark.refactoring
     def test_quit_game_resets_progress_and_returns_to_first_page(self, game):
         enter_game_is_paused(game)
         game.screen_manager.menu_dialog.selected_index = PAUSE_MENU_QUIT_GAME
-        game.game_manager.score = 500
-        game.game_manager.lives = 1
+        game.game_manager._score = 500
+        game.game_manager._lives = 1
         previous_level = game.screen_manager.level
 
         is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(pygame.K_RETURN))
@@ -549,7 +554,7 @@ class TestKeyboardGameIsPaused:
         assert game.game_manager.game_status == GameStatus.FIRST_PAGE
         assert game.game_manager.score == 0
         assert game.game_manager.lives == 2
-        assert game.game_manager.level == 0
+        assert game.game_manager.level_index == 0
         assert game.screen_manager.level is not previous_level
         assert isinstance(game.screen_manager.first_page, FirstPage)
         assert isinstance(game.screen_manager.menu_dialog, MenuBox)
@@ -610,20 +615,21 @@ class TestKeyboardNextLevel:
 
 
 class TestKeyboardLevelCompleted:
+    @pytest.mark.refactoring
     @pytest.mark.parametrize('key', [pygame.K_SPACE, pygame.K_RETURN])
     def test_space_or_return_prepares_next_level(self, game, key):
         enter_level_completed(game)
         game.game_manager.set_player_is_using_weapon(True)
-        level_index_before = game.game_manager.level
-        level_stats_count_before = len(game.game_manager.level_stats)
+        level_index_before = game.game_manager.level_index
+        level_stats_count_before = len(game.game_manager._level_stats)
         previous_level = game.screen_manager.level
 
         is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(key))
 
         assert is_running is True
         assert game.game_manager.game_status == GameStatus.NEXT_LEVEL
-        assert game.game_manager.level == level_index_before + 1
-        assert len(game.game_manager.level_stats) == level_stats_count_before + 1
+        assert game.game_manager.level_index == level_index_before + 1
+        assert len(game.game_manager._level_stats) == level_stats_count_before + 1
         assert game.screen_manager.level is not previous_level
         assert game.game_manager.player_is_using_weapon is False
         assert message_texts(game.screen_manager.message_dialog.messages)[0] == f'LEVEL {level_index_before + 2}'
@@ -708,10 +714,11 @@ class TestKeyboardSummary:
         summary_panel = game.screen_manager.summary_panel
         assert summary_panel.current_page_index == len(summary_panel.pages) - 1
 
+    @pytest.mark.refactoring
     def test_escape_resets_game_and_returns_to_first_page(self, game):
         enter_summary(game)
-        game.game_manager.score = 500
-        game.game_manager.lives = 0
+        game.game_manager._score = 500
+        game.game_manager._lives = 0
         previous_level = game.screen_manager.level
 
         is_running = game.keyboard_controller.handle_keyboard_buttons_down(key_down_event(pygame.K_ESCAPE))
@@ -721,7 +728,7 @@ class TestKeyboardSummary:
         assert game.screen_manager.summary_panel is None
         assert game.game_manager.score == 0
         assert game.game_manager.lives == 2
-        assert game.game_manager.level == 0
+        assert game.game_manager.level_index == 0
         assert game.screen_manager.level is not previous_level
         assert isinstance(game.screen_manager.first_page, FirstPage)
         assert isinstance(game.screen_manager.menu_dialog, MenuBox)

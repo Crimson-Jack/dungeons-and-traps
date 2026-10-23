@@ -27,13 +27,14 @@ RUN_CURRENT_SCREEN_CASES = [
 ]
 
 
+@pytest.mark.refactoring
 class TestRunCurrentScreen:
     @pytest.mark.parametrize('game_status, expected_component_calls', RUN_CURRENT_SCREEN_CASES,
                              ids=[game_status.name for game_status, expected_component_calls in RUN_CURRENT_SCREEN_CASES])
     def test_runs_only_components_of_current_status(self, game, game_status, expected_component_calls):
         for component_name in SCREEN_COMPONENT_NAMES:
             setattr(game.screen_manager, component_name, Mock())
-        game.game_manager.game_status = game_status
+        game.game_manager._game_status = game_status
 
         game.screen_manager.run_current_screen()
 

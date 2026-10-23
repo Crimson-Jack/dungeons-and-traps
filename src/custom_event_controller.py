@@ -144,7 +144,7 @@ class CustomEventController:
     def _handle_next_level_event(self, event: pygame.event.Event) -> None:
         # Mark the level as completed, award the bonus when all enemies are defeated and show the level completed dialog
         self.game_manager.set_level_completed()
-        if self.game_manager.level_stats[-1].all_enemies_defeated():
+        if self.game_manager.current_level_stats.all_enemies_defeated():
             self.game_manager.award_completion_bonus(Settings.LEVEL_COMPLETION_BONUS)
         self.screen_manager.load_level_completed_message_dialog()
 
