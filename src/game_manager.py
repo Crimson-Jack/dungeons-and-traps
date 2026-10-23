@@ -264,38 +264,17 @@ class GameManager:
     def decrease_sword_energy(self):
         if self.sword_energy > 0:
             self.sword_energy -= 1
-
-        if self.sword_energy <= 0:
-            self.remove_weapon(WeaponType.SWORD)
-            if len(self.collected_weapons) == 0:
-                self.add_weapon(WeaponType.NONE)
-            self.set_next_weapon()
-        else:
-            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
+        self._update_weapon_after_use(WeaponType.SWORD, self.sword_energy)
 
     def decrease_number_of_arrows(self):
         if self.number_of_arrows > 0:
             self.number_of_arrows -= 1
-
-        if self.number_of_arrows <= 0:
-            self.remove_weapon(WeaponType.BOW)
-            if len(self.collected_weapons) == 0:
-                self.add_weapon(WeaponType.NONE)
-            self.set_next_weapon()
-        else:
-            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
+        self._update_weapon_after_use(WeaponType.BOW, self.number_of_arrows)
 
     def decrease_number_of_explosions(self):
         if self.number_of_explosions > 0:
             self.number_of_explosions -= 1
-
-        if self.number_of_explosions <= 0:
-            self.remove_weapon(WeaponType.EXPLOSION)
-            if len(self.collected_weapons) == 0:
-                self.add_weapon(WeaponType.NONE)
-            self.set_next_weapon()
-        else:
-            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))
+        self._update_weapon_after_use(WeaponType.EXPLOSION, self.number_of_explosions)
 
     def add_diamond(self, diamond: Diamond):
         self.diamonds.append(diamond)
@@ -387,3 +366,13 @@ class GameManager:
                 return self.LEVELS.index(item)
 
         return None
+
+    def _update_weapon_after_use(self, weapon_type: WeaponType, remaining_amount: int):
+        # A depleted weapon is removed and the next collected weapon is selected
+        if remaining_amount <= 0:
+            self.remove_weapon(weapon_type)
+            if len(self.collected_weapons) == 0:
+                self.add_weapon(WeaponType.NONE)
+            self.set_next_weapon()
+        else:
+            pygame.event.post(pygame.event.Event(Events.CHANGE_WEAPON_CAPACITY_EVENT))

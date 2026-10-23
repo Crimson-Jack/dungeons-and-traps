@@ -1,11 +1,14 @@
 from unittest.mock import Mock
 
+import pygame
 import pytest
 
 import src.game_manager
 from src import level_catalog
 from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
+from src.enums.weapon_type import WeaponType
+from src.events import Events
 from src.game_manager import GameManager
 from src.level_stats import LevelStats
 
@@ -17,8 +20,20 @@ def game_manager(monkeypatch):
     return GameManager()
 
 
+# pygame.event.post needs an initialized pygame; the mock records the posted events instead
+@pytest.fixture
+def post_event_mock(monkeypatch):
+    post_event_mock = Mock()
+    monkeypatch.setattr(pygame.event, 'post', post_event_mock)
+    return post_event_mock
+
+
 def create_key(key_name):
     return Mock(key_name=key_name)
+
+
+def get_posted_event_types(post_event_mock):
+    return [call.args[0].type for call in post_event_mock.call_args_list]
 
 
 class TestLevels:
@@ -183,3 +198,61 @@ class TestGetAggregateKillStats:
 
         assert set(totals) == set(EnemyType)
         assert all((record.count, record.killed, record.score) == (0, 0, 0) for record in totals.values())
+
+
+# Decrease method, amount field, weapon type and another weapon selected after the weapon is depleted
+WEAPON_AMOUNTS = [
+    ('decrease_sword_energy', 'sword_energy', WeaponType.SWORD, WeaponType.BOW),
+    ('decrease_number_of_arrows', 'number_of_arrows', WeaponType.BOW, WeaponType.SWORD),
+    ('decrease_number_of_explosions', 'number_of_explosions', WeaponType.EXPLOSION, WeaponType.SWORD),
+]
+
+
+@pytest.mark.parametrize('decrease_method_name, amount_field_name, weapon_type, other_weapon_type', WEAPON_AMOUNTS)
+class TestDecreaseWeaponAmount:
+    def test_decreases_amount_and_keeps_weapon(self, game_manager, post_event_mock, decrease_method_name,
+                                               amount_field_name, weapon_type, other_weapon_type):
+        setattr(game_manager, amount_field_name, 3)
+        game_manager.collected_weapons = [weapon_type]
+        game_manager.weapon_type = weapon_type
+
+        getattr(game_manager, decrease_method_name)()
+
+        assert getattr(game_manager, amount_field_name) == 2
+        assert game_manager.collected_weapons == [weapon_type]
+        assert game_manager.weapon_type == weapon_type
+        assert get_posted_event_types(post_event_mock) == [Events.CHANGE_WEAPON_CAPACITY_EVENT]
+
+    def test_depleting_only_weapon_selects_no_weapon(self, game_manager, post_event_mock, decrease_method_name,
+                                                     amount_field_name, weapon_type, other_weapon_type):
+        setattr(game_manager, amount_field_name, 1)
+        game_manager.collected_weapons = [weapon_type]
+        game_manager.weapon_type = weapon_type
+
+        getattr(game_manager, decrease_method_name)()
+
+        assert getattr(game_manager, amount_field_name) == 0
+        assert game_manager.collected_weapons == [WeaponType.NONE]
+        assert game_manager.weapon_type == WeaponType.NONE
+
+    def test_depleting_weapon_selects_other_collected_weapon(self, game_manager, post_event_mock, decrease_method_name,
+                                                             amount_field_name, weapon_type, other_weapon_type):
+        setattr(game_manager, amount_field_name, 1)
+        game_manager.collected_weapons = [weapon_type, other_weapon_type]
+        game_manager.weapon_type = weapon_type
+
+        getattr(game_manager, decrease_method_name)()
+
+        assert game_manager.collected_weapons == [other_weapon_type]
+        assert game_manager.weapon_type == other_weapon_type
+        assert get_posted_event_types(post_event_mock) == [Events.CHANGE_WEAPON_EVENT]
+
+    def test_amount_does_not_go_below_zero(self, game_manager, post_event_mock, decrease_method_name,
+                                           amount_field_name, weapon_type, other_weapon_type):
+        setattr(game_manager, amount_field_name, 0)
+        game_manager.collected_weapons = [weapon_type]
+        game_manager.weapon_type = weapon_type
+
+        getattr(game_manager, decrease_method_name)()
+
+        assert getattr(game_manager, amount_field_name) == 0
