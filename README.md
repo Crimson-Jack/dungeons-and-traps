@@ -116,6 +116,8 @@ dungeons-and-traps/
 │   ├── test_bonus_record.py
 │   ├── test_collectable_record.py
 │   ├── test_level_stats.py
+│   ├── test_level_catalog.py
+│   ├── test_game_manager.py
 │   └── test_geometry_helper.py
 └── src/
     ├── game.py              # Main game loop
@@ -123,6 +125,7 @@ dungeons-and-traps/
     ├── keyboard_controller.py  # Keyboard input per game status
     ├── custom_event_controller.py  # Reactions to custom game events
     ├── game_manager.py      # Shared state (score, lives, weapons, events)
+    ├── level_catalog.py     # Ordered list of levels (maps, names, secret codes)
     ├── events.py            # Custom Pygame event type IDs
     ├── level.py             # Level loading and sprite management
     ├── level_sprite_builder.py  # Builds the world of a level from a TMX map

@@ -85,7 +85,9 @@ venv\Scripts\python.exe -m pytest tests/
 
 - **`src/events.py:Events`** — single class of all custom Pygame event type IDs. Touch this when adding a new cross-system event.
 
-- **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), player energy/lives/score, collected items (diamonds, keys), active weapon, lighting status, the ordered `LEVELS` list, and `kill_stats: list[LevelKillStats]` (one entry per played level, persists until game over). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
+- **`src/game_manager.py:GameManager`** — central shared state object passed everywhere. Holds: current game status (`GameStatus` enum), the current level (`level_index` into the level catalog, `current_level_details`), player energy/lives/score/movement, collected items (diamonds, keys), weapons and their ammunition, lighting status, boss state, and the statistics of every played level (`current_level_stats` for the current one; the list persists until game over). All fields are private; other classes read them through read-only properties of the same name and change them only through `GameManager` methods (e.g. `collect_diamond()`, `show_boss()`, `record_enemy_spawn()`, `award_enemy_kill()`). Also owns `SoundManager`. Raises Pygame custom events to trigger cross-system reactions (e.g. `COLLECT_DIAMOND_EVENT` triggers dashboard refresh).
+
+- **`src/level_catalog.py:LEVELS`** — the ordered tuple of `LevelDetails`: the campaign levels in play order, followed by the test maps. `GameManager` reads it directly (`current_level_details`, `validate_secret_code()`).
 
 - **`src/game.py:Game`** — the main game loop. Creates the window, `GameManager`, `ScreenManager`, `KeyboardController` and `CustomEventController`, then each frame passes key events to `KeyboardController`, every event to `CustomEventController`, and draws the current screen through `ScreenManager`.
 
@@ -124,7 +126,7 @@ Sprites communicate back to the game loop via Pygame custom events defined in `E
 
 ### Map / Level System
 
-Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tmx` filename, a flag for whether an exit point opens on diamond collection (`exit_point_enabled`), and an optional secret code for level-select. Maps live in `data/tmx/`, tilesets in `data/tsx/`.
+Levels are defined in `src/level_catalog.py:LEVELS` as `LevelDetails` objects with a `.tmx` filename, a flag for whether an exit point opens on diamond collection (`exit_point_enabled`), and an optional secret code for level-select. `GameManager.current_level_details` returns the details of the level being played; `GameManager.validate_secret_code()` (static) returns the index of the level with a given secret code. Maps live in `data/tmx/`, tilesets in `data/tsx/`.
 
 `LevelSpriteBuilder` (in its constructor) iterates named TMX layers. Tile layers (`ground`, `obstacle`, `moving-obstacle`, etc.) and object layers (`spider-enemy`, `ghost-enemy`, etc.) are handled separately. Enemy behavior parameters (speed, motion schedule, etc.) are read from TMX object custom properties via `TmxHelper`.
 
@@ -144,5 +146,5 @@ Levels are defined in `GameManager.LEVELS` as `LevelDetails` objects with a `.tm
 
 ### Kill Statistics
 
-`LevelStats` (`src/level_stats.py`) tracks per-level statistics: enemy kills (count, killed, score per `EnemyType`), diamonds, keys, and bonus. `GameManager.level_stats[-1]` always refers to the current level's stats. When all enemies are defeated, a bonus is awarded at level completion.
+`LevelStats` (`src/level_stats.py`) tracks per-level statistics: enemy kills (count, killed, score per `EnemyType`), diamonds, keys, and bonus. `GameManager.current_level_stats` always refers to the current level's stats; `GameManager.get_aggregate_collectable_stats()` and `get_aggregate_kill_stats()` sum all played levels for the summary. Spawns and kills are recorded through `GameManager.record_enemy_spawn()` and `award_enemy_kill()` (score and kill together). The boss (Octopus) has no `EnemyType`: killing it only adds score and does not count towards the statistics. When all enemies are defeated, a bonus is awarded at level completion.
 
