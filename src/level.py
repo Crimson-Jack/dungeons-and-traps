@@ -142,11 +142,12 @@ class Level:
 
         # Draw all visible sprites
         tilt_offset = self._tilt_effect.next_offset()
-        self._level_sprite_groups.bottom_background_layer.custom_draw(self._player, tilt_offset)
-        self._level_sprite_groups.bottom_sprites_layer.custom_draw(self._player, tilt_offset)
-        self._level_sprite_groups.middle_sprites_layer.custom_draw(self._player, tilt_offset)
-        self._level_sprite_groups.top_sprites_layer.custom_draw(self._player, tilt_offset)
-        self._level_sprite_groups.the_highest_sprites_layer.custom_draw(self._player, tilt_offset)
+        camera_target = self._player.get_center_point()
+        self._level_sprite_groups.bottom_background_layer.custom_draw(camera_target, tilt_offset)
+        self._level_sprite_groups.bottom_sprites_layer.custom_draw(camera_target, tilt_offset)
+        self._level_sprite_groups.middle_sprites_layer.custom_draw(camera_target, tilt_offset)
+        self._level_sprite_groups.top_sprites_layer.custom_draw(camera_target, tilt_offset)
+        self._level_sprite_groups.the_highest_sprites_layer.custom_draw(camera_target, tilt_offset)
 
         # Draw effects
         self._particle_effect_group.draw()
