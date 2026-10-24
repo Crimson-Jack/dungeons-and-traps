@@ -28,6 +28,7 @@ from src.sprite_costume import SpriteCostume
 from src.sprite_helper import SpriteHelper
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 from src.utilities.debug import Debug
+from src.utilities.debug_overlay import DebugOverlay
 
 
 class Level:
@@ -113,8 +114,9 @@ class Level:
         # Tilt effect
         self._tilt_effect = TiltEffect()
 
-        # Create debugger
+        # Create debugger and debug overlay
         self._debugger = Debug()
+        self._debug_overlay = DebugOverlay(self._game_surface)
 
     def run(self) -> None:
         """
@@ -151,14 +153,22 @@ class Level:
         self._blast_effect.draw()
         self._explode_effect.draw()
 
+        # Draw sprite frames, enemy paths and the player tile on top of all layers
+        if self._debugger.enabled:
+            map_offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
+            if tilt_offset is not None:
+                map_offset = map_offset + tilt_offset
+            self._debug_overlay.draw(self._level_sprite_groups, map_offset)
+
         # Blit the visible area of game_surface on the screen
         self._screen.blit(self._game_surface, self._visible_area_screen_position, self._visible_area_rect)
         # Draw darkness on the screen
         self._draw_darkness()
 
         # Read inputs and display variables if debugger is enabled
-        self._debugger.input()
-        self._debugger.show()
+        if Settings.DEBUG_MODE_AVAILABLE:
+            self._debugger.input()
+            self._debugger.show(self._visible_area_screen_position)
 
     def refresh_obstacle_map(self) -> None:
         """

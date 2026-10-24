@@ -34,11 +34,8 @@ class WideCullingRectSprite(RecordingSprite):
         return self.culling_rect
 
 
-def create_camera_group():
-    game_surface = pygame.Surface((100, 80))
-    camera_group = CameraGroup(game_surface, (50, 50))
-    camera_group.debugger.enabled = False
-    return camera_group
+def create_camera_group(game_surface=None):
+    return CameraGroup(game_surface or pygame.Surface((100, 80)), (50, 50))
 
 
 class TestCustomDraw:
@@ -78,11 +75,12 @@ class TestCustomDraw:
         camera_group.custom_draw(None)
         assert drawn_sprites == []
 
+    @pytest.mark.refactoring
     def test_offset_moves_visible_area(self):
         camera_group = create_camera_group()
         drawn_sprites = []
         sprite = RecordingSprite([camera_group], pygame.Rect(500, 500, 20, 20), drawn_sprites)
-        camera_group.offset = pygame.math.Vector2(-450, -450)
+        camera_group._offset = pygame.math.Vector2(-450, -450)
         camera_group.custom_draw(None)
         assert drawn_sprites == [sprite]
 
@@ -96,7 +94,7 @@ class TestCustomDraw:
     def test_additional_offset_is_removed_after_drawing(self):
         camera_group = create_camera_group()
         camera_group.custom_draw(None, pygame.math.Vector2(-20, 5))
-        assert camera_group.offset == pygame.math.Vector2(0, 0)
+        assert camera_group.get_map_offset() == pygame.math.Vector2(0, 0)
 
     def test_custom_culling_rect_is_used_for_custom_draw_sprite(self):
         camera_group = create_camera_group()
@@ -107,9 +105,10 @@ class TestCustomDraw:
         assert drawn_sprites == [sprite]
 
     def test_plain_sprite_uses_its_rect(self):
-        camera_group = create_camera_group()
         # Plain sprites are blitted directly on game_surface, so record the blit calls
-        camera_group.game_surface = MagicMock()
+        game_surface = MagicMock()
+        game_surface.get_size.return_value = (100, 80)
+        camera_group = create_camera_group(game_surface)
         visible_sprite = pygame.sprite.Sprite(camera_group)
         visible_sprite.image = pygame.Surface((20, 20))
         visible_sprite.rect = pygame.Rect(10, 10, 20, 20)
@@ -117,15 +116,5 @@ class TestCustomDraw:
         hidden_sprite.image = pygame.Surface((20, 20))
         hidden_sprite.rect = pygame.Rect(500, 500, 20, 20)
         camera_group.custom_draw(None)
-        blitted_images = [call.args[0] for call in camera_group.game_surface.blit.call_args_list]
+        blitted_images = [call.args[0] for call in game_surface.blit.call_args_list]
         assert blitted_images == [visible_sprite.image]
-
-    def test_all_sprites_are_drawn_in_debug_mode(self):
-        camera_group = create_camera_group()
-        drawn_sprites = []
-        visible_sprite = RecordingSprite([camera_group], pygame.Rect(10, 10, 20, 20), drawn_sprites)
-        hidden_sprite = RecordingSprite([camera_group], pygame.Rect(500, 500, 20, 20), drawn_sprites)
-        camera_group.debugger.enabled = True
-        camera_group.custom_draw(None)
-        camera_group.debugger.enabled = False
-        assert drawn_sprites == [visible_sprite, hidden_sprite]

@@ -2,6 +2,9 @@ class Settings:
     # Clock
     FPS = 60
 
+    # Debug mode switched on and off with F1/F2/F3 during the game; False in the release version
+    DEBUG_MODE_AVAILABLE = True
+
     # Screen size
     FULL_SCREEN_MODE = False
     # Window size in windowed mode; full screen mode uses the monitor resolution

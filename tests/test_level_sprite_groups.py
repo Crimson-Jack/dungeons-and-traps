@@ -1,5 +1,7 @@
 import pygame
+import pytest
 
+from settings import Settings
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.level_sprite_groups import LevelSpriteGroups
@@ -37,10 +39,11 @@ class TestLevelSpriteGroups:
         assert len({id(group) for group in groups}) == 14
         assert all(len(group) == 0 for group in groups)
 
+    @pytest.mark.refactoring
     def test_visible_layers_use_given_surface_and_map_size(self):
         game_surface = pygame.Surface((320, 240))
         level_sprite_groups = LevelSpriteGroups(game_surface, (10, 8))
         for group_name in VISIBLE_GROUP_NAMES:
             camera_group = getattr(level_sprite_groups, group_name)
-            assert camera_group.game_surface is game_surface, group_name
-            assert camera_group.size_of_map == (10, 8), group_name
+            assert camera_group._game_surface is game_surface, group_name
+            assert (camera_group._map_width, camera_group._map_height) ==                 (10 * Settings.TILE_SIZE, 8 * Settings.TILE_SIZE), group_name

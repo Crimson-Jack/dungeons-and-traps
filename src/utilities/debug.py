@@ -32,14 +32,16 @@ class Debug:
     def add_info(self, info):
         self.info_list.append(info)
 
-    def show(self):
+    def show(self, area_position):
+        # Text is drawn relative to area_position - the top left corner of an area redrawn every frame
         if self.enabled:
             display_surface = pygame.display.get_surface()
             y_position = 0
             for info in self.info_list:
                 debug_surface = self.font.render(str(info), True, self.text_color)
                 debug_surface.set_alpha(150)
-                debug_rect = debug_surface.get_rect(topleft=(self.x, self.y + y_position))
+                debug_rect = debug_surface.get_rect(topleft=(area_position[0] + self.x,
+                                                             area_position[1] + self.y + y_position))
                 display_surface.blit(debug_surface, debug_rect)
                 y_position += 20
 

@@ -25,9 +25,7 @@ class RecordingSprite(CustomDrawSprite):
 
 def create_camera_group():
     game_surface = pygame.Surface((100, 80))
-    camera_group = CameraGroupWithYSort(game_surface, (50, 50))
-    camera_group.debugger.enabled = False
-    return camera_group
+    return CameraGroupWithYSort(game_surface, (50, 50))
 
 
 class TestCustomDraw:
@@ -48,13 +46,3 @@ class TestCustomDraw:
         middle_sprite = RecordingSprite([camera_group], pygame.Rect(70, 30, 20, 20), drawn_sprites)
         camera_group.custom_draw(None)
         assert drawn_sprites == [upper_sprite, middle_sprite, lower_sprite]
-
-    def test_all_sprites_are_drawn_in_debug_mode(self):
-        camera_group = create_camera_group()
-        drawn_sprites = []
-        visible_sprite = RecordingSprite([camera_group], pygame.Rect(10, 10, 20, 20), drawn_sprites)
-        hidden_sprite = RecordingSprite([camera_group], pygame.Rect(500, 500, 20, 20), drawn_sprites)
-        camera_group.debugger.enabled = True
-        camera_group.custom_draw(None)
-        camera_group.debugger.enabled = False
-        assert drawn_sprites == [visible_sprite, hidden_sprite]
