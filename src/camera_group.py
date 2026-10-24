@@ -48,8 +48,9 @@ class CameraGroup(pygame.sprite.Group):
                 sprite.custom_draw(self._game_surface, self._offset)
             else:
                 sprite_image = sprite.image
-                if sprite_image is not None:
-                    offset_position = sprite.rect.topleft + self._offset
+                sprite_rect = sprite.rect
+                if sprite_image is not None and sprite_rect is not None:
+                    offset_position = sprite_rect.topleft + self._offset
                     self._game_surface.blit(sprite_image, offset_position)
 
         # Remove additional offset
@@ -61,29 +62,33 @@ class CameraGroup(pygame.sprite.Group):
         if player is None:
             return
 
+        player_rect = player.rect
+        if player_rect is None:
+            return
+
         # Scroll horizontally only when the map is wider than game_surface
         if self._map_width > self._game_surface_width:
             # Player near the left edge of the map - keep the map aligned to the left
-            if player.rect.centerx < self._game_surface_half_width:
+            if player_rect.centerx < self._game_surface_half_width:
                 self._offset.x = 0
             # Player near the right edge of the map - keep the map aligned to the right
-            elif self._map_width - player.rect.centerx < self._game_surface_half_width:
+            elif self._map_width - player_rect.centerx < self._game_surface_half_width:
                 self._offset.x = self._game_surface_width - self._map_width
             # Otherwise center the view on the player
             else:
-                self._offset.x = self._game_surface_half_width - player.rect.centerx
+                self._offset.x = self._game_surface_half_width - player_rect.centerx
 
         # Scroll vertically only when the map is taller than game_surface
         if self._map_height > self._game_surface_height:
             # Player near the top edge of the map - keep the map aligned to the top
-            if player.rect.centery < self._game_surface_half_height:
+            if player_rect.centery < self._game_surface_half_height:
                 self._offset.y = 0
             # Player near the bottom edge of the map - keep the map aligned to the bottom
-            elif self._map_height - player.rect.centery < self._game_surface_half_height:
+            elif self._map_height - player_rect.centery < self._game_surface_half_height:
                 self._offset.y = self._game_surface_height - self._map_height
             # Otherwise center the view on the player
             else:
-                self._offset.y = self._game_surface_half_height - player.rect.centery
+                self._offset.y = self._game_surface_half_height - player_rect.centery
 
     def _get_visible_sprites(self) -> list[pygame.sprite.Sprite]:
         # The map area currently shown on game_surface, including any additional offset
@@ -94,13 +99,13 @@ class CameraGroup(pygame.sprite.Group):
         visible_sprites = []
         for sprite in self.sprites():
             culling_rect = self._get_sprite_culling_rect(sprite)
-            if visible_rect.colliderect(culling_rect):
+            if culling_rect is not None and visible_rect.colliderect(culling_rect):
                 visible_sprites.append(sprite)
 
         return visible_sprites
 
     @staticmethod
-    def _get_sprite_culling_rect(sprite: pygame.sprite.Sprite) -> pygame.Rect:
+    def _get_sprite_culling_rect(sprite: pygame.sprite.Sprite) -> pygame.Rect | pygame.FRect | None:
         # Area of the map the sprite draws on; larger than the sprite for custom drawn sprites
         if isinstance(sprite, CustomDrawSprite):
             return sprite.get_culling_rect()
