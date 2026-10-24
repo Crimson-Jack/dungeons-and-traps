@@ -7,6 +7,7 @@ from settings import Settings
 from src.events import Events
 from src.abstract_classes.pathfinding_enemy import PathfindingEnemy
 from src.abstract_classes.obstacle_map_observer import ObstacleMapObserver
+from src.camera import Camera
 from src.enums.enemy_type import EnemyType
 from src.effects.blast_effect import BlastEffect
 from src.effects.darkness_effect import DarknessEffect
@@ -63,8 +64,9 @@ class Level:
             self._game_surface.get_size()
         )
 
-        # Set up sprite groups
-        self._level_sprite_groups = LevelSpriteGroups(game_surface, size_of_map)
+        # Set up camera and sprite groups
+        self._camera = Camera(self._game_surface.get_size(), size_of_map)
+        self._level_sprite_groups = LevelSpriteGroups(game_surface)
 
         # Create obstacle map
         self._obstacle_map = ObstacleMapFactory.create(tmx_data)
@@ -132,8 +134,11 @@ class Level:
         self._level_sprite_groups.top_sprites_layer.update()
         self._level_sprite_groups.the_highest_sprites_layer.update()
 
+        # Move the camera to the player after the player has moved
+        self._camera.follow(self._player.get_center_point(), self._tilt_effect.next_offset())
+
         # Run an update method for effects
-        self._particle_effect_group.update(self._level_sprite_groups.top_sprites_layer.get_map_offset())
+        self._particle_effect_group.update(self._camera.offset)
         self._blast_effect.update()
         self._explode_effect.update()
 
@@ -141,13 +146,11 @@ class Level:
         self._game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
 
         # Draw all visible sprites
-        tilt_offset = self._tilt_effect.next_offset()
-        camera_target = self._player.get_center_point()
-        self._level_sprite_groups.bottom_background_layer.custom_draw(camera_target, tilt_offset)
-        self._level_sprite_groups.bottom_sprites_layer.custom_draw(camera_target, tilt_offset)
-        self._level_sprite_groups.middle_sprites_layer.custom_draw(camera_target, tilt_offset)
-        self._level_sprite_groups.top_sprites_layer.custom_draw(camera_target, tilt_offset)
-        self._level_sprite_groups.the_highest_sprites_layer.custom_draw(camera_target, tilt_offset)
+        self._level_sprite_groups.bottom_background_layer.custom_draw(self._camera.offset)
+        self._level_sprite_groups.bottom_sprites_layer.custom_draw(self._camera.offset)
+        self._level_sprite_groups.middle_sprites_layer.custom_draw(self._camera.offset)
+        self._level_sprite_groups.top_sprites_layer.custom_draw(self._camera.offset)
+        self._level_sprite_groups.the_highest_sprites_layer.custom_draw(self._camera.offset)
 
         # Draw effects
         self._particle_effect_group.draw()
@@ -156,10 +159,7 @@ class Level:
 
         # Draw sprite frames, enemy paths and the player tile on top of all layers
         if self._debugger.enabled:
-            map_offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
-            if tilt_offset is not None:
-                map_offset = map_offset + tilt_offset
-            self._debug_overlay.draw(self._level_sprite_groups, map_offset)
+            self._debug_overlay.draw(self._level_sprite_groups, self._camera.offset)
 
         # Blit the visible area of game_surface on the screen
         self._screen.blit(self._game_surface, self._visible_area_screen_position, self._visible_area_rect)
@@ -367,7 +367,7 @@ class Level:
 
     def _draw_darkness(self) -> None:
         # Calculate the position of the player on the game surface
-        offset = self._level_sprite_groups.middle_sprites_layer.get_map_offset()
+        offset = self._camera.offset
         player_rect = self._player.rect
         assert player_rect is not None, 'The player has no rect'
         light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)

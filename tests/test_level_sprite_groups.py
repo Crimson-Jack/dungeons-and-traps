@@ -1,7 +1,6 @@
 import pygame
 import pytest
 
-from settings import Settings
 from src.camera_group import CameraGroup
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.level_sprite_groups import LevelSpriteGroups
@@ -14,7 +13,7 @@ FUNCTIONAL_GROUP_NAMES = ('exit_points', 'obstacle_sprites', 'moving_obstacle_sp
 
 
 def create_level_sprite_groups():
-    return LevelSpriteGroups(pygame.Surface((320, 240)), (10, 8))
+    return LevelSpriteGroups(pygame.Surface((320, 240)))
 
 
 class TestLevelSpriteGroups:
@@ -40,10 +39,9 @@ class TestLevelSpriteGroups:
         assert all(len(group) == 0 for group in groups)
 
     @pytest.mark.refactoring
-    def test_visible_layers_use_given_surface_and_map_size(self):
+    def test_visible_layers_use_given_surface(self):
         game_surface = pygame.Surface((320, 240))
-        level_sprite_groups = LevelSpriteGroups(game_surface, (10, 8))
+        level_sprite_groups = LevelSpriteGroups(game_surface)
         for group_name in VISIBLE_GROUP_NAMES:
             camera_group = getattr(level_sprite_groups, group_name)
             assert camera_group._game_surface is game_surface, group_name
-            assert (camera_group._map_width, camera_group._map_height) ==                 (10 * Settings.TILE_SIZE, 8 * Settings.TILE_SIZE), group_name

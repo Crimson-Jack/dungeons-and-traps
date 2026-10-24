@@ -7,19 +7,18 @@ from src.camera_group_with_y_sort import CameraGroupWithYSort
 class LevelSpriteGroups:
     """Owns the sprite groups of a level: five visible layers drawn back to front and the functional groups."""
 
-    def __init__(self, game_surface: pygame.Surface, size_of_map: tuple[int, int]) -> None:
+    def __init__(self, game_surface: pygame.Surface) -> None:
         """
         Create the empty visible and functional groups.
 
         :param game_surface: surface the visible groups draw on
-        :param size_of_map: map size in tiles
         """
         # Set up visible groups
-        self._bottom_background_layer = CameraGroup(game_surface, size_of_map)
-        self._bottom_sprites_layer = CameraGroup(game_surface, size_of_map)
-        self._middle_sprites_layer = CameraGroupWithYSort(game_surface, size_of_map)
-        self._top_sprites_layer = CameraGroup(game_surface, size_of_map)
-        self._the_highest_sprites_layer = CameraGroup(game_surface, size_of_map)
+        self._bottom_background_layer = CameraGroup(game_surface)
+        self._bottom_sprites_layer = CameraGroup(game_surface)
+        self._middle_sprites_layer = CameraGroupWithYSort(game_surface)
+        self._top_sprites_layer = CameraGroup(game_surface)
+        self._the_highest_sprites_layer = CameraGroup(game_surface)
 
         # Set up functional groups
         self._exit_points = pygame.sprite.Group()

@@ -130,6 +130,7 @@ dungeons-and-traps/
     ├── level.py             # Level loading and sprite management
     ├── level_sprite_builder.py  # Builds the world of a level from a TMX map
     ├── level_sprite_groups.py  # Visible layers and functional sprite groups of a level
+    ├── camera.py            # Camera offset that follows the player, with the tilt shake
     ├── level_stats.py       # Per-level statistics (kills, diamonds, keys, bonus)
     ├── enemy_kill_record.py # Single enemy type kill record (count, killed, score)
     ├── obstacle_map.py      # 2D grid used by enemy pathfinding
@@ -141,6 +142,7 @@ dungeons-and-traps/
     ├── search_path_algorithms/  # BFS and Greedy Best-First Search
     ├── abstract_classes/    # Base classes for enemies
     ├── enums/               # Game enums (GameStatus, WeaponType, SoundEffect, EnemyType…)
+    ├── utilities/           # Debug info and debug overlay
     └── tile_details/        # TMX object property parsers per sprite type
 ```
 

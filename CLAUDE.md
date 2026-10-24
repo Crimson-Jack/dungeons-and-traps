@@ -97,7 +97,7 @@ venv\Scripts\python.exe -m pytest tests/
 
 - **`src/keyboard_controller.py:KeyboardController`** — keyboard input via a state-machine driven by `game_manager.game_status` (`keyboard_handlers`: one key down handler per status). Owns the secret code text and the movement keys pressed while the game is running, and runs gameplay transitions (level intro, pause resume, game reset). Uses only `GameManager` and `ScreenManager`; ends the game from the pause menu by posting `GAME_OVER_SUMMARY_EVENT`, never by calling `CustomEventController`.
 
-- **`src/level.py:Level`** — loads a `.tmx` map file and builds the world from it through `LevelSpriteBuilder`. Owns `LevelSpriteGroups` (private `_level_sprite_groups`). Runs the game loop's update/draw cycle each frame. All its fields are private; other classes use only its methods.
+- **`src/level.py:Level`** — loads a `.tmx` map file and builds the world from it through `LevelSpriteBuilder`. Owns `LevelSpriteGroups` (private `_level_sprite_groups`) and the `Camera` (private `_camera`). Runs the game loop's update/draw cycle each frame. All its fields are private; other classes use only its methods.
 
 - **`src/level_sprite_builder.py:LevelSpriteBuilder`** — builds the world of a level from a TMX map in its constructor: sprites from the tile and object layers, `Player`, `CheckPoint`, `ExitPoint` and the boss point position. Receives the `ObstacleMap` created by `Level` in its constructor. `Level` only reads the results from its read-only properties (`player`, `check_point`, `exit_point`, `boss_point_position`); all builder fields and methods are private. Used only while `Level` is constructed; sprites created during play (eggs, monsters, the boss) stay in `Level`.
 
@@ -113,7 +113,9 @@ venv\Scripts\python.exe -m pytest tests/
 | `top_sprites_layer` | `CameraGroup` | Most enemies |
 | `the_highest_sprites_layer` | `CameraGroup` | Boss (Octopus, 3×3 tiles) |
 
-`CameraGroupWithYSort` sorts sprites by `rect.centery` before drawing, which creates the pseudo-3D depth illusion. The camera offset is computed relative to the player position in `CameraGroup.custom_draw()`.
+`CameraGroupWithYSort` sorts sprites by `rect.centery` before drawing, which creates the pseudo-3D depth illusion. The camera offset is computed once per frame by `Camera` (`src/camera.py`): `Level.run()` calls `camera.follow()` with the player center and the tilt effect shake after the sprites have been updated, then passes `camera.offset` to `CameraGroup.custom_draw()` of every layer, to the particle effects, the darkness effect and the debug overlay. The camera groups only draw their visible sprites with the given offset.
+
+In debug mode (F1/F2 on, F3 off; available when `Settings.DEBUG_MODE_AVAILABLE` is `True`) `DebugOverlay` (`src/utilities/debug_overlay.py`) draws sprite frames, enemy paths and the player tile on top of all layers.
 
 ### Event-Driven Communication
 

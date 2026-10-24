@@ -180,7 +180,7 @@ class TestDrawDarkness:
 
     @staticmethod
     def get_player_and_corner_points(level):
-        offset = level._level_sprite_groups.middle_sprites_layer.get_map_offset()
+        offset = level._camera.offset
         player_point = (int(level._visible_area_screen_position[0] + level._player.rect.centerx + offset.x),
                         int(level._visible_area_screen_position[1] + level._player.rect.centery + offset.y))
         corner_point = (level._visible_area_screen_position[0] + 2, level._visible_area_screen_position[1] + 2)

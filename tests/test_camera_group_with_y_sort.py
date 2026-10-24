@@ -4,9 +4,6 @@ import pytest
 from src.camera_group_with_y_sort import CameraGroupWithYSort
 from src.sprites.custom_draw_sprite import CustomDrawSprite
 
-# The camera at the top left corner of the map keeps the map offset at (0, 0)
-CAMERA_TARGET_AT_TOP_LEFT = (0, 0)
-
 
 # Initialise and shut down Pygame around every test so that Surface, Vector2 and Rect behave correctly.
 @pytest.fixture(autouse=True)
@@ -28,7 +25,11 @@ class RecordingSprite(CustomDrawSprite):
 
 def create_camera_group():
     game_surface = pygame.Surface((100, 80))
-    return CameraGroupWithYSort(game_surface, (50, 50))
+    return CameraGroupWithYSort(game_surface)
+
+
+def no_offset():
+    return pygame.math.Vector2(0, 0)
 
 
 class TestCustomDraw:
@@ -37,7 +38,7 @@ class TestCustomDraw:
         drawn_sprites = []
         visible_sprite = RecordingSprite([camera_group], pygame.Rect(10, 10, 20, 20), drawn_sprites)
         RecordingSprite([camera_group], pygame.Rect(500, 500, 20, 20), drawn_sprites)
-        camera_group.custom_draw(CAMERA_TARGET_AT_TOP_LEFT)
+        camera_group.custom_draw(no_offset())
         assert drawn_sprites == [visible_sprite]
 
     def test_visible_sprites_are_drawn_in_y_order(self):
@@ -47,5 +48,5 @@ class TestCustomDraw:
         RecordingSprite([camera_group], pygame.Rect(10, 300, 20, 20), drawn_sprites)
         upper_sprite = RecordingSprite([camera_group], pygame.Rect(40, 5, 20, 20), drawn_sprites)
         middle_sprite = RecordingSprite([camera_group], pygame.Rect(70, 30, 20, 20), drawn_sprites)
-        camera_group.custom_draw(CAMERA_TARGET_AT_TOP_LEFT)
+        camera_group.custom_draw(no_offset())
         assert drawn_sprites == [upper_sprite, middle_sprite, lower_sprite]
