@@ -133,13 +133,13 @@ def basic_level(game):
 @pytest.mark.refactoring
 class TestVisibleArea:
     def test_map_larger_than_game_surface_fills_it(self, basic_level):
-        assert basic_level._visible_area_screen_position == [0, 80]
+        assert basic_level._visible_area_screen_position == (0, 80)
         assert basic_level._visible_area_rect == pygame.Rect(0, 0, 1200, 496)
 
     def test_map_narrower_than_game_surface_is_centered_horizontally(self, game):
         # The game starts on the first level, s01_level_01.tmx, which is 20 tiles wide
         level = game.screen_manager.level
-        assert level._visible_area_screen_position == [120, 80]
+        assert level._visible_area_screen_position == (120, 80)
         assert level._visible_area_rect == pygame.Rect(0, 0, 960, 496)
 
 

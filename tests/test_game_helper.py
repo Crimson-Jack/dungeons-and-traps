@@ -137,6 +137,12 @@ class TestGetCollidedRectangle:
         result = GameHelper.get_collided_rectangle(rect, rect)
         assert result == rect
 
+    def test_separate_rectangles_return_rectangle_of_zero_size(self):
+        rectangle_one = pygame.Rect(0, 0, 10, 10)
+        rectangle_two = pygame.Rect(20, 20, 5, 5)
+        result = GameHelper.get_collided_rectangle(rectangle_one, rectangle_two)
+        assert result.size == (0, 0)
+
 
 class TestCalculateVisibleArea:
     @pytest.fixture(autouse=True)
@@ -148,23 +154,23 @@ class TestCalculateVisibleArea:
         visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((20, 10), (400, 300))
 
         # Map is 200 x 100 pixels: margins are (400 - 200) / 2 and (300 - 100) / 2
-        assert visible_area_screen_position == [100, 100 + 50]
+        assert visible_area_screen_position == (100, 100 + 50)
         assert visible_area_rect == pygame.Rect(0, 0, 200, 100)
 
     def test_map_larger_than_game_surface_fills_it(self):
         visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((60, 40), (400, 300))
 
-        assert visible_area_screen_position == [0, 50]
+        assert visible_area_screen_position == (0, 50)
         assert visible_area_rect == pygame.Rect(0, 0, 400, 300)
 
     def test_map_wider_but_lower_is_centered_and_cut_only_vertically(self):
         visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((60, 10), (400, 300))
 
-        assert visible_area_screen_position == [0, 100 + 50]
+        assert visible_area_screen_position == (0, 100 + 50)
         assert visible_area_rect == pygame.Rect(0, 0, 400, 100)
 
     def test_map_of_game_surface_size_is_neither_moved_nor_cut(self):
         visible_area_screen_position, visible_area_rect = GameHelper.calculate_visible_area((40, 30), (400, 300))
 
-        assert visible_area_screen_position == [0, 50]
+        assert visible_area_screen_position == (0, 50)
         assert visible_area_rect == pygame.Rect(0, 0, 400, 300)

@@ -60,7 +60,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
         self.move()
 
         if self.path_distance > self.path_distance_threshold:
-            tile = GameHelper.get_tile_by_point(self.hit_box)
+            tile = GameHelper.get_tile_by_point(self.hit_box.topleft)
             position = GameHelper.get_point_by_tile(tile)
 
             if abs(self.hit_box.x - position[0]) <= 2 and abs(self.hit_box.y - position[1]) <= 2:

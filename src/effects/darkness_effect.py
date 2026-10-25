@@ -16,7 +16,7 @@ class DarknessEffect:
         LightingStatus.TORCHLIGHT: ((370, 200), (345, 150), (320, 100), (295, 50), (270, 0)),
     }
 
-    def __init__(self, screen: pygame.Surface, visible_area_screen_position: list[int],
+    def __init__(self, screen: pygame.Surface, visible_area_screen_position: tuple[int, int],
                  visible_area_size: tuple[int, int]) -> None:
         """
         Create the darkness surface once; it is reused in every frame.
