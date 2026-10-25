@@ -28,12 +28,12 @@ class MovingObstacle(CustomDrawSprite):
         bar_width = Settings.TILE_SIZE - GameHelper.multiply_by_tile_size_ratio(10)
         bar_height = GameHelper.multiply_by_tile_size_ratio(12, 9)
         bar_left, bar_top = self.get_bar_position()
-        bar_colors = ColorSet([
+        bar_colors = ColorSet((
             ((0, 25), (255, 0, 0)),
             ((25, 50), (200, 0, 0)),
             ((50, 75), (114, 0, 20)),
             ((75, 100), (0, 0, 0))
-        ])
+        ))
         self.power_bar = Bar(
             position=(bar_left, bar_top),
             width=bar_width,

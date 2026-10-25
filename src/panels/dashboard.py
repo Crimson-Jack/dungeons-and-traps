@@ -54,13 +54,13 @@ class Dashboard:
         bar_height = 25
         bar_left = self.energy_bar_margin
         bar_top = self.right_top_surface.get_height() // 2 - (bar_height // 2)
-        bar_colors = ColorSet([
+        bar_colors = ColorSet((
                 ((0, 20), (255, 60, 0)),        # Red
                 ((21, 40), (255, 158, 87)),     # Dark orange
                 ((41, 60), (243, 244, 180)),    # Rotten green
                 ((61, 80), (189, 244, 180)),    # Light green
                 ((81, 100), (122, 231, 104))    # Dark green
-            ])
+            ))
 
         self.player_energy_bar = Bar(
             position=(bar_left, bar_top),

@@ -19,7 +19,7 @@ def initialize_fonts():
 
 
 def create_bar(position=(0, 0), draw_text=False):
-    return Bar(position=position, width=100, height=20, bar_colors=ColorSet([((0, 100), BAR_COLOR)]),
+    return Bar(position=position, width=100, height=20, bar_colors=ColorSet((((0, 100), BAR_COLOR),)),
                background_color=BACKGROUND_COLOR, text='Energy' if draw_text else None, text_color=TEXT_COLOR)
 
 
