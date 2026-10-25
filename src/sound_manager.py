@@ -1,5 +1,3 @@
-import time
-
 import pygame
 
 from src.enums.sound_effect import SoundEffect
@@ -7,17 +5,30 @@ from src.metaclasses.singleton_meta import SingletonMeta
 
 
 class SoundManager(metaclass=SingletonMeta):
-    def __init__(self):
-        self.music_set = 'set_01'
-        self.sfx_collection = dict()
+    """
+    Singleton that plays the sound effects. All sound effects of SoundEffect are loaded once, when it is created.
+    """
+
+    # Folder in sound/sfx/ with the sound effect files
+    SFX_SET = 'set_01'
+
+    def __init__(self) -> None:
+        """
+        Load all sound effects of SoundEffect from sound/sfx/SFX_SET/.
+        """
+        self._sfx_collection: dict[SoundEffect, pygame.mixer.Sound] = {}
         self._load_sfx_collection()
 
-    def _load_sfx_collection(self):
-        for item in SoundEffect:
-            self.sfx_collection[item] = pygame.mixer.Sound(f'sound/sfx/{self.music_set}/{item}.ogg')
+    def play_sfx(self, sound_effect: SoundEffect) -> None:
+        """
+        Play the sound effect on a free channel, or on the channel with the longest playing sound when none is free.
 
-    def play_sfx(self, sound_effect: SoundEffect):
-        # NOTE: If there are no inactive channels and the force argument is True,
-        # this will find the Channel with the longest running Sound and return it.
-        empty_channel = pygame.mixer.find_channel(True)
-        empty_channel.play(self.sfx_collection[sound_effect])
+        :param sound_effect: sound effect to play
+        """
+        # Force argument True returns the channel with the longest playing sound when no channel is free
+        channel = pygame.mixer.find_channel(True)
+        channel.play(self._sfx_collection[sound_effect])
+
+    def _load_sfx_collection(self) -> None:
+        for sound_effect in SoundEffect:
+            self._sfx_collection[sound_effect] = pygame.mixer.Sound(f'sound/sfx/{self.SFX_SET}/{sound_effect}.ogg')
