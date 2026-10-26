@@ -7,37 +7,33 @@ CELL_SIZE = 4
 SCALED_SIZE = (8, 8)
 NUMBER_OF_ROWS = 2
 NUMBER_OF_CELLS = 3
-KEY_COLOR = (0, 0, 0)
 BACKGROUND_COLOR = (255, 255, 255)
-
-
-# get_image() calls convert_alpha(), which needs a display mode
-@pytest.fixture(autouse=True)
-def pygame_display(monkeypatch):
-    monkeypatch.setenv('SDL_VIDEODRIVER', 'dummy')
-    pygame.display.init()
-    pygame.display.set_mode((1, 1))
-    yield
-    pygame.display.quit()
 
 
 def cell_color(row, cell):
     return 50 + row * 100, 40 + cell * 80, 200
 
 
-# Sheet of NUMBER_OF_ROWS x NUMBER_OF_CELLS cells, each filled with its own cell_color
+# Sheet of NUMBER_OF_ROWS x NUMBER_OF_CELLS cells, each filled with its own cell_color.
+# SRCALPHA gives the sheet an alpha channel, like a PNG loaded with convert_alpha().
 def create_sheet_image():
-    sheet_image = pygame.Surface((NUMBER_OF_CELLS * CELL_SIZE, NUMBER_OF_ROWS * CELL_SIZE))
+    sheet_image = pygame.Surface((NUMBER_OF_CELLS * CELL_SIZE, NUMBER_OF_ROWS * CELL_SIZE), pygame.SRCALPHA)
     for row in range(NUMBER_OF_ROWS):
         for cell in range(NUMBER_OF_CELLS):
             sheet_image.fill(cell_color(row, cell), (cell * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
     return sheet_image
 
 
-def create_sprite_sheet(sheet_image=None, key_color=KEY_COLOR):
+def create_single_cell_sheet_image(color):
+    sheet_image = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
+    sheet_image.fill(color)
+    return sheet_image
+
+
+def create_sprite_sheet(sheet_image=None):
     if sheet_image is None:
         sheet_image = create_sheet_image()
-    return SpriteSheet(sheet_image, CELL_SIZE, CELL_SIZE, SCALED_SIZE, key_color)
+    return SpriteSheet(sheet_image, CELL_SIZE, CELL_SIZE, SCALED_SIZE)
 
 
 def center_color(image):
@@ -68,17 +64,20 @@ class TestSpriteSheetGetImage:
     def test_image_shows_selected_cell(self, row, cell):
         assert center_color(create_sprite_sheet().get_image(row, cell)) == cell_color(row, cell)
 
-    def test_key_color_is_transparent(self):
-        sheet_image = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        sheet_image.fill(KEY_COLOR)
-        image = create_sprite_sheet(sheet_image, key_color=KEY_COLOR).get_image(0, 0)
+    def test_transparent_pixel_stays_transparent(self):
+        sheet_image = create_single_cell_sheet_image((255, 0, 0, 0))
+        image = create_sprite_sheet(sheet_image).get_image(0, 0)
         assert color_on_background(image) == BACKGROUND_COLOR
 
-    def test_without_key_color_nothing_is_transparent(self):
-        sheet_image = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        sheet_image.fill(KEY_COLOR)
-        image = create_sprite_sheet(sheet_image, key_color=None).get_image(0, 0)
-        assert color_on_background(image) == KEY_COLOR
+    def test_opaque_black_pixel_stays_visible(self):
+        sheet_image = create_single_cell_sheet_image((0, 0, 0, 255))
+        image = create_sprite_sheet(sheet_image).get_image(0, 0)
+        assert color_on_background(image) == (0, 0, 0)
+
+    def test_half_transparent_pixel_keeps_its_transparency(self):
+        sheet_image = create_single_cell_sheet_image((255, 0, 0, 128))
+        image = create_sprite_sheet(sheet_image).get_image(0, 0)
+        assert tuple(image.get_at((0, 0))) == (255, 0, 0, 128)
 
     @pytest.mark.parametrize('row, cell', [(NUMBER_OF_ROWS, 0), (0, NUMBER_OF_CELLS), (-1, 0), (0, -1)])
     def test_cell_outside_sheet_raises_index_error(self, row, cell):
