@@ -362,16 +362,33 @@ class SpriteHelper:
 
     @staticmethod
     def get_loading_page_image(size: tuple[int, int]) -> pygame.Surface:
-        loading_page_image_source_width = 320
-        loading_page_image_source_height = 192
-        sprite_sheet = SpriteSheet(
-            pygame.image.load('img/loading-page.png').convert_alpha(),
-            loading_page_image_source_width,
-            loading_page_image_source_height,
-            size,
-            None
-        )
-        return sprite_sheet.get_image(0, 0)
+        """
+        Return the loading page image scaled to the size.
+
+        :param size: size of the returned image
+        :return: loading page image
+        """
+        return SpriteHelper._get_page_image('img/loading-page.png', size)
+
+    @staticmethod
+    def get_start_page_image(size: tuple[int, int]) -> pygame.Surface:
+        """
+        Return the start page image scaled to the size.
+
+        :param size: size of the returned image
+        :return: start page image
+        """
+        return SpriteHelper._get_page_image('img/start-page.png', size)
+
+    @staticmethod
+    def get_studio_page_image(size: tuple[int, int]) -> pygame.Surface:
+        """
+        Return the studio page image scaled to the size.
+
+        :param size: size of the returned image
+        :return: studio page image
+        """
+        return SpriteHelper._get_page_image('img/studio-page.png', size)
 
     @staticmethod
     def get_all_egg_sprites():
@@ -385,3 +402,17 @@ class SpriteHelper:
         sprites.append(sprite_sheet.get_image(0, 3))
 
         return sprites
+
+    @staticmethod
+    def _get_page_image(path: str, size: tuple[int, int]) -> pygame.Surface:
+        # Page images are a single 320px x 192px picture
+        page_image_source_width = 320
+        page_image_source_height = 192
+        sprite_sheet = SpriteSheet(
+            pygame.image.load(path).convert_alpha(),
+            page_image_source_width,
+            page_image_source_height,
+            size,
+            None
+        )
+        return sprite_sheet.get_image(0, 0)
