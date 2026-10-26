@@ -5,17 +5,19 @@ class GeometryHelper:
     """Collection of static geometry helpers for segment and rectangle intersection tests."""
 
     @staticmethod
-    def check_intersection_of_two_segments(
+    def check_single_point_intersection_of_two_segments(
             a: pygame.Vector2, b: pygame.Vector2,
             c: pygame.Vector2, d: pygame.Vector2) -> bool:
         """
-        Check whether segment AB intersects segment CD.
+        Check whether segment AB and segment CD have exactly one common point.
+        Touching at an end point counts as such a point.
+        Parallel and collinear segments return False, even when they overlap.
 
         :param a: start point of the first segment
         :param b: end point of the first segment
         :param c: start point of the second segment
         :param d: end point of the second segment
-        :return: True if the segments intersect, False otherwise
+        :return: True if the segments have exactly one common point, False otherwise
         """
         # a + t*ab = c + u*cd
         # t*ab - u*cd = c-a
@@ -53,13 +55,16 @@ class GeometryHelper:
             rectangle: pygame.Rect) -> bool:
         """
         Check whether a segment intersects any edge of a rectangle.
+        A segment entirely inside the rectangle does not intersect its edges.
+        A segment lying on an edge between its corners returns False; reaching a corner returns True,
+        because the corner is an end point of the adjacent edge.
 
         :param start_point: start point of the segment
         :param end_point: end point of the segment
         :param rectangle: rectangle to test against
         :return: True if the segment intersects any edge, False otherwise
         """
-        vertexes = [
+        vertices = [
             pygame.Vector2(rectangle.topleft),
             pygame.Vector2(rectangle.topright),
             pygame.Vector2(rectangle.bottomright),
@@ -67,15 +72,16 @@ class GeometryHelper:
         ]
 
         edges = [
-            (vertexes[0], vertexes[1]),  # top
-            (vertexes[1], vertexes[2]),  # right
-            (vertexes[2], vertexes[3]),  # bottom
-            (vertexes[3], vertexes[0])   # left
+            (vertices[0], vertices[1]),  # top
+            (vertices[1], vertices[2]),  # right
+            (vertices[2], vertices[3]),  # bottom
+            (vertices[3], vertices[0])   # left
         ]
 
         # Verify each edge with segment
         for start_vertex, end_vertex in edges:
-            intersection = GeometryHelper.check_intersection_of_two_segments(start_point, end_point, start_vertex, end_vertex)
+            intersection = GeometryHelper.check_single_point_intersection_of_two_segments(start_point, end_point,
+                                                                                          start_vertex, end_vertex)
             if intersection:
                 return True
 

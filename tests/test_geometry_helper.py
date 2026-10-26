@@ -1,62 +1,53 @@
 import pygame
-import pytest
 
 from src.geometry_helper import GeometryHelper
 
 
-# Initialise and shut down Pygame around every test so that Vector2 and Rect behave correctly.
-@pytest.fixture(autouse=True)
-def pygame_init():
-    pygame.init()
-    yield
-    pygame.quit()
-
-
-class TestCheckIntersectionOfTwoSegments:
+class TestCheckSinglePointIntersectionOfTwoSegments:
     def test_perpendicular_crossing_segments_return_true(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 1), pygame.Vector2(2, 1),
             pygame.Vector2(1, 0), pygame.Vector2(1, 2)
         )
         assert result is True
 
     def test_parallel_horizontal_segments_return_false(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 0), pygame.Vector2(4, 0),
             pygame.Vector2(0, 2), pygame.Vector2(4, 2)
         )
         assert result is False
 
     def test_collinear_overlapping_segments_return_false(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 0), pygame.Vector2(2, 0),
             pygame.Vector2(1, 0), pygame.Vector2(3, 0)
         )
         assert result is False
 
     def test_segments_too_short_to_reach_each_other_return_false(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 1), pygame.Vector2(0.5, 1),
             pygame.Vector2(1, 0), pygame.Vector2(1, 2)
         )
         assert result is False
 
     def test_endpoint_touching_other_segment_returns_true(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 1), pygame.Vector2(2, 1),
             pygame.Vector2(1, 0), pygame.Vector2(1, 1)
         )
         assert result is True
 
     def test_diagonal_crossing_segments_return_true(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 0), pygame.Vector2(2, 2),
             pygame.Vector2(2, 0), pygame.Vector2(0, 2)
         )
         assert result is True
 
     def test_segments_pointing_away_from_each_other_return_false(self):
-        result = GeometryHelper.check_intersection_of_two_segments(
+        result = GeometryHelper.check_single_point_intersection_of_two_segments(
             pygame.Vector2(0, 0), pygame.Vector2(1, 0),
             pygame.Vector2(3, 0), pygame.Vector2(4, 0)
         )
