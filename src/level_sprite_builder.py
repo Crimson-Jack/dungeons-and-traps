@@ -309,7 +309,7 @@ class LevelSpriteBuilder:
                              position: tuple[int, int]) -> None:
         # Create a spider and record its spawn in the level statistics
         sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item, (Settings.TILE_SIZE, Settings.TILE_SIZE))
-        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix(item.name, sprites)
+        sprite_costumes_matrix = SpriteHelper.get_costumes_matrix(item.name, sprites)
         groups = self._level_sprite_groups.top_sprites_layer, self._level_sprite_groups.enemy_sprites
         tile_details = SpiderTileDetails(item, layer)
         enemy_type = EnemyType.from_name(item.name)

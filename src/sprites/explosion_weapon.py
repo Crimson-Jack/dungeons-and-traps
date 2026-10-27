@@ -22,7 +22,7 @@ class ExplosionWeapon(CustomDrawSprite):
         self.enemy_sprites = enemy_sprites
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_tnt_sprites()
+        self.sprites = SpriteHelper.get_all_explosion_sprites()
 
         # Image
         self.image = self.sprites['right'][0]

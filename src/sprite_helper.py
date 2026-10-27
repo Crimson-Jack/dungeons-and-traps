@@ -35,23 +35,22 @@ class SpriteHelper:
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
-    def get_multi_tile_image(name: str, row: int, cell: int, number_of_tiles: int) -> pygame.Surface:
+    def get_multi_tile_image(sprite_sheet_name: str, row: int, cell: int, number_of_tiles: int) -> pygame.Surface:
         """
-        Return one frame of number_of_tiles x number_of_tiles tiles from img/<name>.png,
+        Return one frame of number_of_tiles x number_of_tiles tiles from img/<sprite_sheet_name>.png,
         scaled to number_of_tiles x number_of_tiles tile sizes.
 
-        :param name: file name of the sprite sheet without the extension
+        :param sprite_sheet_name: file name of the sprite sheet without the extension
         :param row: row of the frame in the sprite sheet
         :param cell: cell of the frame in the row
         :param number_of_tiles: width and height of one frame in tiles
         :return: frame image
         """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{name}.png', number_of_tiles)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png', number_of_tiles)
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
-    def get_sprite_costumes_matrix(sprite_sheet_name: str,
-                                   sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
+    def get_costumes_matrix(sprite_sheet_name: str, sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
         """
         Return the costumes of every row of the sprite sheet for each cell: result[cell][row].
         Each costume takes the number of frames from sprite_costumes[cell].
@@ -72,6 +71,164 @@ class SpriteHelper:
             result.append(cell_costumes)
 
         return result
+
+    @staticmethod
+    def get_tombstone_frames() -> list[pygame.Surface]:
+        """
+        Return 4 frames of the enemy tombstone.
+
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png')
+
+        sprites = list()
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        return sprites
+
+    @staticmethod
+    def get_boss_tombstone_frames() -> list[pygame.Surface]:
+        """
+        Return 18 frames of the vanishing boss, 3 x 3 tiles each.
+
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet('img/vanishing-flare-point.png', 3)
+
+        sprites = list()
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+        sprites.append(sprite_sheet.get_image(0, 4))
+        sprites.append(sprite_sheet.get_image(0, 5))
+        sprites.append(sprite_sheet.get_image(0, 6))
+        sprites.append(sprite_sheet.get_image(0, 7))
+        sprites.append(sprite_sheet.get_image(0, 8))
+        sprites.append(sprite_sheet.get_image(0, 9))
+        sprites.append(sprite_sheet.get_image(0, 10))
+        sprites.append(sprite_sheet.get_image(0, 11))
+        sprites.append(sprite_sheet.get_image(0, 12))
+        sprites.append(sprite_sheet.get_image(0, 13))
+        sprites.append(sprite_sheet.get_image(0, 14))
+        sprites.append(sprite_sheet.get_image(0, 15))
+        sprites.append(sprite_sheet.get_image(0, 16))
+        sprites.append(sprite_sheet.get_image(0, 17))
+
+        return sprites
+
+    @staticmethod
+    def get_vanishing_point_frames() -> list[pygame.Surface]:
+        """
+        Return 8 frames of the vanishing point.
+
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-point.png')
+
+        sprites = list()
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+        sprites.append(sprite_sheet.get_image(0, 4))
+        sprites.append(sprite_sheet.get_image(0, 5))
+        sprites.append(sprite_sheet.get_image(0, 6))
+        sprites.append(sprite_sheet.get_image(0, 7))
+
+        return sprites
+
+    @staticmethod
+    def get_monster_frames(sprite_sheet_name: str) -> list[pygame.Surface]:
+        """
+        Return 4 animation frames of the monster.
+
+        :param sprite_sheet_name: file name of the monster sprite sheet without the extension
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png')
+
+        sprites = list()
+
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        return sprites
+
+    @staticmethod
+    def get_octopus_frames(sprite_sheet_name: str) -> list[pygame.Surface]:
+        """
+        Return 16 animation frames of the octopus, 3 x 3 tiles each.
+
+        :param sprite_sheet_name: file name of the octopus sprite sheet without the extension
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png', 3)
+
+        sprites = list()
+
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        sprites.append(sprite_sheet.get_image(0, 4))
+        sprites.append(sprite_sheet.get_image(0, 5))
+        sprites.append(sprite_sheet.get_image(0, 6))
+        sprites.append(sprite_sheet.get_image(0, 7))
+
+        sprites.append(sprite_sheet.get_image(0, 8))
+        sprites.append(sprite_sheet.get_image(0, 9))
+        sprites.append(sprite_sheet.get_image(0, 10))
+        sprites.append(sprite_sheet.get_image(0, 11))
+
+        sprites.append(sprite_sheet.get_image(0, 12))
+        sprites.append(sprite_sheet.get_image(0, 13))
+        sprites.append(sprite_sheet.get_image(0, 14))
+        sprites.append(sprite_sheet.get_image(0, 15))
+
+        return sprites
+
+    @staticmethod
+    def get_fire_ball_frames() -> list[pygame.Surface]:
+        """
+        Return 4 animation frames of the fireball.
+
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/fireball.png')
+
+        sprites = list()
+
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        return sprites
+
+    @staticmethod
+    def get_egg_frames() -> list[pygame.Surface]:
+        """
+        Return 4 animation frames of the egg.
+
+        :return: frames in animation order
+        """
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/egg.png')
+
+        sprites = list()
+
+        sprites.append(sprite_sheet.get_image(0, 0))
+        sprites.append(sprite_sheet.get_image(0, 1))
+        sprites.append(sprite_sheet.get_image(0, 2))
+        sprites.append(sprite_sheet.get_image(0, 3))
+
+        return sprites
 
     @staticmethod
     def get_all_player_sprites(number_of_sprites: int) -> dict[str, list[pygame.Surface]]:
@@ -116,16 +273,6 @@ class SpriteHelper:
             sprites['left_up'].append(sprite_sheet.get_image(5, number))
 
         return sprites
-
-    @staticmethod
-    def get_life_icon() -> pygame.Surface:
-        """
-        Return the life icon for the dashboard, 64 x 64 pixels.
-
-        :return: life icon
-        """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
-        return sprite_sheet.get_image(1, 2)
 
     @staticmethod
     def get_all_arrow_sprites() -> dict[str, list[pygame.Surface]]:
@@ -213,75 +360,6 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
-    def get_tombstone_frames() -> list[pygame.Surface]:
-        """
-        Return 4 frames of the enemy tombstone.
-
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png')
-
-        sprites = list()
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-
-        return sprites
-
-    @staticmethod
-    def get_boss_tombstone_frames() -> list[pygame.Surface]:
-        """
-        Return 18 frames of the vanishing boss, 3 x 3 tiles each.
-
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet('img/vanishing-flare-point.png', 3)
-
-        sprites = list()
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-        sprites.append(sprite_sheet.get_image(0, 4))
-        sprites.append(sprite_sheet.get_image(0, 5))
-        sprites.append(sprite_sheet.get_image(0, 6))
-        sprites.append(sprite_sheet.get_image(0, 7))
-        sprites.append(sprite_sheet.get_image(0, 8))
-        sprites.append(sprite_sheet.get_image(0, 9))
-        sprites.append(sprite_sheet.get_image(0, 10))
-        sprites.append(sprite_sheet.get_image(0, 11))
-        sprites.append(sprite_sheet.get_image(0, 12))
-        sprites.append(sprite_sheet.get_image(0, 13))
-        sprites.append(sprite_sheet.get_image(0, 14))
-        sprites.append(sprite_sheet.get_image(0, 15))
-        sprites.append(sprite_sheet.get_image(0, 16))
-        sprites.append(sprite_sheet.get_image(0, 17))
-
-        return sprites
-
-    @staticmethod
-    def get_vanishing_point_frames() -> list[pygame.Surface]:
-        """
-        Return 8 frames of the vanishing point.
-
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-point.png')
-
-        sprites = list()
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-        sprites.append(sprite_sheet.get_image(0, 4))
-        sprites.append(sprite_sheet.get_image(0, 5))
-        sprites.append(sprite_sheet.get_image(0, 6))
-        sprites.append(sprite_sheet.get_image(0, 7))
-
-        return sprites
-
-    @staticmethod
     def get_all_bow_sprites() -> dict[str, list[pygame.Surface]]:
         """
         Return one bow image for each of 8 directions.
@@ -312,7 +390,7 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
-    def get_all_tnt_sprites() -> dict[str, list[pygame.Surface]]:
+    def get_all_explosion_sprites() -> dict[str, list[pygame.Surface]]:
         """
         Return one TNT image for each of 4 directions.
 
@@ -334,69 +412,14 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
-    def get_enemy_icon(enemy_type: EnemyType, size: tuple[int, int]) -> pygame.Surface:
+    def get_life_dashboard_icon() -> pygame.Surface:
         """
-        Return the icon of the enemy type (its first frame) scaled to the size, for the summary.
+        Return the life icon for the dashboard, 64 x 64 pixels.
 
-        :param enemy_type: type of the enemy
-        :param size: size of the returned icon
-        :return: enemy icon
+        :return: life icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', size=size)
-        return sprite_sheet.get_image(0, 0)
-
-    @staticmethod
-    def get_monster_frames(name: str) -> list[pygame.Surface]:
-        """
-        Return 4 animation frames of the monster.
-
-        :param name: file name of the monster sprite sheet without the extension
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png')
-
-        sprites = list()
-
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-
-        return sprites
-
-    @staticmethod
-    def get_octopus_frames(name: str) -> list[pygame.Surface]:
-        """
-        Return 16 animation frames of the octopus, 3 x 3 tiles each.
-
-        :param name: file name of the octopus sprite sheet without the extension
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{name}.png', 3)
-
-        sprites = list()
-
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-
-        sprites.append(sprite_sheet.get_image(0, 4))
-        sprites.append(sprite_sheet.get_image(0, 5))
-        sprites.append(sprite_sheet.get_image(0, 6))
-        sprites.append(sprite_sheet.get_image(0, 7))
-
-        sprites.append(sprite_sheet.get_image(0, 8))
-        sprites.append(sprite_sheet.get_image(0, 9))
-        sprites.append(sprite_sheet.get_image(0, 10))
-        sprites.append(sprite_sheet.get_image(0, 11))
-
-        sprites.append(sprite_sheet.get_image(0, 12))
-        sprites.append(sprite_sheet.get_image(0, 13))
-        sprites.append(sprite_sheet.get_image(0, 14))
-        sprites.append(sprite_sheet.get_image(0, 15))
-
-        return sprites
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
+        return sprite_sheet.get_image(1, 2)
 
     @staticmethod
     def get_sword_header_icons() -> list[pygame.Surface]:
@@ -437,22 +460,16 @@ class SpriteHelper:
         return sprite_sheet.get_image(1, 0)
 
     @staticmethod
-    def get_fire_ball_frames() -> list[pygame.Surface]:
+    def get_enemy_icon(enemy_type: EnemyType, size: tuple[int, int]) -> pygame.Surface:
         """
-        Return 4 animation frames of the fireball.
+        Return the icon of the enemy type (its first frame) scaled to the size, for the summary.
 
-        :return: frames in animation order
+        :param enemy_type: type of the enemy
+        :param size: size of the returned icon
+        :return: enemy icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/fireball.png')
-
-        sprites = list()
-
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-
-        return sprites
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', size=size)
+        return sprite_sheet.get_image(0, 0)
 
     @staticmethod
     def get_game_over_lose_image(size: tuple[int, int]) -> pygame.Surface:
@@ -509,24 +526,6 @@ class SpriteHelper:
         :return: studio page image
         """
         return SpriteHelper._get_page_image('img/studio-page.png', size)
-
-    @staticmethod
-    def get_egg_frames() -> list[pygame.Surface]:
-        """
-        Return 4 animation frames of the egg.
-
-        :return: frames in animation order
-        """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/egg.png')
-
-        sprites = list()
-
-        sprites.append(sprite_sheet.get_image(0, 0))
-        sprites.append(sprite_sheet.get_image(0, 1))
-        sprites.append(sprite_sheet.get_image(0, 2))
-        sprites.append(sprite_sheet.get_image(0, 3))
-
-        return sprites
 
     @staticmethod
     def _create_sprite_sheet(path: str, source_size: int = SOURCE_TILE_SIZE,

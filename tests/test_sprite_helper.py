@@ -39,7 +39,7 @@ class TestSingleImages:
         assert SpriteHelper.get_multi_tile_image('octopus-enemy', 1, 0, 3).get_size() == BOSS_SIZE
 
     @pytest.mark.parametrize('get_icon', [
-        SpriteHelper.get_life_icon,
+        SpriteHelper.get_life_dashboard_icon,
         SpriteHelper.get_bow_header_icon,
         SpriteHelper.get_explosion_header_icon,
     ])
@@ -92,7 +92,7 @@ class TestSpriteCostumesMatrix:
         sprite_costumes = [SpriteCostume(pygame.Surface((1, 1)), number_of_frames)
                            for number_of_frames in [2, 4, 6, 8]]
 
-        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix('spider-enemy-small', sprite_costumes)
+        sprite_costumes_matrix = SpriteHelper.get_costumes_matrix('spider-enemy-small', sprite_costumes)
 
         assert len(sprite_costumes_matrix) == 4
         assert [len(cell_costumes) for cell_costumes in sprite_costumes_matrix] == [5, 5, 5, 5]
@@ -101,7 +101,7 @@ class TestSpriteCostumesMatrix:
         sprite_costumes = [SpriteCostume(pygame.Surface((1, 1)), number_of_frames)
                            for number_of_frames in [2, 4, 6, 8]]
 
-        sprite_costumes_matrix = SpriteHelper.get_sprite_costumes_matrix('spider-enemy-small', sprite_costumes)
+        sprite_costumes_matrix = SpriteHelper.get_costumes_matrix('spider-enemy-small', sprite_costumes)
 
         assert [{sprite_costume.number_of_frames for sprite_costume in cell_costumes}
                 for cell_costumes in sprite_costumes_matrix] == [{2}, {4}, {6}, {8}]
@@ -130,7 +130,7 @@ class TestImagesByDirection:
     @pytest.mark.parametrize('get_sprites, directions', [
         (SpriteHelper.get_all_arrow_sprites, EIGHT_DIRECTIONS),
         (SpriteHelper.get_all_bow_sprites, EIGHT_DIRECTIONS),
-        (SpriteHelper.get_all_tnt_sprites, FOUR_DIRECTIONS),
+        (SpriteHelper.get_all_explosion_sprites, FOUR_DIRECTIONS),
     ])
     def test_returns_one_tile_size_image_for_each_direction(self, get_sprites, directions):
         sprites = get_sprites()
