@@ -14,7 +14,12 @@ class SpriteHelper:
 
     # Size in pixels of a single tile in the source sprite sheet images
     SOURCE_TILE_SIZE = 16
-    SCALE = int(Settings.TILE_SIZE), int(Settings.TILE_SIZE)
+    # Size in pixels of a single tile on the screen
+    SCALED_TILE_SIZE = int(Settings.TILE_SIZE), int(Settings.TILE_SIZE)
+    # Size in pixels of the icons in the header and the dashboard
+    ICON_SIZE = 64, 64
+    # Size in pixels of the game over images in the source
+    GAME_OVER_IMAGE_SOURCE_SIZE = 120
 
     @staticmethod
     def get_tile_image(sprite_sheet_name: str, row: int, cell: int) -> pygame.Surface:
@@ -26,7 +31,7 @@ class SpriteHelper:
         :param cell: cell of the frame in the row
         :return: frame image
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png')
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
@@ -45,7 +50,8 @@ class SpriteHelper:
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
-    def get_sprite_costumes_matrix(sprite_sheet_name: str, sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
+    def get_sprite_costumes_matrix(sprite_sheet_name: str,
+                                   sprite_costumes: list[SpriteCostume]) -> list[list[SpriteCostume]]:
         """
         Return the costumes of every row of the sprite sheet for each cell: result[cell][row].
         Each costume takes the number of frames from sprite_costumes[cell].
@@ -54,7 +60,7 @@ class SpriteHelper:
         :param sprite_costumes: one costume per cell, giving its number of frames
         :return: costumes indexed by cell and then by row
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png')
         result = list()
 
         for cell in range(len(sprite_costumes)):
@@ -76,7 +82,7 @@ class SpriteHelper:
         :param number_of_sprites: number of walking images per direction
         :return: images by direction name
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/player.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/player.png')
 
         sprites = {
             'left': [],
@@ -118,7 +124,7 @@ class SpriteHelper:
 
         :return: life icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 2)
 
     @staticmethod
@@ -128,7 +134,7 @@ class SpriteHelper:
 
         :return: one-element image lists by direction name
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/arrow.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/arrow.png')
 
         sprites = {
             'left': [],
@@ -160,7 +166,7 @@ class SpriteHelper:
 
         :return: frames by direction name
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/sword.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/sword.png')
 
         sprites = {
             'left': [],
@@ -213,7 +219,7 @@ class SpriteHelper:
 
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/skull.png')
 
         sprites = list()
         sprites.append(sprite_sheet.get_image(0, 0))
@@ -261,7 +267,7 @@ class SpriteHelper:
 
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-point.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-point.png')
 
         sprites = list()
         sprites.append(sprite_sheet.get_image(0, 0))
@@ -282,7 +288,7 @@ class SpriteHelper:
 
         :return: one-element image lists by direction name
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/bow.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/bow.png')
 
         sprites = {
             'left': [],
@@ -312,7 +318,7 @@ class SpriteHelper:
 
         :return: one-element image lists by direction name
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png')
 
         sprites = {
             'left': [],
@@ -336,7 +342,7 @@ class SpriteHelper:
         :param size: size of the returned icon
         :return: enemy icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', SpriteHelper.SOURCE_TILE_SIZE, size)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', size=size)
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
@@ -347,7 +353,7 @@ class SpriteHelper:
         :param name: file name of the monster sprite sheet without the extension
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png')
 
         sprites = list()
 
@@ -399,7 +405,7 @@ class SpriteHelper:
 
         :return: icons in wear level order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
 
         images = list()
         images.append(sprite_sheet.get_image(2, 0))
@@ -417,7 +423,7 @@ class SpriteHelper:
 
         :return: bow icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 1)
 
     @staticmethod
@@ -427,17 +433,17 @@ class SpriteHelper:
 
         :return: TNT icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 0)
 
     @staticmethod
     def get_fire_ball_frames() -> list[pygame.Surface]:
         """
-        Return 4 animation frames of the fire ball.
+        Return 4 animation frames of the fireball.
 
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/fireball.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/fireball.png')
 
         sprites = list()
 
@@ -456,8 +462,9 @@ class SpriteHelper:
         :param size: size of the returned image
         :return: game over lose image
         """
-        game_over_image_source_size = 120
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/game-over-you-lose.png', game_over_image_source_size, size)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(
+            'img/game-over-you-lose.png', SpriteHelper.GAME_OVER_IMAGE_SOURCE_SIZE, size
+        )
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
@@ -468,8 +475,9 @@ class SpriteHelper:
         :param size: size of the returned image
         :return: game over win image
         """
-        game_over_image_source_size = 120
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/game-over-you-win.png', game_over_image_source_size, size)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(
+            'img/game-over-you-win.png', SpriteHelper.GAME_OVER_IMAGE_SOURCE_SIZE, size
+        )
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
@@ -509,7 +517,7 @@ class SpriteHelper:
 
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/egg.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/egg.png')
 
         sprites = list()
 
@@ -521,7 +529,9 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
-    def _create_sprite_sheet(path: str, source_size: int, size: tuple[float, float]) -> SpriteSheet:
+    def _create_sprite_sheet(path: str, source_size: int = SOURCE_TILE_SIZE,
+                             size: tuple[float, float] = SCALED_TILE_SIZE) -> SpriteSheet:
+        # By default, a frame is one source tile scaled to one tile on the screen
         sprite_sheet = SpriteSheet(
             pygame.image.load(path).convert_alpha(),
             source_size,
