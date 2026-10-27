@@ -8,7 +8,7 @@ class VanishingPoint(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_vanishing_point_sprites()
+        self.sprites = SpriteHelper.get_vanishing_point_frames()
         self.number_of_sprites = 7
         self.costume_switching_threshold = 2
         self.costume_step_counter = 0

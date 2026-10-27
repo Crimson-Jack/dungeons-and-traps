@@ -217,7 +217,7 @@ class Level:
 
         :param position: position of the tombstone
         """
-        sprites = SpriteHelper.get_all_tombstone_sprites()
+        sprites = SpriteHelper.get_tombstone_frames()
         self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,)))
 
     def add_boss_tombstone(self, position: tuple[int, int]) -> None:
@@ -226,7 +226,7 @@ class Level:
 
         :param position: position of the tombstone
         """
-        sprites = SpriteHelper.get_all_boss_tombstone_sprites()
+        sprites = SpriteHelper.get_boss_tombstone_frames()
         self._tombstones.append(Tombstone(sprites, position, (self._level_sprite_groups.bottom_sprites_layer,), 0))
 
     def add_vanishing_point(self, position: tuple[int, int]) -> None:
@@ -255,9 +255,9 @@ class Level:
         name = random.choice(['monster-enemy-blue-deaf', 'monster-enemy-green-deaf', 'monster-enemy-red-deaf'])
         tile_details = MonsterTileDetailsFactory.create(name)
 
-        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_all_monster_sprites(name),
+        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_monster_frames(name),
                                                     self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
-        sprite_image_in_damage_state = SpriteHelper.get_sprite_image(name, 1, 0)
+        sprite_image_in_damage_state = SpriteHelper.get_tile_image(name, 1, 0)
 
         groups = self._level_sprite_groups.top_sprites_layer, self._level_sprite_groups.enemy_sprites
 
@@ -280,9 +280,9 @@ class Level:
         name = 'octopus-enemy'
         tile_details = OctopusTileDetails(None, None)
 
-        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_all_octopus_sprites(name),
+        sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_octopus_frames(name),
                                                     self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
-        sprite_image_in_damage_state = SpriteHelper.get_large_sprite_image(name, 1, 0, 3)
+        sprite_image_in_damage_state = SpriteHelper.get_multi_tile_image(name, 1, 0, 3)
 
         groups = self._level_sprite_groups.the_highest_sprites_layer, self._level_sprite_groups.enemy_sprites
 

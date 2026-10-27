@@ -21,7 +21,7 @@ class Dashboard:
         self.game_manager = game_manager
 
         # Life image
-        self.life_image = SpriteHelper.get_life_sprite()
+        self.life_image = SpriteHelper.get_life_icon()
 
         # Fonts
         self.text_color = Settings.TEXT_COLOR

@@ -22,7 +22,7 @@ class FireBallEnemy(pygame.sprite.Sprite):
         self.damage_power = 30
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_fire_ball_enemy_sprites()
+        self.sprites = SpriteHelper.get_fire_ball_frames()
         self.number_of_sprites = len(self.sprites)
         self.costume_switching_threshold = 10
         self.costume_step_counter = 0

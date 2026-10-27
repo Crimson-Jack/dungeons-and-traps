@@ -15,7 +15,7 @@ class Egg(ItemToCollect):
         self.sound_manager = SoundManager()
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_egg_sprites()
+        self.sprites = SpriteHelper.get_egg_frames()
         self.number_of_sprites = len(self.sprites)
         self.costume_switching_threshold = 100
         self.costume_step_counter = 0

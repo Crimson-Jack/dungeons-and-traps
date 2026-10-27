@@ -16,10 +16,10 @@ class Header:
         self.game_manager = game_manager
 
         # Sword and bow images
-        self.sword_images = SpriteHelper.get_sword_images_to_header_view()
+        self.sword_images = SpriteHelper.get_sword_header_icons()
         self.sword_image = self.sword_images[0]
-        self.bow_image = SpriteHelper.get_bow_image_to_header_view()
-        self.explosion_image = SpriteHelper.get_explosion_image_to_header_view()
+        self.bow_image = SpriteHelper.get_bow_header_icon()
+        self.explosion_image = SpriteHelper.get_explosion_header_icon()
 
         # Fonts
         self.text_color = Settings.TEXT_COLOR
