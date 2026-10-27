@@ -17,17 +17,6 @@ class SpriteHelper:
     SCALE = int(Settings.TILE_SIZE), int(Settings.TILE_SIZE)
 
     @staticmethod
-    def _create_sprite_sheet(path: str, source_size: int, size: tuple[float, float]) -> SpriteSheet:
-        sprite_sheet = SpriteSheet(
-            pygame.image.load(path).convert_alpha(),
-            source_size,
-            source_size,
-            size
-        )
-
-        return sprite_sheet
-
-    @staticmethod
     def get_tile_image(sprite_sheet_name: str, row: int, cell: int) -> pygame.Surface:
         """
         Return one frame of 1 x 1 tile from img/<sprite_sheet_name>.png, scaled to the tile size.
@@ -70,13 +59,13 @@ class SpriteHelper:
         sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{sprite_sheet_name}.png', SpriteHelper.SOURCE_TILE_SIZE, SpriteHelper.SCALE)
         result = list()
 
-        for cell in range(0, len(sprite_costumes)):
-            rows = list()
-            for row in range(0, sprite_sheet.number_of_rows):
-                rows.append(
+        for cell in range(len(sprite_costumes)):
+            cell_costumes = list()
+            for row in range(sprite_sheet.number_of_rows):
+                cell_costumes.append(
                     SpriteCostume(sprite_sheet.get_image(row, cell), sprite_costumes[cell].number_of_frames)
                 )
-            result.append(rows)
+            result.append(cell_costumes)
 
         return result
 
@@ -416,7 +405,7 @@ class SpriteHelper:
 
         :return: icons in wear level order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
 
         images = list()
         images.append(sprite_sheet.get_image(2, 0))
@@ -434,7 +423,7 @@ class SpriteHelper:
 
         :return: bow icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
         return sprite_sheet.get_image(1, 1)
 
     @staticmethod
@@ -444,7 +433,7 @@ class SpriteHelper:
 
         :return: TNT icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', SpriteHelper.SOURCE_TILE_SIZE, (64, 64))
         return sprite_sheet.get_image(1, 0)
 
     @staticmethod
@@ -536,6 +525,17 @@ class SpriteHelper:
         sprites.append(sprite_sheet.get_image(0, 3))
 
         return sprites
+
+    @staticmethod
+    def _create_sprite_sheet(path: str, source_size: int, size: tuple[float, float]) -> SpriteSheet:
+        sprite_sheet = SpriteSheet(
+            pygame.image.load(path).convert_alpha(),
+            source_size,
+            source_size,
+            size
+        )
+
+        return sprite_sheet
 
     @staticmethod
     def _get_page_image(path: str, size: tuple[int, int]) -> pygame.Surface:
