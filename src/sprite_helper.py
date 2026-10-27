@@ -41,9 +41,7 @@ class SpriteHelper:
         :param number_of_tiles: width and height of one frame in tiles
         :return: frame image
         """
-        octopus_source_tile_size = SpriteHelper.SOURCE_TILE_SIZE * number_of_tiles
-        octopus_scale = int(Settings.TILE_SIZE * number_of_tiles), int(Settings.TILE_SIZE * number_of_tiles)
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{name}.png', number_of_tiles)
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
@@ -232,9 +230,7 @@ class SpriteHelper:
 
         :return: frames in animation order
         """
-        source_tile_size = SpriteHelper.SOURCE_TILE_SIZE * 3
-        scale = int(Settings.TILE_SIZE * 3), int(Settings.TILE_SIZE * 3)
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/vanishing-flare-point.png', source_tile_size, scale)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet('img/vanishing-flare-point.png', 3)
 
         sprites = list()
         sprites.append(sprite_sheet.get_image(0, 0))
@@ -370,9 +366,7 @@ class SpriteHelper:
         :param name: file name of the octopus sprite sheet without the extension
         :return: frames in animation order
         """
-        octopus_source_tile_size = SpriteHelper.SOURCE_TILE_SIZE * 3
-        octopus_scale = int(Settings.TILE_SIZE * 3), int(Settings.TILE_SIZE * 3)
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{name}.png', octopus_source_tile_size, octopus_scale)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{name}.png', 3)
 
         sprites = list()
 
@@ -536,6 +530,13 @@ class SpriteHelper:
         )
 
         return sprite_sheet
+
+    @staticmethod
+    def _create_multi_tile_sprite_sheet(path: str, number_of_tiles: int) -> SpriteSheet:
+        # Each frame takes number_of_tiles x number_of_tiles tiles in the source and on the screen
+        source_size = SpriteHelper.SOURCE_TILE_SIZE * number_of_tiles
+        scaled_size = int(Settings.TILE_SIZE * number_of_tiles), int(Settings.TILE_SIZE * number_of_tiles)
+        return SpriteHelper._create_sprite_sheet(path, source_size, scaled_size)
 
     @staticmethod
     def _get_page_image(path: str, size: tuple[int, int]) -> pygame.Surface:
