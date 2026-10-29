@@ -49,28 +49,7 @@ class Arrow(CustomDrawSprite):
         self.damage_power = 60
 
     def get_image(self):
-        sprites = SpriteHelper.get_all_arrow_sprites()
-
-        image = None
-
-        if self.direction == Direction.RIGHT:
-            image = sprites['right'][0]
-        elif self.direction == Direction.LEFT:
-            image = sprites['left'][0]
-        elif self.direction == Direction.UP:
-            image = sprites['up'][0]
-        elif self.direction == Direction.DOWN:
-            image = sprites['down'][0]
-        elif self.direction == Direction.RIGHT_UP:
-            image = sprites['right_up'][0]
-        elif self.direction == Direction.LEFT_UP:
-            image = sprites['left_up'][0]
-        elif self.direction == Direction.RIGHT_DOWN:
-            image = sprites['right_down'][0]
-        elif self.direction == Direction.LEFT_DOWN:
-            image = sprites['left_down'][0]
-
-        return image
+        return SpriteHelper.get_arrow_image_by_direction()[self.direction]
 
     def custom_draw(self, game_surface, offset):
         offset_position = self.rect.topleft + offset

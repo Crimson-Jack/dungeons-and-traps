@@ -22,7 +22,7 @@ class SwordWeapon(CustomDrawSprite):
         self.game_manager = game_manager
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_sword_sprites()
+        self.sprites = SpriteHelper.get_sword_frames_by_direction()
         self.costume_switching_threshold = 1
         self.number_of_sprites = 8
         self.costume_step_counter = 0
@@ -30,7 +30,7 @@ class SwordWeapon(CustomDrawSprite):
         self.costume_index = 0
 
         # Image
-        self.image = self.sprites['right'][0]
+        self.image = self.sprites[Direction.RIGHT][0]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -53,18 +53,7 @@ class SwordWeapon(CustomDrawSprite):
     def set_costume(self, new_direction, index):
         self.direction = new_direction
         # Set image based on direction
-        if self.direction == Direction.RIGHT:
-            self.image = self.sprites['right'][index]
-        elif self.direction == Direction.LEFT:
-            self.image = self.sprites['left'][index]
-        elif (self.direction == Direction.UP or
-              self.direction == Direction.LEFT_UP or
-              self.direction == Direction.RIGHT_UP):
-            self.image = self.sprites['up'][index]
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
-            self.image = self.sprites['down'][index]
+        self.image = self.sprites[self.direction][index]
 
     def set_position(self, position):
         # Calculate additional offset

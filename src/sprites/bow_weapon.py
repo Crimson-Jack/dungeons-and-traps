@@ -15,10 +15,10 @@ class BowWeapon(CustomDrawSprite):
         self.sound_manager = SoundManager()
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_bow_sprites()
+        self.sprites = SpriteHelper.get_bow_image_by_direction()
 
         # Image
-        self.image = self.sprites['right'][0]
+        self.image = self.sprites[Direction.RIGHT]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -72,22 +72,7 @@ class BowWeapon(CustomDrawSprite):
     def set_costume(self, new_direction):
         self.direction = new_direction
         # Set image based on direction
-        if self.direction == Direction.RIGHT:
-            self.image = self.sprites['right'][0]
-        elif self.direction == Direction.LEFT:
-            self.image = self.sprites['left'][0]
-        elif self.direction == Direction.UP:
-            self.image = self.sprites['up'][0]
-        elif self.direction == Direction.DOWN:
-            self.image = self.sprites['down'][0]
-        elif self.direction == Direction.RIGHT_UP:
-            self.image = self.sprites['right_up'][0]
-        elif self.direction == Direction.LEFT_UP:
-            self.image = self.sprites['left_up'][0]
-        elif self.direction == Direction.RIGHT_DOWN:
-            self.image = self.sprites['right_down'][0]
-        elif self.direction == Direction.LEFT_DOWN:
-            self.image = self.sprites['left_down'][0]
+        self.image = self.sprites[self.direction]
 
     def fire(self):
         if self.is_armed:

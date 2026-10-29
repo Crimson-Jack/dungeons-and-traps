@@ -33,11 +33,11 @@ class Player(CustomDrawSprite):
         self.number_of_sprites = 4
         self.step_counter = 0
         self.costume_index = 0
-        self.sprites = SpriteHelper.get_all_player_sprites(self.number_of_sprites)
+        self.sprites = SpriteHelper.get_player_frames_by_direction(self.number_of_sprites)
 
         # Image
         self.position = position
-        self.image = self.sprites['right'][0]
+        self.image = self.sprites[Direction.RIGHT][0]
         self.rect = self.image.get_rect(topleft=self.position)
         self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-5), 0)
 
@@ -87,22 +87,7 @@ class Player(CustomDrawSprite):
 
     def set_costume(self, current_direction, index):
         # Select appropriate costume for sprite
-        if current_direction == Direction.RIGHT:
-            self.image = self.sprites['right'][index]
-        elif current_direction == Direction.LEFT:
-            self.image = self.sprites['left'][index]
-        elif current_direction == Direction.UP:
-            self.image = self.sprites['up'][index]
-        elif current_direction == Direction.DOWN:
-            self.image = self.sprites['down'][index]
-        elif current_direction == Direction.RIGHT_UP:
-            self.image = self.sprites['right_up'][index]
-        elif current_direction == Direction.RIGHT_DOWN:
-            self.image = self.sprites['right_down'][index]
-        elif current_direction == Direction.LEFT_UP:
-            self.image = self.sprites['left_up'][index]
-        elif current_direction == Direction.LEFT_DOWN:
-            self.image = self.sprites['left_down'][index]
+        self.image = self.sprites[current_direction][index]
 
     def reset_costume(self):
         # Reset counter and costume index

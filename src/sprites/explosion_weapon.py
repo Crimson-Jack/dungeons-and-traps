@@ -22,10 +22,10 @@ class ExplosionWeapon(CustomDrawSprite):
         self.enemy_sprites = enemy_sprites
 
         # Sprite animation variables
-        self.sprites = SpriteHelper.get_all_explosion_sprites()
+        self.sprites = SpriteHelper.get_explosion_image_by_direction()
 
         # Image
-        self.image = self.sprites['right'][0]
+        self.image = self.sprites[Direction.RIGHT]
         self.rect = self.image.get_rect(topleft=position)
         self.hit_box = self.rect
 
@@ -95,18 +95,7 @@ class ExplosionWeapon(CustomDrawSprite):
     def set_costume(self, new_direction):
         self.direction = new_direction
         # Set image based on direction
-        if self.direction == Direction.RIGHT:
-            self.image = self.sprites['right'][0]
-        elif self.direction == Direction.LEFT:
-            self.image = self.sprites['left'][0]
-        elif (self.direction == Direction.UP or
-              self.direction == Direction.LEFT_UP or
-              self.direction == Direction.RIGHT_UP):
-            self.image = self.sprites['up'][0]
-        elif (self.direction == Direction.DOWN or
-              self.direction == Direction.LEFT_DOWN or
-              self.direction == Direction.RIGHT_DOWN):
-            self.image = self.sprites['down'][0]
+        self.image = self.sprites[self.direction]
 
     def fire(self) -> bool:
         if self.is_armed and self.last_center_position_with_offset is not None:

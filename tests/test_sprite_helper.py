@@ -2,6 +2,7 @@ import pygame
 import pytest
 
 from settings import Settings
+from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
 from src.sprite_costume import SpriteCostume
 from src.sprite_helper import SpriteHelper
@@ -9,8 +10,12 @@ from src.sprite_helper import SpriteHelper
 TILE_SIZE = (Settings.TILE_SIZE, Settings.TILE_SIZE)
 BOSS_SIZE = (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3)
 ICON_SIZE = (64, 64)
-EIGHT_DIRECTIONS = {'left', 'right', 'up', 'down', 'right_down', 'left_down', 'left_up', 'right_up'}
-FOUR_DIRECTIONS = {'left', 'right', 'up', 'down'}
+DIAGONAL_AND_VERTICAL_DIRECTIONS = [
+    (Direction.RIGHT_DOWN, Direction.DOWN),
+    (Direction.LEFT_DOWN, Direction.DOWN),
+    (Direction.RIGHT_UP, Direction.UP),
+    (Direction.LEFT_UP, Direction.UP),
+]
 
 
 # SpriteHelper loads real images from img/ with convert_alpha(), so a display mode must be set around every test.
@@ -108,44 +113,50 @@ class TestSpriteCostumesMatrix:
 
 
 class TestImagesByDirection:
-    def test_player_has_standing_and_walking_images_for_eight_directions(self):
-        player_sprites = SpriteHelper.get_all_player_sprites(4)
+    def test_player_has_standing_and_walking_images_for_every_direction(self):
+        player_frames = SpriteHelper.get_player_frames_by_direction(4)
 
-        assert set(player_sprites) == EIGHT_DIRECTIONS
-        assert {len(images) for images in player_sprites.values()} == {5}
-        assert sizes(image for images in player_sprites.values() for image in images) == {TILE_SIZE}
+        assert set(player_frames) == set(Direction)
+        assert {len(frames) for frames in player_frames.values()} == {5}
+        assert sizes(frame for frames in player_frames.values() for frame in frames) == {TILE_SIZE}
 
-    @pytest.mark.parametrize('diagonal_direction, vertical_direction', [
-        ('right_down', 'down'),
-        ('left_down', 'down'),
-        ('right_up', 'up'),
-        ('left_up', 'up'),
-    ])
+    @pytest.mark.parametrize('diagonal_direction, vertical_direction', DIAGONAL_AND_VERTICAL_DIRECTIONS)
     def test_player_diagonal_direction_uses_vertical_images(self, diagonal_direction, vertical_direction):
-        player_sprites = SpriteHelper.get_all_player_sprites(4)
+        player_frames = SpriteHelper.get_player_frames_by_direction(4)
 
-        assert ([image_bytes(image) for image in player_sprites[diagonal_direction]]
-                == [image_bytes(image) for image in player_sprites[vertical_direction]])
+        assert ([image_bytes(frame) for frame in player_frames[diagonal_direction]]
+                == [image_bytes(frame) for frame in player_frames[vertical_direction]])
 
-    @pytest.mark.parametrize('get_sprites, directions', [
-        (SpriteHelper.get_all_arrow_sprites, EIGHT_DIRECTIONS),
-        (SpriteHelper.get_all_bow_sprites, EIGHT_DIRECTIONS),
-        (SpriteHelper.get_all_explosion_sprites, FOUR_DIRECTIONS),
+    @pytest.mark.parametrize('get_image_by_direction', [
+        SpriteHelper.get_arrow_image_by_direction,
+        SpriteHelper.get_bow_image_by_direction,
+        SpriteHelper.get_explosion_image_by_direction,
     ])
-    def test_returns_one_tile_size_image_for_each_direction(self, get_sprites, directions):
-        sprites = get_sprites()
+    def test_returns_one_tile_size_image_for_every_direction(self, get_image_by_direction):
+        image_by_direction = get_image_by_direction()
 
-        assert set(sprites) == directions
-        assert {len(images) for images in sprites.values()} == {1}
-        assert sizes(images[0] for images in sprites.values()) == {TILE_SIZE}
+        assert set(image_by_direction) == set(Direction)
+        assert sizes(image_by_direction.values()) == {TILE_SIZE}
 
-    def test_sword_has_eight_frames_for_four_directions(self):
-        sword_sprites = SpriteHelper.get_all_sword_sprites()
+    @pytest.mark.parametrize('diagonal_direction, vertical_direction', DIAGONAL_AND_VERTICAL_DIRECTIONS)
+    def test_explosion_diagonal_direction_uses_vertical_image(self, diagonal_direction, vertical_direction):
+        image_by_direction = SpriteHelper.get_explosion_image_by_direction()
 
-        assert set(sword_sprites) == FOUR_DIRECTIONS
-        assert {len(frames) for frames in sword_sprites.values()} == {8}
-        assert sizes(frame for frames in sword_sprites.values() for frame in frames) == {TILE_SIZE}
+        assert image_by_direction[diagonal_direction] is image_by_direction[vertical_direction]
+
+    def test_sword_has_eight_frames_for_every_direction(self):
+        sword_frames = SpriteHelper.get_sword_frames_by_direction()
+
+        assert set(sword_frames) == set(Direction)
+        assert {len(frames) for frames in sword_frames.values()} == {8}
+        assert sizes(frame for frames in sword_frames.values() for frame in frames) == {TILE_SIZE}
+
+    @pytest.mark.parametrize('diagonal_direction, vertical_direction', DIAGONAL_AND_VERTICAL_DIRECTIONS)
+    def test_sword_diagonal_direction_uses_vertical_frames(self, diagonal_direction, vertical_direction):
+        sword_frames = SpriteHelper.get_sword_frames_by_direction()
+
+        assert sword_frames[diagonal_direction] is sword_frames[vertical_direction]
 
     def test_sword_repeats_its_fourth_frame_until_the_end(self):
-        for frames in SpriteHelper.get_all_sword_sprites().values():
+        for frames in SpriteHelper.get_sword_frames_by_direction().values():
             assert len({image_bytes(frame) for frame in frames[3:]}) == 1

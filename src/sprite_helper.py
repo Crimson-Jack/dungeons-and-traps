@@ -1,6 +1,7 @@
 import pygame
 
 from settings import Settings
+from src.enums.direction import Direction
 from src.enums.enemy_type import EnemyType
 from src.sprite_costume import SpriteCostume
 from src.spritesheet import SpriteSheet
@@ -231,185 +232,174 @@ class SpriteHelper:
         return sprites
 
     @staticmethod
-    def get_all_player_sprites(number_of_sprites: int) -> dict[str, list[pygame.Surface]]:
+    def get_player_frames_by_direction(number_of_walking_frames: int) -> dict[Direction, list[pygame.Surface]]:
         """
         Return the player images for 8 directions: the standing image followed by the walking images.
         Diagonal directions use the up and down images.
 
-        :param number_of_sprites: number of walking images per direction
-        :return: images by direction name
+        :param number_of_walking_frames: number of walking images per direction
+        :return: images by direction
         """
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/player.png')
 
         sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': [],
-            'right_down': [],
-            'left_down': [],
-            'left_up': [],
-            'right_up': []}
+            Direction.LEFT: [],
+            Direction.RIGHT: [],
+            Direction.UP: [],
+            Direction.DOWN: [],
+            Direction.RIGHT_DOWN: [],
+            Direction.LEFT_DOWN: [],
+            Direction.LEFT_UP: [],
+            Direction.RIGHT_UP: []}
 
         # Sprites with the state: standing
-        sprites['right'].append(sprite_sheet.get_image(0, 0))
-        sprites['left'].append(sprite_sheet.get_image(2, 0))
-        sprites['up'].append(sprite_sheet.get_image(4, 0))
-        sprites['down'].append(sprite_sheet.get_image(6, 0))
-        sprites['right_down'].append(sprite_sheet.get_image(6, 0))
-        sprites['right_up'].append(sprite_sheet.get_image(4, 0))
-        sprites['left_down'].append(sprite_sheet.get_image(6, 0))
-        sprites['left_up'].append(sprite_sheet.get_image(4, 0))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 0))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(2, 0))
+        sprites[Direction.UP].append(sprite_sheet.get_image(4, 0))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(6, 0))
+        sprites[Direction.RIGHT_DOWN].append(sprite_sheet.get_image(6, 0))
+        sprites[Direction.RIGHT_UP].append(sprite_sheet.get_image(4, 0))
+        sprites[Direction.LEFT_DOWN].append(sprite_sheet.get_image(6, 0))
+        sprites[Direction.LEFT_UP].append(sprite_sheet.get_image(4, 0))
 
         # Sprites with the state: walking
-        for number in range(0, number_of_sprites):
-            sprites['right'].append(sprite_sheet.get_image(1, number))
-            sprites['left'].append(sprite_sheet.get_image(3, number))
-            sprites['up'].append(sprite_sheet.get_image(5, number))
-            sprites['down'].append(sprite_sheet.get_image(7, number))
-            sprites['right_down'].append(sprite_sheet.get_image(7, number))
-            sprites['right_up'].append(sprite_sheet.get_image(5, number))
-            sprites['left_down'].append(sprite_sheet.get_image(7, number))
-            sprites['left_up'].append(sprite_sheet.get_image(5, number))
+        for number in range(number_of_walking_frames):
+            sprites[Direction.RIGHT].append(sprite_sheet.get_image(1, number))
+            sprites[Direction.LEFT].append(sprite_sheet.get_image(3, number))
+            sprites[Direction.UP].append(sprite_sheet.get_image(5, number))
+            sprites[Direction.DOWN].append(sprite_sheet.get_image(7, number))
+            sprites[Direction.RIGHT_DOWN].append(sprite_sheet.get_image(7, number))
+            sprites[Direction.RIGHT_UP].append(sprite_sheet.get_image(5, number))
+            sprites[Direction.LEFT_DOWN].append(sprite_sheet.get_image(7, number))
+            sprites[Direction.LEFT_UP].append(sprite_sheet.get_image(5, number))
 
         return sprites
 
     @staticmethod
-    def get_all_arrow_sprites() -> dict[str, list[pygame.Surface]]:
+    def get_arrow_image_by_direction() -> dict[Direction, pygame.Surface]:
         """
         Return one arrow image for each of 8 directions.
 
-        :return: one-element image lists by direction name
+        :return: image by direction
         """
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/arrow.png')
 
-        sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': [],
-            'right_up': [],
-            'left_up': [],
-            'right_down': [],
-            'left_down': []
+        return {
+            Direction.RIGHT: sprite_sheet.get_image(0, 0),
+            Direction.LEFT: sprite_sheet.get_image(1, 0),
+            Direction.UP: sprite_sheet.get_image(2, 0),
+            Direction.DOWN: sprite_sheet.get_image(3, 0),
+            Direction.RIGHT_UP: sprite_sheet.get_image(4, 0),
+            Direction.LEFT_UP: sprite_sheet.get_image(5, 0),
+            Direction.RIGHT_DOWN: sprite_sheet.get_image(6, 0),
+            Direction.LEFT_DOWN: sprite_sheet.get_image(7, 0),
         }
 
-        sprites['right'].append(sprite_sheet.get_image(0, 0))
-        sprites['left'].append(sprite_sheet.get_image(1, 0))
-        sprites['up'].append(sprite_sheet.get_image(2, 0))
-        sprites['down'].append(sprite_sheet.get_image(3, 0))
-        sprites['right_up'].append(sprite_sheet.get_image(4, 0))
-        sprites['left_up'].append(sprite_sheet.get_image(5, 0))
-        sprites['right_down'].append(sprite_sheet.get_image(6, 0))
-        sprites['left_down'].append(sprite_sheet.get_image(7, 0))
-
-        return sprites
-
     @staticmethod
-    def get_all_sword_sprites() -> dict[str, list[pygame.Surface]]:
+    def get_sword_frames_by_direction() -> dict[Direction, list[pygame.Surface]]:
         """
-        Return 8 frames of the sword strike for each of 4 directions.
+        Return 8 frames of the sword strike for each of 8 directions.
         The last frame is repeated, so the sword stays extended longer.
+        Diagonal directions use the up and down frames.
 
-        :return: frames by direction name
+        :return: frames by direction
         """
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/sword.png')
 
         sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': []}
+            Direction.LEFT: [],
+            Direction.RIGHT: [],
+            Direction.UP: [],
+            Direction.DOWN: []}
 
-        sprites['right'].append(sprite_sheet.get_image(0, 0))
-        sprites['right'].append(sprite_sheet.get_image(0, 1))
-        sprites['right'].append(sprite_sheet.get_image(0, 2))
-        sprites['right'].append(sprite_sheet.get_image(0, 3))
-        sprites['right'].append(sprite_sheet.get_image(0, 3))
-        sprites['right'].append(sprite_sheet.get_image(0, 3))
-        sprites['right'].append(sprite_sheet.get_image(0, 3))
-        sprites['right'].append(sprite_sheet.get_image(0, 3))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 0))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 1))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 2))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 3))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 3))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 3))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 3))
+        sprites[Direction.RIGHT].append(sprite_sheet.get_image(0, 3))
 
-        sprites['left'].append(sprite_sheet.get_image(1, 0))
-        sprites['left'].append(sprite_sheet.get_image(1, 1))
-        sprites['left'].append(sprite_sheet.get_image(1, 2))
-        sprites['left'].append(sprite_sheet.get_image(1, 3))
-        sprites['left'].append(sprite_sheet.get_image(1, 3))
-        sprites['left'].append(sprite_sheet.get_image(1, 3))
-        sprites['left'].append(sprite_sheet.get_image(1, 3))
-        sprites['left'].append(sprite_sheet.get_image(1, 3))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 0))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 1))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 2))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 3))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 3))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 3))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 3))
+        sprites[Direction.LEFT].append(sprite_sheet.get_image(1, 3))
 
-        sprites['up'].append(sprite_sheet.get_image(2, 0))
-        sprites['up'].append(sprite_sheet.get_image(2, 1))
-        sprites['up'].append(sprite_sheet.get_image(2, 2))
-        sprites['up'].append(sprite_sheet.get_image(2, 3))
-        sprites['up'].append(sprite_sheet.get_image(2, 3))
-        sprites['up'].append(sprite_sheet.get_image(2, 3))
-        sprites['up'].append(sprite_sheet.get_image(2, 3))
-        sprites['up'].append(sprite_sheet.get_image(2, 3))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 0))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 1))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 2))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 3))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 3))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 3))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 3))
+        sprites[Direction.UP].append(sprite_sheet.get_image(2, 3))
 
-        sprites['down'].append(sprite_sheet.get_image(3, 0))
-        sprites['down'].append(sprite_sheet.get_image(3, 1))
-        sprites['down'].append(sprite_sheet.get_image(3, 2))
-        sprites['down'].append(sprite_sheet.get_image(3, 3))
-        sprites['down'].append(sprite_sheet.get_image(3, 3))
-        sprites['down'].append(sprite_sheet.get_image(3, 3))
-        sprites['down'].append(sprite_sheet.get_image(3, 3))
-        sprites['down'].append(sprite_sheet.get_image(3, 3))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 0))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 1))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 2))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 3))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 3))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 3))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 3))
+        sprites[Direction.DOWN].append(sprite_sheet.get_image(3, 3))
+
+        # The sprite sheet has no diagonal frames; diagonal directions use the up and down frames
+        sprites[Direction.RIGHT_UP] = sprites[Direction.UP]
+        sprites[Direction.LEFT_UP] = sprites[Direction.UP]
+        sprites[Direction.RIGHT_DOWN] = sprites[Direction.DOWN]
+        sprites[Direction.LEFT_DOWN] = sprites[Direction.DOWN]
 
         return sprites
 
     @staticmethod
-    def get_all_bow_sprites() -> dict[str, list[pygame.Surface]]:
+    def get_bow_image_by_direction() -> dict[Direction, pygame.Surface]:
         """
         Return one bow image for each of 8 directions.
 
-        :return: one-element image lists by direction name
+        :return: image by direction
         """
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/bow.png')
 
-        sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': [],
-            'right_down': [],
-            'left_down': [],
-            'left_up': [],
-            'right_up': []}
-
-        sprites['right'].append(sprite_sheet.get_image(0, 0))
-        sprites['left'].append(sprite_sheet.get_image(1, 0))
-        sprites['up'].append(sprite_sheet.get_image(2, 0))
-        sprites['down'].append(sprite_sheet.get_image(3, 0))
-        sprites['right_up'].append(sprite_sheet.get_image(4, 0))
-        sprites['left_up'].append(sprite_sheet.get_image(5, 0))
-        sprites['right_down'].append(sprite_sheet.get_image(6, 0))
-        sprites['left_down'].append(sprite_sheet.get_image(7, 0))
-
-        return sprites
+        return {
+            Direction.RIGHT: sprite_sheet.get_image(0, 0),
+            Direction.LEFT: sprite_sheet.get_image(1, 0),
+            Direction.UP: sprite_sheet.get_image(2, 0),
+            Direction.DOWN: sprite_sheet.get_image(3, 0),
+            Direction.RIGHT_UP: sprite_sheet.get_image(4, 0),
+            Direction.LEFT_UP: sprite_sheet.get_image(5, 0),
+            Direction.RIGHT_DOWN: sprite_sheet.get_image(6, 0),
+            Direction.LEFT_DOWN: sprite_sheet.get_image(7, 0),
+        }
 
     @staticmethod
-    def get_all_explosion_sprites() -> dict[str, list[pygame.Surface]]:
+    def get_explosion_image_by_direction() -> dict[Direction, pygame.Surface]:
         """
-        Return one TNT image for each of 4 directions.
+        Return one TNT image for each of 8 directions.
+        Diagonal directions use the up and down images.
 
-        :return: one-element image lists by direction name
+        :return: image by direction
         """
         sprite_sheet = SpriteHelper._create_sprite_sheet('img/tnt.png')
 
-        sprites = {
-            'left': [],
-            'right': [],
-            'up': [],
-            'down': []}
+        images = {
+            Direction.RIGHT: sprite_sheet.get_image(0, 0),
+            Direction.LEFT: sprite_sheet.get_image(1, 0),
+            Direction.UP: sprite_sheet.get_image(2, 0),
+            Direction.DOWN: sprite_sheet.get_image(3, 0),
+        }
 
-        sprites['right'].append(sprite_sheet.get_image(0, 0))
-        sprites['left'].append(sprite_sheet.get_image(1, 0))
-        sprites['up'].append(sprite_sheet.get_image(2, 0))
-        sprites['down'].append(sprite_sheet.get_image(3, 0))
+        # The sprite sheet has no diagonal images; diagonal directions use the up and down images
+        images[Direction.RIGHT_UP] = images[Direction.UP]
+        images[Direction.LEFT_UP] = images[Direction.UP]
+        images[Direction.RIGHT_DOWN] = images[Direction.DOWN]
+        images[Direction.LEFT_DOWN] = images[Direction.DOWN]
 
-        return sprites
+        return images
 
     @staticmethod
     def get_life_dashboard_icon() -> pygame.Surface:
