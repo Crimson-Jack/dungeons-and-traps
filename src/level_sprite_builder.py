@@ -342,8 +342,9 @@ class LevelSpriteBuilder:
     def _create_octopus_enemy(self, item: pytmx.TiledObject, layer: pytmx.TiledObjectGroup,
                               position: tuple[int, int]) -> None:
         # Create an octopus placed on the map, three by three tiles; it is not counted in the level statistics
-        boss_size = Settings.TILE_SIZE * SpriteHelper.BOSS_SIZE_IN_TILES
-        sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item, (boss_size, boss_size))
+        boss_width_in_tiles, boss_height_in_tiles = SpriteHelper.BOSS_SIZE_IN_TILES
+        boss_size = Settings.TILE_SIZE * boss_width_in_tiles, Settings.TILE_SIZE * boss_height_in_tiles
+        sprites = TmxHelper.convert_to_sprite_costumes(self._tmx_data, item, boss_size)
         sprite_image_in_damage_state = SpriteHelper.get_multi_tile_image(item.name, 1, 0,
                                                                          SpriteHelper.BOSS_SIZE_IN_TILES)
         groups = self._level_sprite_groups.the_highest_sprites_layer, self._level_sprite_groups.enemy_sprites

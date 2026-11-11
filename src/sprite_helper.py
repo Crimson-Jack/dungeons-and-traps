@@ -14,15 +14,17 @@ class SpriteHelper:
     """
 
     # Size in pixels of a single tile in the source sprite sheet images
-    SOURCE_TILE_SIZE = 16
+    SOURCE_TILE_SIZE = 16, 16
     # Size in pixels of a single tile on the screen
     SCALED_TILE_SIZE = int(Settings.TILE_SIZE), int(Settings.TILE_SIZE)
     # Size in pixels of the icons in the header and the dashboard
     ICON_SIZE = 64, 64
     # Size in pixels of the game over images in the source
-    GAME_OVER_IMAGE_SOURCE_SIZE = 120
+    GAME_OVER_IMAGE_SOURCE_SIZE = 120, 120
+    # Size in pixels of the page images in the source
+    PAGE_IMAGE_SOURCE_SIZE = 320, 192
     # Width and height in tiles of the boss (octopus) frames and the vanishing boss frames
-    BOSS_SIZE_IN_TILES = 3
+    BOSS_SIZE_IN_TILES = 3, 3
 
     @staticmethod
     def get_tile_image(sprite_sheet_name: str, row: int, cell: int) -> pygame.Surface:
@@ -38,18 +40,18 @@ class SpriteHelper:
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
-    def get_multi_tile_image(sprite_sheet_name: str, row: int, cell: int, number_of_tiles: int) -> pygame.Surface:
+    def get_multi_tile_image(sprite_sheet_name: str, row: int, cell: int,
+                             size_in_tiles: tuple[int, int]) -> pygame.Surface:
         """
-        Return one frame of number_of_tiles x number_of_tiles tiles from img/<sprite_sheet_name>.png,
-        scaled to number_of_tiles x number_of_tiles tile sizes.
+        Return one frame of several tiles from img/<sprite_sheet_name>.png, scaled to the same number of tiles.
 
         :param sprite_sheet_name: file name of the sprite sheet without the extension
         :param row: row of the frame in the sprite sheet
         :param cell: cell of the frame in the row
-        :param number_of_tiles: width and height of one frame in tiles
+        :param size_in_tiles: width and height of one frame in tiles
         :return: frame image
         """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png', number_of_tiles)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png', size_in_tiles)
         return sprite_sheet.get_image(row, cell)
 
     @staticmethod
@@ -412,7 +414,7 @@ class SpriteHelper:
 
         :return: life icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', scaled_size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 2)
 
     @staticmethod
@@ -422,7 +424,7 @@ class SpriteHelper:
 
         :return: icons in wear level order
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', scaled_size=SpriteHelper.ICON_SIZE)
 
         images = list()
         images.append(sprite_sheet.get_image(2, 0))
@@ -440,7 +442,7 @@ class SpriteHelper:
 
         :return: bow icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', scaled_size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 1)
 
     @staticmethod
@@ -450,7 +452,7 @@ class SpriteHelper:
 
         :return: TNT icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', size=SpriteHelper.ICON_SIZE)
+        sprite_sheet = SpriteHelper._create_sprite_sheet('img/misc.png', scaled_size=SpriteHelper.ICON_SIZE)
         return sprite_sheet.get_image(1, 0)
 
     @staticmethod
@@ -462,7 +464,7 @@ class SpriteHelper:
         :param size: size of the returned icon
         :return: enemy icon
         """
-        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', size=size)
+        sprite_sheet = SpriteHelper._create_sprite_sheet(f'img/{enemy_type.value}.png', scaled_size=size)
         return sprite_sheet.get_image(0, 0)
 
     @staticmethod
@@ -522,32 +524,29 @@ class SpriteHelper:
         return SpriteHelper._get_page_image('img/studio-page.png', size)
 
     @staticmethod
-    def _create_sprite_sheet(path: str, source_size: int = SOURCE_TILE_SIZE,
-                             size: tuple[float, float] = SCALED_TILE_SIZE) -> SpriteSheet:
+    def _create_sprite_sheet(path: str,
+                             source_size: tuple[int, int] = SOURCE_TILE_SIZE,
+                             scaled_size: tuple[float, float] = SCALED_TILE_SIZE) -> SpriteSheet:
         # By default, a frame is one source tile scaled to one tile on the screen
         sprite_sheet = SpriteSheet(
             pygame.image.load(path).convert_alpha(),
-            (source_size, source_size),
-            size
+            source_size,
+            scaled_size
         )
 
         return sprite_sheet
 
     @staticmethod
-    def _create_multi_tile_sprite_sheet(path: str, number_of_tiles: int) -> SpriteSheet:
-        # Each frame takes number_of_tiles x number_of_tiles tiles in the source and on the screen
-        source_size = SpriteHelper.SOURCE_TILE_SIZE * number_of_tiles
-        scaled_size = int(Settings.TILE_SIZE * number_of_tiles), int(Settings.TILE_SIZE * number_of_tiles)
+    def _create_multi_tile_sprite_sheet(path: str, size_in_tiles: tuple[int, int]) -> SpriteSheet:
+        # Each frame takes size_in_tiles tiles in the source and on the screen
+        width_in_tiles, height_in_tiles = size_in_tiles
+        source_tile_width, source_tile_height = SpriteHelper.SOURCE_TILE_SIZE
+        source_size = width_in_tiles * source_tile_width, height_in_tiles * source_tile_height
+        scaled_size = int(width_in_tiles * Settings.TILE_SIZE), int(height_in_tiles * Settings.TILE_SIZE)
         return SpriteHelper._create_sprite_sheet(path, source_size, scaled_size)
 
     @staticmethod
     def _get_page_image(path: str, size: tuple[int, int]) -> pygame.Surface:
-        # Page images are a single 320px x 192px picture
-        page_image_source_width = 320
-        page_image_source_height = 192
-        sprite_sheet = SpriteSheet(
-            pygame.image.load(path).convert_alpha(),
-            (page_image_source_width, page_image_source_height),
-            size
-        )
+        # Page images are a single picture
+        sprite_sheet = SpriteHelper._create_sprite_sheet(path, SpriteHelper.PAGE_IMAGE_SOURCE_SIZE, size)
         return sprite_sheet.get_image(0, 0)
