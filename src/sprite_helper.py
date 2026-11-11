@@ -21,6 +21,8 @@ class SpriteHelper:
     ICON_SIZE = 64, 64
     # Size in pixels of the game over images in the source
     GAME_OVER_IMAGE_SOURCE_SIZE = 120
+    # Width and height in tiles of the boss (octopus) frames and the vanishing boss frames
+    BOSS_SIZE_IN_TILES = 3
 
     @staticmethod
     def get_tile_image(sprite_sheet_name: str, row: int, cell: int) -> pygame.Surface:
@@ -97,7 +99,8 @@ class SpriteHelper:
 
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet('img/vanishing-flare-point.png', 3)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet('img/vanishing-flare-point.png',
+                                                                    SpriteHelper.BOSS_SIZE_IN_TILES)
 
         sprites = list()
         sprites.append(sprite_sheet.get_image(0, 0))
@@ -169,7 +172,8 @@ class SpriteHelper:
         :param sprite_sheet_name: file name of the octopus sprite sheet without the extension
         :return: frames in animation order
         """
-        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png', 3)
+        sprite_sheet = SpriteHelper._create_multi_tile_sprite_sheet(f'img/{sprite_sheet_name}.png',
+                                                                    SpriteHelper.BOSS_SIZE_IN_TILES)
 
         sprites = list()
 

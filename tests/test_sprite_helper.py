@@ -8,7 +8,7 @@ from src.sprite_costume import SpriteCostume
 from src.sprite_helper import SpriteHelper
 
 TILE_SIZE = (Settings.TILE_SIZE, Settings.TILE_SIZE)
-BOSS_SIZE = (Settings.TILE_SIZE * 3, Settings.TILE_SIZE * 3)
+BOSS_SIZE = (Settings.TILE_SIZE * SpriteHelper.BOSS_SIZE_IN_TILES, Settings.TILE_SIZE * SpriteHelper.BOSS_SIZE_IN_TILES)
 ICON_SIZE = (64, 64)
 DIAGONAL_AND_VERTICAL_DIRECTIONS = [
     (Direction.RIGHT_DOWN, Direction.DOWN),
@@ -41,7 +41,7 @@ class TestSingleImages:
         assert SpriteHelper.get_tile_image('monster-enemy-blue', 1, 0).get_size() == TILE_SIZE
 
     def test_multi_tile_image_is_scaled_to_number_of_tiles(self):
-        assert SpriteHelper.get_multi_tile_image('octopus-enemy', 1, 0, 3).get_size() == BOSS_SIZE
+        assert SpriteHelper.get_multi_tile_image('octopus-enemy', 1, 0, SpriteHelper.BOSS_SIZE_IN_TILES).get_size() == BOSS_SIZE
 
     @pytest.mark.parametrize('get_icon', [
         SpriteHelper.get_life_dashboard_icon,

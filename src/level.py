@@ -282,7 +282,7 @@ class Level:
 
         sprite_costumes = SpriteCostume.create_list(SpriteHelper.get_octopus_frames(name),
                                                     self.SPAWNED_ENEMY_NUMBER_OF_FRAMES)
-        sprite_image_in_damage_state = SpriteHelper.get_multi_tile_image(name, 1, 0, 3)
+        sprite_image_in_damage_state = SpriteHelper.get_multi_tile_image(name, 1, 0, SpriteHelper.BOSS_SIZE_IN_TILES)
 
         groups = self._level_sprite_groups.the_highest_sprites_layer, self._level_sprite_groups.enemy_sprites
 
