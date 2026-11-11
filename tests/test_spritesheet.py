@@ -3,7 +3,8 @@ import pytest
 
 from src.spritesheet import SpriteSheet
 
-CELL_SIZE = 4
+CELL_WIDTH = 4
+CELL_HEIGHT = 2
 SCALED_SIZE = (8, 8)
 NUMBER_OF_ROWS = 2
 NUMBER_OF_CELLS = 3
@@ -17,15 +18,15 @@ def cell_color(row, cell):
 # Sheet of NUMBER_OF_ROWS x NUMBER_OF_CELLS cells, each filled with its own cell_color.
 # SRCALPHA gives the sheet an alpha channel, like a PNG loaded with convert_alpha().
 def create_sheet_image():
-    sheet_image = pygame.Surface((NUMBER_OF_CELLS * CELL_SIZE, NUMBER_OF_ROWS * CELL_SIZE), pygame.SRCALPHA)
+    sheet_image = pygame.Surface((NUMBER_OF_CELLS * CELL_WIDTH, NUMBER_OF_ROWS * CELL_HEIGHT), pygame.SRCALPHA)
     for row in range(NUMBER_OF_ROWS):
         for cell in range(NUMBER_OF_CELLS):
-            sheet_image.fill(cell_color(row, cell), (cell * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+            sheet_image.fill(cell_color(row, cell), (cell * CELL_WIDTH, row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT))
     return sheet_image
 
 
 def create_single_cell_sheet_image(color):
-    sheet_image = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
+    sheet_image = pygame.Surface((CELL_WIDTH, CELL_HEIGHT), pygame.SRCALPHA)
     sheet_image.fill(color)
     return sheet_image
 
@@ -33,7 +34,7 @@ def create_single_cell_sheet_image(color):
 def create_sprite_sheet(sheet_image=None):
     if sheet_image is None:
         sheet_image = create_sheet_image()
-    return SpriteSheet(sheet_image, CELL_SIZE, CELL_SIZE, SCALED_SIZE)
+    return SpriteSheet(sheet_image, (CELL_WIDTH, CELL_HEIGHT), SCALED_SIZE)
 
 
 def center_color(image):

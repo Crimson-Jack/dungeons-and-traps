@@ -527,8 +527,7 @@ class SpriteHelper:
         # By default, a frame is one source tile scaled to one tile on the screen
         sprite_sheet = SpriteSheet(
             pygame.image.load(path).convert_alpha(),
-            source_size,
-            source_size,
+            (source_size, source_size),
             size
         )
 
@@ -548,8 +547,7 @@ class SpriteHelper:
         page_image_source_height = 192
         sprite_sheet = SpriteSheet(
             pygame.image.load(path).convert_alpha(),
-            page_image_source_width,
-            page_image_source_height,
+            (page_image_source_width, page_image_source_height),
             size
         )
         return sprite_sheet.get_image(0, 0)
