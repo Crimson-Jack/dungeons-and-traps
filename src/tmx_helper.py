@@ -1,6 +1,7 @@
+from typing import Any
+
 import pygame
 import pytmx
-from typing import Any
 
 from settings import Settings
 from src.game_helper import GameHelper
@@ -8,16 +9,22 @@ from src.sprite_costume import SpriteCostume
 
 
 class TmxHelper:
-    @staticmethod
-    def get_data_map_by_layer(layer: pytmx.TiledObjectGroup, size_of_map: tuple[int, int], tile_width: int, tile_height: int) -> list[list[int]]:
-        """
-        Create and return data map based on layer.
+    """
+    Static helpers that read data from a TMX map: object grids, tile positions, property values
+    and animation frames.
+    """
 
-        :param layer: group of tiled objects
-        :param size_of_map: map size
-        :param tile_width: tile width
-        :param tile_height: tile height
-        :return: data map
+    @staticmethod
+    def get_data_map_by_layer(layer: pytmx.TiledObjectGroup | None, size_of_map: tuple[int, int],
+                              tile_width: int, tile_height: int) -> list[list[int]]:
+        """
+        Create a grid that marks the tiles occupied by the objects of the layer.
+
+        :param layer: group of tiled objects; None gives a grid of zeros
+        :param size_of_map: map size in tiles (width, height)
+        :param tile_width: tile width of the TMX map in pixels
+        :param tile_height: tile height of the TMX map in pixels
+        :return: grid indexed [row][column], 1 for a tile with an object, 0 otherwise
         """
         rows = list()
         for row_counter in range(0, size_of_map[1]):
@@ -35,16 +42,17 @@ class TmxHelper:
         return rows
 
     @staticmethod
-    def get_tile_position(x: float, y: float, width: int, height: int, rotation: int=0) -> tuple[int, int]:
+    def get_tile_position(x: float, y: float, width: int, height: int, rotation: float = 0) -> tuple[int, int]:
         """
-        Get tile position, based on x, y coordinates and rotation.
+        Convert the position of a TMX object to the top left corner of its tile on the screen.
+        The position is corrected by the rotation of the object.
 
-        :param x: x coordinate
-        :param y: y coordinate
-        :param width: width
-        :param height: height
-        :param rotation: rotation
-        :return: tile position
+        :param x: x coordinate of the object in TMX map pixels
+        :param y: y coordinate of the object in TMX map pixels
+        :param width: tile width of the TMX map in pixels
+        :param height: tile height of the TMX map in pixels
+        :param rotation: rotation of the object in degrees, clockwise
+        :return: top left corner of the tile in screen pixels (Settings.TILE_SIZE)
         """
         tile_x = int(x // width)
         tile_y = int(y // height)
@@ -68,14 +76,14 @@ class TmxHelper:
     def get_tiled_object_value(name: str, default: Any, tiled_object: pytmx.TiledObject,
                                layer: pytmx.TiledObjectGroup | None) -> Any:
         """
-        Get the value from the tiled object.
-        If not exists, get the value from the layer (group of tiled objects).
-        Otherwise, return the default value.
+        Get the property value of the tiled object.
+        If the object does not have it, get the value from the layer (group of tiled objects).
+        If neither has it, return the default value. A property set to None counts as missing.
 
         :param name: property name
-        :param default: default value
-        :param tiled_object: tiled object
-        :param layer: group of tiled objects
+        :param default: value returned when neither the object nor the layer has the property
+        :param tiled_object: tiled object; can be None
+        :param layer: group of tiled objects; can be None
         :return: property value
         """
         value = default
@@ -91,14 +99,13 @@ class TmxHelper:
     def convert_to_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject,
                                    size: tuple[float, float] | None = None) -> list[SpriteCostume]:
         """
-        Convert each id and duration from the tiled object to a sprite costume object with an image and number of frames.
-        Image can be scaled by size argument.
-        Return a list of sprite costumes.
+        Convert the animation frames of the tiled object (the 'frames' property) to sprite costumes.
+        Each frame gives the tile image of its gid and the number of game frames for its duration.
 
-        :param tiled_map: tiled map
-        :param tiled_object: tiled object
-        :param size: image size
-        :return: sprite costumes
+        :param tiled_map: tiled map with the tile images
+        :param tiled_object: tiled object with the animation frames
+        :param size: size the images are scaled to; None keeps the original size
+        :return: sprite costumes in the order of the frames; empty if the object has no frames
         """
         sprite_costumes = list()
         tmx_frames = tiled_object.properties.get('frames')
