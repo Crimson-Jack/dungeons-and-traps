@@ -70,12 +70,13 @@ class TestGetTilePosition:
     TILE = Settings.TILE_SIZE
 
     def test_no_rotation_returns_tile_top_left(self):
-        x, y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE)
-        assert (x, y) == (self.TILE * 2, self.TILE * 1)
+        position_x, position_y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE)
+        assert (position_x, position_y) == (self.TILE * 2, self.TILE * 1)
 
     def test_rotation_90_shifts_y_by_tile_size(self):
-        x, y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=90)
-        assert (x, y) == (self.TILE * 2, self.TILE * 2)
+        position_x, position_y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE,
+                                                             rotation=90)
+        assert (position_x, position_y) == (self.TILE * 2, self.TILE * 2)
 
     def test_rotation_minus_270_same_as_90(self):
         result_90 = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=90)
@@ -83,8 +84,9 @@ class TestGetTilePosition:
         assert result_90 == result_minus_270
 
     def test_rotation_180_shifts_x_left_and_y_down(self):
-        x, y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=180)
-        assert (x, y) == (self.TILE * 1, self.TILE * 2)
+        position_x, position_y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE,
+                                                             rotation=180)
+        assert (position_x, position_y) == (self.TILE * 1, self.TILE * 2)
 
     def test_rotation_minus_180_same_as_180(self):
         result_180 = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=180)
@@ -92,8 +94,9 @@ class TestGetTilePosition:
         assert result_180 == result_minus_180
 
     def test_rotation_270_shifts_x_left(self):
-        x, y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=270)
-        assert (x, y) == (self.TILE * 1, self.TILE * 1)
+        position_x, position_y = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE,
+                                                             rotation=270)
+        assert (position_x, position_y) == (self.TILE * 1, self.TILE * 1)
 
     def test_rotation_minus_90_same_as_270(self):
         result_270 = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=270)
@@ -101,12 +104,12 @@ class TestGetTilePosition:
         assert result_270 == result_minus_90
 
     def test_coordinates_inside_tile_return_tile_top_left(self):
-        x, y = TmxHelper.get_tile_position(self.TILE * 1.5, self.TILE * 2.5, self.TILE, self.TILE)
-        assert (x, y) == (self.TILE, self.TILE * 2)
+        position_x, position_y = TmxHelper.get_tile_position(self.TILE * 1.5, self.TILE * 2.5, self.TILE, self.TILE)
+        assert (position_x, position_y) == (self.TILE, self.TILE * 2)
 
     def test_tmx_tile_size_different_from_screen_tile_size(self):
-        x, y = TmxHelper.get_tile_position(32, 48, 16, 16)
-        assert (x, y) == (self.TILE * 2, self.TILE * 3)
+        position_x, position_y = TmxHelper.get_tile_position(32, 48, 16, 16)
+        assert (position_x, position_y) == (self.TILE * 2, self.TILE * 3)
 
 
 class TestGetTiledObjectValue:

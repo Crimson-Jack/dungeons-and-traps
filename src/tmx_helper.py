@@ -42,35 +42,36 @@ class TmxHelper:
         return rows
 
     @staticmethod
-    def get_tile_position(x: float, y: float, width: int, height: int, rotation: float = 0) -> tuple[int, int]:
+    def get_tile_position(object_x: float, object_y: float, tile_width: int, tile_height: int,
+                          rotation: float = 0) -> tuple[int, int]:
         """
         Convert the position of a TMX object to the top left corner of its tile on the screen.
         The position is corrected by the rotation of the object.
 
-        :param x: x coordinate of the object in TMX map pixels
-        :param y: y coordinate of the object in TMX map pixels
-        :param width: tile width of the TMX map in pixels
-        :param height: tile height of the TMX map in pixels
+        :param object_x: x coordinate of the object in TMX map pixels
+        :param object_y: y coordinate of the object in TMX map pixels
+        :param tile_width: tile width of the TMX map in pixels
+        :param tile_height: tile height of the TMX map in pixels
         :param rotation: rotation of the object in degrees, clockwise
         :return: top left corner of the tile in screen pixels (Settings.TILE_SIZE)
         """
-        tile_x = int(x // width)
-        tile_y = int(y // height)
-        x = tile_x * Settings.TILE_SIZE
-        y = tile_y * Settings.TILE_SIZE
+        tile_column = int(object_x // tile_width)
+        tile_row = int(object_y // tile_height)
+        position_x = tile_column * Settings.TILE_SIZE
+        position_y = tile_row * Settings.TILE_SIZE
 
         # According to the tmx format, rotation causes the object to move clockwise around the point 0, 0, which is the
         # bottom left corner of the tile.
         # Original baseline values do not correspond to visible on the map therefore they need to be corrected.
-        if rotation == 90 or rotation == -270:
-            y = y + Settings.TILE_SIZE
-        elif rotation == 180 or rotation == -180:
-            x = x - Settings.TILE_SIZE
-            y = y + Settings.TILE_SIZE
-        elif rotation == 270 or rotation == -90:
-            x = x - Settings.TILE_SIZE
+        if rotation in (90, -270):
+            position_y += Settings.TILE_SIZE
+        elif rotation in (180, -180):
+            position_x -= Settings.TILE_SIZE
+            position_y += Settings.TILE_SIZE
+        elif rotation in (270, -90):
+            position_x -= Settings.TILE_SIZE
 
-        return x, y
+        return position_x, position_y
 
     @staticmethod
     def get_tiled_object_value(name: str, default: Any, tiled_object: pytmx.TiledObject,
