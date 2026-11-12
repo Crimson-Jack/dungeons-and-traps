@@ -1,6 +1,11 @@
-from unittest.mock import MagicMock
+from types import SimpleNamespace
+from unittest.mock import MagicMock, call
+
+import pygame
+import pytest
 
 from settings import Settings
+from src.game_helper import GameHelper
 from src.tmx_helper import TmxHelper
 
 
@@ -44,6 +49,22 @@ class TestGetDataMapByLayer:
         assert result[0][0] == 1
         assert result[1][1] == 1
 
+    def test_rectangular_map_marks_only_object_tile(self):
+        mock_object = MagicMock()
+        mock_object.x = 144
+        mock_object.y = 48
+        mock_layer = [mock_object]
+        result = TmxHelper.get_data_map_by_layer(mock_layer, (4, 2), 48, 48)
+        assert result == [[0, 0, 0, 0], [0, 0, 0, 1]]
+
+    def test_non_integer_object_coordinates_mark_containing_tile(self):
+        mock_object = MagicMock()
+        mock_object.x = 60.5
+        mock_object.y = 100.7
+        mock_layer = [mock_object]
+        result = TmxHelper.get_data_map_by_layer(mock_layer, (3, 3), 48, 48)
+        assert result[2][1] == 1
+
 
 class TestGetTilePosition:
     TILE = Settings.TILE_SIZE
@@ -78,6 +99,14 @@ class TestGetTilePosition:
         result_270 = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=270)
         result_minus_90 = TmxHelper.get_tile_position(self.TILE * 2, self.TILE * 1, self.TILE, self.TILE, rotation=-90)
         assert result_270 == result_minus_90
+
+    def test_coordinates_inside_tile_return_tile_top_left(self):
+        x, y = TmxHelper.get_tile_position(self.TILE * 1.5, self.TILE * 2.5, self.TILE, self.TILE)
+        assert (x, y) == (self.TILE, self.TILE * 2)
+
+    def test_tmx_tile_size_different_from_screen_tile_size(self):
+        x, y = TmxHelper.get_tile_position(32, 48, 16, 16)
+        assert (x, y) == (self.TILE * 2, self.TILE * 3)
 
 
 class TestGetTiledObjectValue:
@@ -114,3 +143,45 @@ class TestGetTiledObjectValue:
         mock_layer.properties.get.return_value = 99
         result = TmxHelper.get_tiled_object_value('speed', 0, mock_object, mock_layer)
         assert result == 7
+
+    @pytest.mark.parametrize('falsy_value', [0, False, ''])
+    def test_falsy_object_value_does_not_fall_back_to_layer(self, falsy_value):
+        tiled_object = SimpleNamespace(properties={'speed': falsy_value})
+        layer = SimpleNamespace(properties={'speed': 99})
+        result = TmxHelper.get_tiled_object_value('speed', 5, tiled_object, layer)
+        assert result == falsy_value
+        assert type(result) is type(falsy_value)
+
+
+class TestConvertToSpriteCostumes:
+    def test_missing_frames_property_returns_empty_list(self):
+        tiled_object = SimpleNamespace(properties={})
+        result = TmxHelper.convert_to_sprite_costumes(MagicMock(), tiled_object)
+        assert result == []
+
+    def test_each_frame_becomes_costume_with_tile_image_and_number_of_frames(self):
+        images_by_gid = {11: pygame.Surface((48, 48)), 12: pygame.Surface((48, 48))}
+        tiled_map = MagicMock()
+        tiled_map.get_tile_image_by_gid.side_effect = lambda gid: images_by_gid[gid]
+        frames = [SimpleNamespace(gid=11, duration=100), SimpleNamespace(gid=12, duration=250)]
+        tiled_object = SimpleNamespace(properties={'frames': frames})
+
+        result = TmxHelper.convert_to_sprite_costumes(tiled_map, tiled_object)
+
+        assert len(result) == 2
+        assert result[0].image is images_by_gid[11]
+        assert result[1].image is images_by_gid[12]
+        assert result[0].number_of_frames == GameHelper.calculate_frames(100)
+        assert result[1].number_of_frames == GameHelper.calculate_frames(250)
+        assert tiled_map.get_tile_image_by_gid.call_args_list == [call(11), call(12)]
+
+    def test_size_scales_image_to_given_size(self):
+        source_image = pygame.Surface((48, 48))
+        tiled_map = MagicMock()
+        tiled_map.get_tile_image_by_gid.return_value = source_image
+        tiled_object = SimpleNamespace(properties={'frames': [SimpleNamespace(gid=11, duration=100)]})
+
+        result = TmxHelper.convert_to_sprite_costumes(tiled_map, tiled_object, (24, 24))
+
+        assert result[0].image.get_size() == (24, 24)
+        assert result[0].image is not source_image
