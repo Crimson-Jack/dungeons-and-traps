@@ -15,18 +15,18 @@ class TmxHelper:
     """
 
     @staticmethod
-    def get_tiles_occupied_by_objects(layer: pytmx.TiledObjectGroup | None, size_of_map: tuple[int, int],
+    def get_tiles_occupied_by_objects(layer: pytmx.TiledObjectGroup | None, map_size_in_tiles: tuple[int, int],
                                       tile_width: int, tile_height: int) -> list[list[int]]:
         """
         Create a grid that marks the tiles occupied by the objects of the layer.
 
         :param layer: group of tiled objects; None gives a grid of zeros
-        :param size_of_map: map size in tiles (width, height)
+        :param map_size_in_tiles: map size in tiles (width, height)
         :param tile_width: tile width of the TMX map in pixels
         :param tile_height: tile height of the TMX map in pixels
         :return: grid indexed [row][column], 1 for a tile with an object, 0 otherwise
         """
-        map_width, map_height = size_of_map
+        map_width, map_height = map_size_in_tiles
 
         rows = []
         for row_index in range(map_height):

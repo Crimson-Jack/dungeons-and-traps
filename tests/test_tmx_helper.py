@@ -14,7 +14,7 @@ class TestGetTilesOccupiedByObjects:
         result = TmxHelper.get_tiles_occupied_by_objects(None, (3, 2), 48, 48)
         assert result == [[0, 0, 0], [0, 0, 0]]
 
-    def test_grid_dimensions_match_size_of_map(self):
+    def test_grid_dimensions_match_map_size_in_tiles(self):
         result = TmxHelper.get_tiles_occupied_by_objects(None, (4, 3), 48, 48)
         assert len(result) == 3
         assert all(len(row) == 4 for row in result)

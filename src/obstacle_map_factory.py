@@ -15,7 +15,7 @@ class ObstacleMapFactory:
         :param tmx_data: loaded TMX map
         :return: obstacle map
         """
-        size_of_map = (tmx_data.width, tmx_data.height)
+        map_size_in_tiles = (tmx_data.width, tmx_data.height)
         obstacle_layer_data = None
         moving_obstacle_layer_data = None
         removable_obstacle_layer_data = None
@@ -29,7 +29,7 @@ class ObstacleMapFactory:
             if layer.name == 'removable-obstacle':
                 removable_obstacle_layer_data = layer.data
             if layer.name == 'door':
-                door_layer_data = TmxHelper.get_tiles_occupied_by_objects(layer, size_of_map,
+                door_layer_data = TmxHelper.get_tiles_occupied_by_objects(layer, map_size_in_tiles,
                                                                            tmx_data.tilewidth, tmx_data.tileheight)
 
         return ObstacleMap([

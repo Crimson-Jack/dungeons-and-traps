@@ -124,7 +124,7 @@ class GameHelper:
         return rectangle_one.clip(rectangle_two)
 
     @staticmethod
-    def calculate_visible_area(size_of_map: tuple[int, int],
+    def calculate_visible_area(map_size_in_tiles: tuple[int, int],
                                game_surface_size: tuple[int, int]) -> tuple[tuple[int, int], pygame.Rect]:
         """
         Calculate the visible area of the game surface (the part with the map) and its position on the screen.
@@ -135,16 +135,17 @@ class GameHelper:
         The header height is added to the vertical position.
 
         Example (48 px tiles, 80 px header):
-            size_of_map   map (px)      game_surface_size   visible_area_screen_position   visible_area_rect
-            20 x 30       960 x 1440    1200 x 496          (120, 80)                      (0, 0, 960, 496)
-            30 x 20       1440 x 960    1200 x 496          (0, 80)                        (0, 0, 1200, 496)
+            map_size_in_tiles   map (px)      game_surface_size   visible_area_screen_position   visible_area_rect
+            20 x 30             960 x 1440    1200 x 496          (120, 80)                      (0, 0, 960, 496)
+            30 x 20             1440 x 960    1200 x 496          (0, 80)                        (0, 0, 1200, 496)
 
-        :param size_of_map: map size in tiles (width, height)
+        :param map_size_in_tiles: map size in tiles (width, height)
         :param game_surface_size: game surface size in pixels (width, height)
         :return: position (x, y) of the visible area on the screen
                  and the visible area as a rectangle at (0, 0) on the game surface
         """
-        map_rect = pygame.Rect(0, 0, size_of_map[0] * Settings.TILE_SIZE, size_of_map[1] * Settings.TILE_SIZE)
+        map_width_in_tiles, map_height_in_tiles = map_size_in_tiles
+        map_rect = pygame.Rect(0, 0, map_width_in_tiles * Settings.TILE_SIZE, map_height_in_tiles * Settings.TILE_SIZE)
         game_surface_rect = pygame.Rect((0, 0), game_surface_size)
 
         # Calculate the position of the visible area on the screen

@@ -56,16 +56,16 @@ class Level:
 
         # Load tmx data - world map
         tmx_data = load_pygame(f'data/tmx/{self._game_manager.current_level_details.source_file}')
-        size_of_map = (tmx_data.width, tmx_data.height)
+        map_size_in_tiles = (tmx_data.width, tmx_data.height)
 
         # Calculate the visible area of the game surface and its position on the screen
         self._visible_area_screen_position, self._visible_area_rect = GameHelper.calculate_visible_area(
-            size_of_map,
+            map_size_in_tiles,
             self._game_surface.get_size()
         )
 
         # Set up camera and sprite groups
-        self._camera = Camera(self._game_surface.get_size(), size_of_map)
+        self._camera = Camera(self._game_surface.get_size(), map_size_in_tiles)
         self._level_sprite_groups = LevelSpriteGroups(game_surface)
 
         # Create obstacle map

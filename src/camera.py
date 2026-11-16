@@ -6,18 +6,18 @@ from settings import Settings
 class Camera:
     """Camera of a level: keeps a target point in the center of the game surface and stops at the map edges."""
 
-    def __init__(self, game_surface_size: tuple[int, int], size_of_map: tuple[int, int]) -> None:
+    def __init__(self, game_surface_size: tuple[int, int], map_size_in_tiles: tuple[int, int]) -> None:
         """
         Prepare the camera for a map of the given size shown on a game surface of the given size.
 
         :param game_surface_size: size of the game surface in pixels
-        :param size_of_map: map size in tiles
+        :param map_size_in_tiles: map size in tiles (width, height)
         """
         self._game_surface_width, self._game_surface_height = game_surface_size
         self._game_surface_half_width = self._game_surface_width // 2
         self._game_surface_half_height = self._game_surface_height // 2
-        self._map_width = Settings.TILE_SIZE * size_of_map[0]
-        self._map_height = Settings.TILE_SIZE * size_of_map[1]
+        self._map_width = Settings.TILE_SIZE * map_size_in_tiles[0]
+        self._map_height = Settings.TILE_SIZE * map_size_in_tiles[1]
         self._map_offset = pygame.math.Vector2()
         self._shake_offset = pygame.math.Vector2()
 
