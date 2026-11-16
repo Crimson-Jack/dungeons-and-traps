@@ -9,13 +9,13 @@ from src.game_helper import GameHelper
 from src.tmx_helper import TmxHelper
 
 
-class TestGetDataMapByLayer:
+class TestGetTilesOccupiedByObjects:
     def test_none_layer_returns_grid_of_zeros(self):
-        result = TmxHelper.get_data_map_by_layer(None, (3, 2), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(None, (3, 2), 48, 48)
         assert result == [[0, 0, 0], [0, 0, 0]]
 
     def test_grid_dimensions_match_size_of_map(self):
-        result = TmxHelper.get_data_map_by_layer(None, (4, 3), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(None, (4, 3), 48, 48)
         assert len(result) == 3
         assert all(len(row) == 4 for row in result)
 
@@ -24,7 +24,7 @@ class TestGetDataMapByLayer:
         mock_object.x = 48
         mock_object.y = 96
         mock_layer = [mock_object]
-        result = TmxHelper.get_data_map_by_layer(mock_layer, (5, 5), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(mock_layer, (5, 5), 48, 48)
         assert result[2][1] == 1
 
     def test_unmarked_tiles_remain_zero(self):
@@ -32,7 +32,7 @@ class TestGetDataMapByLayer:
         mock_object.x = 0
         mock_object.y = 0
         mock_layer = [mock_object]
-        result = TmxHelper.get_data_map_by_layer(mock_layer, (3, 3), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(mock_layer, (3, 3), 48, 48)
         assert result[0][1] == 0
         assert result[1][0] == 0
         assert result[1][1] == 0
@@ -45,7 +45,7 @@ class TestGetDataMapByLayer:
         second_object.x = 48
         second_object.y = 48
         mock_layer = [first_object, second_object]
-        result = TmxHelper.get_data_map_by_layer(mock_layer, (3, 3), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(mock_layer, (3, 3), 48, 48)
         assert result[0][0] == 1
         assert result[1][1] == 1
 
@@ -54,7 +54,7 @@ class TestGetDataMapByLayer:
         mock_object.x = 144
         mock_object.y = 48
         mock_layer = [mock_object]
-        result = TmxHelper.get_data_map_by_layer(mock_layer, (4, 2), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(mock_layer, (4, 2), 48, 48)
         assert result == [[0, 0, 0, 0], [0, 0, 0, 1]]
 
     def test_non_integer_object_coordinates_mark_containing_tile(self):
@@ -62,7 +62,7 @@ class TestGetDataMapByLayer:
         mock_object.x = 60.5
         mock_object.y = 100.7
         mock_layer = [mock_object]
-        result = TmxHelper.get_data_map_by_layer(mock_layer, (3, 3), 48, 48)
+        result = TmxHelper.get_tiles_occupied_by_objects(mock_layer, (3, 3), 48, 48)
         assert result[2][1] == 1
 
 

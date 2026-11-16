@@ -29,8 +29,8 @@ class ObstacleMapFactory:
             if layer.name == 'removable-obstacle':
                 removable_obstacle_layer_data = layer.data
             if layer.name == 'door':
-                door_layer_data = TmxHelper.get_data_map_by_layer(layer, size_of_map,
-                                                                   tmx_data.tilewidth, tmx_data.tileheight)
+                door_layer_data = TmxHelper.get_tiles_occupied_by_objects(layer, size_of_map,
+                                                                           tmx_data.tilewidth, tmx_data.tileheight)
 
         return ObstacleMap([
             obstacle_layer_data,

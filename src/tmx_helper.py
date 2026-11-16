@@ -15,8 +15,8 @@ class TmxHelper:
     """
 
     @staticmethod
-    def get_data_map_by_layer(layer: pytmx.TiledObjectGroup | None, size_of_map: tuple[int, int],
-                              tile_width: int, tile_height: int) -> list[list[int]]:
+    def get_tiles_occupied_by_objects(layer: pytmx.TiledObjectGroup | None, size_of_map: tuple[int, int],
+                                      tile_width: int, tile_height: int) -> list[list[int]]:
         """
         Create a grid that marks the tiles occupied by the objects of the layer.
 

@@ -31,13 +31,13 @@ class TestObstacleMapFactory:
 
     def test_converts_door_layer_with_map_and_tile_size(self, monkeypatch):
         door_layer = create_layer('door')
-        get_data_map_by_layer = Mock(return_value=[[0, 0], [0, 1]])
-        monkeypatch.setattr(TmxHelper, 'get_data_map_by_layer', get_data_map_by_layer)
+        get_tiles_occupied_by_objects = Mock(return_value=[[0, 0], [0, 1]])
+        monkeypatch.setattr(TmxHelper, 'get_tiles_occupied_by_objects', get_tiles_occupied_by_objects)
         tmx_data = create_tmx_data([create_layer('obstacle', [[1, 0], [0, 0]]), door_layer], width=2, height=2)
 
         obstacle_map = ObstacleMapFactory.create(tmx_data)
 
-        get_data_map_by_layer.assert_called_once_with(door_layer, (2, 2), 16, 16)
+        get_tiles_occupied_by_objects.assert_called_once_with(door_layer, (2, 2), 16, 16)
         assert obstacle_map.items == [[1, 0], [0, 1]]
 
     def test_skips_layers_that_are_not_visible(self):
