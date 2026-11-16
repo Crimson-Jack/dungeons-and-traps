@@ -89,14 +89,17 @@ class TmxHelper:
         :param layer: group of tiled objects; can be None
         :return: property value
         """
-        value = default
+        if tiled_object is not None:
+            object_value = tiled_object.properties.get(name)
+            if object_value is not None:
+                return object_value
 
-        if tiled_object is not None and tiled_object.properties.get(name) is not None:
-            value = tiled_object.properties.get(name)
-        elif layer is not None and layer.properties.get(name) is not None:
-            value = layer.properties.get(name)
+        if layer is not None:
+            layer_value = layer.properties.get(name)
+            if layer_value is not None:
+                return layer_value
 
-        return value
+        return default
 
     @staticmethod
     def convert_to_sprite_costumes(tiled_map: pytmx.TiledMap, tiled_object: pytmx.TiledObject,
@@ -110,7 +113,7 @@ class TmxHelper:
         :param size: size the images are scaled to; None keeps the original size
         :return: sprite costumes in the order of the frames; empty if the object has no frames
         """
-        sprite_costumes = list()
+        sprite_costumes = []
         tmx_frames = tiled_object.properties.get('frames')
 
         if tmx_frames is not None:
