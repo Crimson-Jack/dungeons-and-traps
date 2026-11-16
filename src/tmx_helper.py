@@ -26,18 +26,20 @@ class TmxHelper:
         :param tile_height: tile height of the TMX map in pixels
         :return: grid indexed [row][column], 1 for a tile with an object, 0 otherwise
         """
-        rows = list()
-        for row_counter in range(0, size_of_map[1]):
-            columns = list()
-            for columns_counter in range(0, size_of_map[0]):
-                columns.append(0)
-            rows.append(columns)
+        map_width, map_height = size_of_map
+
+        rows = []
+        for row_index in range(map_height):
+            row = []
+            for column_index in range(map_width):
+                row.append(0)
+            rows.append(row)
 
         if layer is not None:
-            for item in layer:
-                tile_x = int(item.x // tile_width)
-                tile_y = int(item.y // tile_height)
-                rows[tile_y][tile_x] = 1
+            for tiled_object in layer:
+                tile_column = int(tiled_object.x // tile_width)
+                tile_row = int(tiled_object.y // tile_height)
+                rows[tile_row][tile_column] = 1
 
         return rows
 
