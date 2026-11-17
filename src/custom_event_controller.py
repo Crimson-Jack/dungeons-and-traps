@@ -51,6 +51,8 @@ class CustomEventController:
                 lambda _event: self._screen_manager.refresh_header_and_dashboard_surfaces(),
             Events.COLLECT_KEY_EVENT:
                 lambda _event: self._screen_manager.refresh_header_and_dashboard_surfaces(),
+            Events.REFRESH_KEY_HINT_EVENT:
+                lambda _event: self._screen_manager.refresh_dashboard_surface(),
             Events.COLLECT_LIFE_EVENT:
                 lambda _event: self._screen_manager.refresh_dashboard_surface(),
             Events.CHANGE_WEAPON_CAPACITY_EVENT:

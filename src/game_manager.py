@@ -45,6 +45,7 @@ class GameManager:
         self._collected_diamonds = list()
         self._keys = list()
         self._collected_keys = list()
+        self._hinted_key_name: str | None = None
 
         self._player_max_energy = 800
         self._player_energy = self._player_max_energy
@@ -119,6 +120,11 @@ class GameManager:
     def keys(self) -> list[Key]:
         """Keys placed on the current level."""
         return self._keys
+
+    @property
+    def hinted_key_name(self) -> str | None:
+        """Name of the key that opens the door the player walks into without that key, or None."""
+        return self._hinted_key_name
 
     @property
     def player_max_energy(self) -> int:
@@ -208,6 +214,7 @@ class GameManager:
         self._collected_diamonds.clear()
         self._keys.clear()
         self._collected_keys.clear()
+        self._hinted_key_name = None
 
         self._restore_player_energy()
         self._reset_player_direction()
@@ -226,6 +233,7 @@ class GameManager:
         self._collected_diamonds.clear()
         self._keys.clear()
         self._collected_keys.clear()
+        self._hinted_key_name = None
 
         self._reset_player_direction()
 
@@ -246,6 +254,7 @@ class GameManager:
         self._collected_diamonds.clear()
         self._keys.clear()
         self._collected_keys.clear()
+        self._hinted_key_name = None
 
         self._restore_player_energy()
         self._reset_player_direction()
@@ -516,6 +525,22 @@ class GameManager:
         :return: True when such a key is collected
         """
         return any(key.key_name == key_name for key in self._collected_keys)
+
+    def show_key_hint(self, key_name: str) -> None:
+        """
+        Hint the key that opens the door the player walks into. Posts REFRESH_KEY_HINT_EVENT only when the hint changes.
+
+        :param key_name: name of the key that opens the door
+        """
+        if self._hinted_key_name != key_name:
+            self._hinted_key_name = key_name
+            pygame.event.post(pygame.event.Event(Events.REFRESH_KEY_HINT_EVENT))
+
+    def hide_key_hint(self) -> None:
+        """Remove the key hint. Posts REFRESH_KEY_HINT_EVENT only when a hint was shown."""
+        if self._hinted_key_name is not None:
+            self._hinted_key_name = None
+            pygame.event.post(pygame.event.Event(Events.REFRESH_KEY_HINT_EVENT))
 
     def collect_life_powerup(self) -> None:
         """Add one life and post COLLECT_LIFE_EVENT."""

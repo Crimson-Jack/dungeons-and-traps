@@ -14,6 +14,8 @@ from src.tile_details.key_and_door_tile_details import KeyAndDoorTileDetails
 class Dashboard:
     _FONT_PATH = 'font/silkscreen/silkscreen-regular.ttf'
     _BASIC_FONT_SIZE = 24
+    _MISSING_KEY_ALPHA = 100
+    _HINTED_KEY_ALPHA = 178
 
     def __init__(self, screen, dashboard_surface, game_manager):
         self.screen = screen
@@ -138,7 +140,11 @@ class Dashboard:
             if item.alive():
                 # Copy sprite for dashboard - semi transparent
                 transparent_image = Key(item.base_size_image, item.rect.topleft, tuple(), item.game_manager, KeyAndDoorTileDetails.from_properties(item.key_name, item.score))
-                transparent_image.base_size_image.set_alpha(100)
+                # The key that opens the door the player walks into is half-highlighted
+                if item.key_name == self.game_manager.hinted_key_name:
+                    transparent_image.base_size_image.set_alpha(self._HINTED_KEY_ALPHA)
+                else:
+                    transparent_image.base_size_image.set_alpha(self._MISSING_KEY_ALPHA)
                 surface.blit(transparent_image.base_size_image, (self.margin * 3 + keys_text.get_width() + (count * GameHelper.BASE_TILE_SIZE), 0))
             else:
                 # Use original sprite

@@ -68,6 +68,8 @@ class Player(CustomDrawSprite):
         # State variables
         self.visible = True
         self.collided_with_enemy = False
+        # Key name of the locked door the player walks into in the current frame
+        self.locked_door_key_name = None
 
         # Player weapon
         self.weapon_is_in_use = False
@@ -137,12 +139,14 @@ class Player(CustomDrawSprite):
         self.real_x_position += float(self.movement_vector.x * self.speed)
         self.real_y_position += float(self.movement_vector.y * self.speed)
 
+        self.locked_door_key_name = None
         # Cast real position to integer and check the collision
         self.hit_box.x = int(self.real_x_position)
         self.check_horizontal_collision()
         self.hit_box.y = int(self.real_y_position)
         self.check_vertical_collision()
         self.check_collision()
+        self._update_key_hint()
 
         # If direction was changed
         if self.movement_direction != self.previous_movement_direction:
@@ -248,9 +252,12 @@ class Player(CustomDrawSprite):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_manager.is_key_collected(sprite.key_name):
-                    # Remove if key_name matches
-                    sprite.kill()
+                if sprite in self.passage_sprites:
+                    if self.game_manager.is_key_collected(sprite.key_name):
+                        # Remove if key_name matches
+                        sprite.kill()
+                    else:
+                        self.locked_door_key_name = sprite.key_name
                 if self.movement_vector.x > 0:
                     self.hit_box.right = sprite.hit_box.left
                 if self.movement_vector.x < 0:
@@ -276,9 +283,12 @@ class Player(CustomDrawSprite):
         # Obstacle
         for sprite in self.obstacle_sprites:
             if sprite.hit_box.colliderect(self.hit_box):
-                if sprite in self.passage_sprites and self.game_manager.is_key_collected(sprite.key_name):
-                    # Remove if key_name matches
-                    sprite.kill()
+                if sprite in self.passage_sprites:
+                    if self.game_manager.is_key_collected(sprite.key_name):
+                        # Remove if key_name matches
+                        sprite.kill()
+                    else:
+                        self.locked_door_key_name = sprite.key_name
                 if self.movement_vector.y > 0:
                     self.hit_box.bottom = sprite.hit_box.top
                 if self.movement_vector.y < 0:
@@ -393,3 +403,10 @@ class Player(CustomDrawSprite):
         self.hit_box = self.rect.inflate(GameHelper.multiply_by_tile_size_ratio(-5), 0)
         self.real_x_position = float(self.hit_box.x)
         self.real_y_position = float(self.hit_box.y)
+
+    def _update_key_hint(self):
+        # Hint the matching key while the player walks into a locked door
+        if self.locked_door_key_name is not None:
+            self.game_manager.show_key_hint(self.locked_door_key_name)
+        else:
+            self.game_manager.hide_key_hint()

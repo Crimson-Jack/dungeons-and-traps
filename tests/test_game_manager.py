@@ -186,6 +186,43 @@ class TestGetAggregateKillStats:
         assert all((record.count, record.killed, record.score) == (0, 0, 0) for record in totals.values())
 
 
+
+class TestKeyHint:
+    def test_show_sets_hinted_key_name_and_posts_event(self, game_manager, post_event_mock):
+        game_manager.show_key_hint('red')
+
+        assert game_manager.hinted_key_name == 'red'
+        assert get_posted_event_types(post_event_mock) == [Events.REFRESH_KEY_HINT_EVENT]
+
+    def test_show_same_key_again_posts_no_event(self, game_manager, post_event_mock):
+        game_manager.show_key_hint('red')
+        game_manager.show_key_hint('red')
+
+        assert get_posted_event_types(post_event_mock) == [Events.REFRESH_KEY_HINT_EVENT]
+
+    def test_hide_clears_hinted_key_name_and_posts_event(self, game_manager, post_event_mock):
+        game_manager.show_key_hint('red')
+        game_manager.hide_key_hint()
+
+        assert game_manager.hinted_key_name is None
+        assert get_posted_event_types(post_event_mock) == [Events.REFRESH_KEY_HINT_EVENT,
+                                                           Events.REFRESH_KEY_HINT_EVENT]
+
+    def test_hide_without_hint_posts_no_event(self, game_manager, post_event_mock):
+        game_manager.hide_key_hint()
+
+        assert get_posted_event_types(post_event_mock) == []
+
+    @pytest.mark.parametrize('clear_method_name', ['clear_settings_for_first_level',
+                                                   'clear_settings_for_next_level',
+                                                   'clear_settings_for_current_level'])
+    def test_clear_settings_removes_hint(self, game_manager, post_event_mock, clear_method_name):
+        game_manager.show_key_hint('red')
+
+        getattr(game_manager, clear_method_name)()
+
+        assert game_manager.hinted_key_name is None
+
 # Decrease method, amount field, weapon type and another weapon selected after the weapon is depleted
 WEAPON_AMOUNTS = [
     ('decrease_sword_energy', '_sword_energy', WeaponType.SWORD, WeaponType.BOW),

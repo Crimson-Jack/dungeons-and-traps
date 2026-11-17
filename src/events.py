@@ -16,6 +16,7 @@ class Events:
     FINISH_TELEPORT_PLAYER_TO_NEXT_LEVEL_EVENT = pygame.event.custom_type()
     NEXT_LEVEL_EVENT = pygame.event.custom_type()
     REFRESH_OBSTACLE_MAP_EVENT = pygame.event.custom_type()
+    REFRESH_KEY_HINT_EVENT = pygame.event.custom_type()
     PLAYER_TILE_POSITION_CHANGED_EVENT = pygame.event.custom_type()
     PLAYER_IS_NOT_USING_WEAPON_EVENT = pygame.event.custom_type()
     ADD_TOMBSTONE_EVENT = pygame.event.custom_type()
