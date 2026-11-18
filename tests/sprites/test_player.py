@@ -70,3 +70,13 @@ class TestSetCostume:
         player.set_costume(direction, costume_index)
 
         assert image_bytes(player.image) == image_bytes(expected_player_image(direction, costume_index))
+
+
+class TestDisable:
+    def test_hides_player_and_key_hint(self):
+        player = create_player()
+
+        player.disable()
+
+        assert player.visible is False
+        player.game_manager.hide_key_hint.assert_called_once_with()

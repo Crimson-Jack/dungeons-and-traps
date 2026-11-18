@@ -382,6 +382,8 @@ class Player(CustomDrawSprite):
         self.sword_weapon.disarm_weapon()
         self.bow_weapon.disarm_weapon()
         self.explosion_weapon.disarm_weapon()
+        # The disabled player no longer walks into a locked door
+        self.game_manager.hide_key_hint()
 
     def enable(self):
         self.visible = True
