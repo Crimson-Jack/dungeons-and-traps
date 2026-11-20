@@ -201,6 +201,12 @@ class TestDrawDarkness:
         assert tuple(lit_level._screen.get_at(player_point))[:3] == player_color
         assert tuple(lit_level._screen.get_at(corner_point))[:3] == corner_color
 
+    def test_player_without_rect_raises_value_error(self, lit_level):
+        lit_level._player.rect = None
+
+        with pytest.raises(ValueError, match='The player has no rect'):
+            lit_level._draw_darkness()
+
 
 @pytest.mark.refactoring
 class TestCreateSpritesFromBasicMap:

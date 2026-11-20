@@ -369,7 +369,8 @@ class Level:
         # Calculate the position of the player on the game surface
         offset = self._camera.offset
         player_rect = self._player.rect
-        assert player_rect is not None, 'The player has no rect'
+        if player_rect is None:
+            raise ValueError('The player has no rect')
         light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
 
         self._darkness_effect.draw(self._game_manager.lighting_status, light_center)
