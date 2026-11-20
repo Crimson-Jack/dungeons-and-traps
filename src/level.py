@@ -1,4 +1,5 @@
 import random
+from typing import TypeVar
 
 import pygame
 from pytmx.util_pygame import load_pygame
@@ -30,6 +31,9 @@ from src.tile_details.monster_tile_details_factory import MonsterTileDetailsFact
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 from src.utilities.debug import Debug
 from src.utilities.debug_overlay import DebugOverlay
+
+# Effects that are killed and forgotten by Level once they expire
+ExpiringEffectType = TypeVar('ExpiringEffectType', Tombstone, VanishingPoint)
 
 
 class Level:
@@ -347,22 +351,8 @@ class Level:
 
     def _remove_unnecessary_effects(self) -> None:
         # Kill and forget the expired tombstones, vanishing points and particle effects
-        remaining_tombstones = []
-        for tombstone in self._tombstones:
-            if tombstone.is_expired():
-                tombstone.kill()
-            else:
-                remaining_tombstones.append(tombstone)
-        self._tombstones = remaining_tombstones
-
-        remaining_vanishing_points = []
-        for vanishing_point in self._vanishing_points:
-            if vanishing_point.is_expired():
-                vanishing_point.kill()
-            else:
-                remaining_vanishing_points.append(vanishing_point)
-        self._vanishing_points = remaining_vanishing_points
-
+        self._tombstones = self._kill_expired_and_keep_active(self._tombstones)
+        self._vanishing_points = self._kill_expired_and_keep_active(self._vanishing_points)
         self._particle_effect_group.remove_expired()
 
     def _draw_darkness(self) -> None:
@@ -374,3 +364,14 @@ class Level:
         light_center = (player_rect.centerx + offset.x, player_rect.centery + offset.y)
 
         self._darkness_effect.draw(self._game_manager.lighting_status, light_center)
+
+    @staticmethod
+    def _kill_expired_and_keep_active(effects: list[ExpiringEffectType]) -> list[ExpiringEffectType]:
+        # Kill the expired effects and return the remaining ones
+        remaining_effects = []
+        for effect in effects:
+            if effect.is_expired():
+                effect.kill()
+            else:
+                remaining_effects.append(effect)
+        return remaining_effects
