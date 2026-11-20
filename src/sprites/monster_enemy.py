@@ -11,7 +11,7 @@ from src.enums.enemy_type import EnemyType
 from src.enums.sound_effect import SoundEffect
 from src.game_helper import GameHelper
 from src.geometry_helper import GeometryHelper
-from src.factories.search_path_algorithm_factory import SearchPathAlgorithmFactory
+from src.search_path_algorithms.search_path_algorithm_factory import SearchPathAlgorithmFactory
 from src.sound_manager import SoundManager
 from src.sprite_costume import SpriteCostume
 from src.sprites.custom_draw_sprite import CustomDrawSprite

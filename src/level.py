@@ -19,7 +19,6 @@ from src.game_manager import GameManager
 from src.level_sprite_builder import LevelSpriteBuilder
 from src.level_sprite_groups import LevelSpriteGroups
 from src.obstacle_map_factory import ObstacleMapFactory
-from src.factories.monster_tile_details_factory import MonsterTileDetailsFactory
 from src.sprites.egg import Egg
 from src.sprites.monster_enemy import MonsterEnemy
 from src.sprites.octopus_enemy import OctopusEnemy
@@ -27,6 +26,7 @@ from src.sprites.tombstone import Tombstone
 from src.sprites.vanishing_point import VanishingPoint
 from src.sprite_costume import SpriteCostume
 from src.sprite_helper import SpriteHelper
+from src.tile_details.monster_tile_details_factory import MonsterTileDetailsFactory
 from src.tile_details.octopus_tile_details import OctopusTileDetails
 from src.utilities.debug import Debug
 from src.utilities.debug_overlay import DebugOverlay

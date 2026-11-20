@@ -10,7 +10,6 @@ from src.game_helper import GameHelper
 from src.game_manager import GameManager
 from src.level_sprite_groups import LevelSpriteGroups
 from src.obstacle_map import ObstacleMap
-from src.factories.powerup_factory import PowerupFactory
 from src.sprites.bat_enemy import BatEnemy
 from src.sprites.check_point import CheckPoint
 from src.sprites.demolished_wall import DemolishedWall
@@ -26,6 +25,7 @@ from src.sprites.lighting_spell import LightingSpell
 from src.sprites.monster_enemy import MonsterEnemy
 from src.sprites.octopus_enemy import OctopusEnemy
 from src.sprites.player import Player
+from src.sprites.powerup_factory import PowerupFactory
 from src.sprites.spider_enemy import SpiderEnemy
 from src.sprites.stone import Stone
 from src.sprites.teleport import Teleport
