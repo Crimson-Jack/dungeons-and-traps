@@ -144,7 +144,7 @@ class Level:
         # Run an update method for effects
         self._particle_effect_group.update(self._camera.offset)
         self._blast_effect.update()
-        self._explode_effect.update()
+        self._explode_effect.update(self._camera.offset)
 
         # Clean game surface - fill with background color
         self._game_surface.fill(Settings.GAME_BACKGROUND_COLOR)
@@ -211,7 +211,7 @@ class Level:
         """
         Show the explosion effect.
 
-        :param position: position of the explosion
+        :param position: center of the explosion on the map
         """
         self._explode_effect.run(position)
 

@@ -13,6 +13,7 @@ MAX_SIZE = (1800, 1800)
 STEPS = 12
 POSITION = (300, 200)
 OTHER_POSITION = (500, 400)
+NO_OFFSET = pygame.math.Vector2(0, 0)
 
 
 @pytest.fixture
@@ -81,8 +82,8 @@ class TestRun:
 
     def test_restarts_from_smallest_rings_at_new_position(self, explode_effect, draw_arc):
         explode_effect.run(POSITION)
-        explode_effect.update()
-        explode_effect.update()
+        explode_effect.update(NO_OFFSET)
+        explode_effect.update(NO_OFFSET)
 
         explode_effect.run(OTHER_POSITION)
 
@@ -93,9 +94,9 @@ class TestUpdate:
     def test_grows_rings_by_one_step_keeping_center(self, explode_effect, draw_arc):
         explode_effect.run(POSITION)
 
-        explode_effect.update()
+        explode_effect.update(NO_OFFSET)
         first_rings = get_drawn_rings(explode_effect, draw_arc)
-        explode_effect.update()
+        explode_effect.update(NO_OFFSET)
         second_rings = get_drawn_rings(explode_effect, draw_arc)
 
         assert first_rings == get_expected_rings(POSITION, (300, 300))
@@ -105,17 +106,34 @@ class TestUpdate:
         explode_effect.run(POSITION)
         # Eleven updates grow the rectangle to the maximum size
         for update_number in range(11):
-            explode_effect.update()
+            explode_effect.update(NO_OFFSET)
         assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(POSITION, MAX_SIZE)
 
-        explode_effect.update()
+        explode_effect.update(NO_OFFSET)
         draw_arc.reset_mock()
         explode_effect.draw()
 
         draw_arc.assert_not_called()
 
     def test_does_nothing_before_run(self, explode_effect, draw_arc):
-        explode_effect.update()
+        explode_effect.update(NO_OFFSET)
         explode_effect.draw()
 
         draw_arc.assert_not_called()
+
+    def test_draws_rings_moved_by_map_offset(self, explode_effect, draw_arc):
+        explode_effect.run(POSITION)
+
+        explode_effect.update(pygame.math.Vector2(40, -30))
+
+        moved_center = (POSITION[0] + 40, POSITION[1] - 30)
+        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(moved_center, (300, 300))
+
+    def test_rings_follow_new_map_offset_keeping_position_on_map(self, explode_effect, draw_arc):
+        explode_effect.run(POSITION)
+        explode_effect.update(pygame.math.Vector2(40, -30))
+
+        explode_effect.update(pygame.math.Vector2(-20, 10))
+
+        moved_center = (POSITION[0] - 20, POSITION[1] + 10)
+        assert get_drawn_rings(explode_effect, draw_arc) == get_expected_rings(moved_center, (450, 450))

@@ -33,13 +33,12 @@ class ExplosionWeapon(CustomDrawSprite):
         self.direction = Direction.RIGHT
         self.is_armed = False
 
-        # Offset position
-        self.last_center_position_with_offset = None
-
         # Explosion variables
         self.range = (Settings.EXPLOSION_WEAPON_RANGE + 1) * Settings.TILE_SIZE
         self.damage_power = 300
         self.is_fired = False
+        # Center of the explosion on the map, saved when the weapon is fired
+        self.explosion_center = self.rect.center
         self.step_counter = 0
         self.explosion_starting_threshold = Settings.NUMBER_OF_EXPLOSION_STEPS
 
@@ -57,8 +56,8 @@ class ExplosionWeapon(CustomDrawSprite):
                 self.is_fired = False
 
     def is_enemy_in_range(self, enemy):
-        distance = (abs(enemy.rect.center[0] - self.rect.center[0]),
-                    abs(enemy.rect.center[1] - self.rect.center[1]))
+        distance = (abs(enemy.rect.center[0] - self.explosion_center[0]),
+                    abs(enemy.rect.center[1] - self.explosion_center[1]))
 
         return (distance[0]**2 + distance[1]**2)**0.5 < self.range
 
@@ -67,9 +66,6 @@ class ExplosionWeapon(CustomDrawSprite):
             # Draw sprite
             offset_position = self.rect.topleft + offset
             game_surface.blit(self.image, offset_position)
-
-            # Save the last center position with offset
-            self.last_center_position_with_offset = self.rect.center + offset
 
     def set_position(self, position):
         # Calculate additional offset
@@ -98,9 +94,10 @@ class ExplosionWeapon(CustomDrawSprite):
         self.image = self.sprites[self.direction]
 
     def fire(self) -> bool:
-        if self.is_armed and self.last_center_position_with_offset is not None:
+        if self.is_armed:
+            self.explosion_center = self.rect.center
             self.sound_manager.play_sfx(SoundEffect.EXPLODE)
-            pygame.event.post(pygame.event.Event(Events.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.last_center_position_with_offset}))
+            pygame.event.post(pygame.event.Event(Events.CREATE_EXPLODE_EFFECT_EVENT, {"position": self.explosion_center}))
             self.is_fired = True
             return True
         else:

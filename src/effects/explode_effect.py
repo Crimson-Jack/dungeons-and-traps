@@ -5,7 +5,10 @@ from src.game_helper import GameHelper
 
 
 class ExplodeEffect:
-    """Rings of an explosion that grow from a position until they reach the maximum size, then disappear."""
+    """
+    Rings of an explosion that grow from a position on the map until they reach the maximum size, then disappear.
+    The rings stay at that position on the map and are drawn with the map offset of the current frame.
+    """
 
     # Rings drawn inside the explosion rectangle: (inflate_x, inflate_y, line_width),
     # given for the base tile size and scaled to the current tile size
@@ -35,18 +38,24 @@ class ExplodeEffect:
         self._base_rectangle = pygame.rect.Rect(0, 0, 0, 0)
         self._rectangle = pygame.rect.Rect(0, 0, 0, 0)
         self._counter = 1
+        self._map_offset = pygame.math.Vector2()
 
     def run(self, position: tuple[int, int]) -> None:
         """
         Start the explosion from the smallest rings centered at the position.
 
-        :param position: center of the explosion on the game surface
+        :param position: center of the explosion on the map
         """
         self._reset(position)
         self._visible = True
 
-    def update(self) -> None:
-        """Grow the rings by one step; hide the effect once they reach the maximum size."""
+    def update(self, map_offset: pygame.math.Vector2) -> None:
+        """
+        Grow the rings by one step; hide the effect once they reach the maximum size.
+
+        :param map_offset: offset of the map on the game surface in the current frame
+        """
+        self._map_offset = pygame.math.Vector2(map_offset)
         if self._visible:
             if self._rectangle.width < self._width and self._rectangle.height < self._height:
                 self._rectangle = self._base_rectangle.inflate(self._step_x * self._counter,
@@ -58,8 +67,10 @@ class ExplodeEffect:
     def draw(self) -> None:
         """Draw the rings while the effect is visible."""
         if self._visible:
+            rectangle_on_game_surface = self._rectangle.move(self._map_offset)
             for inflate_x, inflate_y, line_width in self._rings:
-                pygame.draw.arc(self._game_surface, self._color, self._rectangle.inflate(inflate_x, inflate_y),
+                pygame.draw.arc(self._game_surface, self._color,
+                                rectangle_on_game_surface.inflate(inflate_x, inflate_y),
                                 0, 2 * math.pi, line_width)
 
     def _reset(self, position: tuple[int, int]) -> None:
